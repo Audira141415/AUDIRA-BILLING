@@ -1,0 +1,63 @@
+# AUDIRA - Zip Ignore Reference
+# File ini adalah referensi untuk apa yang TIDAK perlu di-zip
+# Gunakan cleanup-before-zip.bat untuk menghapus otomatis
+
+# Node Modules (PALING BESAR - 90% dari ukuran project)
+node_modules/
+apps/*/node_modules/
+
+# Build Artifacts
+apps/frontend/.next/
+apps/customer-portal/.next/
+apps/backend/dist/
+*.tsbuildinfo
+
+# Cache Directories
+.pnpm/
+.expo/
+apps/*/.expo/
+.turbo/
+
+# Testing & Coverage
+coverage/
+.nyc_output/
+apps/*/coverage/
+
+# Temporary Files
+_tmp_*
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+logs/
+apps/*/logs/
+
+# IDE Settings (opsional, tergantung preferensi)
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment Variables (JANGAN di-zip jika ada data sensitif)
+# .env  # Uncomment jika tidak ingin share kredensial
+
+# OS Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Deprecated Files
+start-backend-simple.bat
+
+# Test Files
+test-technician-login.js
+
+# React Native
+apps/mobile/.expo/
+apps/mobile/android/app/build/
+apps/mobile/ios/build/

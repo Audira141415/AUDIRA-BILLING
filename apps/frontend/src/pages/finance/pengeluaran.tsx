@@ -1,0 +1,965 @@
+import { useState } from 'react';
+import { useRouter } from 'next/router';
+import Layout from '@/components/Layout';
+import {
+  TrendingUp,
+  TrendingDown,
+  DollarSign,
+  Calendar,
+  Filter,
+  Download,
+  Search,
+  Plus,
+  ChevronDown,
+  Eye,
+  Trash,
+  PlusCircle,
+  Settings,
+  Bell,
+  Mail,
+  CheckCircle,
+  AlertCircle
+} from 'lucide-react';
+import {
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  Tooltip
+} from 'recharts';
+
+const formatRupiah = (val: number) => {
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  }).format(val).replace('Rp', 'Rp ');
+};
+
+const COLORS_KATEGORI = ['#3B82F6', '#10B981', '#6366F1', '#F59E0B', '#EC4899', '#14B8A6', '#8B5CF6'];
+const COLORS_METODE = ['#3B82F6', '#10B981', '#6366F1', '#F59E0B', '#EC4899', '#8B5CF6'];
+
+export default function PengeluaranDashboard() {
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState('Ringkasan');
+
+  // Filter states
+  const [filterPeriod, setFilterPeriod] = useState('25/06/2026 - 01/07/2026');
+  const [filterStatus, setFilterStatus] = useState('Semua Status');
+  const [filterKategori, setFilterKategori] = useState('Semua Kategori');
+  const [filterVendor, setFilterVendor] = useState('Semua Vendor');
+  const [filterMetode, setFilterMetode] = useState('Semua Metode');
+  const [filterProyek, setFilterProyek] = useState('Semua Proyek');
+  const [filterMinNominal, setFilterMinNominal] = useState('');
+  const [filterMaxNominal, setFilterMaxNominal] = useState('');
+
+  // Transaction list (Mock matching the screenshot)
+  const initialTransactions = [
+    { no: 1, tanggal: '01/07/2026 09:21', invoice: 'EXP/2026/07/000342', vendor: 'PT. Cloud Nusantara', kategori: 'Server & Hosting', metode: 'Transfer Bank', total: 2450000, status: 'Lunas' },
+    { no: 2, tanggal: '01/07/2026 08:45', invoice: 'EXP/2026/07/000341', vendor: 'Telkom Indonesia', kategori: 'Bandwidth & Internet', metode: 'Virtual Account', total: 1850000, status: 'Lunas' },
+    { no: 3, tanggal: '01/07/2026 08:10', invoice: 'EXP/2026/07/000340', vendor: 'PLN', kategori: 'Listrik & Utilitas', metode: 'Transfer Bank', total: 950000, status: 'Lunas' },
+    { no: 4, tanggal: '30/06/2026 17:22', invoice: 'EXP/2026/06/000339', vendor: 'Andi Pratama', kategori: 'Office & Umum', metode: 'E-Wallet', total: 350000, status: 'Lunas' },
+    { no: 5, tanggal: '30/06/2026 16:35', invoice: 'EXP/2026/06/000338', vendor: 'CV. Maju Jaya', kategori: 'Marketing', metode: 'Transfer Bank', total: 1200000, status: 'Sebagian' },
+    { no: 6, tanggal: '30/06/2026 15:12', invoice: 'EXP/2026/06/000337', vendor: 'Rina Marlina', kategori: 'Gaji & SDM', metode: 'Transfer Bank', total: 8500000, status: 'Lunas' },
+    { no: 7, tanggal: '30/06/2026 14:05', invoice: 'EXP/2026/06/000336', vendor: 'AWS (Amazon Web)', kategori: 'Server & Hosting', metode: 'Virtual Account', total: 1750000, status: 'Belum Lunas' },
+    { no: 8, tanggal: '30/06/2026 11:33', invoice: 'EXP/2026/06/000335', vendor: 'Google Workspace', kategori: 'Software', metode: 'E-Wallet', total: 450000, status: 'Lunas' },
+    { no: 9, tanggal: '29/06/2026 09:50', invoice: 'EXP/2026/06/000334', vendor: 'Fajar Nugroho', kategori: 'Office & Umum', metode: 'Tunai', total: 120000, status: 'Lunas' },
+    { no: 10, tanggal: '28/06/2026 16:20', invoice: 'EXP/2026/06/000333', vendor: 'DigitalOcean', kategori: 'Server & Hosting', metode: 'Transfer Bank', total: 1200000, status: 'Lunas' }
+  ];
+
+  const [transactions, setTransactions] = useState(initialTransactions);
+  const [filteredTransactions, setFilteredTransactions] = useState(initialTransactions);
+  const [showAddModal, setShowAddModal] = useState(false);
+
+  // New transaction form state
+  const [newDate, setNewDate] = useState('01/07/2026 11:00');
+  const [newInvoice, setNewInvoice] = useState('EXP/2026/07/000350');
+  const [newVendor, setNewVendor] = useState('');
+  const [newKategori, setNewKategori] = useState('Server & Hosting');
+  const [newMetode, setNewMetode] = useState('Transfer Bank');
+  const [newTotal, setNewTotal] = useState('');
+  const [newStatus, setNewStatus] = useState('Lunas');
+
+  const applyFilters = () => {
+    let result = [...transactions];
+
+    if (filterStatus !== 'Semua Status') {
+      result = result.filter(t => t.status === filterStatus);
+    }
+    if (filterKategori !== 'Semua Kategori') {
+      result = result.filter(t => t.kategori === filterKategori);
+    }
+    if (filterMetode !== 'Semua Metode') {
+      result = result.filter(t => t.metode === filterMetode);
+    }
+    if (filterMinNominal) {
+      result = result.filter(t => t.total >= parseInt(filterMinNominal));
+    }
+    if (filterMaxNominal) {
+      result = result.filter(t => t.total <= parseInt(filterMaxNominal));
+    }
+
+    setFilteredTransactions(result);
+  };
+
+  const resetFilters = () => {
+    setFilterStatus('Semua Status');
+    setFilterKategori('Semua Kategori');
+    setFilterMetode('Semua Metode');
+    setFilterMinNominal('');
+    setFilterMaxNominal('');
+    setFilteredTransactions(transactions);
+  };
+
+  const handleAddTransaction = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newVendor || !newTotal) return;
+
+    const newTx = {
+      no: transactions.length + 1,
+      tanggal: newDate,
+      invoice: newInvoice,
+      vendor: newVendor,
+      kategori: newKategori,
+      metode: newMetode,
+      total: parseInt(newTotal),
+      status: newStatus
+    };
+
+    const updated = [newTx, ...transactions];
+    setTransactions(updated);
+    setFilteredTransactions(updated);
+    setShowAddModal(false);
+
+    // reset inputs
+    setNewVendor('');
+    setNewTotal('');
+    setNewInvoice(`EXP/2026/07/00${350 + transactions.length}`);
+  };
+
+  const handleExport = () => {
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + ["NO,TANGGAL,NO. PENGELUARAN,VENDOR / SUPPLIER,KATEGORI,METODE,TOTAL,STATUS", 
+         ...filteredTransactions.map(t => `${t.no},${t.tanggal},${t.invoice},"${t.vendor}",${t.kategori},${t.metode},${t.total},${t.status}`)
+        ].join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `laporan_pengeluaran_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // Sparkline data
+  const sparkData = {
+    total: [{ v: 75 }, { v: 80 }, { v: 78 }, { v: 85 }, { v: 82 }, { v: 88 }, { v: 82.7 }],
+    operasional: [{ v: 45 }, { v: 48 }, { v: 46 }, { v: 51 }, { v: 49 }, { v: 52 }, { v: 48.65 }],
+    nonOperasional: [{ v: 15 }, { v: 14 }, { v: 16 }, { v: 13 }, { v: 14 }, { v: 12 }, { v: 12.83 }],
+    tetap: [{ v: 20 }, { v: 20 }, { v: 21 }, { v: 21 }, { v: 21 }, { v: 22 }, { v: 21.25 }],
+    rataRata: [{ v: 2.4 }, { v: 2.6 }, { v: 2.5 }, { v: 2.8 }, { v: 2.7 }, { v: 2.9 }, { v: 2.66 }],
+    transaksi: [{ v: 310 }, { v: 330 }, { v: 320 }, { v: 350 }, { v: 335 }, { v: 360 }, { v: 342 }]
+  };
+
+  // Tren Pengeluaran Harian
+  const dailyTrendData = [
+    { name: '25 Jun', Tren: 11 },
+    { name: '26 Jun', Tren: 15 },
+    { name: '27 Jun', Tren: 13 },
+    { name: '28 Jun', Tren: 10 },
+    { name: '29 Jun', Tren: 12 },
+    { name: '30 Jun', Tren: 11 },
+    { name: '01 Jul', Tren: 14 }
+  ];
+
+  // Donut data
+  const categoryData = [
+    { name: 'Server & Hosting', value: 22450000, percent: '27.1%' },
+    { name: 'Bandwidth & Internet', value: 15200000, percent: '18.4%' },
+    { name: 'Gaji & SDM', value: 12850000, percent: '15.5%' },
+    { name: 'Listrik & Utilitas', value: 9450000, percent: '11.4%' },
+    { name: 'Marketing', value: 6730000, percent: '8.1%' },
+    { name: 'Office & Umum', value: 5180000, percent: '6.3%' },
+    { name: 'Lainnya', value: 10870500, percent: '13.2%' }
+  ];
+
+  const paymentMethodData = [
+    { name: 'Transfer Bank', value: 45320000, percent: '54.8%' },
+    { name: 'E-Wallet', value: 18650000, percent: '22.5%' },
+    { name: 'Virtual Account', value: 12830000, percent: '15.5%' },
+    { name: 'Tunai', value: 3930000, percent: '4.8%' },
+    { name: 'Kartu Kredit', value: 0, percent: '0%' },
+    { name: 'Lainnya', value: 0, percent: '0%' }
+  ];
+
+  const vendorData = [
+    { name: 'PT. Cloud Nusantara', value: 12450000, percent: '15.0%' },
+    { name: 'Telkom Indonesia', value: 10850000, percent: '13.1%' },
+    { name: 'AWS (Amazon Web)', value: 8750000, percent: '10.6%' },
+    { name: 'PLN', value: 6450000, percent: '7.8%' },
+    { name: 'Google Workspace', value: 4250000, percent: '5.1%' }
+  ];
+
+  return (
+    <Layout>
+      <div className="bg-[#050B14] text-gray-100 min-h-screen p-6 font-sans antialiased">
+        {/* Custom Header Area */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 pb-6 border-b border-blue-950">
+          <div className="flex items-center gap-4">
+            <div className="bg-[#091526] px-4 py-2 rounded-lg border border-blue-900/60 flex items-center gap-3">
+              <Calendar className="w-4 h-4 text-cyan-400" />
+              <div className="text-xs">
+                <p className="text-gray-400 font-semibold">01 Juli 2026</p>
+                <p className="text-cyan-400 text-[10px]">08.35 WIB</p>
+              </div>
+            </div>
+            <div className="bg-[#091526] px-4 py-2 rounded-lg border border-blue-900/60 flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <div className="text-xs">
+                <p className="text-gray-400 font-semibold">Status Sistem</p>
+                <p className="text-emerald-400 text-[10px]">● Normal</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4 w-full md:w-auto">
+            <div className="relative w-full md:w-64">
+              <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Cari invoice, customer, transaksi..."
+                className="w-full pl-9 pr-4 py-2 rounded-lg bg-[#091526] border border-blue-900/60 text-xs focus:outline-none focus:border-cyan-500 placeholder-gray-500 text-gray-200"
+              />
+            </div>
+            <div className="flex items-center gap-2.5">
+              <button className="p-2 rounded-lg bg-[#091526] border border-blue-900/40 hover:border-cyan-500/50 relative">
+                <Bell className="w-4 h-4 text-gray-300" />
+                <span className="absolute -top-1 -right-1 w-4.5 h-4.5 bg-red-500 rounded-full text-[9px] font-bold flex items-center justify-center text-white px-1">12</span>
+              </button>
+              <button className="p-2 rounded-lg bg-[#091526] border border-blue-900/40 hover:border-cyan-500/50 relative">
+                <Mail className="w-4 h-4 text-gray-300" />
+                <span className="absolute -top-1 -right-1 w-4.5 h-4.5 bg-red-500 rounded-full text-[9px] font-bold flex items-center justify-center text-white px-1">6</span>
+              </button>
+              <button className="p-2 rounded-lg bg-[#091526] border border-blue-900/40 hover:border-cyan-500/50">
+                <Settings className="w-4 h-4 text-gray-300" />
+              </button>
+            </div>
+            <div className="flex items-center gap-3 pl-3 border-l border-blue-950">
+              <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center font-bold text-xs text-white">AD</div>
+              <div className="text-left hidden lg:block">
+                <p className="text-xs font-semibold text-gray-200">Agus Dwi Rianto</p>
+                <p className="text-[10px] text-gray-400">Super Admin</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Dashboard Title & Top Bar */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-white">Pengeluaran</h1>
+            <p className="text-xs text-gray-400 mt-1">Kelola semua pengeluaran dan analisis performa biaya operasional.</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#091526] border border-blue-900/40 text-xs">
+              <span className="text-gray-400 font-medium">25 Juni 2026 - 01 Juli 2026</span>
+            </div>
+            <button className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white transition-colors">
+              <Filter className="w-3.5 h-3.5" />
+              <span>Filter</span>
+            </button>
+            <button 
+              onClick={handleExport}
+              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white border border-blue-900/40 transition-colors"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>Ekspor</span>
+              <ChevronDown className="w-3 h-3 text-gray-400" />
+            </button>
+          </div>
+        </div>
+
+        {/* Top Metric Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 mb-6">
+          {/* Total Pengeluaran */}
+          <div className="bg-[#0A1629]/70 border border-blue-900/40 rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+            <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Total Pengeluaran</p>
+            <h3 className="text-base font-bold text-white mt-1">Rp 82.730.500</h3>
+            <span className="text-[10px] text-emerald-400 flex items-center font-semibold mt-1">
+              ▲ 8.4% <span className="text-gray-500 font-normal ml-1">vs lalu</span>
+            </span>
+            <div className="h-8 mt-2">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={sparkData.total}>
+                  <Area type="monotone" dataKey="v" stroke="#3b82f6" strokeWidth={1.5} fill="rgba(59, 130, 246, 0.05)" dot={false} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Pengeluaran Operasional */}
+          <div className="bg-[#0A1629]/70 border border-blue-900/40 rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+            <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Pengeluaran Operasional</p>
+            <h3 className="text-base font-bold text-white mt-1">Rp 48.650.000</h3>
+            <span className="text-[10px] text-emerald-400 flex items-center font-semibold mt-1">
+              ▲ 6.2% <span className="text-gray-500 font-normal ml-1">vs lalu</span>
+            </span>
+            <div className="h-8 mt-2">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={sparkData.operasional}>
+                  <Area type="monotone" dataKey="v" stroke="#10b981" strokeWidth={1.5} fill="rgba(16, 185, 129, 0.05)" dot={false} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Pengeluaran Non Operasional */}
+          <div className="bg-[#0A1629]/70 border border-blue-900/40 rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+            <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Pengeluaran Non Operasional</p>
+            <h3 className="text-base font-bold text-white mt-1">Rp 12.830.000</h3>
+            <span className="text-[10px] text-rose-400 flex items-center font-semibold mt-1">
+              ▼ 3.6% <span className="text-gray-500 font-normal ml-1">vs lalu</span>
+            </span>
+            <div className="h-8 mt-2">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={sparkData.nonOperasional}>
+                  <Area type="monotone" dataKey="v" stroke="#10b981" strokeWidth={1.5} fill="rgba(16, 185, 129, 0.05)" dot={false} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Pengeluaran Tetap */}
+          <div className="bg-[#0A1629]/70 border border-blue-900/40 rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+            <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Pengeluaran Tetap</p>
+            <h3 className="text-base font-bold text-white mt-1">Rp 21.250.000</h3>
+            <span className="text-[10px] text-emerald-400 flex items-center font-semibold mt-1">
+              ▲ 9.1% <span className="text-gray-500 font-normal ml-1">vs lalu</span>
+            </span>
+            <div className="h-8 mt-2">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={sparkData.tetap}>
+                  <Area type="monotone" dataKey="v" stroke="#f59e0b" strokeWidth={1.5} fill="rgba(245, 158, 11, 0.05)" dot={false} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Rata-rata per Hari */}
+          <div className="bg-[#0A1629]/70 border border-blue-900/40 rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+            <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Rata-rata per Hari</p>
+            <h3 className="text-base font-bold text-white mt-1">Rp 2.669.371</h3>
+            <span className="text-[10px] text-emerald-400 flex items-center font-semibold mt-1">
+              ▲ 8.4% <span className="text-gray-500 font-normal ml-1">vs lalu</span>
+            </span>
+            <div className="h-8 mt-2">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={sparkData.rataRata}>
+                  <Area type="monotone" dataKey="v" stroke="#3b82f6" strokeWidth={1.5} fill="rgba(59, 130, 246, 0.05)" dot={false} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Transaksi Pengeluaran */}
+          <div className="bg-[#0A1629]/70 border border-blue-900/40 rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+            <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Transaksi Pengeluaran</p>
+            <h3 className="text-base font-bold text-white mt-1">342</h3>
+            <span className="text-[10px] text-emerald-400 flex items-center font-semibold mt-1">
+              ▲ 11.2% <span className="text-gray-500 font-normal ml-1">vs lalu</span>
+            </span>
+            <div className="h-8 mt-2">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={sparkData.transaksi}>
+                  <Area type="monotone" dataKey="v" stroke="#8b5cf6" strokeWidth={1.5} fill="rgba(139, 92, 246, 0.05)" dot={false} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+
+        {/* Tab Selection */}
+        <div className="flex border-b border-blue-950/80 mb-6 gap-2 overflow-x-auto pb-1">
+          {['Ringkasan', 'Transaksi Pengeluaran', 'Kategori Pengeluaran', 'Vendor / Supplier', 'Metode Pembayaran', 'Proyek / Department', 'Anggaran', 'Tren Pengeluaran'].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-4 py-2 text-xs font-semibold whitespace-nowrap transition-all duration-200 border-b-2 -mb-[2px] ${
+                activeTab === tab 
+                  ? 'border-blue-500 text-blue-400 font-bold' 
+                  : 'border-transparent text-gray-400 hover:text-gray-200'
+              }`}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+
+        {/* Tab Content: Ringkasan */}
+        {activeTab === 'Ringkasan' && (
+          <>
+            {/* Charts Row */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+              {/* Tren Pengeluaran */}
+              <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4">
+                <div className="flex justify-between items-center mb-4">
+                  <h4 className="text-xs font-bold text-gray-200 tracking-wide uppercase">Tren Pengeluaran</h4>
+                  <span className="text-[10px] text-gray-400 bg-blue-950/60 px-2 py-0.5 rounded border border-blue-900/30">7 Hari Terakhir</span>
+                </div>
+                <div className="h-52">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={dailyTrendData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
+                      <XAxis dataKey="name" stroke="#64748b" fontSize={10} tickLine={false} />
+                      <YAxis stroke="#64748b" fontSize={10} tickLine={false} />
+                      <Tooltip contentStyle={{ backgroundColor: '#091526', borderColor: '#1E3A8A', color: '#FFF', fontSize: 11 }} />
+                      <Area type="monotone" dataKey="Tren" stroke="#8b5cf6" strokeWidth={2.5} fill="rgba(139, 92, 246, 0.08)" dot={{ r: 3 }} />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              {/* Pengeluaran per Kategori */}
+              <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4 flex flex-col justify-between">
+                <h4 className="text-xs font-bold text-gray-200 tracking-wide uppercase mb-3">Pengeluaran per Kategori</h4>
+                <div className="flex items-center gap-4">
+                  <div className="relative w-28 h-28 flex-shrink-0">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={categoryData}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={30}
+                          outerRadius={45}
+                          paddingAngle={3}
+                          dataKey="value"
+                        >
+                          {categoryData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS_KATEGORI[index % COLORS_KATEGORI.length]} />
+                          ))}
+                        </Pie>
+                      </PieChart>
+                    </ResponsiveContainer>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                      <p className="text-[8px] text-gray-400 font-semibold uppercase">Total</p>
+                      <p className="text-[9px] font-bold text-white">82.7M</p>
+                    </div>
+                  </div>
+
+                  <div className="flex-1 space-y-1 text-[10px] overflow-y-auto max-h-[140px] pr-1">
+                    {categoryData.map((e, index) => (
+                      <div key={index} className="flex justify-between items-center">
+                        <div className="flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: COLORS_KATEGORI[index] }}></span>
+                          <span className="text-gray-300 max-w-[80px] truncate">{e.name}</span>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-white font-semibold block">{formatRupiah(e.value)}</span>
+                          <span className="text-[8px] text-gray-400">{e.percent}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Pengeluaran per Metode Pembayaran */}
+              <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4 flex flex-col justify-between">
+                <h4 className="text-xs font-bold text-gray-200 tracking-wide uppercase mb-3">Pengeluaran per Metode Pembayaran</h4>
+                <div className="flex items-center gap-4">
+                  <div className="relative w-28 h-28 flex-shrink-0">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={paymentMethodData}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={30}
+                          outerRadius={45}
+                          paddingAngle={3}
+                          dataKey="value"
+                        >
+                          {paymentMethodData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS_METODE[index % COLORS_METODE.length]} />
+                          ))}
+                        </Pie>
+                      </PieChart>
+                    </ResponsiveContainer>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                      <p className="text-[8px] text-gray-400 font-semibold uppercase">Total</p>
+                      <p className="text-[9px] font-bold text-white">82.7M</p>
+                    </div>
+                  </div>
+
+                  <div className="flex-1 space-y-1 text-[10px] overflow-y-auto max-h-[140px] pr-1">
+                    {paymentMethodData.map((e, index) => (
+                      <div key={index} className="flex justify-between items-center">
+                        <div className="flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: COLORS_METODE[index] }}></span>
+                          <span className="text-gray-300 max-w-[80px] truncate">{e.name}</span>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-white font-semibold block">{formatRupiah(e.value)}</span>
+                          <span className="text-[8px] text-gray-400">{e.percent}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom Row: Filter, Table, Summaries */}
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+              {/* Filter Sidebar (1/4 column) */}
+              <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4 space-y-4">
+                <h3 className="text-xs font-bold text-gray-200 tracking-wide uppercase border-b border-blue-950/60 pb-2">Filter Pengeluaran</h3>
+
+                <div className="space-y-3.5 text-xs">
+                  {/* Periode */}
+                  <div className="space-y-1">
+                    <label className="text-[10px] text-gray-400 font-semibold uppercase">Periode</label>
+                    <input 
+                      type="text" 
+                      value={filterPeriod}
+                      onChange={(e) => setFilterPeriod(e.target.value)}
+                      className="w-full bg-[#081225] border border-blue-900/50 p-2 rounded text-white text-[11px]" 
+                    />
+                  </div>
+
+                  {/* Status */}
+                  <div className="space-y-1">
+                    <label className="text-[10px] text-gray-400 font-semibold uppercase">Status</label>
+                    <select 
+                      value={filterStatus}
+                      onChange={(e) => setFilterStatus(e.target.value)}
+                      className="w-full bg-[#081225] border border-blue-900/50 p-2 rounded text-white text-[11px]"
+                    >
+                      <option>Semua Status</option>
+                      <option>Lunas</option>
+                      <option>Sebagian</option>
+                      <option>Belum Lunas</option>
+                      <option>Dibatalkan</option>
+                    </select>
+                  </div>
+
+                  {/* Kategori */}
+                  <div className="space-y-1">
+                    <label className="text-[10px] text-gray-400 font-semibold uppercase">Kategori</label>
+                    <select 
+                      value={filterKategori}
+                      onChange={(e) => setFilterKategori(e.target.value)}
+                      className="w-full bg-[#081225] border border-blue-900/50 p-2 rounded text-white text-[11px]"
+                    >
+                      <option>Semua Kategori</option>
+                      <option>Server & Hosting</option>
+                      <option>Bandwidth & Internet</option>
+                      <option>Listrik & Utilitas</option>
+                      <option>Office & Umum</option>
+                      <option>Marketing</option>
+                      <option>Gaji & SDM</option>
+                    </select>
+                  </div>
+
+                  {/* Vendor / Supplier */}
+                  <div className="space-y-1">
+                    <label className="text-[10px] text-gray-400 font-semibold uppercase">Vendor / Supplier</label>
+                    <select 
+                      value={filterVendor}
+                      onChange={(e) => setFilterVendor(e.target.value)}
+                      className="w-full bg-[#081225] border border-blue-900/50 p-2 rounded text-white text-[11px]"
+                    >
+                      <option>Semua Vendor</option>
+                    </select>
+                  </div>
+
+                  {/* Metode Pembayaran */}
+                  <div className="space-y-1">
+                    <label className="text-[10px] text-gray-400 font-semibold uppercase">Metode Pembayaran</label>
+                    <select 
+                      value={filterMetode}
+                      onChange={(e) => setFilterMetode(e.target.value)}
+                      className="w-full bg-[#081225] border border-blue-900/50 p-2 rounded text-white text-[11px]"
+                    >
+                      <option>Semua Metode</option>
+                      <option>Transfer Bank</option>
+                      <option>Virtual Account</option>
+                      <option>E-Wallet</option>
+                      <option>Tunai</option>
+                    </select>
+                  </div>
+
+                  {/* Proyek / Department */}
+                  <div className="space-y-1">
+                    <label className="text-[10px] text-gray-400 font-semibold uppercase">Proyek / Department</label>
+                    <select 
+                      value={filterProyek}
+                      onChange={(e) => setFilterProyek(e.target.value)}
+                      className="w-full bg-[#081225] border border-blue-900/50 p-2 rounded text-white text-[11px]"
+                    >
+                      <option>Semua Proyek</option>
+                    </select>
+                  </div>
+
+                  {/* Minimal/Maksimal Nominal */}
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="space-y-1">
+                      <label className="text-[10px] text-gray-400 font-semibold uppercase">Min Nominal</label>
+                      <input 
+                        type="text" 
+                        placeholder="Rp 0" 
+                        value={filterMinNominal}
+                        onChange={(e) => setFilterMinNominal(e.target.value)}
+                        className="w-full bg-[#081225] border border-blue-900/50 p-2 rounded text-white text-[11px]" 
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] text-gray-400 font-semibold uppercase">Max Nominal</label>
+                      <input 
+                        type="text" 
+                        placeholder="Rp 0" 
+                        value={filterMaxNominal}
+                        onChange={(e) => setFilterMaxNominal(e.target.value)}
+                        className="w-full bg-[#081225] border border-blue-900/50 p-2 rounded text-white text-[11px]" 
+                      />
+                    </div>
+                  </div>
+
+                  {/* Buttons */}
+                  <div className="grid grid-cols-2 gap-2 pt-2 border-t border-blue-950/40">
+                    <button 
+                      onClick={applyFilters}
+                      className="w-full py-2 bg-blue-600 hover:bg-blue-500 rounded text-xs font-semibold text-white transition-colors"
+                    >
+                      Terapkan Filter
+                    </button>
+                    <button 
+                      onClick={resetFilters}
+                      className="w-full py-2 bg-blue-950 hover:bg-blue-900 rounded text-xs font-semibold text-gray-300 hover:text-white transition-colors border border-blue-900/30"
+                    >
+                      Reset
+                    </button>
+                  </div>
+                </div>
+
+                {/* Status Breakdown Checklist */}
+                <div className="pt-3.5 border-t border-blue-950/40 space-y-2">
+                  <div className="flex justify-between items-center text-[10px] text-gray-400 font-semibold uppercase">
+                    <span>Status Pengeluaran</span>
+                    <span>342</span>
+                  </div>
+                  <div className="space-y-1.5 text-xs">
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-300 flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded bg-emerald-500"></span> Lunas
+                      </span>
+                      <span className="font-semibold text-white">267 <span className="text-[10px] font-normal text-gray-400">(78.1%)</span></span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-300 flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded bg-amber-500"></span> Sebagian
+                      </span>
+                      <span className="font-semibold text-white">36 <span className="text-[10px] font-normal text-gray-400">(10.5%)</span></span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-300 flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded bg-orange-500"></span> Belum Lunas
+                      </span>
+                      <span className="font-semibold text-white">28 <span className="text-[10px] font-normal text-gray-400">(8.2%)</span></span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-300 flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded bg-red-600"></span> Dibatalkan
+                      </span>
+                      <span className="font-semibold text-white">11 <span className="text-[10px] font-normal text-gray-400">(3.2%)</span></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Table (2/4 columns) */}
+              <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4 lg:col-span-2 space-y-4">
+                <div className="flex justify-between items-center gap-4">
+                  <h3 className="text-xs font-bold text-gray-200 tracking-wide uppercase">Transaksi Pengeluaran Terbaru</h3>
+                  <button 
+                    onClick={() => setShowAddModal(true)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white rounded-lg transition-colors"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Pengeluaran Baru</span>
+                  </button>
+                </div>
+
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs border-collapse">
+                    <thead>
+                      <tr className="border-b border-blue-950 text-gray-400">
+                        <th className="py-2.5 font-medium">NO</th>
+                        <th className="py-2.5 font-medium">TANGGAL</th>
+                        <th className="py-2.5 font-medium">NO. PENGELUARAN</th>
+                        <th className="py-2.5 font-medium">VENDOR / SUPPLIER</th>
+                        <th className="py-2.5 font-medium">KATEGORI</th>
+                        <th className="py-2.5 font-medium">METODE</th>
+                        <th className="py-2.5 font-medium text-right">TOTAL</th>
+                        <th className="py-2.5 font-medium text-center">STATUS</th>
+                        <th className="py-2.5 font-medium text-center">AKSI</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-blue-950/40 text-gray-300">
+                      {filteredTransactions.map((tx, idx) => (
+                        <tr key={idx} className="hover:bg-blue-950/20">
+                          <td className="py-3 text-gray-400">{tx.no}</td>
+                          <td className="py-3 text-gray-400 whitespace-nowrap">{tx.tanggal}</td>
+                          <td className="py-3 font-semibold text-cyan-400 whitespace-nowrap">{tx.invoice}</td>
+                          <td className="py-3 font-medium text-white">{tx.vendor}</td>
+                          <td className="py-3 text-gray-400">{tx.kategori}</td>
+                          <td className="py-3 text-gray-300">{tx.metode}</td>
+                          <td className="py-3 text-right font-bold text-white whitespace-nowrap">{formatRupiah(tx.total)}</td>
+                          <td className="py-3 text-center">
+                            <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-semibold ${
+                              tx.status === 'Lunas' ? 'bg-emerald-500/15 text-emerald-400' :
+                              tx.status === 'Sebagian' ? 'bg-amber-500/15 text-amber-400' :
+                              tx.status === 'Belum Lunas' ? 'bg-orange-500/15 text-orange-400' :
+                              'bg-red-500/15 text-red-400'
+                            }`}>
+                              {tx.status}
+                            </span>
+                          </td>
+                          <td className="py-3 text-center">
+                            <div className="flex items-center justify-center gap-1.5">
+                              <button className="p-1 text-gray-400 hover:text-cyan-400">
+                                <Eye className="w-3.5 h-3.5" />
+                              </button>
+                              <button 
+                                onClick={() => {
+                                  if (confirm("Hapus pencatatan pengeluaran ini?")) {
+                                    const updated = transactions.filter(t => t.invoice !== tx.invoice);
+                                    setTransactions(updated);
+                                    setFilteredTransactions(updated);
+                                  }
+                                }}
+                                className="p-1 text-gray-400 hover:text-rose-500"
+                              >
+                                <Trash className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Pagination */}
+                <div className="flex justify-between items-center pt-4 border-t border-blue-950/40 text-xs text-gray-400">
+                  <span>Menampilkan 1 - 10 dari 342 transaksi</span>
+                  <div className="flex items-center gap-1">
+                    <button className="px-2 py-1 rounded bg-[#091526] border border-blue-900/40 text-gray-300 font-semibold hover:border-cyan-500">&lt;</button>
+                    <button className="px-2.5 py-1 rounded bg-blue-600 text-white font-bold">1</button>
+                    <button className="px-2.5 py-1 rounded bg-[#091526] border border-blue-900/40 text-gray-300 font-semibold hover:border-cyan-500">2</button>
+                    <button className="px-2.5 py-1 rounded bg-[#091526] border border-blue-900/40 text-gray-300 font-semibold hover:border-cyan-500">3</button>
+                    <button className="px-2.5 py-1 rounded bg-[#091526] border border-blue-900/40 text-gray-300 font-semibold hover:border-cyan-500">4</button>
+                    <button className="px-2.5 py-1 rounded bg-[#091526] border border-blue-900/40 text-gray-300 font-semibold hover:border-cyan-500">5</button>
+                    <span>...</span>
+                    <button className="px-2.5 py-1 rounded bg-[#091526] border border-blue-900/40 text-gray-300 font-semibold hover:border-cyan-500">35</button>
+                    <button className="px-2 py-1 rounded bg-[#091526] border border-blue-900/40 text-gray-300 font-semibold hover:border-cyan-500">&gt;</button>
+                  </div>
+                  <div>
+                    <select className="bg-[#081225] border border-blue-900/40 rounded p-1 text-[11px] text-white">
+                      <option>10 / halaman</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Summaries (1/4 column) */}
+              <div className="space-y-6">
+                {/* Ringkasan Pengeluaran */}
+                <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4 space-y-3.5">
+                  <h4 className="text-xs font-bold text-gray-200 tracking-wide uppercase border-b border-blue-950/60 pb-2">Ringkasan Pengeluaran</h4>
+                  <div className="space-y-2 text-xs text-gray-300">
+                    <div className="flex justify-between pb-1 border-b border-blue-950/40">
+                      <span>Total Pengeluaran</span>
+                      <span className="font-semibold text-white">Rp 82.730.500</span>
+                    </div>
+                    <div className="flex justify-between pb-1 border-b border-blue-950/40">
+                      <span>Pengeluaran Operasional</span>
+                      <span className="font-semibold text-white">Rp 48.650.000</span>
+                    </div>
+                    <div className="flex justify-between pb-1 border-b border-blue-950/40">
+                      <span>Pengeluaran Non Operasional</span>
+                      <span className="font-semibold text-white">Rp 12.830.000</span>
+                    </div>
+                    <div className="flex justify-between pb-1 border-b border-blue-950/40">
+                      <span>Pengeluaran Tetap</span>
+                      <span className="font-semibold text-white">Rp 21.250.000</span>
+                    </div>
+                    <div className="flex justify-between pb-1 border-b border-blue-950/40">
+                      <span>Pengeluaran Variabel</span>
+                      <span className="font-semibold text-white">Rp 27.400.000</span>
+                    </div>
+                    <div className="flex justify-between pb-1 border-b border-blue-950/40">
+                      <span>Penghematan (Budget)</span>
+                      <span className="font-semibold text-emerald-400">Rp 6.740.000</span>
+                    </div>
+                    <div className="flex justify-between pt-1 text-cyan-400 font-bold">
+                      <span>Persentase Budget</span>
+                      <span>88.6%</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Top 5 Vendor */}
+                <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4 space-y-3.5">
+                  <div className="flex justify-between items-center border-b border-blue-950/60 pb-2">
+                    <h4 className="text-xs font-bold text-gray-200 tracking-wide uppercase">Top 5 Vendor</h4>
+                    <button className="text-[10px] font-semibold text-cyan-400 hover:underline">Lihat Semua</button>
+                  </div>
+                  <div className="space-y-3 text-xs">
+                    {vendorData.map((d, index) => (
+                      <div key={index} className="space-y-1">
+                        <div className="flex justify-between items-center">
+                          <span className="text-[11px] text-gray-300 font-medium">{index + 1}. {d.name}</span>
+                          <span className="font-semibold text-white">{formatRupiah(d.value)}</span>
+                        </div>
+                        {/* Progress bar */}
+                        <div className="w-full bg-blue-950/60 rounded-full h-1 border border-blue-900/20 overflow-hidden">
+                          <div 
+                            className="bg-blue-600 h-full rounded-full" 
+                            style={{ width: d.percent }}
+                          ></div>
+                        </div>
+                        <div className="text-right text-[9px] text-gray-400 mt-0.5">{d.percent}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* Add Modal */}
+        {showAddModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+            <form onSubmit={handleAddTransaction} className="bg-[#0A1629] border border-blue-900 rounded-xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+              <h3 className="text-sm font-bold text-white uppercase tracking-wider border-b border-blue-950 pb-2">Tambah Pengeluaran Baru</h3>
+
+              <div className="grid grid-cols-2 gap-3 text-xs">
+                <div className="space-y-1">
+                  <label className="text-gray-400">Tanggal & Waktu</label>
+                  <input 
+                    type="text" 
+                    value={newDate} 
+                    onChange={(e) => setNewDate(e.target.value)}
+                    className="w-full bg-[#081225] border border-blue-900/60 p-2 rounded text-white" 
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-gray-400">No. Pengeluaran</label>
+                  <input 
+                    type="text" 
+                    value={newInvoice} 
+                    onChange={(e) => setNewInvoice(e.target.value)}
+                    className="w-full bg-[#081225] border border-blue-900/60 p-2 rounded text-white" 
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1 text-xs">
+                <label className="text-gray-400">Vendor / Supplier</label>
+                <input 
+                  type="text" 
+                  required
+                  placeholder="Nama vendor..."
+                  value={newVendor} 
+                  onChange={(e) => setNewVendor(e.target.value)}
+                  className="w-full bg-[#081225] border border-blue-900/60 p-2 rounded text-white" 
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 text-xs">
+                <div className="space-y-1">
+                  <label className="text-gray-400">Kategori</label>
+                  <select 
+                    value={newKategori} 
+                    onChange={(e) => setNewKategori(e.target.value)}
+                    className="w-full bg-[#081225] border border-blue-900/60 p-2 rounded text-white"
+                  >
+                    <option>Server & Hosting</option>
+                    <option>Bandwidth & Internet</option>
+                    <option>Listrik & Utilitas</option>
+                    <option>Office & Umum</option>
+                    <option>Marketing</option>
+                    <option>Gaji & SDM</option>
+                  </select>
+                </div>
+                <div className="space-y-1">
+                  <label className="text-gray-400">Metode Pembayaran</label>
+                  <select 
+                    value={newMetode} 
+                    onChange={(e) => setNewMetode(e.target.value)}
+                    className="w-full bg-[#081225] border border-blue-900/60 p-2 rounded text-white"
+                  >
+                    <option>Transfer Bank</option>
+                    <option>Virtual Account</option>
+                    <option>E-Wallet</option>
+                    <option>Tunai</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 text-xs">
+                <div className="space-y-1">
+                  <label className="text-gray-400">Total Nominal (Rp)</label>
+                  <input 
+                    type="number" 
+                    required
+                    placeholder="Contoh: 150000"
+                    value={newTotal} 
+                    onChange={(e) => setNewTotal(e.target.value)}
+                    className="w-full bg-[#081225] border border-blue-900/60 p-2 rounded text-white" 
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-gray-400">Status</label>
+                  <select 
+                    value={newStatus} 
+                    onChange={(e) => setNewStatus(e.target.value)}
+                    className="w-full bg-[#081225] border border-blue-900/60 p-2 rounded text-white"
+                  >
+                    <option>Lunas</option>
+                    <option>Sebagian</option>
+                    <option>Belum Lunas</option>
+                    <option>Dibatalkan</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2 border-t border-blue-950">
+                <button 
+                  type="button"
+                  onClick={() => setShowAddModal(false)}
+                  className="px-4 py-2 rounded bg-blue-950 hover:bg-blue-900 text-xs font-semibold text-gray-300"
+                >
+                  Batal
+                </button>
+                <button 
+                  type="submit"
+                  className="px-4 py-2 rounded bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white"
+                >
+                  Simpan
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+      </div>
+    </Layout>
+  );
+}

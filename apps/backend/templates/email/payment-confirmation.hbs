@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: #10b981; color: white; padding: 20px; text-align: center; }
+    .content { background: #f9f9f9; padding: 20px; }
+    .payment-details { background: white; padding: 15px; margin: 15px 0; border-radius: 5px; }
+    .amount { font-size: 24px; font-weight: bold; color: #10b981; }
+    .success-badge { background: #10b981; color: white; padding: 5px 15px; border-radius: 20px; display: inline-block; }
+    .footer { text-align: center; padding: 20px; font-size: 12px; color: #666; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>✓ Pembayaran Berhasil</h1>
+    </div>
+    
+    <div class="content">
+      <p>Halo <strong>{{customerName}}</strong>,</p>
+      
+      <p><span class="success-badge">LUNAS</span></p>
+      
+      <p>Pembayaran Anda telah kami terima dan diproses. Terima kasih!</p>
+      
+      <div class="payment-details">
+        <table width="100%">
+          <tr>
+            <td><strong>Nomor Invoice:</strong></td>
+            <td>{{invoiceNumber}}</td>
+          </tr>
+          <tr>
+            <td><strong>Tanggal Pembayaran:</strong></td>
+            <td>{{paymentDate}}</td>
+          </tr>
+          <tr>
+            <td><strong>Metode Pembayaran:</strong></td>
+            <td>{{paymentMethod}}</td>
+          </tr>
+          <tr>
+            <td colspan="2" style="padding-top: 15px;">
+              <strong>Jumlah Dibayar:</strong><br/>
+              <span class="amount">Rp {{amount}}</span>
+            </td>
+          </tr>
+        </table>
+      </div>
+      
+      <p>Layanan internet Anda akan tetap aktif. Jika ada pertanyaan, silakan hubungi customer service kami.</p>
+      
+      <p><strong>Simpan email ini sebagai bukti pembayaran.</strong></p>
+    </div>
+    
+    <div class="footer">
+      <p>Email otomatis dari AudiraNET<br/>
+      Jangan balas email ini. Untuk pertanyaan, hubungi customer service kami.</p>
+    </div>
+  </div>
+</body>
+</html>

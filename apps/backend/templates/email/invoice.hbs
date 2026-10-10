@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: #2563eb; color: white; padding: 20px; text-align: center; }
+    .content { background: #f9f9f9; padding: 20px; }
+    .invoice-details { background: white; padding: 15px; margin: 15px 0; border-radius: 5px; }
+    .amount { font-size: 24px; font-weight: bold; color: #2563eb; }
+    .footer { text-align: center; padding: 20px; font-size: 12px; color: #666; }
+    .button { display: inline-block; padding: 12px 24px; background: #2563eb; color: white; text-decoration: none; border-radius: 5px; margin: 10px 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Invoice Tagihan</h1>
+    </div>
+    
+    <div class="content">
+      <p>Halo <strong>{{customerName}}</strong>,</p>
+      
+      <p>Invoice untuk periode <strong>{{period}}</strong> telah dibuat. Berikut detail tagihan Anda:</p>
+      
+      <div class="invoice-details">
+        <table width="100%">
+          <tr>
+            <td><strong>Nomor Invoice:</strong></td>
+            <td>{{invoiceNumber}}</td>
+          </tr>
+          <tr>
+            <td><strong>Periode:</strong></td>
+            <td>{{period}}</td>
+          </tr>
+          <tr>
+            <td><strong>Jatuh Tempo:</strong></td>
+            <td>{{dueDate}}</td>
+          </tr>
+          <tr>
+            <td colspan="2" style="padding-top: 15px;">
+              <strong>Total Tagihan:</strong><br/>
+              <span class="amount">Rp {{amount}}</span>
+            </td>
+          </tr>
+        </table>
+      </div>
+      
+      <p><strong>Silakan lakukan pembayaran sebelum tanggal jatuh tempo untuk menghindari penangguhan layanan.</strong></p>
+      
+      <p>Anda dapat melakukan pembayaran melalui:</p>
+      <ul>
+        <li>Transfer Bank</li>
+        <li>QRIS</li>
+        <li>Virtual Account</li>
+        <li>Portal Customer</li>
+      </ul>
+      
+      <p style="text-align: center;">
+        <a href="{{portalUrl}}" class="button">Bayar Sekarang</a>
+      </p>
+    </div>
+    
+    <div class="footer">
+      <p>Email otomatis dari AudiraNET<br/>
+      Jangan balas email ini. Untuk pertanyaan, hubungi customer service kami.</p>
+    </div>
+  </div>
+</body>
+</html>

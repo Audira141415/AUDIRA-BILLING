@@ -1,0 +1,35 @@
+{
+  "name": "sebilling-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sebilling App - Next.js + NestJS + PostgreSQL + Redis",
+  "scripts": {
+    "dev": "pnpm --parallel --filter \"./apps/*\" dev",
+    "build": "pnpm --filter \"./apps/*\" build",
+    "start": "pnpm --parallel --filter \"./apps/*\" start",
+    "lint": "pnpm --filter \"./apps/*\" lint"
+  },
+  "devDependencies": {
+    "styled-jsx": "^5.1.7",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@angular-devkit/core": "^21.0.3",
+    "@angular-devkit/schematics": "^21.0.3",
+    "@nestjs/schedule": "^6.0.1",
+    "@next/env": "^16.0.10",
+    "@swc/helpers": "^0.5.17",
+    "bcrypt": "^6.0.0",
+    "chalk": "^5.6.2",
+    "chokidar": "^4.0.3",
+    "cli-table3": "^0.6.5",
+    "commander": "^14.0.2",
+    "glob": "^13.0.0",
+    "inquirer": "^13.0.2",
+    "midtrans-client": "^1.4.3",
+    "node-emoji": "^2.2.0",
+    "ora": "^9.0.0",
+    "ping": "^1.0.0",
+    "tree-kill": "^1.2.2"
+  }
+}

@@ -1,0 +1,682 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String           @id @default(uuid())
+  email           String           @unique
+  name            String
+  password        String
+  role            String           @default("BILLING")
+  pushToken       String?
+  phone           String?
+  tenantId        String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  tenant          Tenant?          @relation(fields: [tenantId], references: [id])
+  maintenanceLogs MaintenanceLog[]
+  workOrders      WorkOrder[]
+  attendances     Attendance[]
+  employee        Employee?
+
+  @@map("users")
+}
+
+model Customer {
+  id                String           @id @default(uuid())
+  name              String
+  email             String?          @unique
+  phone             String
+  address           String?
+  password          String?
+  pushToken         String?
+  status            String           @default("active")
+  internetNumber    String?          @unique // Nomor internet/ID pelanggan ISP
+  ipAddress         String?          // IP Address yang diberikan
+  installedModem    String?          // Jenis modem (ONT, Router model)
+  modemSerial       String?          // Serial number modem
+  installationDate  DateTime?        // Tanggal instalasi
+  tenantId          String?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  tenant            Tenant?          @relation(fields: [tenantId], references: [id])
+  genieDevices      GenieAcsDevice[]
+  invoices          Invoice[]
+  packages          Package[]
+  services          Service[]
+  tickets           Ticket[]
+  transactions      Transaction[]
+  equipment         Equipment[]
+  referralsGiven    Referral[]       @relation("ReferralReferrer")
+  referralsReceived Referral[]       @relation("ReferralReferred")
+  loyaltyPoints     LoyaltyPoint[]
+  workOrders        WorkOrder[]
+
+  @@map("customers")
+}
+
+model Package {
+  id          String    @id @default(uuid())
+  name        String
+  price       Int
+  speed       String
+  description String?
+  status      String    @default("active")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  customerId  String?
+  customer    Customer? @relation(fields: [customerId], references: [id])
+  services    Service[]
+
+  @@map("packages")
+}
+
+model Transaction {
+  id                String    @id @default(uuid())
+  amount            Int
+  type              String
+  method            String?
+  status            String    @default("pending")
+  description       String?
+  invoiceId         String?
+  paymentGatewayRef String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  customerId        String?
+  customer          Customer? @relation(fields: [customerId], references: [id])
+
+  @@map("transactions")
+}
+
+model Mikrotik {
+  id          String     @id @default(uuid())
+  name        String
+  ipAddress   String     @unique
+  username    String
+  password    String
+  port        Int        @default(8728)
+  apiPort     Int        @default(8729)
+  status      String     @default("inactive")
+  location    String?
+  description String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  incidents   Incident[]
+
+  @@map("mikrotiks")
+}
+
+model GenieAcsDevice {
+  id              String    @id @default(uuid())
+  deviceId        String    @unique
+  serialNumber    String    @unique
+  manufacturer    String?
+  model           String?
+  softwareVersion String?
+  ipAddress       String?
+  macAddress      String?
+  status          String    @default("offline")
+  lastInform      DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  customerId      String?
+  customer        Customer? @relation(fields: [customerId], references: [id])
+
+  @@map("genieacs_devices")
+}
+
+model Service {
+  id          String   @id @default(uuid())
+  name        String
+  type        String // pppoe, hotspot
+  status      String   @default("active")
+  description String?
+  username    String?  @unique
+  password    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  customerId  String
+  packageId   String?
+  customer    Customer @relation(fields: [customerId], references: [id])
+  package     Package? @relation(fields: [packageId], references: [id])
+
+  @@map("services")
+}
+
+model Ticket {
+  id           String      @id @default(uuid())
+  ticketNumber String      @unique
+  title        String
+  description  String?
+  priority     String      @default("medium")
+  status       String      @default("open")
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  customerId   String?
+  technicianId String?
+  customer     Customer?   @relation(fields: [customerId], references: [id])
+  technician   Technician? @relation(fields: [technicianId], references: [id])
+
+  @@map("tickets")
+}
+
+model Technician {
+  id        String   @id @default(uuid())
+  name      String
+  email     String?  @unique
+  phone     String
+  status    String   @default("available")
+  skills    String[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tickets   Ticket[]
+
+  @@map("technicians")
+}
+
+model ODP {
+  id          String   @id @default(uuid())
+  name        String
+  location    String
+  latitude    Float?
+  longitude   Float?
+  capacity    Int
+  usedPorts   Int      @default(0)
+  status      String   @default("active")
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("odps")
+}
+
+model NetworkDevice {
+  id          String   @id @default(uuid())
+  name        String
+  type        String
+  ipAddress   String?
+  macAddress  String?
+  latitude    Float?
+  longitude   Float?
+  status      String   @default("active")
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("network_devices")
+}
+
+model Invoice {
+  id            String    @id @default(uuid())
+  invoiceNumber String    @unique
+  amount        Int
+  dueDate       DateTime
+  paidAt        DateTime?
+  status        String    @default("PENDING")
+  description   String?
+  month         String?
+  paymentUrl    String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  customerId    String
+  customer      Customer  @relation(fields: [customerId], references: [id])
+  payments      Payment[]
+
+  @@map("invoices")
+}
+
+model Payment {
+  id            String   @id @default(uuid())
+  invoiceId     String
+  amount        Int
+  paymentMethod String?
+  paymentDate   DateTime @default(now())
+  status        String   @default("success")
+  transactionId String?
+  description   String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  invoice       Invoice  @relation(fields: [invoiceId], references: [id])
+
+  @@map("payments")
+}
+
+model Incident {
+  id          String    @id @default(uuid())
+  routerId    String
+  type        String // network_down, high_latency
+  severity    String // low, medium, high, critical
+  description String
+  status      String // open, investigating, resolved
+  detectedAt  DateTime
+  resolvedAt  DateTime?
+  downtime    Int? // in minutes
+
+  router Mikrotik @relation(fields: [routerId], references: [id])
+
+  @@map("incidents")
+}
+
+model Equipment {
+  id            String    @id @default(uuid())
+  type          String // ONT, Router, Switch, Cable
+  serialNumber  String?   @unique
+  brand         String?
+  model         String?
+  macAddress    String?
+  status        String    @default("available") // available, assigned, maintenance, damaged
+  customerId    String?
+  purchaseDate  DateTime?
+  warrantyUntil DateTime?
+  vendor        String?
+  notes         String?
+  location      String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  customer        Customer?        @relation(fields: [customerId], references: [id])
+  maintenanceLogs MaintenanceLog[]
+
+  @@map("equipment")
+}
+
+model MaintenanceLog {
+  id           String    @id @default(uuid())
+  equipmentId  String
+  equipment    Equipment @relation(fields: [equipmentId], references: [id])
+  type         String // repair, replacement, cleaning, inspection
+  description  String
+  cost         Int?
+  technicianId String?
+  technician   User?     @relation(fields: [technicianId], references: [id])
+  scheduledAt  DateTime
+  completedAt  DateTime?
+  status       String    @default("scheduled") // scheduled, in-progress, completed, cancelled
+  notes        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@map("maintenance_logs")
+}
+
+model Referral {
+  id             String    @id @default(uuid())
+  referrerId     String
+  referrer       Customer  @relation("ReferralReferrer", fields: [referrerId], references: [id])
+  referredId     String
+  referred       Customer  @relation("ReferralReferred", fields: [referredId], references: [id])
+  code           String    @unique
+  status         String    @default("pending") // pending, completed, rewarded
+  commission     Float     @default(0)
+  commissionType String    @default("percentage") // percentage, fixed
+  level          Int       @default(1) // for MLM structure
+  createdAt      DateTime  @default(now())
+  completedAt    DateTime?
+
+  @@map("referrals")
+}
+
+model LoyaltyPoint {
+  id          String    @id @default(uuid())
+  customerId  String
+  customer    Customer  @relation(fields: [customerId], references: [id])
+  points      Int       @default(0)
+  tier        String    @default("bronze") // bronze, silver, gold, platinum
+  source      String // signup, referral, payment, cashback
+  description String
+  expiresAt   DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@map("loyalty_points")
+}
+
+model WorkOrder {
+  id              String    @id @default(uuid())
+  customerId      String
+  customer        Customer  @relation(fields: [customerId], references: [id])
+  technicianId    String
+  technician      User      @relation(fields: [technicianId], references: [id])
+  tenantId        String?
+  type            String // installation, repair, maintenance, inspection
+  priority        String    @default("medium") // low, medium, high, urgent
+  status          String    @default("pending") // pending, assigned, on-route, in-progress, completed, cancelled
+  title           String
+  description     String
+  scheduledAt     DateTime
+  startedAt       DateTime?
+  completedAt     DateTime?
+  location        String?
+  latitude        Float?
+  longitude       Float?
+  notes           String?
+  signature       String? // Base64 encoded signature
+  checkInPhoto    String? // Foto selfie saat check-in
+  photos          String[] // Array of photo URLs (bukti pekerjaan)
+  rating          Int? // Customer rating 1-5
+  feedback        String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@map("work_orders")
+}
+
+// Attendance System - Absensi Harian Karyawan/Teknisi
+model Attendance {
+  id            String    @id @default(uuid())
+  userId        String    // Karyawan/Teknisi
+  user          User      @relation(fields: [userId], references: [id])
+  employeeId    String?   // Link to Employee table
+  employee      Employee? @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  date          DateTime  @default(now()) @db.Date // Tanggal absensi
+  checkInTime   DateTime? // Waktu masuk
+  checkOutTime  DateTime? // Waktu pulang
+  checkInPhoto  String?   // Foto selfie saat check-in
+  checkOutPhoto String?   // Foto selfie saat check-out
+  checkInLat    Float?    // GPS latitude check-in
+  checkInLong   Float?    // GPS longitude check-in
+  checkOutLat   Float?    // GPS latitude check-out
+  checkOutLong  Float?    // GPS longitude check-out
+  status        String    @default("present") // present, late, absent, leave, sick
+  notes         String?   // Catatan (izin, sakit, dll)
+  workDuration  Int?      // Durasi kerja dalam menit
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@unique([userId, date]) // 1 user hanya bisa 1 absensi per hari
+  @@map("attendances")
+}
+
+// Multi-tenant & Franchise System
+model Tenant {
+  id             String   @id @default(uuid())
+  name           String
+  slug           String   @unique // URL-friendly identifier
+  domain         String?  @unique // Custom domain
+  logo           String?
+  primaryColor   String   @default("#2563eb")
+  secondaryColor String   @default("#16a34a")
+  contactEmail   String
+  contactPhone   String
+  address        String?
+  type           String   @default("franchise") // franchise, branch, independent
+  status         String   @default("active") // active, suspended, cancelled
+  parentTenantId String?
+  commissionRate Float    @default(10.0) // Percentage
+  settings       Json? // Custom settings
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  parentTenant Tenant?            @relation("TenantHierarchy", fields: [parentTenantId], references: [id])
+  childTenants Tenant[]           @relation("TenantHierarchy")
+  customers    Customer[]
+  users        User[]
+  tenantUsers  TenantUser[]
+  permissions  TenantPermission[]
+  commissions  TenantCommission[]
+
+  @@map("tenants")
+}
+
+model TenantUser {
+  id          String   @id @default(uuid())
+  tenantId    String
+  userId      String
+  role        String // admin, manager, staff
+  permissions String[] // Array of permission strings
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, userId])
+  @@map("tenant_users")
+}
+
+model TenantPermission {
+  id        String   @id @default(uuid())
+  tenantId  String
+  resource  String // e.g., "customers", "invoices", "reports"
+  action    String // e.g., "create", "read", "update", "delete"
+  role      String // Which role has this permission
+  createdAt DateTime @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, resource, action, role])
+  @@map("tenant_permissions")
+}
+
+model TenantCommission {
+  id             String    @id @default(uuid())
+  tenantId       String
+  parentTenantId String?
+  amount         Float
+  percentage     Float
+  sourceType     String // invoice, referral, etc.
+  sourceId       String
+  status         String    @default("pending") // pending, paid, cancelled
+  paidAt         DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+
+  @@map("tenant_commissions")
+}
+
+// ============================================================================
+// HRM (Human Resource Management) Models
+// ============================================================================
+
+// Employee Master Data - Extended from User
+model Employee {
+  id               String        @id @default(uuid())
+  userId           String        @unique
+  employeeNumber   String        @unique // NIK karyawan
+  fullName         String
+  nickname         String?
+  birthDate        DateTime?     @db.Date
+  birthPlace       String?
+  gender           String? // male, female
+  religion         String?
+  maritalStatus    String? // single, married, divorced, widowed
+  bloodType        String?
+  identityType     String? // ktp, sim, passport
+  identityNumber   String?       @unique
+  address          String?
+  city             String?
+  province         String?
+  postalCode       String?
+  phone            String?
+  emergencyContact String?
+  emergencyPhone   String?
+  email            String?
+  photo            String? // URL to photo
+  // Employment Info
+  department       String? // NOC, CS, Billing, Technician, Finance, etc.
+  position         String?
+  employmentType   String        @default("permanent") // permanent, contract, freelance, intern
+  joinDate         DateTime      @db.Date
+  endDate          DateTime?     @db.Date // For contract employees
+  status           String        @default("active") // active, inactive, resigned, terminated
+  workLocation     String?
+  directSuperior   String? // Employee ID of manager
+  // Compensation
+  baseSalary       Float         @default(0)
+  bankName         String?
+  bankAccount      String?
+  bankAccountName  String?
+  taxNumber        String? // NPWP
+  bpjsKetenagakerjaan String?
+  bpjsKesehatan    String?
+  // Documents
+  cvUrl            String?
+  contractUrl      String?
+  notes            String?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  salaries         Salary[]
+  leaves           Leave[]
+  schedules        WorkSchedule[]
+  performances     Performance[]
+  resignations     Resignation[]
+  attendances      Attendance[]
+
+  @@map("employees")
+}
+
+// Salary & Payroll
+model Salary {
+  id              String    @id @default(uuid())
+  employeeId      String
+  period          String // YYYY-MM format (e.g., "2025-01")
+  baseSalary      Float
+  allowances      Float     @default(0) // Tunjangan
+  overtime        Float     @default(0) // Lembur
+  bonus           Float     @default(0)
+  deductions      Float     @default(0) // Potongan (BPJS, PPh, etc.)
+  totalSalary     Float // baseSalary + allowances + overtime + bonus - deductions
+  status          String    @default("pending") // pending, paid, cancelled
+  paidAt          DateTime?
+  paymentMethod   String? // transfer, cash, check
+  paymentRef      String? // Reference number
+  notes           String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  employee        Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@unique([employeeId, period])
+  @@map("salaries")
+}
+
+// Leave Request
+model Leave {
+  id              String    @id @default(uuid())
+  employeeId      String
+  leaveType       String // annual, sick, unpaid, maternity, paternity, emergency
+  startDate       DateTime  @db.Date
+  endDate         DateTime  @db.Date
+  totalDays       Int
+  reason          String
+  status          String    @default("pending") // pending, approved, rejected, cancelled
+  approvedBy      String?
+  approvedAt      DateTime?
+  rejectedReason  String?
+  attachment      String? // URL to medical certificate, etc.
+  notes           String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  employee        Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@map("leaves")
+}
+
+// Work Schedule / Shift
+model WorkSchedule {
+  id          String    @id @default(uuid())
+  employeeId  String
+  date        DateTime  @db.Date
+  shiftType   String // morning, afternoon, night, off
+  startTime   String? // HH:mm format
+  endTime     String? // HH:mm format
+  location    String? // Office, Remote, Field
+  notes       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  employee    Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@unique([employeeId, date])
+  @@map("work_schedules")
+}
+
+// Performance & KPI Tracking
+model Performance {
+  id              String    @id @default(uuid())
+  employeeId      String
+  period          String // YYYY-MM or YYYY-Q1, YYYY-Q2, etc.
+  reviewType      String // monthly, quarterly, annual
+  // KPI Metrics
+  productivity    Int? // 0-100
+  quality         Int? // 0-100
+  attendance      Int? // 0-100
+  discipline      Int? // 0-100
+  teamwork        Int? // 0-100
+  initiative      Int? // 0-100
+  overallScore    Int? // Average of all metrics
+  // Details
+  achievements    String? // Text description
+  improvements    String? // Areas to improve
+  goals           String? // Goals for next period
+  reviewedBy      String? // Manager/supervisor ID
+  reviewedAt      DateTime?
+  status          String    @default("draft") // draft, submitted, approved
+  notes           String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  employee        Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@unique([employeeId, period])
+  @@map("performances")
+}
+
+// Resignation / Employee Exit
+model Resignation {
+  id                String    @id @default(uuid())
+  employeeId        String
+  resignationType   String // voluntary, terminated, contract_end, retirement
+  resignationDate   DateTime  @db.Date // Tanggal mengajukan
+  lastWorkingDate   DateTime  @db.Date // Tanggal terakhir bekerja
+  reason            String
+  status            String    @default("pending") // pending, approved, rejected, completed
+  exitInterview     Boolean   @default(false)
+  exitInterviewDate DateTime?
+  exitInterviewNotes String?
+  approvedBy        String?
+  approvedAt        DateTime?
+  handoverCompleted Boolean   @default(false)
+  handoverNotes     String?
+  finalSettlement   Float? // Settlement amount
+  settlementPaid    Boolean   @default(false)
+  notes             String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  employee          Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@map("resignations")
+}
+
+// Audit Logging System
+model AuditLog {
+  id           Int      @id @default(autoincrement())
+  action       String   @db.VarChar(100)
+  userId       Int?     @map("user_id")
+  userEmail    String?  @map("user_email") @db.VarChar(255)
+  entityType   String?  @map("entity_type") @db.VarChar(100)
+  entityId     String?  @map("entity_id") @db.VarChar(255)
+  details      Json?
+  ipAddress    String?  @map("ip_address") @db.VarChar(50)
+  userAgent    String?  @map("user_agent")
+  status       String?  @default("SUCCESS") @db.VarChar(20)
+  errorMessage String?  @map("error_message")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamp
+
+  @@map("audit_logs")
+  @@index([action], map: "idx_audit_logs_action")
+  @@index([userId], map: "idx_audit_logs_user_id")
+  @@index([entityType, entityId], map: "idx_audit_logs_entity")
+  @@index([createdAt], map: "idx_audit_logs_created_at")
+  @@index([status], map: "idx_audit_logs_status")
+}
+

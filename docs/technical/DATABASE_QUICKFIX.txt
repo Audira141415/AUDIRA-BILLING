@@ -1,0 +1,131 @@
+╔════════════════════════════════════════════════════════════╗
+║                                                            ║
+║     🔧 QUICK FIX - DATABASE CONNECTION ERROR              ║
+║                                                            ║
+╚════════════════════════════════════════════════════════════╝
+
+
+┌─────────────────────────────────────────────────────────┐
+│  ❌ ERROR:                                              │
+└─────────────────────────────────────────────────────────┘
+
+  Can't reach database server at `localhost:5433`
+
+
+┌─────────────────────────────────────────────────────────┐
+│  ✅ SOLUSI (3 LANGKAH):                                 │
+└─────────────────────────────────────────────────────────┘
+
+  STEP 1: START DOCKER DESKTOP
+  ════════════════════════════════════════════════════════
+
+  • Tekan Windows Key
+  • Ketik: "Docker Desktop"
+  • Klik untuk buka
+  • Tunggu hingga icon Docker di system tray berwarna HIJAU
+    (biasanya 30-60 detik)
+
+
+  STEP 2: START DATABASE
+  ════════════════════════════════════════════════════════
+
+  PowerShell:
+  
+    .\start-database.bat
+
+  Atau manual:
+
+    docker-compose up -d
+
+
+  STEP 3: VERIFY
+  ════════════════════════════════════════════════════════
+
+  PowerShell:
+
+    docker ps
+
+  Harus muncul 2 containers:
+    ✅ sebilling-postgres (running)
+    ✅ sebilling-redis (running)
+
+
+┌─────────────────────────────────────────────────────────┐
+│  🚀 SETELAH DATABASE JALAN:                             │
+└─────────────────────────────────────────────────────────┘
+
+  Start Backend:
+
+    cd apps\backend
+    npm run dev
+
+  Atau gunakan all-in-one:
+
+    .\quick-start.bat
+
+
+┌─────────────────────────────────────────────────────────┐
+│  🔍 CEK STATUS:                                         │
+└─────────────────────────────────────────────────────────┘
+
+  Docker running?
+    → Lihat icon Docker di system tray (harus hijau)
+
+  Database running?
+    → docker ps
+
+  Port available?
+    → netstat -ano | findstr :5433
+
+
+┌─────────────────────────────────────────────────────────┐
+│  ⚠️  JIKA DOCKER TIDAK INSTALL:                         │
+└─────────────────────────────────────────────────────────┘
+
+  1. Download:
+     https://www.docker.com/products/docker-desktop
+
+  2. Install Docker Desktop
+
+  3. Restart komputer
+
+  4. Buka Docker Desktop
+
+  5. Jalankan start-database.bat
+
+
+┌─────────────────────────────────────────────────────────┐
+│  💡 TIPS:                                               │
+└─────────────────────────────────────────────────────────┘
+
+  • Set Docker auto-start on boot:
+    Docker Settings → General → 
+    ✅ "Start Docker Desktop when you log in"
+
+  • Database akan auto-start saat Docker hidup
+
+  • Untuk stop database:
+    .\stop-database.bat
+
+
+╔════════════════════════════════════════════════════════════╗
+║  📌 REMEMBER:                                             ║
+║                                                            ║
+║  Backend PERLU database running!                          ║
+║  Selalu pastikan Docker Desktop hidup sebelum start       ║
+║  backend!                                                 ║
+╚════════════════════════════════════════════════════════════╝
+
+
+┌─────────────────────────────────────────────────────────┐
+│  📁 SCRIPTS YANG TERSEDIA:                              │
+└─────────────────────────────────────────────────────────┘
+
+  .\start-database.bat    → Start database only
+  .\stop-database.bat     → Stop database
+  .\quick-start.bat       → Start everything
+  .\start-backend.bat     → Start backend only
+  .\start-frontend.bat    → Start frontend only
+
+
+Untuk detail lengkap, baca: FIX_DATABASE_ERROR.md
