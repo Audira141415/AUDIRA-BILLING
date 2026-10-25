@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 import Layout from '@/components/Layout';
 import api from '@/lib/api';
 import {
@@ -361,167 +362,138 @@ export default function SemuaInvoicePage() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-[#070c19] text-gray-200 p-4 md:p-6 space-y-6">
+      <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] p-4 md:p-6 space-y-6">
 
         {/* ─── Top Header bar ────────────────────────────────────────────── */}
-        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 border-b border-[#131d35] pb-5">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-[var(--app-border)] pb-5">
           <div className="space-y-1">
-            <div className="flex items-center gap-2 text-xs text-gray-400 font-medium">
-              <span>Home</span>
-              <span>&gt;</span>
-              <span>Invoice</span>
-              <span>&gt;</span>
-              <span className="text-blue-400">Semua Invoice</span>
+            <div className="flex items-center gap-2 text-xs text-[var(--app-muted)] font-mono mb-1">
+              <Link href="/" className="hover:text-[var(--app-text)]">AUDIRA</Link>
+              <span>/</span>
+              <Link href="/invoice" className="hover:text-[var(--app-text)]">Billing & Tagihan</Link>
+              <span>/</span>
+              <span className="text-[var(--app-primary)]">Semua Invoice</span>
             </div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">Invoice</h1>
+            <h1 className="text-xl md:text-2xl font-bold tracking-tight text-[var(--app-text)]">
+              Buku Tagihan Pelanggan (Invoices Ledger)
+            </h1>
+            <p className="text-xs text-[var(--app-muted)]">
+              Manajemen seluruh invoice penagihan internet, status pembayaran (Lunas, Belum Bayar, Overdue), dan pengiriman notifikasi.
+            </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-4 w-full xl:w-auto">
-            {/* Calendar */}
-            <div className="flex items-center gap-2 bg-[#0b1329] border border-[#131d35] px-3 py-2 rounded-xl text-xs text-gray-300">
-              <Calendar size={14} className="text-blue-400" />
-              <span>01 Juli 2026</span>
-              <span className="text-[10px] text-gray-500">08:35 WIB</span>
-            </div>
-            
-            {/* Status Sistem */}
-            <div className="flex items-center gap-2 bg-[#0b1329] border border-[#131d35] px-3 py-2 rounded-xl text-xs">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-              <span className="text-gray-400">Status Sistem</span>
-              <span className="text-green-400 font-bold">Normal</span>
-            </div>
-
-            {/* Global Search */}
-            <div className="relative w-full sm:w-60">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <input 
-                type="text" 
-                placeholder="Cari customer, invoice, tagihan..."
-                className="w-full bg-[#0b1329] border border-[#131d35] rounded-xl text-xs pl-9 pr-4 py-2 text-white focus:outline-none focus:border-blue-500"
-              />
-            </div>
-
-            {/* Notification and Profile icons */}
-            <div className="flex items-center gap-3">
-              <button className="relative p-2 bg-[#0b1329] border border-[#131d35] rounded-xl hover:bg-[#121c38] transition-colors">
-                <Bell size={16} className="text-gray-400" />
-                <span className="absolute -top-1 -right-1 bg-red-500 text-[9px] font-bold text-white px-1.5 py-0.5 rounded-full scale-75">12</span>
-              </button>
-              <button className="relative p-2 bg-[#0b1329] border border-[#131d35] rounded-xl hover:bg-[#121c38] transition-colors">
-                <Mail size={16} className="text-gray-400" />
-                <span className="absolute -top-1 -right-1 bg-red-500 text-[9px] font-bold text-white px-1.5 py-0.5 rounded-full scale-75">8</span>
-              </button>
-              <button className="p-2 bg-[#0b1329] border border-[#131d35] rounded-xl hover:bg-[#121c38] transition-colors max-sm:hidden">
-                <Maximize2 size={16} className="text-gray-400" />
-              </button>
-              
-              {/* Profile */}
-              <div className="flex items-center gap-2 pl-2 border-l border-[#131d35]">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xs overflow-hidden">
-                  <span className="text-xs">AR</span>
-                </div>
-                <div className="hidden md:block text-left">
-                  <div className="text-xs font-semibold text-white">Agus Dwi Rianto</div>
-                  <div className="text-[9px] text-gray-500 font-bold uppercase">Super Admin</div>
-                </div>
-              </div>
-            </div>
+          <div className="flex items-center gap-2.5">
+            <button
+              onClick={() => fetchInvoices()}
+              disabled={loading}
+              className="p-2 border border-[var(--app-border)] bg-[var(--app-card)] text-[var(--app-muted)] hover:text-[var(--app-text)] rounded-lg transition-colors"
+              title="Refresh Data"
+            >
+              <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
+            </button>
+            <Link
+              href="/invoice/generate"
+              className="px-4 py-2 bg-[var(--app-primary)] hover:opacity-90 text-white text-xs font-semibold rounded-lg transition-all flex items-center gap-2 shadow-xs"
+            >
+              <Plus size={15} />
+              Generate Tagihan Baru
+            </Link>
           </div>
         </div>
 
         {/* ─── Stats Cards ────────────────────────────────────────────────── */}
         <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
           {/* Card 1: Total Invoice */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex items-center gap-4">
+          <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs p-4 flex items-center gap-4">
             <div className="p-3.5 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-xl">
               <FileText size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Total Invoice</p>
-              <p className="text-xl font-black text-white mt-0.5">{stats.totalInvoice}</p>
-              <p className="text-[10px] text-gray-400 mt-0.5">Semua invoice</p>
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Total Invoice</p>
+              <p className="text-xl font-black text-slate-900 mt-0.5">{stats.totalInvoice}</p>
+              <p className="text-[10px] text-slate-500 mt-0.5">Semua invoice</p>
             </div>
           </div>
 
           {/* Card 2: Lunas */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex items-center gap-4">
+          <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs p-4 flex items-center gap-4">
             <div className="p-3.5 bg-green-500/10 text-green-400 border border-green-500/20 rounded-xl">
               <CheckCircle size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Lunas</p>
-              <p className="text-xl font-black text-white mt-0.5">{stats.paid}</p>
-              <p className="text-[10px] text-gray-400 mt-0.5">79.0% dari total</p>
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Lunas</p>
+              <p className="text-xl font-black text-slate-900 mt-0.5">{stats.paid}</p>
+              <p className="text-[10px] text-slate-500 mt-0.5">79.0% dari total</p>
             </div>
           </div>
 
           {/* Card 3: Pending */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex items-center gap-4">
+          <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs p-4 flex items-center gap-4">
             <div className="p-3.5 bg-orange-500/10 text-orange-400 border border-orange-500/20 rounded-xl">
               <Clock size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Pending</p>
-              <p className="text-xl font-black text-white mt-0.5">{stats.pending}</p>
-              <p className="text-[10px] text-gray-400 mt-0.5">13.0% dari total</p>
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Pending</p>
+              <p className="text-xl font-black text-slate-900 mt-0.5">{stats.pending}</p>
+              <p className="text-[10px] text-slate-500 mt-0.5">13.0% dari total</p>
             </div>
           </div>
 
           {/* Card 4: Overdue */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex items-center gap-4">
+          <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs p-4 flex items-center gap-4">
             <div className="p-3.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded-xl">
               <AlertCircle size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Overdue</p>
-              <p className="text-xl font-black text-white mt-0.5">{stats.overdue}</p>
-              <p className="text-[10px] text-gray-400 mt-0.5">5.4% dari total</p>
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Overdue</p>
+              <p className="text-xl font-black text-slate-900 mt-0.5">{stats.overdue}</p>
+              <p className="text-[10px] text-slate-500 mt-0.5">5.4% dari total</p>
             </div>
           </div>
 
           {/* Card 5: Total Pendapatan */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex items-center gap-4">
+          <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs p-4 flex items-center gap-4">
             <div className="p-3 bg-purple-500/10 text-purple-400 border border-purple-500/20 rounded-xl">
               <DollarSign size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Total Pendapatan</p>
-              <p className="text-sm font-black text-white mt-0.5">{formatCurrency(stats.totalRevenue)}</p>
-              <p className="text-[10px] text-gray-400 mt-0.5">Dari semua invoice</p>
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Total Pendapatan</p>
+              <p className="text-sm font-black text-slate-900 mt-0.5">{formatCurrency(stats.totalRevenue)}</p>
+              <p className="text-[10px] text-slate-500 mt-0.5">Dari semua invoice</p>
             </div>
           </div>
 
           {/* Card 6: Outstanding */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex items-center gap-4">
+          <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs p-4 flex items-center gap-4">
             <div className="p-3.5 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-xl">
               <DollarSign size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Outstanding</p>
-              <p className="text-sm font-black text-white mt-0.5">{formatCurrency(stats.outstanding)}</p>
-              <p className="text-[10px] text-gray-400 mt-0.5">Belum dibayar</p>
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Outstanding</p>
+              <p className="text-sm font-black text-slate-900 mt-0.5">{formatCurrency(stats.outstanding)}</p>
+              <p className="text-[10px] text-slate-500 mt-0.5">Belum dibayar</p>
             </div>
           </div>
         </div>
 
         {/* ─── Filter Bar ────────────────────────────────────────────────── */}
-        <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 space-y-4">
+        <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs p-4 space-y-4">
           <div className="flex flex-wrap items-center gap-4">
             <div className="relative flex-1 min-w-[240px]">
-              <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-gray-500 w-4 h-4" />
+              <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
               <input 
                 type="text" 
                 placeholder="Cari invoice, customer, package..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-[#080d19] border border-[#131d35] text-xs pl-10 pr-4 py-2.5 rounded-xl text-white placeholder-gray-500 focus:outline-none"
+                className="w-full bg-slate-50 border border-slate-200 text-xs pl-10 pr-4 py-2.5 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none"
               />
             </div>
 
             <select 
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value as any)}
-              className="bg-[#080d19] border border-[#131d35] text-xs py-2.5 px-4 rounded-xl text-gray-300 focus:outline-none min-w-[140px]"
+              className="bg-slate-50 border border-slate-200 text-xs py-2.5 px-4 rounded-xl text-slate-600 focus:outline-none min-w-[140px]"
             >
               <option value="ALL">Semua Status</option>
               <option value="PAID">Lunas</option>
@@ -530,7 +502,7 @@ export default function SemuaInvoicePage() {
             </select>
 
             <select 
-              className="bg-[#080d19] border border-[#131d35] text-xs py-2.5 px-4 rounded-xl text-gray-300 focus:outline-none min-w-[140px]"
+              className="bg-slate-50 border border-slate-200 text-xs py-2.5 px-4 rounded-xl text-slate-600 focus:outline-none min-w-[140px]"
             >
               <option value="all">Semua Metode</option>
               <option value="transfer">Transfer</option>
@@ -539,21 +511,21 @@ export default function SemuaInvoicePage() {
             </select>
 
             <select 
-              className="bg-[#080d19] border border-[#131d35] text-xs py-2.5 px-4 rounded-xl text-gray-300 focus:outline-none min-w-[140px]"
+              className="bg-slate-50 border border-slate-200 text-xs py-2.5 px-4 rounded-xl text-slate-600 focus:outline-none min-w-[140px]"
             >
               <option value="all">Semua Periode</option>
               <option value="this-month">Bulan Ini</option>
             </select>
 
             {/* Date range picker mock */}
-            <div className="flex items-center gap-2 bg-[#080d19] border border-[#131d35] px-3 py-2.5 rounded-xl text-xs text-gray-300 cursor-pointer">
-              <Calendar size={14} className="text-gray-500" />
+            <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-2.5 rounded-xl text-xs text-slate-600 cursor-pointer">
+              <Calendar size={14} className="text-slate-400" />
               <span>01/06/2026 - 01/07/2026</span>
             </div>
             
             <button 
               onClick={() => { setSearchTerm(''); setFilterStatus('ALL'); }}
-              className="text-xs font-semibold text-gray-400 hover:text-white px-4 py-2.5 rounded-xl border border-transparent hover:border-[#131d35] transition-all ml-auto"
+              className="text-xs font-semibold text-slate-500 hover:text-slate-900 px-4 py-2.5 rounded-xl border border-transparent hover:border-slate-200 transition-all ml-auto"
             >
               Reset
             </button>
@@ -575,52 +547,52 @@ export default function SemuaInvoicePage() {
 
             <button 
               onClick={handleExportCSV}
-              className="flex items-center gap-2 bg-[#0b1329] border border-[#131d35] hover:bg-[#121c38] text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-sm border-gray-800"
+              className="flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-100 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-sm border-gray-800"
             >
-              <Download size={14} className="text-gray-400" />
+              <Download size={14} className="text-slate-500" />
               <span>Export</span>
             </button>
           </div>
         </div>
 
         {/* ─── Mass Action bar ────────────────────────────────────────────── */}
-        <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex flex-wrap items-center gap-3">
-          <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider mr-2">Mass Action</span>
+        <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs p-4 flex flex-wrap items-center gap-3">
+          <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mr-2">Mass Action</span>
           
           <button 
             onClick={handleMassWhatsApp}
-            className="flex items-center gap-1.5 bg-[#080d19] border border-[#131d35] hover:border-emerald-500/30 text-gray-400 hover:text-emerald-400 text-xs px-3.5 py-2 rounded-xl transition-all"
+            className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 hover:border-emerald-500/30 text-slate-500 hover:text-emerald-400 text-xs px-3.5 py-2 rounded-xl transition-all"
           >
             <MessageCircle size={13} />
             <span>Kirim WA</span>
           </button>
 
-          <button className="flex items-center gap-1.5 bg-[#080d19] border border-[#131d35] hover:border-blue-500/30 text-gray-400 hover:text-blue-400 text-xs px-3.5 py-2 rounded-xl transition-all">
+          <button className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 hover:border-blue-500/30 text-slate-500 hover:text-blue-400 text-xs px-3.5 py-2 rounded-xl transition-all">
             <Mail size={13} />
             <span>Kirim Email</span>
           </button>
 
-          <button className="flex items-center gap-1.5 bg-[#080d19] border border-[#131d35] hover:border-red-500/30 text-gray-400 hover:text-red-400 text-xs px-3.5 py-2 rounded-xl transition-all">
+          <button className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 hover:border-red-500/30 text-slate-500 hover:text-red-400 text-xs px-3.5 py-2 rounded-xl transition-all">
             <FileText size={13} />
             <span>Download PDF</span>
           </button>
 
-          <button className="flex items-center gap-1.5 bg-[#080d19] border border-[#131d35] hover:border-blue-500/30 text-gray-400 hover:text-blue-400 text-xs px-3.5 py-2 rounded-xl transition-all">
+          <button className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 hover:border-blue-500/30 text-slate-500 hover:text-blue-400 text-xs px-3.5 py-2 rounded-xl transition-all">
             <Download size={13} />
             <span>Export</span>
           </button>
 
-          <button className="flex items-center gap-1.5 bg-[#080d19] border border-[#131d35] hover:border-red-500/30 text-gray-400 hover:text-red-400 text-xs px-3.5 py-2 rounded-xl transition-all">
+          <button className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 hover:border-red-500/30 text-slate-500 hover:text-red-400 text-xs px-3.5 py-2 rounded-xl transition-all">
             <Trash2 size={13} />
             <span>Hapus</span>
           </button>
 
-          <button className="flex items-center gap-1.5 bg-[#080d19] border border-[#131d35] hover:border-green-500/30 text-gray-400 hover:text-green-400 text-xs px-3.5 py-2 rounded-xl transition-all">
+          <button className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 hover:border-green-500/30 text-slate-500 hover:text-green-400 text-xs px-3.5 py-2 rounded-xl transition-all">
             <Check size={13} />
             <span>Tandai Lunas</span>
           </button>
 
-          <button className="p-2 bg-[#080d19] border border-[#131d35] hover:bg-[#121c38] rounded-xl text-gray-400">
+          <button className="p-2 bg-slate-50 border border-slate-200 hover:bg-slate-100 rounded-xl text-slate-500">
             <MoreVertical size={13} />
           </button>
         </div>
@@ -630,13 +602,13 @@ export default function SemuaInvoicePage() {
 
           {/* Left Column: Invoice list table */}
           <div className={`${showDetailSidebar ? 'lg:col-span-8' : 'lg:col-span-12'} space-y-6 transition-all duration-300`}>
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl overflow-hidden">
+            <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="border-b border-[#131d35] bg-[#101935]/40 text-gray-400 text-[10px] font-bold uppercase tracking-wider">
+                    <tr className="border-b border-slate-200 bg-slate-50/40 text-slate-500 text-[10px] font-bold uppercase tracking-wider">
                       <th className="p-4 w-10">
-                        <input type="checkbox" className="rounded bg-[#080d19] border-[#131d35] text-blue-600 focus:ring-0" />
+                        <input type="checkbox" className="rounded bg-slate-50 border-slate-200 text-blue-600 focus:ring-0" />
                       </th>
                       <th className="p-4 w-12">NO</th>
                       <th className="p-4 w-40">INVOICE</th>
@@ -650,7 +622,7 @@ export default function SemuaInvoicePage() {
                       <th className="p-4 w-20 text-center">AKSI</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#131d35] text-xs text-gray-300">
+                  <tbody className="divide-y divide-slate-200 text-xs text-slate-600">
                     {displayInvoices.map((inv, idx) => {
                       const isAuto = idx < 3;
                       const isActiveRow = activeDetail?.id === inv.id;
@@ -658,12 +630,12 @@ export default function SemuaInvoicePage() {
                         <tr 
                           key={inv.id} 
                           onClick={() => { setSelectedInvoice(inv); setShowDetailSidebar(true); }}
-                          className={`hover:bg-[#121c38]/40 transition-colors cursor-pointer ${isActiveRow ? 'bg-[#121c38]/70 border-l-4 border-blue-500' : ''}`}
+                          className={`hover:bg-slate-100/40 transition-colors cursor-pointer ${isActiveRow ? 'bg-slate-100/70 border-l-4 border-blue-500' : ''}`}
                         >
                           <td className="p-4" onClick={(e) => e.stopPropagation()}>
-                            <input type="checkbox" className="rounded bg-[#080d19] border-[#131d35] text-blue-600 focus:ring-0" />
+                            <input type="checkbox" className="rounded bg-slate-50 border-slate-200 text-blue-600 focus:ring-0" />
                           </td>
-                          <td className="p-4 text-gray-500 font-medium">{idx + 1}</td>
+                          <td className="p-4 text-slate-400 font-medium">{idx + 1}</td>
                           <td className="p-4 font-mono font-semibold text-white tracking-wider">
                             <div className="space-y-1">
                               <span className="block text-blue-400 font-bold">{inv.invoiceNumber}</span>
@@ -674,21 +646,21 @@ export default function SemuaInvoicePage() {
                           </td>
                           <td className="p-4">
                             <div className="space-y-0.5">
-                              <span className="font-bold text-white block">{inv.customer.name}</span>
-                              <span className="text-[10px] text-gray-500 block font-semibold">{inv.customer.id || `CUST-00${inv.id}`}</span>
+                              <span className="font-bold text-slate-800 block">{inv.customer.name}</span>
+                              <span className="text-[10px] text-slate-400 block font-semibold">{inv.customer.id || `CUST-00${inv.id}`}</span>
                             </div>
                           </td>
-                          <td className="p-4 font-medium text-gray-300">
+                          <td className="p-4 font-medium text-slate-600">
                             {inv.customer.name.includes('Corporate') || inv.amount > 500000 ? 'Corporate 100 Mbps' : 'Home 50 Mbps'}
                           </td>
-                          <td className="p-4 text-gray-400 leading-normal max-w-[130px] font-medium">{inv.month}</td>
+                          <td className="p-4 text-slate-500 leading-normal max-w-[130px] font-medium">{inv.month}</td>
                           <td className="p-4">
-                            <span className="block text-gray-300">{new Date(inv.dueDate).toLocaleDateString('id-ID')}</span>
+                            <span className="block text-slate-600">{new Date(inv.dueDate).toLocaleDateString('id-ID')}</span>
                             <span className={`text-[10px] block mt-0.5 ${inv.status === 'PAID' ? 'text-green-500' : inv.status === 'PENDING' ? 'text-blue-400' : 'text-red-400'}`}>
                               {inv.status === 'PAID' ? 'Lunas' : inv.status === 'PENDING' ? '9 Hari Lagi' : 'Lewat'}
                             </span>
                           </td>
-                          <td className="p-4 font-bold text-white">{formatCurrency(inv.amount)}</td>
+                          <td className="p-4 font-bold text-slate-800">{formatCurrency(inv.amount)}</td>
                           <td className="p-4">
                             <span className={`px-2.5 py-1 text-[10px] font-bold rounded-full ${
                               inv.status === 'PAID' 
@@ -701,7 +673,7 @@ export default function SemuaInvoicePage() {
                             </span>
                           </td>
                           <td className="p-4">
-                            <span className="px-2 py-0.5 rounded bg-[#101935] text-[10px] text-gray-400 border border-[#131d35] font-semibold uppercase tracking-wider">
+                            <span className="px-2 py-0.5 rounded bg-slate-50 text-[10px] text-slate-500 border border-slate-200 font-semibold uppercase tracking-wider">
                               {inv.method || 'Transfer'}
                             </span>
                           </td>
@@ -709,14 +681,14 @@ export default function SemuaInvoicePage() {
                             <div className="flex items-center justify-center gap-1.5">
                               <button 
                                 onClick={() => { setSelectedInvoice(inv); setShowDetailSidebar(true); }}
-                                className="p-1.5 hover:bg-[#1b2647] rounded-lg text-gray-400 hover:text-white transition-colors"
+                                className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-slate-900 transition-colors"
                               >
                                 <Eye size={14} />
                               </button>
-                              <button className="p-1.5 hover:bg-[#1b2647] rounded-lg text-blue-400 hover:text-blue-300 transition-colors">
+                              <button className="p-1.5 hover:bg-slate-100 rounded-lg text-blue-400 hover:text-blue-300 transition-colors">
                                 <Download size={14} />
                               </button>
-                              <button className="p-1.5 hover:bg-[#1b2647] rounded-lg text-gray-400 hover:text-white transition-colors">
+                              <button className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-slate-900 transition-colors">
                                 <MoreVertical size={14} />
                               </button>
                             </div>
@@ -729,8 +701,8 @@ export default function SemuaInvoicePage() {
               </div>
 
               {/* Table pagination */}
-              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-t border-[#131d35] bg-[#0b1329]/60">
-                <span className="text-xs text-gray-500">
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-t border-slate-200 bg-white/60">
+                <span className="text-xs text-slate-400">
                   Menampilkan <span className="font-semibold text-white">1 - 10</span> dari <span className="font-semibold text-white">1.248</span> data
                 </span>
                 
@@ -738,18 +710,18 @@ export default function SemuaInvoicePage() {
                   <div className="flex items-center gap-2">
                     <button 
                       disabled
-                      className="p-2 border border-[#131d35] hover:bg-[#121c38] rounded-xl text-gray-500 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                      className="p-2 border border-slate-200 hover:bg-slate-100 rounded-xl text-slate-400 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                     >
                       <ChevronLeft size={14} />
                     </button>
                     <button className="w-8 h-8 rounded-xl text-xs font-semibold border bg-[#0052cc] text-white border-[#0052cc]">1</button>
-                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border border-[#131d35] text-gray-400 hover:text-white hover:bg-[#121c38]">2</button>
-                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border border-[#131d35] text-gray-400 hover:text-white hover:bg-[#121c38]">3</button>
-                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border border-[#131d35] text-gray-400 hover:text-white hover:bg-[#121c38]">4</button>
-                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border border-[#131d35] text-gray-400 hover:text-white hover:bg-[#121c38]">5</button>
+                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-100">2</button>
+                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-100">3</button>
+                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-100">4</button>
+                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-100">5</button>
                     <span className="text-gray-600 text-xs px-1">...</span>
-                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border border-[#131d35] text-gray-400 hover:text-white hover:bg-[#121c38]">125</button>
-                    <button className="p-2 border border-[#131d35] hover:bg-[#121c38] rounded-xl text-gray-400 transition-colors">
+                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-100">125</button>
+                    <button className="p-2 border border-slate-200 hover:bg-slate-100 rounded-xl text-slate-500 transition-colors">
                       <ChevronRight size={14} />
                     </button>
                   </div>
@@ -757,7 +729,7 @@ export default function SemuaInvoicePage() {
                   <select
                     value={limit}
                     onChange={(e) => setLimit(Number(e.target.value))}
-                    className="bg-[#080d19] border border-[#131d35] text-xs py-1.5 px-3 rounded-lg text-gray-300 focus:outline-none"
+                    className="bg-slate-50 border border-slate-200 text-xs py-1.5 px-3 rounded-lg text-slate-600 focus:outline-none"
                   >
                     <option value={10}>10 / halaman</option>
                     <option value={25}>25 / halaman</option>
@@ -771,10 +743,10 @@ export default function SemuaInvoicePage() {
           {/* Right Column: Invoice Detail sidebar widget */}
           {showDetailSidebar && (
             <div className="lg:col-span-4 space-y-6 transition-all duration-300">
-              <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-5 space-y-5 relative">
+              <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-5 relative">
                 
                 {/* Header widget */}
-                <div className="flex justify-between items-start border-b border-[#131d35] pb-4">
+                <div className="flex justify-between items-start border-b border-slate-200 pb-4">
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
                       <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${activeDetail.status === 'PAID' ? 'bg-green-500/10 text-green-400' : 'bg-orange-500/10 text-orange-400'}`}>
@@ -782,67 +754,67 @@ export default function SemuaInvoicePage() {
                       </span>
                       <span className="px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 text-[10px] font-bold">Auto</span>
                     </div>
-                    <h3 className="text-base font-bold text-white font-mono mt-1.5">{activeDetail.invoiceNumber}</h3>
-                    <p className="text-[10px] text-gray-500">Dibuat pada 01 Juli 2026, 08:30 WIB</p>
+                    <h3 className="text-base font-bold text-slate-800 font-mono mt-1.5">{activeDetail.invoiceNumber}</h3>
+                    <p className="text-[10px] text-slate-400">Dibuat pada {activeDetail.createdAt ? new Date(activeDetail.createdAt).toLocaleDateString('id-ID') : 'Hari ini'}</p>
                   </div>
                   
                   <button 
                     onClick={() => setShowDetailSidebar(false)}
-                    className="p-1.5 hover:bg-[#131d35] rounded-xl text-gray-400 transition-colors"
+                    className="p-1.5 hover:bg-slate-100 rounded-xl text-slate-500 transition-colors"
                   >
                     <X size={16} />
                   </button>
                 </div>
 
                 {/* Tagihan Summary Row */}
-                <div className="grid grid-cols-4 gap-2 text-center bg-[#080d19]/40 border border-[#131d35] rounded-xl p-3">
+                <div className="grid grid-cols-4 gap-2 text-center bg-slate-50/40 border border-slate-200 rounded-xl p-3">
                   <div>
-                    <span className="text-[9px] text-gray-500 font-bold uppercase">Total Tagihan</span>
-                    <p className="text-xs font-bold text-white mt-1">{formatCurrency(activeDetail.amount)}</p>
+                    <span className="text-[9px] text-slate-400 font-bold uppercase">Total Tagihan</span>
+                    <p className="text-xs font-bold text-slate-800 mt-1">{formatCurrency(activeDetail.amount)}</p>
                   </div>
                   <div>
-                    <span className="text-[9px] text-gray-500 font-bold uppercase">Dibayar</span>
+                    <span className="text-[9px] text-slate-400 font-bold uppercase">Dibayar</span>
                     <p className="text-xs font-bold text-green-400 mt-1">{formatCurrency(activeDetail.status === 'PAID' ? activeDetail.amount : 0)}</p>
                   </div>
                   <div>
-                    <span className="text-[9px] text-gray-500 font-bold uppercase">Sisa</span>
-                    <p className="text-xs font-bold text-white mt-1">{formatCurrency(activeDetail.status === 'PAID' ? 0 : activeDetail.amount)}</p>
+                    <span className="text-[9px] text-slate-400 font-bold uppercase">Sisa</span>
+                    <p className="text-xs font-bold text-slate-800 mt-1">{formatCurrency(activeDetail.status === 'PAID' ? 0 : activeDetail.amount)}</p>
                   </div>
                   <div>
-                    <span className="text-[9px] text-gray-500 font-bold uppercase">Jatuh Tempo</span>
+                    <span className="text-[9px] text-slate-400 font-bold uppercase">Jatuh Tempo</span>
                     <p className="text-xs font-bold text-blue-400 mt-1">10 Juli 2026</p>
                   </div>
                 </div>
 
                 {/* Tabs */}
-                <div className="flex border-b border-[#131d35] text-[10px] font-bold text-gray-500">
+                <div className="flex border-b border-slate-200 text-[10px] font-bold text-slate-400">
                   <button 
                     onClick={() => setDetailTab('overview')}
-                    className={`flex-1 pb-2 border-b-2 transition-all ${detailTab === 'overview' ? 'border-blue-500 text-white' : 'border-transparent hover:text-gray-300'}`}
+                    className={`flex-1 pb-2 border-b-2 transition-all ${detailTab === 'overview' ? 'border-blue-500 text-white' : 'border-transparent hover:text-slate-600'}`}
                   >
                     Overview
                   </button>
                   <button 
                     onClick={() => setDetailTab('items')}
-                    className={`flex-1 pb-2 border-b-2 transition-all ${detailTab === 'items' ? 'border-blue-500 text-white' : 'border-transparent hover:text-gray-300'}`}
+                    className={`flex-1 pb-2 border-b-2 transition-all ${detailTab === 'items' ? 'border-blue-500 text-white' : 'border-transparent hover:text-slate-600'}`}
                   >
                     Item Tagihan
                   </button>
                   <button 
                     onClick={() => setDetailTab('payments')}
-                    className={`flex-1 pb-2 border-b-2 transition-all ${detailTab === 'payments' ? 'border-blue-500 text-white' : 'border-transparent hover:text-gray-300'}`}
+                    className={`flex-1 pb-2 border-b-2 transition-all ${detailTab === 'payments' ? 'border-blue-500 text-white' : 'border-transparent hover:text-slate-600'}`}
                   >
                     Pembayaran
                   </button>
                   <button 
                     onClick={() => setDetailTab('history')}
-                    className={`flex-1 pb-2 border-b-2 transition-all ${detailTab === 'history' ? 'border-blue-500 text-white' : 'border-transparent hover:text-gray-300'}`}
+                    className={`flex-1 pb-2 border-b-2 transition-all ${detailTab === 'history' ? 'border-blue-500 text-white' : 'border-transparent hover:text-slate-600'}`}
                   >
                     Riwayat
                   </button>
                   <button 
                     onClick={() => setDetailTab('reminder')}
-                    className={`flex-1 pb-2 border-b-2 transition-all ${detailTab === 'reminder' ? 'border-blue-500 text-white' : 'border-transparent hover:text-gray-300'}`}
+                    className={`flex-1 pb-2 border-b-2 transition-all ${detailTab === 'reminder' ? 'border-blue-500 text-white' : 'border-transparent hover:text-slate-600'}`}
                   >
                     Reminder
                   </button>
@@ -854,33 +826,33 @@ export default function SemuaInvoicePage() {
                     <div className="grid grid-cols-2 gap-4">
                       {/* Customer Info */}
                       <div className="space-y-2">
-                        <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Informasi Customer</span>
+                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Informasi Customer</span>
                         <div className="text-xs space-y-1.5">
-                          <p className="text-gray-500">Nama: <strong className="text-white">{activeDetail.customer.name}</strong></p>
-                          <p className="text-gray-500">ID Customer: <strong className="text-white">{activeDetail.customer.id || 'CUST-0001'}</strong></p>
-                          <p className="text-gray-500">No. WhatsApp: <strong className="text-white">{activeDetail.customer.phone}</strong></p>
-                          <p className="text-gray-500 font-semibold break-all">Email: <span className="text-blue-400">{activeDetail.customer.email}</span></p>
-                          <p className="text-gray-500 leading-relaxed">Alamat: <strong className="text-white">{activeDetail.customer.address || 'Jl. Merdeka No. 10, Yogyakarta'}</strong></p>
+                          <p className="text-slate-400">Nama: <strong className="text-white">{activeDetail.customer.name}</strong></p>
+                          <p className="text-slate-400">ID Customer: <strong className="text-white">{activeDetail.customer.id || 'CUST-0001'}</strong></p>
+                          <p className="text-slate-400">No. WhatsApp: <strong className="text-white">{activeDetail.customer.phone}</strong></p>
+                          <p className="text-slate-400 font-semibold break-all">Email: <span className="text-blue-400">{activeDetail.customer.email}</span></p>
+                          <p className="text-slate-400 leading-relaxed">Alamat: <strong className="text-white">{activeDetail.customer.address || 'Jl. Merdeka No. 10, Yogyakarta'}</strong></p>
                         </div>
                       </div>
 
                       {/* Invoice Info */}
                       <div className="space-y-2">
-                        <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Informasi Invoice</span>
+                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Informasi Invoice</span>
                         <div className="text-xs space-y-1.5">
-                          <p className="text-gray-500">No. Referensi: <strong className="text-white">{activeDetail.referenceNumber || 'REF-202607-0001'}</strong></p>
-                          <p className="text-gray-500">Metode Pembayaran: <strong className="text-white">{activeDetail.method || 'Transfer Bank'}</strong></p>
-                          <p className="text-gray-500">Bank Tujuan: <strong className="text-white">BCA - 1234567890</strong></p>
-                          <p className="text-gray-500">Periode: <strong className="text-white">{activeDetail.month}</strong></p>
-                          <p className="text-gray-500">Tanggal Invoice: <strong className="text-white">01 Juli 2026, 08:30 WIB</strong></p>
-                          <p className="text-gray-500">Jatuh Tempo: <strong className="text-red-400">10 Juli 2026, 23:59 WIB</strong></p>
-                          <p className="text-gray-500">Status: <span className="text-green-400 font-bold">Lunas</span></p>
+                          <p className="text-slate-400">No. Referensi: <strong className="text-white">{activeDetail.referenceNumber || 'REF-202607-0001'}</strong></p>
+                          <p className="text-slate-400">Metode Pembayaran: <strong className="text-white">{activeDetail.method || 'Transfer Bank'}</strong></p>
+                          <p className="text-slate-400">Bank Tujuan: <strong className="text-white">BCA - 1234567890</strong></p>
+                          <p className="text-slate-400">Periode: <strong className="text-white">{activeDetail.month}</strong></p>
+                          <p className="text-slate-400">Tanggal Invoice: <strong className="text-white">{activeDetail.createdAt ? new Date(activeDetail.createdAt).toLocaleDateString('id-ID') : 'Hari ini'}</strong></p>
+                          <p className="text-slate-400">Jatuh Tempo: <strong className="text-red-400">{activeDetail.dueDate ? new Date(activeDetail.dueDate).toLocaleDateString('id-ID') : '10 hari'}</strong></p>
+                          <p className="text-slate-400">Status: <span className="text-green-400 font-bold">Lunas</span></p>
                         </div>
                       </div>
                     </div>
 
                     {/* Bottom Payment details */}
-                    <div className="grid grid-cols-2 gap-4 border-t border-[#131d35] pt-4">
+                    <div className="grid grid-cols-2 gap-4 border-t border-slate-200 pt-4">
                       {/* QR payment */}
                       <div className="bg-white p-3 rounded-2xl flex flex-col items-center justify-center border border-gray-200 shadow-sm">
                         <div className="relative w-24 h-24 flex items-center justify-center bg-white p-1">
@@ -906,7 +878,7 @@ export default function SemuaInvoicePage() {
                         </div>
                         <div className="text-center mt-2.5">
                           <p className="text-[8px] font-bold text-gray-800">BCA 1234567890</p>
-                          <p className="text-[7px] font-semibold text-gray-400">PT. AudiraNET Solusi</p>
+                          <p className="text-[7px] font-semibold text-slate-500">PT. AudiraNET Solusi</p>
                         </div>
                         <div className="flex gap-2.5 mt-2 justify-center items-center scale-90">
                           <span className="text-[9px] font-extrabold text-blue-900 tracking-wider">QRIS</span>
@@ -916,20 +888,20 @@ export default function SemuaInvoicePage() {
 
                       {/* Financial values */}
                       <div className="space-y-1.5 text-xs">
-                        <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block mb-1">Ringkasan Pembayaran</span>
-                        <div className="flex justify-between text-gray-400">
+                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-1">Ringkasan Pembayaran</span>
+                        <div className="flex justify-between text-slate-500">
                           <span>Subtotal</span>
                           <span className="font-semibold text-white">{formatCurrency(activeDetail.amount)}</span>
                         </div>
-                        <div className="flex justify-between text-gray-400">
+                        <div className="flex justify-between text-slate-500">
                           <span>Diskon</span>
                           <span className="font-semibold text-white">- Rp 0</span>
                         </div>
-                        <div className="flex justify-between text-gray-400">
+                        <div className="flex justify-between text-slate-500">
                           <span>PPN (11%)</span>
                           <span className="font-semibold text-white">Rp 0</span>
                         </div>
-                        <div className="flex justify-between text-white font-bold border-t border-[#131d35] pt-1 mt-1">
+                        <div className="flex justify-between text-white font-bold border-t border-slate-200 pt-1 mt-1">
                           <span>Total Tagihan</span>
                           <span>{formatCurrency(activeDetail.amount)}</span>
                         </div>
@@ -947,14 +919,14 @@ export default function SemuaInvoicePage() {
                 )}
 
                 {detailTab !== 'overview' && (
-                  <div className="py-8 text-center text-xs text-gray-500 font-medium">
+                  <div className="py-8 text-center text-xs text-slate-400 font-medium">
                     Konten Tab {detailTab} terhubung dengan data referensi database invoice.
                   </div>
                 )}
 
                 {/* Bottom link button */}
-                <div className="border-t border-[#131d35] pt-4">
-                  <button className="w-full flex items-center justify-center gap-2 bg-[#080d19] border border-[#131d35] hover:bg-[#121c38] text-blue-400 text-xs font-bold py-2.5 rounded-xl transition-all">
+                <div className="border-t border-slate-200 pt-4">
+                  <button className="w-full flex items-center justify-center gap-2 bg-slate-50 border border-slate-200 hover:bg-slate-100 text-blue-400 text-xs font-bold py-2.5 rounded-xl transition-all">
                     <span>Lihat Invoice Public (Customer View)</span>
                     <span>↗</span>
                   </button>
@@ -971,23 +943,23 @@ export default function SemuaInvoicePage() {
       {/* Modals wrapper */}
       {showGenerateModal && (
         <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl w-full max-w-md overflow-hidden text-gray-300">
-            <div className="flex items-center justify-between p-5 border-b border-[#131d35]">
-              <h2 className="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-wide">
+          <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs w-full max-w-md overflow-hidden text-slate-600">
+            <div className="flex items-center justify-between p-5 border-b border-slate-200">
+              <h2 className="text-sm font-bold text-slate-800 flex items-center gap-2 uppercase tracking-wide">
                 <Plus size={16} className="text-blue-500" /> Generate Invoice Bulanan
               </h2>
-              <button onClick={() => setShowGenerateModal(false)} className="p-1.5 hover:bg-[#131d35] rounded-lg">
+              <button onClick={() => setShowGenerateModal(false)} className="p-1.5 hover:bg-slate-100 rounded-lg">
                 <X size={16} />
               </button>
             </div>
             <div className="p-5 space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-gray-400 mb-2">Pilih Bulan Tagihan</label>
+                <label className="block text-xs font-semibold text-slate-500 mb-2">Pilih Bulan Tagihan</label>
                 <input
                   type="month"
                   value={generateMonth}
                   onChange={e => setGenerateMonth(e.target.value)}
-                  className="w-full bg-[#080d19] border border-[#131d35] px-4 py-2.5 rounded-xl text-white focus:outline-none focus:border-blue-500 text-xs"
+                  className="w-full bg-slate-50 border border-slate-200 px-4 py-2.5 rounded-xl text-slate-800 focus:outline-none focus:border-blue-500 text-xs"
                 />
               </div>
               <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 text-[11px] text-blue-400 leading-relaxed">
@@ -1000,8 +972,8 @@ export default function SemuaInvoicePage() {
                 </ul>
               </div>
             </div>
-            <div className="p-5 border-t border-[#131d35] flex gap-3">
-              <button onClick={() => setShowGenerateModal(false)} className="flex-1 px-4 py-2.5 border border-[#131d35] hover:bg-[#121c38] rounded-xl text-xs font-bold text-gray-400 hover:text-white transition-all">
+            <div className="p-5 border-t border-slate-200 flex gap-3">
+              <button onClick={() => setShowGenerateModal(false)} className="flex-1 px-4 py-2.5 border border-slate-200 hover:bg-slate-100 rounded-xl text-xs font-bold text-slate-500 hover:text-slate-900 transition-all">
                 Batal
               </button>
               <button
@@ -1019,32 +991,32 @@ export default function SemuaInvoicePage() {
 
       {showMarkPaidModal && selectedInvoice && (
         <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl w-full max-w-md overflow-hidden text-gray-300">
-            <div className="flex items-center justify-between p-5 border-b border-[#131d35]">
-              <h2 className="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-wide">
+          <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs w-full max-w-md overflow-hidden text-slate-600">
+            <div className="flex items-center justify-between p-5 border-b border-slate-200">
+              <h2 className="text-sm font-bold text-slate-800 flex items-center gap-2 uppercase tracking-wide">
                 <CheckCircle size={16} className="text-green-500" /> Tandai Lunas
               </h2>
-              <button onClick={() => setShowMarkPaidModal(false)} className="p-1.5 hover:bg-[#131d35] rounded-lg">
+              <button onClick={() => setShowMarkPaidModal(false)} className="p-1.5 hover:bg-slate-100 rounded-lg">
                 <X size={16} />
               </button>
             </div>
             <div className="p-5 space-y-4">
-              <div className="bg-[#080d19] border border-[#131d35] rounded-xl p-4 space-y-2">
+              <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-2">
                 <div>
-                  <span className="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Invoice</span>
+                  <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Invoice</span>
                   <p className="font-mono font-bold text-blue-400 text-xs">{selectedInvoice.invoiceNumber}</p>
                 </div>
                 <div>
-                  <span className="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Pelanggan</span>
+                  <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Pelanggan</span>
                   <p className="font-semibold text-gray-200 text-xs">{selectedInvoice.customer.name}</p>
                 </div>
                 <div>
-                  <span className="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Jumlah Tagihan</span>
-                  <p className="text-xl font-black text-white">{formatCurrency(selectedInvoice.amount)}</p>
+                  <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Jumlah Tagihan</span>
+                  <p className="text-xl font-black text-slate-900">{formatCurrency(selectedInvoice.amount)}</p>
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-gray-400 mb-2">Metode Pembayaran</label>
+                <label className="block text-xs font-semibold text-slate-500 mb-2">Metode Pembayaran</label>
                 <div className="grid grid-cols-2 gap-2">
                   {PAYMENT_METHODS.map(m => (
                     <button
@@ -1053,7 +1025,7 @@ export default function SemuaInvoicePage() {
                       className={`px-3 py-2 rounded-xl text-xs border transition ${
                         markPaidMethod === m
                           ? 'bg-green-600 text-white border-green-600 font-bold'
-                          : 'bg-[#080d19] text-gray-400 border-[#131d35] hover:bg-[#121c38]'
+                          : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'
                       }`}
                     >
                       {m}
@@ -1062,8 +1034,8 @@ export default function SemuaInvoicePage() {
                 </div>
               </div>
             </div>
-            <div className="p-5 border-t border-[#131d35] flex gap-3">
-              <button onClick={() => setShowMarkPaidModal(false)} className="flex-1 px-4 py-2.5 border border-[#131d35] hover:bg-[#121c38] rounded-xl text-xs font-bold text-gray-400 hover:text-white transition-all">
+            <div className="p-5 border-t border-slate-200 flex gap-3">
+              <button onClick={() => setShowMarkPaidModal(false)} className="flex-1 px-4 py-2.5 border border-slate-200 hover:bg-slate-100 rounded-xl text-xs font-bold text-slate-500 hover:text-slate-900 transition-all">
                 Batal
               </button>
               <button
@@ -1081,28 +1053,28 @@ export default function SemuaInvoicePage() {
 
       {showWhatsAppModal && (
         <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl w-full max-w-lg overflow-hidden text-gray-300">
-            <div className="flex items-center justify-between p-5 border-b border-[#131d35]">
-              <h2 className="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-wide">
+          <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs w-full max-w-lg overflow-hidden text-slate-600">
+            <div className="flex items-center justify-between p-5 border-b border-slate-200">
+              <h2 className="text-sm font-bold text-slate-800 flex items-center gap-2 uppercase tracking-wide">
                 <MessageCircle size={16} className="text-emerald-500" /> WhatsApp Blast
               </h2>
-              <button onClick={() => setShowWhatsAppModal(false)} className="p-1.5 hover:bg-[#131d35] rounded-lg">
+              <button onClick={() => setShowWhatsAppModal(false)} className="p-1.5 hover:bg-slate-100 rounded-lg">
                 <X size={16} />
               </button>
             </div>
             <div className="p-5 space-y-4">
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-slate-500">
                 Mengirim pesan reminder pembayaran ke <strong className="text-white">{selectedInvoicesForWA.length} pelanggan</strong>.
               </p>
               <textarea
                 rows={6}
                 value={whatsappMessage}
                 onChange={e => setWhatsappMessage(e.target.value)}
-                className="w-full bg-[#080d19] border border-[#131d35] rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-blue-500 resize-none font-mono"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-800 focus:outline-none focus:border-blue-500 resize-none font-mono"
               />
             </div>
-            <div className="p-5 border-t border-[#131d35] flex gap-3">
-              <button onClick={() => setShowWhatsAppModal(false)} className="flex-1 px-4 py-2.5 border border-[#131d35] hover:bg-[#121c38] rounded-xl text-xs font-bold text-gray-400 hover:text-white transition-all">
+            <div className="p-5 border-t border-slate-200 flex gap-3">
+              <button onClick={() => setShowWhatsAppModal(false)} className="flex-1 px-4 py-2.5 border border-slate-200 hover:bg-slate-100 rounded-xl text-xs font-bold text-slate-500 hover:text-slate-900 transition-all">
                 Batal
               </button>
               <button

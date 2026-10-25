@@ -1,5 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class CustomerService {
@@ -221,14 +222,17 @@ export class CustomerService {
       this.prisma.invoice.count({ where }),
     ]);
 
+    const meta = {
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+
     return {
       data: invoices,
-      pagination: {
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-      },
+      pagination: meta,
+      meta,
     };
   }
 
@@ -323,14 +327,17 @@ export class CustomerService {
       this.prisma.ticket.count({ where }),
     ]);
 
+    const meta = {
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+
     return {
       data: tickets,
-      pagination: {
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-      },
+      pagination: meta,
+      meta,
     };
   }
 
@@ -409,5 +416,37 @@ export class CustomerService {
     });
 
     return ticket;
+  }
+
+  /**
+   * Change customer password
+   */
+  async changePassword(customerId: string, data: { currentPassword?: string; newPassword?: string }) {
+    if (!data.newPassword || data.newPassword.length < 3) {
+      throw new BadRequestException('Password baru minimal 3 karakter');
+    }
+
+    const customer = await this.prisma.customer.findUnique({
+      where: { id: customerId },
+    });
+
+    if (!customer) {
+      throw new NotFoundException('Customer not found');
+    }
+
+    if (customer.password && data.currentPassword) {
+      const isValid = await bcrypt.compare(data.currentPassword, customer.password);
+      if (!isValid) {
+        throw new BadRequestException('Password saat ini salah');
+      }
+    }
+
+    const hashedPassword = await bcrypt.hash(data.newPassword, 10);
+    await this.prisma.customer.update({
+      where: { id: customerId },
+      data: { password: hashedPassword },
+    });
+
+    return { message: 'Password berhasil diperbarui' };
   }
 }

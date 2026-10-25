@@ -30,7 +30,7 @@ export default function Custom404() {
           <p className="text-lg text-gray-600 mb-2">
             Maaf, halaman yang Anda cari tidak ada atau telah dipindahkan.
           </p>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-slate-400">
             URL: <code className="bg-gray-100 px-2 py-1 rounded">{router.asPath}</code>
           </p>
         </div>
@@ -67,14 +67,14 @@ export default function Custom404() {
             >
               📚 Dokumentasi
             </Link>
-            <span className="text-gray-300">•</span>
+            <span className="text-slate-600">•</span>
             <Link
               href="/pengaturan"
               className="text-sm text-blue-600 hover:text-blue-700 font-medium"
             >
               ⚙️ Pengaturan
             </Link>
-            <span className="text-gray-300">•</span>
+            <span className="text-slate-600">•</span>
             <a
               href="mailto:support@audiranet.com"
               className="text-sm text-blue-600 hover:text-blue-700 font-medium"

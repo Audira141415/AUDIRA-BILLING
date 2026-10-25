@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 
-const API_BASE_URL = 'http://localhost:1993/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3218';
 
 export default function AdminLoginPage() {
   const router = useRouter();

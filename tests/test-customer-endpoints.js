@@ -1,6 +1,6 @@
 const http = require('http');
 
-const API_BASE = 'http://localhost:1993';
+const API_BASE = process.env.API_URL || 'http://localhost:3218';
 let customerToken = '';
 
 // Helper function to make HTTP requests

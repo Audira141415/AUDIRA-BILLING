@@ -1,5 +1,6 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { RealtimeService } from '../realtime/realtime.service';
 
 // DTOs
 class CreateTicketDto {
@@ -36,7 +37,12 @@ class AssignTicketDto {
 
 @Injectable()
 export class TicketService {
-  constructor(private prisma: PrismaService) {}
+  private readonly logger = new Logger(TicketService.name);
+
+  constructor(
+    private prisma: PrismaService,
+    private realtimeService: RealtimeService,
+  ) {}
 
   /**
    * Get tickets with pagination, search, and filters
@@ -228,6 +234,22 @@ export class TicketService {
       },
     });
 
+    // Broadcast realtime event
+    try {
+      this.realtimeService.broadcastTicketUpdated({
+        ticketId: ticket.id,
+        ticketNumber: ticket.ticketNumber,
+        title: ticket.title,
+        status: ticket.status,
+        priority: ticket.priority,
+        customerName: ticket.customer?.name,
+        technicianId: ticket.technicianId || undefined,
+        technicianName: ticket.technician?.name || undefined,
+      });
+    } catch (rtErr: any) {
+      this.logger.warn(`Failed to broadcast ticket event: ${rtErr.message}`);
+    }
+
     return {
       message: 'Ticket berhasil dibuat',
       ticket,
@@ -272,6 +294,22 @@ export class TicketService {
         technician: true,
       },
     });
+
+    // Broadcast realtime event
+    try {
+      this.realtimeService.broadcastTicketUpdated({
+        ticketId: ticket.id,
+        ticketNumber: ticket.ticketNumber,
+        title: ticket.title,
+        status: ticket.status,
+        priority: ticket.priority,
+        customerName: ticket.customer?.name,
+        technicianId: ticket.technicianId || undefined,
+        technicianName: ticket.technician?.name || undefined,
+      });
+    } catch (rtErr: any) {
+      this.logger.warn(`Failed to broadcast ticket event: ${rtErr.message}`);
+    }
 
     return {
       message: 'Ticket berhasil diupdate',

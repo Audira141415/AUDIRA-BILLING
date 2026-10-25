@@ -224,10 +224,10 @@ export default function CustomerTickets() {
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
           {tickets.length === 0 ? (
             <div className="text-center py-12">
-              <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-16 h-16 text-slate-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
               </svg>
-              <p className="text-gray-500">No tickets found</p>
+              <p className="text-slate-400">No tickets found</p>
               <button
                 onClick={() => setShowCreateModal(true)}
                 className="mt-4 text-blue-600 hover:underline"
@@ -255,7 +255,7 @@ export default function CustomerTickets() {
                         </span>
                       </div>
                       <p className="text-sm text-gray-600 mb-3 line-clamp-2">{ticket.description}</p>
-                      <div className="flex items-center gap-4 text-sm text-gray-500">
+                      <div className="flex items-center gap-4 text-sm text-slate-400">
                         <span>#{ticket.ticketNumber}</span>
                         <span>•</span>
                         <span>{formatDate(ticket.createdAt)}</span>
@@ -267,7 +267,7 @@ export default function CustomerTickets() {
                         )}
                       </div>
                     </div>
-                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </div>
@@ -315,7 +315,7 @@ export default function CustomerTickets() {
                     setShowCreateModal(false);
                     setCreateForm({ title: '', description: '', priority: 'medium' });
                   }}
-                  className="text-gray-400 hover:text-gray-600"
+                  className="text-slate-500 hover:text-gray-600"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -406,7 +406,7 @@ export default function CustomerTickets() {
                 </div>
                 <button
                   onClick={() => setSelectedTicket(null)}
-                  className="text-gray-400 hover:text-gray-600"
+                  className="text-slate-500 hover:text-gray-600"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

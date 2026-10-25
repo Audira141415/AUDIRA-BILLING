@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../components/Layout';
@@ -228,7 +229,7 @@ export default function AttendanceCheckIn() {
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg shadow-lg p-8 mb-6 text-white">
           <div className="flex items-center gap-4 mb-4">
-            <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center text-blue-600 text-3xl font-bold">
+            <div className="w-20 h-20 bg-[var(--app-card)] rounded-full flex items-center justify-center text-blue-600 text-3xl font-bold">
               {user?.name?.charAt(0) || 'U'}
             </div>
             <div>
@@ -239,7 +240,7 @@ export default function AttendanceCheckIn() {
           </div>
 
           {/* Current Time */}
-          <div className="bg-white bg-opacity-20 rounded-lg p-4 text-center">
+          <div className="bg-[var(--app-card)] bg-opacity-20 rounded-lg p-4 text-center">
             <div className="flex items-center justify-center gap-2 mb-2">
               <Calendar size={20} />
               <span className="text-sm">
@@ -256,23 +257,23 @@ export default function AttendanceCheckIn() {
         </div>
 
         {/* Status Card */}
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Status Absensi Hari Ini</h2>
+        <div className="bg-[var(--app-card)] rounded-lg shadow-lg p-6 mb-6">
+          <h2 className="text-xl font-bold text-[var(--app-text)] mb-4">Status Absensi Hari Ini</h2>
           
           <div className="grid grid-cols-2 gap-4 mb-6">
             {/* Check-In Status */}
             <div className={`p-4 rounded-lg border-2 ${
               attendance?.hasCheckedIn 
                 ? 'bg-green-50 border-green-200' 
-                : 'bg-gray-50 border-gray-200'
+                : 'bg-[var(--app-bg)] border-[var(--app-border)]'
             }`}>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-gray-600">Check-In</span>
+                <span className="text-sm font-medium text-[var(--app-muted)]">Check-In</span>
                 {attendance?.hasCheckedIn && (
                   <CheckCircle className="text-green-600" size={20} />
                 )}
               </div>
-              <div className="text-2xl font-bold text-gray-900">
+              <div className="text-2xl font-bold text-[var(--app-text)]">
                 {formatTime(attendance?.checkInTime)}
               </div>
               {attendance?.status === 'late' && (
@@ -284,15 +285,15 @@ export default function AttendanceCheckIn() {
             <div className={`p-4 rounded-lg border-2 ${
               attendance?.hasCheckedOut 
                 ? 'bg-blue-50 border-blue-200' 
-                : 'bg-gray-50 border-gray-200'
+                : 'bg-[var(--app-bg)] border-[var(--app-border)]'
             }`}>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-gray-600">Check-Out</span>
+                <span className="text-sm font-medium text-[var(--app-muted)]">Check-Out</span>
                 {attendance?.hasCheckedOut && (
                   <CheckCircle className="text-blue-600" size={20} />
                 )}
               </div>
-              <div className="text-2xl font-bold text-gray-900">
+              <div className="text-2xl font-bold text-[var(--app-text)]">
                 {formatTime(attendance?.checkOutTime)}
               </div>
             </div>
@@ -302,10 +303,10 @@ export default function AttendanceCheckIn() {
           {attendance?.workDuration > 0 && (
             <div className="bg-purple-50 border-2 border-purple-200 rounded-lg p-4">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-600">Durasi Kerja</span>
+                <span className="text-sm font-medium text-[var(--app-muted)]">Durasi Kerja</span>
                 <Clock className="text-purple-600" size={20} />
               </div>
-              <div className="text-2xl font-bold text-gray-900 mt-2">
+              <div className="text-2xl font-bold text-[var(--app-text)] mt-2">
                 {formatDuration(attendance.workDuration)}
               </div>
             </div>
@@ -335,7 +336,7 @@ export default function AttendanceCheckIn() {
           )}
 
           {attendance?.hasCheckedIn && attendance?.hasCheckedOut && (
-            <div className="bg-gray-100 text-gray-600 px-6 py-4 rounded-lg text-center">
+            <div className="bg-gray-100 text-[var(--app-muted)] px-6 py-4 rounded-lg text-center">
               <CheckCircle className="inline-block mr-2" size={20} />
               <span className="font-medium">Absensi hari ini sudah lengkap</span>
             </div>
@@ -345,7 +346,7 @@ export default function AttendanceCheckIn() {
         {/* Camera Modal */}
         {showCamera && (
           <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg max-w-lg w-full p-6">
+            <div className="bg-[var(--app-card)] rounded-lg max-w-lg w-full p-6">
               <h3 className="text-xl font-bold mb-4">
                 Foto Selfie {checkInOut === 'in' ? 'Check-In' : 'Check-Out'}
               </h3>
@@ -370,7 +371,7 @@ export default function AttendanceCheckIn() {
                     </button>
                     <button
                       onClick={cancelCamera}
-                      className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50"
+                      className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-[var(--app-bg)]"
                     >
                       Batal
                     </button>
@@ -381,13 +382,13 @@ export default function AttendanceCheckIn() {
                   <div className="relative rounded-lg overflow-hidden">
                     <img src={capturedPhoto} alt="Preview" className="w-full" />
                   </div>
-                  <p className="text-sm text-gray-600 text-center">
+                  <p className="text-sm text-[var(--app-muted)] text-center">
                     Pastikan wajah Anda terlihat jelas
                   </p>
                   <div className="flex gap-3">
                     <button
                       onClick={() => setCapturedPhoto(null)}
-                      className="flex-1 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50"
+                      className="flex-1 px-4 py-3 border border-gray-300 rounded-lg hover:bg-[var(--app-bg)]"
                     >
                       Ulangi
                     </button>

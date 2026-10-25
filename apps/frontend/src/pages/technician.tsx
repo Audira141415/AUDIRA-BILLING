@@ -52,47 +52,7 @@ export default function TechnicianDashboard() {
     // const response = await fetch(`/api/field-service/technician/${technicianId}/today`);
     // const data = await response.json();
     
-    // Mock data
-    const mockJobs: WorkOrder[] = [
-      {
-        id: '1',
-        type: 'installation',
-        priority: 'high',
-        status: 'assigned',
-        title: 'Instalasi Baru - Paket 50 Mbps',
-        description: 'Instalasi router dan ONT untuk pelanggan baru',
-        scheduledAt: new Date().toISOString(),
-        location: 'Jl. Merdeka No. 123',
-        latitude: -6.2088,
-        longitude: 106.8456,
-        customer: {
-          name: 'Budi Santoso',
-          phone: '08123456789',
-          address: 'Jl. Merdeka No. 123, Jakarta',
-        },
-        photos: [],
-      },
-      {
-        id: '2',
-        type: 'repair',
-        priority: 'urgent',
-        status: 'assigned',
-        title: 'Perbaikan Koneksi Lambat',
-        description: 'Pelanggan melaporkan kecepatan internet sangat lambat',
-        scheduledAt: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
-        location: 'Jl. Sudirman No. 45',
-        latitude: -6.2115,
-        longitude: 106.8452,
-        customer: {
-          name: 'Siti Rahayu',
-          phone: '08198765432',
-          address: 'Jl. Sudirman No. 45, Jakarta',
-        },
-        photos: [],
-      },
-    ];
-
-    setWorkOrders(mockJobs);
+    setWorkOrders([]);
   };
 
   const loadStats = async () => {
@@ -155,7 +115,7 @@ export default function TechnicianDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] pb-20">
       {/* Header */}
       <div className="bg-blue-600 text-white p-4">
         <h1 className="text-xl font-bold">Field Service</h1>
@@ -164,24 +124,24 @@ export default function TechnicianDashboard() {
 
       {/* Stats Cards */}
       <div className="p-4 grid grid-cols-2 gap-3">
-        <div className="bg-white rounded-lg p-3 shadow-sm">
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-lg p-3 shadow-xs">
           <div className="text-2xl font-bold text-blue-600">{stats.completed}</div>
-          <div className="text-xs text-gray-600">Selesai</div>
+          <div className="text-xs text-[var(--app-muted)]">Selesai</div>
         </div>
-        <div className="bg-white rounded-lg p-3 shadow-sm">
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-lg p-3 shadow-xs">
           <div className="text-2xl font-bold text-orange-600">{stats.pending}</div>
-          <div className="text-xs text-gray-600">Pending</div>
+          <div className="text-xs text-[var(--app-muted)]">Pending</div>
         </div>
-        <div className="bg-white rounded-lg p-3 shadow-sm">
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-lg p-3 shadow-xs">
           <div className="text-2xl font-bold text-green-600">{stats.inProgress}</div>
-          <div className="text-xs text-gray-600">Sedang Dikerjakan</div>
+          <div className="text-xs text-[var(--app-muted)]">Sedang Dikerjakan</div>
         </div>
-        <div className="bg-white rounded-lg p-3 shadow-sm">
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-lg p-3 shadow-xs">
           <div className="flex items-center gap-1">
             <Star className="w-5 h-5 text-yellow-500 fill-yellow-500" />
             <span className="text-2xl font-bold text-yellow-600">{stats.avgRating}</span>
           </div>
-          <div className="text-xs text-gray-600">Rating Rata-rata</div>
+          <div className="text-xs text-[var(--app-muted)]">Rating Rata-rata</div>
         </div>
       </div>
 
@@ -192,7 +152,7 @@ export default function TechnicianDashboard() {
           className={`flex-1 py-3 text-sm font-medium ${
             activeTab === 'today'
               ? 'border-b-2 border-blue-600 text-blue-600'
-              : 'text-gray-600'
+              : 'text-[var(--app-muted)]'
           }`}
         >
           Hari Ini ({workOrders.length})
@@ -202,7 +162,7 @@ export default function TechnicianDashboard() {
           className={`flex-1 py-3 text-sm font-medium ${
             activeTab === 'all'
               ? 'border-b-2 border-blue-600 text-blue-600'
-              : 'text-gray-600'
+              : 'text-[var(--app-muted)]'
           }`}
         >
           Semua Pekerjaan
@@ -223,7 +183,7 @@ export default function TechnicianDashboard() {
               <div className="flex items-start justify-between mb-2">
                 <div>
                   <h3 className="font-semibold text-gray-900">{job.title}</h3>
-                  <p className="text-sm text-gray-600 mt-1">{job.description}</p>
+                  <p className="text-sm text-[var(--app-muted)] mt-1">{job.description}</p>
                 </div>
                 <span className={`text-xs px-2 py-1 rounded-full ${getStatusColor(job.status)}`}>
                   {job.status}
@@ -233,17 +193,17 @@ export default function TechnicianDashboard() {
               {/* Customer Info */}
               <div className="space-y-2 mb-3">
                 <div className="flex items-center gap-2 text-sm text-gray-700">
-                  <MapPin className="w-4 h-4 text-gray-400" />
+                  <MapPin className="w-4 h-4 text-[var(--app-muted)]" />
                   <span>{job.customer.name}</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Phone className="w-4 h-4 text-gray-400" />
+                <div className="flex items-center gap-2 text-sm text-[var(--app-muted)]">
+                  <Phone className="w-4 h-4 text-[var(--app-muted)]" />
                   <a href={`tel:${job.customer.phone}`} className="text-blue-600">
                     {job.customer.phone}
                   </a>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Clock className="w-4 h-4 text-gray-400" />
+                <div className="flex items-center gap-2 text-sm text-[var(--app-muted)]">
+                  <Clock className="w-4 h-4 text-[var(--app-muted)]" />
                   <span>{formatTime(job.scheduledAt)}</span>
                 </div>
               </div>
@@ -287,8 +247,8 @@ export default function TechnicianDashboard() {
         ))}
 
         {workOrders.length === 0 && (
-          <div className="text-center py-8 text-gray-500">
-            <AlertCircle className="w-12 h-12 mx-auto mb-2 text-gray-400" />
+          <div className="text-center py-8 text-[var(--app-muted)]">
+            <AlertCircle className="w-12 h-12 mx-auto mb-2 text-[var(--app-muted)]" />
             <p>Tidak ada pekerjaan untuk hari ini</p>
           </div>
         )}
@@ -302,14 +262,14 @@ export default function TechnicianDashboard() {
               <h2 className="font-bold text-lg">Detail Pekerjaan</h2>
               <button
                 onClick={() => setShowJobDetail(false)}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-[var(--app-muted)] hover:text-gray-700"
               >
                 <XCircle className="w-6 h-6" />
               </button>
             </div>
             
             <div className="p-4">
-              <p className="text-sm text-gray-600 mb-4">
+              <p className="text-sm text-[var(--app-muted)] mb-4">
                 Feature lengkap untuk upload foto, tanda tangan, dan rating akan ditambahkan
               </p>
               

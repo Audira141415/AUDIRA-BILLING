@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
@@ -221,76 +222,21 @@ export default function AkunDashboard() {
 
   return (
     <Layout>
-      <div className="bg-[#050B14] text-gray-100 min-h-screen p-6 font-sans antialiased">
-        {/* Custom Header Area */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 pb-6 border-b border-blue-950">
-          <div>
-            <button onClick={() => router.push('/finance/dashboard')} className="flex items-center gap-1.5 text-xs text-cyan-400 hover:text-cyan-300 mb-2 transition-colors">
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Kembali ke Dashboard</span>
-            </button>
-            <div className="flex items-center gap-2 text-xs text-gray-400">
-              <span>Finance</span>
-              <span>&gt;</span>
-              <span className="text-cyan-400 font-medium">Akun</span>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-4 w-full md:w-auto">
-            <div className="bg-[#091526] px-4 py-2 rounded-lg border border-blue-900/60 flex items-center gap-3">
-              <Calendar className="w-4 h-4 text-cyan-400" />
-              <div className="text-xs">
-                <p className="text-gray-400 font-semibold">01 Juli 2026</p>
-                <p className="text-cyan-400 text-[10px]">08.35 WIB</p>
-              </div>
-            </div>
-            <div className="bg-[#091526] px-4 py-2 rounded-lg border border-blue-900/60 flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              <div className="text-xs">
-                <p className="text-gray-400 font-semibold">Status Sistem</p>
-                <p className="text-emerald-400 text-[10px]">● Normal</p>
-              </div>
-            </div>
-
-            {/* Search bar & profile */}
-            <div className="relative w-full md:w-64">
-              <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Cari akun, nama akun, COA..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 rounded-lg bg-[#091526] border border-blue-900/60 text-xs focus:outline-none focus:border-cyan-500 placeholder-gray-500 text-gray-200"
-              />
-            </div>
-            <div className="flex items-center gap-2.5">
-              <button className="p-2 rounded-lg bg-[#091526] border border-blue-900/40 hover:border-cyan-500/50 relative">
-                <Bell className="w-4 h-4 text-gray-300" />
-                <span className="absolute -top-1 -right-1 w-4.5 h-4.5 bg-red-500 rounded-full text-[9px] font-bold flex items-center justify-center text-white px-1">12</span>
-              </button>
-              <button className="p-2 rounded-lg bg-[#091526] border border-blue-900/40 hover:border-cyan-500/50 relative">
-                <Mail className="w-4 h-4 text-gray-300" />
-                <span className="absolute -top-1 -right-1 w-4.5 h-4.5 bg-red-500 rounded-full text-[9px] font-bold flex items-center justify-center text-white px-1">6</span>
-              </button>
-              <button className="p-2 rounded-lg bg-[#091526] border border-blue-900/40 hover:border-cyan-500/50">
-                <Settings className="w-4 h-4 text-gray-300" />
-              </button>
-            </div>
-            <div className="flex items-center gap-3 pl-3 border-l border-blue-950">
-              <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center font-bold text-xs text-white">AD</div>
-              <div className="text-left hidden lg:block">
-                <p className="text-xs font-semibold text-gray-200">Agus Dwi Rianto</p>
-                <p className="text-[10px] text-gray-400">Super Admin</p>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className="bg-[var(--app-bg)] text-[var(--app-text)] min-h-screen p-6 font-sans antialiased">
+        
 
         {/* Dashboard Title & Top Bar */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 border-b border-[var(--app-border)] pb-5">
           <div>
+            <div className="flex items-center gap-2 text-xs text-[var(--app-muted)] font-mono mb-1.5">
+              <Link href="/" className="hover:text-[var(--app-text)]">AUDIRA</Link>
+              <span>/</span>
+              <Link href="/finance/dashboard" className="hover:text-[var(--app-text)]">Keuangan & Akuntansi</Link>
+              <span>/</span>
+              <span className="text-emerald-500 font-semibold">Bagan Akun (COA)</span>
+            </div>
             <h1 className="text-2xl font-bold tracking-tight text-white">Akun</h1>
-            <p className="text-xs text-gray-400 mt-1">Kelola semua akun/COA perusahaan. Buat, edit, dan atur struktur akun dengan mudah.</p>
+            <p className="text-xs text-[var(--app-muted)] mt-1">Kelola semua akun/COA perusahaan. Buat, edit, dan atur struktur akun dengan mudah.</p>
           </div>
           <div className="flex items-center gap-3">
             <button 
@@ -300,17 +246,17 @@ export default function AkunDashboard() {
               <Plus className="w-3.5 h-3.5" />
               <span>Akun Baru</span>
             </button>
-            <button className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white border border-blue-900/40 transition-colors">
-              <FolderOpen className="w-3.5 h-3.5 text-gray-400" />
+            <button className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white border border-[var(--app-border)] transition-colors">
+              <FolderOpen className="w-3.5 h-3.5 text-[var(--app-muted)]" />
               <span>Import Akun</span>
             </button>
             <button 
               onClick={() => alert('Mengekspor COA...')}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#091526] hover:bg-slate-800 text-xs font-semibold text-white border border-blue-900/40 transition-colors"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--app-card)] hover:bg-slate-800 text-xs font-semibold text-white border border-[var(--app-border)] transition-colors"
             >
               <Download className="w-3.5 h-3.5" />
               <span>Ekspor</span>
-              <ChevronDown className="w-3 h-3 text-gray-400" />
+              <ChevronDown className="w-3 h-3 text-[var(--app-muted)]" />
             </button>
           </div>
         </div>
@@ -318,9 +264,9 @@ export default function AkunDashboard() {
         {/* Top Metric Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
           {/* Total Akun */}
-          <div className="bg-[#0A1629]/70 border border-blue-900/40 rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Total Akun</p>
+              <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Total Akun</p>
               <div className="p-1.5 rounded-lg bg-blue-600/10 border border-blue-600/20 text-blue-400">
                 <Layers className="w-3.5 h-3.5" />
               </div>
@@ -330,9 +276,9 @@ export default function AkunDashboard() {
           </div>
 
           {/* Akun Aktif */}
-          <div className="bg-[#0A1629]/70 border border-blue-900/40 rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Akun Aktif</p>
+              <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Akun Aktif</p>
               <div className="p-1.5 rounded-lg bg-emerald-600/10 border border-emerald-600/20 text-emerald-400">
                 <CheckSquare className="w-3.5 h-3.5" />
               </div>
@@ -342,9 +288,9 @@ export default function AkunDashboard() {
           </div>
 
           {/* Akun Non Aktif */}
-          <div className="bg-[#0A1629]/70 border border-blue-900/40 rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Akun Non Aktif</p>
+              <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Akun Non Aktif</p>
               <div className="p-1.5 rounded-lg bg-orange-600/10 border border-orange-600/20 text-orange-400">
                 <Lock className="w-3.5 h-3.5" />
               </div>
@@ -354,9 +300,9 @@ export default function AkunDashboard() {
           </div>
 
           {/* Akun Header */}
-          <div className="bg-[#0A1629]/70 border border-blue-900/40 rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Akun Header</p>
+              <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Akun Header</p>
               <div className="p-1.5 rounded-lg bg-purple-600/10 border border-purple-600/20 text-purple-400">
                 <Folder className="w-3.5 h-3.5" />
               </div>
@@ -366,9 +312,9 @@ export default function AkunDashboard() {
           </div>
 
           {/* Akun Detail */}
-          <div className="bg-[#0A1629]/70 border border-blue-900/40 rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Akun Detail</p>
+              <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Akun Detail</p>
               <div className="p-1.5 rounded-lg bg-cyan-600/10 border border-cyan-600/20 text-cyan-400">
                 <FileText className="w-3.5 h-3.5" />
               </div>
@@ -378,20 +324,20 @@ export default function AkunDashboard() {
           </div>
 
           {/* Level Terdalam */}
-          <div className="bg-[#0A1629]/70 border border-blue-900/40 rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Level Terdalam</p>
+              <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Level Terdalam</p>
               <div className="p-1.5 rounded-lg bg-rose-600/10 border border-rose-600/20 text-rose-400">
                 <Activity className="w-3.5 h-3.5 text-rose-400" />
               </div>
             </div>
             <h3 className="text-base font-bold text-white">{deepestLevel}</h3>
-            <span className="text-[9px] text-gray-400 font-semibold mt-1">Struktur COA</span>
+            <span className="text-[9px] text-[var(--app-muted)] font-semibold mt-1">Struktur COA</span>
           </div>
         </div>
 
         {/* Tab Selection */}
-        <div className="flex border-b border-blue-950/80 mb-6 gap-2 overflow-x-auto pb-1">
+        <div className="flex border-b border-[var(--app-border)]/80 mb-6 gap-2 overflow-x-auto pb-1">
           {['Semua Akun', 'Akun Aktif', 'Akun Non Aktif', 'Akun Header', 'Akun Detail'].map((tab) => (
             <button
               key={tab}
@@ -399,7 +345,7 @@ export default function AkunDashboard() {
               className={`px-4 py-2 text-xs font-semibold whitespace-nowrap transition-all duration-200 border-b-2 -mb-[2px] ${
                 activeTab === tab 
                   ? 'border-blue-500 text-blue-400 font-bold' 
-                  : 'border-transparent text-gray-400 hover:text-gray-200'
+                  : 'border-transparent text-[var(--app-muted)] hover:text-[var(--app-text)]'
               }`}
             >
               {tab}
@@ -432,10 +378,10 @@ export default function AkunDashboard() {
               </ResponsiveContainer>
               <div className="absolute text-center">
                 <p className="text-lg font-bold text-white">{totalAkun}</p>
-                <p className="text-[8px] text-gray-400">Total Akun</p>
+                <p className="text-[8px] text-[var(--app-muted)]">Total Akun</p>
               </div>
             </div>
-            <div className="space-y-1.5 text-[9px] text-gray-400 w-full">
+            <div className="space-y-1.5 text-[9px] text-[var(--app-muted)] w-full">
               <h3 className="text-xs font-bold text-white mb-2 uppercase tracking-wider">Struktur Akun</h3>
               <div className="grid grid-cols-2 gap-2">
                 {donutChartData.map((item, index) => (
@@ -450,7 +396,7 @@ export default function AkunDashboard() {
 
           {/* Bar Chart: Distribusi Level Akun */}
           <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
-            <h3 className="text-xs font-bold text-gray-200 uppercase tracking-wider mb-3">Distribusi Level Akun</h3>
+            <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-3">Distribusi Level Akun</h3>
             <div className="h-28">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={distributionLevelData}>
@@ -465,8 +411,8 @@ export default function AkunDashboard() {
 
           {/* Saldo Per Kategori */}
           <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
-            <h3 className="text-xs font-bold text-gray-200 uppercase tracking-wider mb-3">Saldo per Kategori</h3>
-            <div className="space-y-1.5 text-xs text-gray-300">
+            <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-3">Saldo per Kategori</h3>
+            <div className="space-y-1.5 text-xs text-[var(--app-text)]/90">
               <div className="flex justify-between items-center">
                 <span className="text-blue-400 font-semibold">● Aset</span>
                 <span>Rp 253.410.000</span>
@@ -487,7 +433,7 @@ export default function AkunDashboard() {
                 <span className="text-rose-400 font-semibold">● Beban</span>
                 <span>Rp 88.450.000</span>
               </div>
-              <div className="flex justify-between items-center border-t border-blue-950/80 pt-2 font-bold text-white text-[13px]">
+              <div className="flex justify-between items-center border-t border-[var(--app-border)]/80 pt-2 font-bold text-white text-[13px]">
                 <span>Total Saldo</span>
                 <span>Rp 720.130.500</span>
               </div>
@@ -501,7 +447,7 @@ export default function AkunDashboard() {
           <div className="lg:col-span-8 bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
             <div className="flex flex-wrap items-center gap-3 mb-4 text-xs">
               <div className="relative flex-1 min-w-[150px]">
-                <Search className="absolute left-2.5 top-2 w-3.5 h-3.5 text-gray-400" />
+                <Search className="absolute left-2.5 top-2 w-3.5 h-3.5 text-[var(--app-muted)]" />
                 <input
                   type="text"
                   placeholder="Cari akun..."
@@ -563,7 +509,7 @@ export default function AkunDashboard() {
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
-                  <tr className="border-b border-blue-950/80 text-gray-400 font-semibold">
+                  <tr className="border-b border-[var(--app-border)]/80 text-[var(--app-muted)] font-semibold">
                     <th className="py-2.5">KODE AKUN</th>
                     <th className="py-2.5">NAMA AKUN</th>
                     <th className="py-2.5">KATEGORI</th>
@@ -574,7 +520,7 @@ export default function AkunDashboard() {
                     <th className="py-2.5 text-right">SALDO (KREDIT)</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-blue-950/40 text-gray-300">
+                <tbody className="divide-y divide-blue-950/40 text-[var(--app-text)]/90">
                   {filteredAccounts.map((acc) => {
                     const isCollapsed = collapsedNodes[acc.code];
                     const hasChildren = accounts.some(child => child.parent === acc.code);
@@ -607,7 +553,7 @@ export default function AkunDashboard() {
                           </div>
                         </td>
                         <td className="py-2.5">{acc.category}</td>
-                        <td className="py-2.5 text-gray-400">{acc.level}</td>
+                        <td className="py-2.5 text-[var(--app-muted)]">{acc.level}</td>
                         <td className="py-2.5">
                           <span className={`px-1.5 py-0.5 rounded text-[9px] ${
                             acc.type === 'Header' ? 'bg-purple-500/15 text-purple-300' : 'bg-cyan-500/15 text-cyan-300'
@@ -632,7 +578,7 @@ export default function AkunDashboard() {
             </div>
 
             {/* Table Pagination */}
-            <div className="flex justify-between items-center mt-4 pt-4 border-t border-blue-950/60 text-[11px] text-gray-400">
+            <div className="flex justify-between items-center mt-4 pt-4 border-t border-[var(--app-border)]/60 text-[11px] text-[var(--app-muted)]">
               <span>Menampilkan 1 - {filteredAccounts.length} dari {totalAkun} akun</span>
               <div className="flex items-center gap-1.5">
                 <button className="px-2 py-0.5 rounded bg-blue-600 text-white">1</button>
@@ -646,8 +592,8 @@ export default function AkunDashboard() {
 
           {/* Account Detail Panel */}
           <div className="lg:col-span-4 bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5 space-y-5">
-            <div className="flex justify-between items-center pb-2 border-b border-blue-950/60">
-              <h3 className="text-xs font-bold text-gray-200 uppercase tracking-wider">Detail Akun</h3>
+            <div className="flex justify-between items-center pb-2 border-b border-[var(--app-border)]/60">
+              <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider">Detail Akun</h3>
               <span className={`px-2 py-0.5 rounded text-[10px] ${
                 selectedAcc.status === 'Aktif' ? 'bg-emerald-500/15 text-emerald-400' : 'bg-rose-500/15 text-rose-400'
               }`}>
@@ -655,65 +601,65 @@ export default function AkunDashboard() {
               </span>
             </div>
 
-            <div className="space-y-3.5 text-xs text-gray-300">
+            <div className="space-y-3.5 text-xs text-[var(--app-text)]/90">
               <div className="grid grid-cols-3">
-                <span className="text-gray-400">Kode Akun</span>
+                <span className="text-[var(--app-muted)]">Kode Akun</span>
                 <span className="col-span-2 font-mono font-semibold text-white">{selectedAcc.code}</span>
               </div>
               <div className="grid grid-cols-3">
-                <span className="text-gray-400">Nama Akun</span>
+                <span className="text-[var(--app-muted)]">Nama Akun</span>
                 <span className="col-span-2 font-semibold text-white">{selectedAcc.name}</span>
               </div>
               <div className="grid grid-cols-3">
-                <span className="text-gray-400">Kategori</span>
+                <span className="text-[var(--app-muted)]">Kategori</span>
                 <span className="col-span-2">{selectedAcc.category}</span>
               </div>
               <div className="grid grid-cols-3">
-                <span className="text-gray-400">Tipe Akun</span>
+                <span className="text-[var(--app-muted)]">Tipe Akun</span>
                 <span className="col-span-2">{selectedAcc.type}</span>
               </div>
               <div className="grid grid-cols-3">
-                <span className="text-gray-400">Level</span>
+                <span className="text-[var(--app-muted)]">Level</span>
                 <span className="col-span-2">{selectedAcc.level}</span>
               </div>
               <div className="grid grid-cols-3">
-                <span className="text-gray-400">Saldo Normal</span>
+                <span className="text-[var(--app-muted)]">Saldo Normal</span>
                 <span className="col-span-2 text-cyan-400 font-semibold">{selectedAcc.debit > 0 ? 'Debit' : 'Kredit'}</span>
               </div>
               <div className="grid grid-cols-3">
-                <span className="text-gray-400">Saldo (Debit)</span>
+                <span className="text-[var(--app-muted)]">Saldo (Debit)</span>
                 <span className="col-span-2 font-mono">{formatRupiah(selectedAcc.debit)}</span>
               </div>
               <div className="grid grid-cols-3">
-                <span className="text-gray-400">Saldo (Kredit)</span>
+                <span className="text-[var(--app-muted)]">Saldo (Kredit)</span>
                 <span className="col-span-2 font-mono">{formatRupiah(selectedAcc.kredit)}</span>
               </div>
-              <div className="grid grid-cols-3 border-t border-blue-950 pt-3">
-                <span className="text-gray-400">Deskripsi</span>
-                <span className="col-span-2 text-gray-400 italic">{selectedAcc.desc}</span>
+              <div className="grid grid-cols-3 border-t border-[var(--app-border)] pt-3">
+                <span className="text-[var(--app-muted)]">Deskripsi</span>
+                <span className="col-span-2 text-[var(--app-muted)] italic">{selectedAcc.desc}</span>
               </div>
               <div className="grid grid-cols-3">
-                <span className="text-gray-400">Dibuat Oleh</span>
+                <span className="text-[var(--app-muted)]">Dibuat Oleh</span>
                 <span className="col-span-2">{selectedAcc.creator}</span>
               </div>
               <div className="grid grid-cols-3">
-                <span className="text-gray-400">Dibuat Pada</span>
-                <span className="col-span-2 text-gray-400">{selectedAcc.dateCreated}</span>
+                <span className="text-[var(--app-muted)]">Dibuat Pada</span>
+                <span className="col-span-2 text-[var(--app-muted)]">{selectedAcc.dateCreated}</span>
               </div>
               <div className="grid grid-cols-3">
-                <span className="text-gray-400">Diubah Oleh</span>
+                <span className="text-[var(--app-muted)]">Diubah Oleh</span>
                 <span className="col-span-2">{selectedAcc.changer}</span>
               </div>
               <div className="grid grid-cols-3">
-                <span className="text-gray-400">Diubah Pada</span>
-                <span className="col-span-2 text-gray-400">{selectedAcc.dateChanged}</span>
+                <span className="text-[var(--app-muted)]">Diubah Pada</span>
+                <span className="col-span-2 text-[var(--app-muted)]">{selectedAcc.dateChanged}</span>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 pt-4 border-t border-blue-950">
+            <div className="grid grid-cols-2 gap-3 pt-4 border-t border-[var(--app-border)]">
               <button 
                 onClick={() => alert(`Mengedit akun ${selectedAcc.name}...`)}
-                className="bg-blue-600 hover:bg-blue-500 py-2 rounded text-white font-semibold text-center text-xs"
+                className="bg-blue-600 hover:bg-blue-500 py-2 rounded text-[var(--app-text)] font-semibold text-center text-xs"
               >
                 Edit Akun
               </button>
@@ -730,12 +676,12 @@ export default function AkunDashboard() {
         {/* Modal: Tambah Akun Baru */}
         {showAddModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-            <div className="w-full max-w-md bg-[#0A1629] border border-blue-900/60 rounded-xl p-6 shadow-2xl">
-              <div className="flex justify-between items-center mb-4 pb-3 border-b border-blue-950">
+            <div className="w-full max-w-md bg-[#0A1629] border border-[var(--app-border)] rounded-xl p-6 shadow-2xl">
+              <div className="flex justify-between items-center mb-4 pb-3 border-b border-[var(--app-border)]">
                 <h3 className="text-sm font-bold text-white">Buat Akun Baru</h3>
                 <button 
                   onClick={() => setShowAddModal(false)}
-                  className="text-gray-400 hover:text-white text-xs"
+                  className="text-[var(--app-muted)] hover:text-white text-xs"
                 >
                   Batal
                 </button>
@@ -743,36 +689,36 @@ export default function AkunDashboard() {
               <form onSubmit={handleAddAccount} className="space-y-4 text-xs">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-gray-400 mb-1">Kode Akun</label>
+                    <label className="block text-[var(--app-muted)] mb-1">Kode Akun</label>
                     <input
                       type="text"
                       required
                       placeholder="Contoh: 1.1.1.04"
                       value={newCode}
                       onChange={(e) => setNewCode(e.target.value)}
-                      className="w-full p-2.5 rounded bg-[#081225] border border-blue-900/40 text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500"
+                      className="w-full p-2.5 rounded bg-[#081225] border border-[var(--app-border)] text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-gray-400 mb-1">Nama Akun</label>
+                    <label className="block text-[var(--app-muted)] mb-1">Nama Akun</label>
                     <input
                       type="text"
                       required
                       placeholder="Contoh: Kas Kecil"
                       value={newName}
                       onChange={(e) => setNewName(e.target.value)}
-                      className="w-full p-2.5 rounded bg-[#081225] border border-blue-900/40 text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500"
+                      className="w-full p-2.5 rounded bg-[#081225] border border-[var(--app-border)] text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-gray-400 mb-1">Kategori</label>
+                    <label className="block text-[var(--app-muted)] mb-1">Kategori</label>
                     <select
                       value={newCategory}
                       onChange={(e) => setNewCategory(e.target.value)}
-                      className="w-full p-2.5 rounded bg-[#081225] border border-blue-900/40 text-white focus:outline-none focus:border-cyan-500"
+                      className="w-full p-2.5 rounded bg-[#081225] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
                     >
                       <option>Aset</option>
                       <option>Liabilitas</option>
@@ -782,11 +728,11 @@ export default function AkunDashboard() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-gray-400 mb-1">Level</label>
+                    <label className="block text-[var(--app-muted)] mb-1">Level</label>
                     <select
                       value={newLevel}
                       onChange={(e) => setNewLevel(Number(e.target.value))}
-                      className="w-full p-2.5 rounded bg-[#081225] border border-blue-900/40 text-white focus:outline-none focus:border-cyan-500"
+                      className="w-full p-2.5 rounded bg-[#081225] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
                     >
                       <option>1</option>
                       <option>2</option>
@@ -796,11 +742,11 @@ export default function AkunDashboard() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-gray-400 mb-1">Tipe</label>
+                    <label className="block text-[var(--app-muted)] mb-1">Tipe</label>
                     <select
                       value={newType}
                       onChange={(e) => setNewType(e.target.value)}
-                      className="w-full p-2.5 rounded bg-[#081225] border border-blue-900/40 text-white focus:outline-none focus:border-cyan-500"
+                      className="w-full p-2.5 rounded bg-[#081225] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
                     >
                       <option>Detail</option>
                       <option>Header</option>
@@ -810,41 +756,41 @@ export default function AkunDashboard() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-gray-400 mb-1">Saldo Awal (Debit)</label>
+                    <label className="block text-[var(--app-muted)] mb-1">Saldo Awal (Debit)</label>
                     <input
                       type="number"
                       placeholder="0"
                       value={newDebit}
                       onChange={(e) => setNewDebit(e.target.value)}
-                      className="w-full p-2.5 rounded bg-[#081225] border border-blue-900/40 text-white focus:outline-none focus:border-cyan-500"
+                      className="w-full p-2.5 rounded bg-[#081225] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-gray-400 mb-1">Saldo Awal (Kredit)</label>
+                    <label className="block text-[var(--app-muted)] mb-1">Saldo Awal (Kredit)</label>
                     <input
                       type="number"
                       placeholder="0"
                       value={newKredit}
                       onChange={(e) => setNewKredit(e.target.value)}
-                      className="w-full p-2.5 rounded bg-[#081225] border border-blue-900/40 text-white focus:outline-none focus:border-cyan-500"
+                      className="w-full p-2.5 rounded bg-[#081225] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-gray-400 mb-1">Deskripsi Akun</label>
+                  <label className="block text-[var(--app-muted)] mb-1">Deskripsi Akun</label>
                   <textarea
                     rows={2}
                     placeholder="Deskripsi singkat akun..."
                     value={newDesc}
                     onChange={(e) => setNewDesc(e.target.value)}
-                    className="w-full p-2.5 rounded bg-[#081225] border border-blue-900/40 text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500"
+                    className="w-full p-2.5 rounded bg-[#081225] border border-[var(--app-border)] text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full py-2.5 rounded bg-blue-600 hover:bg-blue-500 text-white font-semibold transition-colors mt-2"
+                  className="w-full py-2.5 rounded bg-blue-600 hover:bg-blue-500 text-[var(--app-text)] font-semibold transition-colors mt-2"
                 >
                   Simpan Akun
                 </button>

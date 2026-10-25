@@ -21,6 +21,26 @@ services:
     volumes:
       - redis_data:/data
 
+  waha:
+    image: devlikeapro/waha:latest
+    container_name: audira-waha-gateway
+    restart: unless-stopped
+    ports:
+      - "3220:3000"
+    environment:
+      - WAHA_ZIP_LOGS=false
+      - WAHA_PRINT_QR=true
+      - WHATSAPP_DEFAULT_ENGINE=NOWEB
+      - WAHA_API_KEY=audira-secret-key-2026
+      - WAHA_DASHBOARD_USERNAME=admin
+      - WAHA_DASHBOARD_PASSWORD=audirapassword
+      - WHATSAPP_SWAGGER_USERNAME=admin
+      - WHATSAPP_SWAGGER_PASSWORD=audirapassword
+    volumes:
+      - waha_data:/app/.sessions
+
 volumes:
   postgres_data:
   redis_data:
+  waha_data:
+

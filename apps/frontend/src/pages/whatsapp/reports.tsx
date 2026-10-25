@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React, { useState } from 'react';
 import Layout from '@/components/Layout';
 import {
@@ -86,14 +87,14 @@ const tableData = [
 // ─── Sub-components ──────────────────────────────────────────────────────────
 
 const KpiCard = ({ icon: Icon, iconBg, iconColor, label, value, change, changeColor }: any) => (
-  <div className="bg-[#0b1329] border border-[#131d35] rounded-xl p-3 flex flex-col gap-1.5 min-w-0">
+  <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-3 flex flex-col gap-1.5 min-w-0">
     <div className="flex items-center gap-2">
       <div className={`p-2 rounded-lg ${iconBg} border`} style={{ borderColor: iconColor + '30' }}>
         <Icon size={14} style={{ color: iconColor }} />
       </div>
-      <p className="text-[9px] text-gray-400 font-bold uppercase tracking-wide leading-tight">{label}</p>
+      <p className="text-[9px] text-[var(--app-muted)] font-bold uppercase tracking-wide leading-tight">{label}</p>
     </div>
-    <p className="text-xl font-black text-white leading-none">{value}</p>
+    <p className="text-xl font-black text-[var(--app-text)] leading-none">{value}</p>
     <p className={`text-[9px] font-semibold ${changeColor}`}>{change}</p>
   </div>
 );
@@ -125,16 +126,16 @@ const DonutChart = ({ data, total, label }: { data: { value: number; color: stri
           ))}
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <p className="text-xs font-black text-white leading-none">{total}</p>
-          <p className="text-[6px] text-gray-500 font-bold uppercase">{label}</p>
+          <p className="text-xs font-black text-[var(--app-text)] leading-none">{total}</p>
+          <p className="text-[6px] text-[var(--app-muted)] font-bold uppercase">{label}</p>
         </div>
       </div>
       <div className="space-y-1">
         {data.map((d, i) => (
           <div key={i} className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: d.color }} />
-            <span className="text-[8px] text-gray-400 leading-none">{d.name}</span>
-            <span className="text-[8px] text-white font-bold ml-auto pl-2">{d.pct}</span>
+            <span className="text-[8px] text-[var(--app-muted)] leading-none">{d.name}</span>
+            <span className="text-[8px] text-[var(--app-text)] font-bold ml-auto pl-2">{d.pct}</span>
           </div>
         ))}
       </div>
@@ -149,10 +150,10 @@ const HorizontalBar = ({ data }: { data: { name: string; value: number }[] }) =>
       {data.map((d, i) => (
         <div key={i} className="space-y-0.5">
           <div className="flex justify-between text-[9px]">
-            <span className="text-gray-400 truncate">{d.name}</span>
-            <span className="text-white font-bold ml-2 shrink-0">{d.value.toLocaleString()} ({Math.round(d.value / max * 100)}%)</span>
+            <span className="text-[var(--app-muted)] truncate">{d.name}</span>
+            <span className="text-[var(--app-text)] font-bold ml-2 shrink-0">{d.value.toLocaleString()} ({Math.round(d.value / max * 100)}%)</span>
           </div>
-          <div className="h-1.5 bg-[#131d35] rounded-full overflow-hidden">
+          <div className="h-1.5 bg-[var(--app-border)]/20 rounded-full overflow-hidden">
             <div className="h-full bg-blue-500 rounded-full" style={{ width: `${(d.value / max) * 100}%` }} />
           </div>
         </div>
@@ -176,11 +177,11 @@ const Heatmap = () => {
       <div className="grid gap-0.5" style={{ gridTemplateColumns: `40px repeat(${heatmapDays.length}, 1fr)` }}>
         <div />
         {heatmapDays.map(d => (
-          <div key={d} className="text-center text-[8px] text-gray-500 font-bold pb-1">{d}</div>
+          <div key={d} className="text-center text-[8px] text-[var(--app-muted)] font-bold pb-1">{d}</div>
         ))}
         {heatmapSlots.map((slot, si) => (
           <React.Fragment key={slot}>
-            <div className="text-[8px] text-gray-500 font-bold flex items-center pr-1 justify-end">{slot}</div>
+            <div className="text-[8px] text-[var(--app-muted)] font-bold flex items-center pr-1 justify-end">{slot}</div>
             {heatmapValues[si].map((val, di) => (
               <div key={di} className="h-5 rounded-sm transition-all hover:scale-110 cursor-default"
                 style={{ backgroundColor: getColor(val) }}
@@ -190,11 +191,11 @@ const Heatmap = () => {
         ))}
       </div>
       <div className="flex items-center gap-1.5 mt-2 justify-end">
-        <span className="text-[8px] text-gray-500">Rendah</span>
+        <span className="text-[8px] text-[var(--app-muted)]">Rendah</span>
         {['#0d1e3a', '#1e3a6b', '#1d4ed8', '#3b82f6', '#60a5fa'].map(c => (
           <div key={c} className="w-3 h-3 rounded-sm" style={{ backgroundColor: c }} />
         ))}
-        <span className="text-[8px] text-gray-500">Tinggi</span>
+        <span className="text-[8px] text-[var(--app-muted)]">Tinggi</span>
       </div>
     </div>
   );
@@ -228,18 +229,18 @@ function TabRingkasan() {
           {/* Row 1: Line, Donut Status, Response Rate */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Tren Pesan */}
-            <div className="md:col-span-2 bg-[#0b1329] border border-[#131d35] rounded-xl p-4 space-y-3">
+            <div className="md:col-span-2 bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4 space-y-3">
               <div className="flex justify-between items-center">
                 <div>
-                  <h4 className="text-xs font-bold text-white">Tren Pesan (6 Bulan Terakhir)</h4>
+                  <h4 className="text-xs font-bold text-[var(--app-text)]">Tren Pesan (6 Bulan Terakhir)</h4>
                 </div>
-                <select className="bg-[#080d19] border border-[#131d35] text-[9px] py-1 px-2 rounded-lg text-gray-300 focus:outline-none">
+                <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-[9px] py-1 px-2 rounded-lg text-[var(--app-text)]/80 focus:outline-none">
                   <option>6 Bulan Terakhir</option>
                 </select>
               </div>
               <ResponsiveContainer width="100%" height={160}>
                 <LineChart data={trendData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#131d35" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                   <XAxis dataKey="month" tick={{ fontSize: 9, fill: '#6b7280' }} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fontSize: 9, fill: '#6b7280' }} axisLine={false} tickLine={false} tickFormatter={v => `${(v/1000).toFixed(0)}K`} />
                   <Tooltip contentStyle={{ background: '#0b1329', border: '1px solid #131d35', borderRadius: 8, fontSize: 10 }} />
@@ -253,17 +254,17 @@ function TabRingkasan() {
             </div>
 
             {/* Distribusi Status Pesan */}
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-xl p-4 space-y-3">
-              <h4 className="text-xs font-bold text-white">Distribusi Status Pesan</h4>
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4 space-y-3">
+              <h4 className="text-xs font-bold text-[var(--app-text)]">Distribusi Status Pesan</h4>
               <DonutChart data={statusDistData} total="48.765" label="Total Pesan" />
               <div className="space-y-1 mt-2">
                 {statusDistData.map((d, i) => (
                   <div key={i} className="flex justify-between text-[9px]">
                     <span className="flex items-center gap-1">
                       <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: d.color }} />
-                      <span className="text-gray-400">{d.name}</span>
+                      <span className="text-[var(--app-muted)]">{d.name}</span>
                     </span>
-                    <span className="text-white font-bold">{d.value.toLocaleString()} ({d.pct})</span>
+                    <span className="text-[var(--app-text)] font-bold">{d.value.toLocaleString()} ({d.pct})</span>
                   </div>
                 ))}
               </div>
@@ -272,16 +273,16 @@ function TabRingkasan() {
 
           {/* Row 2: Tingkat Respons */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-xl p-4 space-y-3">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4 space-y-3">
               <div className="flex justify-between items-center">
-                <h4 className="text-xs font-bold text-white">Tingkat Respons (Response Rate)</h4>
-                <select className="bg-[#080d19] border border-[#131d35] text-[9px] py-1 px-2 rounded-lg text-gray-300 focus:outline-none">
+                <h4 className="text-xs font-bold text-[var(--app-text)]">Tingkat Respons (Response Rate)</h4>
+                <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-[9px] py-1 px-2 rounded-lg text-[var(--app-text)]/80 focus:outline-none">
                   <option>6 Bulan Terakhir</option>
                 </select>
               </div>
               <ResponsiveContainer width="100%" height={110}>
                 <LineChart data={responseRateData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#131d35" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                   <XAxis dataKey="month" tick={{ fontSize: 9, fill: '#6b7280' }} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fontSize: 9, fill: '#6b7280' }} axisLine={false} tickLine={false} tickFormatter={v => `${v}%`} />
                   <Tooltip contentStyle={{ background: '#0b1329', border: '1px solid #131d35', borderRadius: 8, fontSize: 10 }} formatter={(v: any) => [`${v}%`, 'Response Rate']} />
@@ -291,15 +292,15 @@ function TabRingkasan() {
             </div>
 
             {/* Pesan per Channel */}
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-xl p-4 space-y-3">
-              <h4 className="text-xs font-bold text-white">Pesan per Channel / Nomor</h4>
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4 space-y-3">
+              <h4 className="text-xs font-bold text-[var(--app-text)]">Pesan per Channel / Nomor</h4>
               <DonutChart data={channelData} total="48.765" label="Total Pesan" />
             </div>
 
             {/* Pesan per Campaign */}
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-xl p-4 space-y-3">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4 space-y-3">
               <div className="flex justify-between items-center">
-                <h4 className="text-xs font-bold text-white">Pesan per Campaign (Top 5)</h4>
+                <h4 className="text-xs font-bold text-[var(--app-text)]">Pesan per Campaign (Top 5)</h4>
                 <span className="text-[9px] text-blue-400 bg-blue-500/10 border border-blue-500/20 px-2 py-0.5 rounded">Top 5</span>
               </div>
               <HorizontalBar data={campaignData} />
@@ -308,43 +309,43 @@ function TabRingkasan() {
 
           {/* Row 3: Heatmap + Message Type */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-xl p-4 space-y-3">
-              <h4 className="text-xs font-bold text-white">Distribusi Waktu Pengiriman</h4>
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4 space-y-3">
+              <h4 className="text-xs font-bold text-[var(--app-text)]">Distribusi Waktu Pengiriman</h4>
               <Heatmap />
             </div>
 
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-xl p-4 space-y-3">
-              <h4 className="text-xs font-bold text-white">Tipe Pesan</h4>
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4 space-y-3">
+              <h4 className="text-xs font-bold text-[var(--app-text)]">Tipe Pesan</h4>
               <DonutChart data={messagetypeData} total="48.765" label="Total Pesan" />
             </div>
           </div>
 
           {/* Detail Table */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-xl p-4 space-y-4">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4 space-y-4">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-              <h4 className="text-xs font-bold text-white">Detail Performa WhatsApp</h4>
+              <h4 className="text-xs font-bold text-[var(--app-text)]">Detail Performa WhatsApp</h4>
               <div className="flex items-center gap-2">
                 <div className="relative">
-                  <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--app-muted)]" />
                   <input type="text" placeholder="Cari campaign, nomor, agent..."
-                    className="bg-[#080d19] border border-[#131d35] text-[10px] pl-8 pr-3 py-1.5 rounded-lg text-white focus:outline-none w-48" />
+                    className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs pl-8 pr-3 py-1.5 rounded-lg text-[var(--app-text)] placeholder-[var(--app-text-dim)] focus:outline-none focus:border-blue-500 w-48 transition-colors" />
                 </div>
                 <button className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg transition-colors">
                   <Filter size={11} /> Filter
                 </button>
-                <button className="p-1.5 bg-[#080d19] border border-[#131d35] rounded-lg hover:bg-[#121c38] text-gray-400">
+                <button className="p-1.5 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg hover:bg-[var(--app-border)]/30 text-[var(--app-muted)]">
                   <BarChart2 size={14} />
                 </button>
-                <button className="p-1.5 bg-[#080d19] border border-[#131d35] rounded-lg hover:bg-[#121c38] text-gray-400">
+                <button className="p-1.5 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg hover:bg-[var(--app-border)]/30 text-[var(--app-muted)]">
                   <FileText size={14} />
                 </button>
               </div>
             </div>
 
-            <div className="overflow-x-auto rounded-xl border border-[#131d35]">
-              <table className="w-full text-left border-collapse text-[9px] text-gray-300 min-w-[900px]">
+            <div className="overflow-x-auto rounded-xl border border-[var(--app-border)]">
+              <table className="w-full text-left border-collapse text-[9px] text-[var(--app-text)]/80 min-w-[900px]">
                 <thead>
-                  <tr className="border-b border-[#131d35] bg-[#101935]/60 text-gray-400 font-bold uppercase">
+                  <tr className="border-b border-[var(--app-border)] bg-[var(--app-border)]/20 text-[var(--app-muted)] font-bold uppercase">
                     <th className="px-3 py-2.5">No</th>
                     <th className="px-3 py-2.5">Channel / Nomor</th>
                     <th className="px-3 py-2.5">Campaign</th>
@@ -359,32 +360,32 @@ function TabRingkasan() {
                     <th className="px-3 py-2.5 text-center">Aksi</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#131d35]">
+                <tbody className="divide-y divide-[var(--app-border)]">
                   {tableData.map((row) => (
-                    <tr key={row.no} className="hover:bg-[#121c38]/40 transition-colors">
-                      <td className="px-3 py-2.5 text-gray-500 font-bold">{row.no}</td>
+                    <tr key={row.no} className="hover:bg-[var(--app-border)]/20 transition-colors">
+                      <td className="px-3 py-2.5 text-[var(--app-muted)] font-bold">{row.no}</td>
                       <td className="px-3 py-2.5">
-                        <p className="text-white font-bold leading-none">{row.channel}</p>
-                        <p className="text-[8px] text-gray-500 mt-0.5">{row.number}</p>
+                        <p className="text-[var(--app-text)] font-bold leading-none">{row.channel}</p>
+                        <p className="text-[8px] text-[var(--app-muted)] mt-0.5">{row.number}</p>
                       </td>
-                      <td className="px-3 py-2.5 text-gray-300">{row.campaign}</td>
-                      <td className="px-3 py-2.5 text-center font-bold text-white">{row.terkirim.toLocaleString()}</td>
-                      <td className="px-3 py-2.5 text-center text-gray-400">{row.sukses.toLocaleString()}</td>
-                      <td className="px-3 py-2.5 text-center text-gray-400">{row.diterima.toLocaleString()}</td>
-                      <td className="px-3 py-2.5 text-center text-gray-400">{row.dibaca.toLocaleString()}</td>
-                      <td className="px-3 py-2.5 text-center text-gray-400">{row.dibalas.toLocaleString()}</td>
+                      <td className="px-3 py-2.5 text-[var(--app-text)]/80">{row.campaign}</td>
+                      <td className="px-3 py-2.5 text-center font-bold text-[var(--app-text)]">{row.terkirim.toLocaleString()}</td>
+                      <td className="px-3 py-2.5 text-center text-[var(--app-muted)]">{row.sukses.toLocaleString()}</td>
+                      <td className="px-3 py-2.5 text-center text-[var(--app-muted)]">{row.diterima.toLocaleString()}</td>
+                      <td className="px-3 py-2.5 text-center text-[var(--app-muted)]">{row.dibaca.toLocaleString()}</td>
+                      <td className="px-3 py-2.5 text-center text-[var(--app-muted)]">{row.dibalas.toLocaleString()}</td>
                       <td className="px-3 py-2.5 text-center font-bold text-green-400">{row.responseRate}</td>
                       <td className="px-3 py-2.5 text-center font-bold text-blue-400">{row.readRate}</td>
                       <td className="px-3 py-2.5 text-center font-bold text-red-400">{row.gagal.toLocaleString()}</td>
                       <td className="px-3 py-2.5">
                         <div className="flex items-center justify-center gap-1.5">
-                          <button className="p-1 hover:bg-[#1a2a4a] rounded text-gray-400 hover:text-blue-400 transition-colors" title="Lihat Detail">
+                          <button className="p-1 hover:bg-[var(--app-border)]/30 rounded text-[var(--app-muted)] hover:text-blue-400 transition-colors" title="Lihat Detail">
                             <Eye size={12} />
                           </button>
-                          <button className="p-1 hover:bg-[#1a2a4a] rounded text-gray-400 hover:text-green-400 transition-colors" title="Download">
+                          <button className="p-1 hover:bg-[var(--app-border)]/30 rounded text-[var(--app-muted)] hover:text-green-400 transition-colors" title="Download">
                             <Download size={12} />
                           </button>
-                          <button className="p-1 hover:bg-[#1a2a4a] rounded text-gray-400 transition-colors" title="Lainnya">
+                          <button className="p-1 hover:bg-[var(--app-border)]/30 rounded text-[var(--app-muted)] transition-colors" title="Lainnya">
                             <MoreVertical size={12} />
                           </button>
                         </div>
@@ -397,21 +398,21 @@ function TabRingkasan() {
 
             {/* Pagination */}
             <div className="flex flex-col sm:flex-row justify-between items-center gap-3">
-              <p className="text-[9px] text-gray-500">Menampilkan 1 - 5 dari 24 data</p>
+              <p className="text-[9px] text-[var(--app-muted)]">Menampilkan 1 - 5 dari 24 data</p>
               <div className="flex items-center gap-2">
-                <button className="p-1.5 bg-[#080d19] border border-[#131d35] rounded-lg text-gray-400 hover:bg-[#121c38]">
+                <button className="p-1.5 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-[var(--app-muted)] hover:bg-[var(--app-border)]/30">
                   <ChevronLeft size={12} />
                 </button>
                 {[1, 2, 3, 4, 5].map(p => (
                   <button key={p} onClick={() => setCurrentPage(p)}
-                    className={`w-6 h-6 text-[9px] rounded-md font-bold transition-all ${currentPage === p ? 'bg-blue-600 text-white' : 'bg-[#080d19] border border-[#131d35] text-gray-400 hover:bg-[#121c38]'}`}>
+                    className={`w-6 h-6 text-[9px] rounded-md font-bold transition-all ${currentPage === p ? 'bg-blue-600 text-white' : 'bg-[var(--app-bg)] border border-[var(--app-border)] text-[var(--app-muted)] hover:bg-[var(--app-border)]/30'}`}>
                     {p}
                   </button>
                 ))}
-                <button className="p-1.5 bg-[#080d19] border border-[#131d35] rounded-lg text-gray-400 hover:bg-[#121c38]">
+                <button className="p-1.5 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-[var(--app-muted)] hover:bg-[var(--app-border)]/30">
                   <ChevronRight size={12} />
                 </button>
-                <select className="bg-[#080d19] border border-[#131d35] text-[9px] py-1.5 px-2 rounded-lg text-gray-300 focus:outline-none">
+                <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-[9px] py-1.5 px-2 rounded-lg text-[var(--app-text)]/80 focus:outline-none">
                   <option>10 / halaman</option>
                   <option>25 / halaman</option>
                   <option>50 / halaman</option>
@@ -424,11 +425,11 @@ function TabRingkasan() {
         {/* Right: Sidebar */}
         <div className="lg:col-span-3 space-y-4">
           {/* Filter Cepat */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-xl p-4 space-y-4">
-            <h4 className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Filter Cepat</h4>
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4 space-y-4">
+            <h4 className="text-[10px] font-bold uppercase tracking-wider text-[var(--app-muted)]">Filter Cepat</h4>
             <div className="grid grid-cols-3 gap-1.5">
               {['7 Hari', '30 Hari', 'Bulan Ini', '3 Bulan', '6 Bulan', 'Tahun Ini'].map((t, i) => (
-                <button key={t} className={`text-[9px] font-bold py-1.5 px-2 rounded-lg border transition-all ${i === 4 ? 'bg-blue-600 border-blue-500 text-white' : 'bg-[#080d19] border-[#131d35] text-gray-400 hover:bg-[#121c38]'}`}>
+                <button key={t} className={`text-[9px] font-bold py-1.5 px-2 rounded-lg border transition-all ${i === 4 ? 'bg-blue-600 border-blue-500 text-white' : 'bg-[var(--app-bg)] border-[var(--app-border)] text-[var(--app-muted)] hover:bg-[var(--app-border)]/30'}`}>
                   {t}
                 </button>
               ))}
@@ -442,8 +443,8 @@ function TabRingkasan() {
                 { label: 'Status Pesan', opt: 'Semua Status' },
               ].map(f => (
                 <div key={f.label} className="space-y-1">
-                  <span className="text-[8px] text-gray-500 font-bold uppercase">{f.label}</span>
-                  <select className="w-full bg-[#080d19] border border-[#131d35] text-[9px] py-1.5 px-2.5 rounded-lg text-white focus:outline-none">
+                  <span className="text-[10px] text-[var(--app-text-muted)] font-semibold uppercase">{f.label}</span>
+                  <select className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-1.5 px-2.5 rounded-lg text-[var(--app-text)] focus:outline-none focus:border-blue-500">
                     <option>{f.opt}</option>
                   </select>
                 </div>
@@ -455,8 +456,8 @@ function TabRingkasan() {
           </div>
 
           {/* Aksi Cepat */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-xl p-4 space-y-3">
-            <h4 className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Aksi Cepat</h4>
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4 space-y-3">
+            <h4 className="text-[10px] font-bold uppercase tracking-wider text-[var(--app-muted)]">Aksi Cepat</h4>
             <div className="space-y-1.5">
               {[
                 { label: 'Lihat Detail Pesan', icon: Eye, color: 'text-blue-400' },
@@ -466,20 +467,20 @@ function TabRingkasan() {
                 { label: 'Template Message Report', icon: FileText, color: 'text-purple-400' },
                 { label: 'Auto Reply Report', icon: Zap, color: 'text-cyan-400' },
               ].map(a => (
-                <button key={a.label} className="w-full flex items-center justify-between gap-2 bg-[#080d19] border border-[#131d35] hover:bg-[#121c38] p-2.5 rounded-lg text-[9px] font-semibold text-gray-300 transition-all group">
+                <button key={a.label} className="w-full flex items-center justify-between gap-2 bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 p-2.5 rounded-lg text-[9px] font-semibold text-[var(--app-text)]/80 transition-all group">
                   <span className="flex items-center gap-2">
                     <a.icon size={12} className={a.color} />
                     {a.label}
                   </span>
-                  <ChevronDown size={10} className="text-gray-600 group-hover:text-gray-400 -rotate-90" />
+                  <ChevronDown size={10} className="text-gray-600 group-hover:text-[var(--app-muted)] -rotate-90" />
                 </button>
               ))}
             </div>
           </div>
 
           {/* Insight & Rekomendasi */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-xl p-4 space-y-3">
-            <h4 className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Insight & Rekomendasi</h4>
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4 space-y-3">
+            <h4 className="text-[10px] font-bold uppercase tracking-wider text-[var(--app-muted)]">Insight & Rekomendasi</h4>
             <div className="space-y-2.5">
               {[
                 { text: 'Tingkat dibaca naik 2.45% dibanding periode sebelumnya.', color: 'text-green-400', bg: 'bg-green-500/10 border-green-500/20' },
@@ -505,7 +506,7 @@ function TabRingkasan() {
 
 function TabPlaceholder({ name }: { name: string }) {
   return (
-    <div className="flex flex-col items-center justify-center py-20 text-gray-500 space-y-3">
+    <div className="flex flex-col items-center justify-center py-20 text-[var(--app-muted)] space-y-3">
       <BarChart2 size={40} className="text-gray-700" />
       <p className="text-sm font-bold">Tab <span className="text-blue-400">{name}</span> sedang dalam pengembangan</p>
       <p className="text-xs">Fitur ini akan segera tersedia</p>
@@ -528,60 +529,33 @@ export default function WhatsappReportsPage() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-[#070c19] text-gray-200 p-4 md:p-5 space-y-4">
+      <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] p-4 md:p-6 space-y-6">
 
-        {/* ─── Page Header ──────────────────────────────────────────────── */}
-        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-start gap-3 border-b border-[#131d35] pb-4">
-          <div>
-            <div className="flex items-center gap-1.5 text-[9px] text-gray-400 font-semibold mb-1">
-              <span>Finance</span><span className="text-gray-600">›</span>
-              <span>Reports</span><span className="text-gray-600">›</span>
-              <span className="text-blue-400">WhatsApp Report</span>
+        {/* ─── Swiss B2B Reports Header ────────────────────────────────────────────── */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-[var(--app-border)] pb-5 mb-5">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 text-xs text-[var(--app-muted)] font-mono mb-1">
+              <Link href="/" className="hover:text-[var(--app-text)]">AUDIRA</Link>
+              <span>/</span>
+              <Link href="/whatsapp" className="hover:text-[var(--app-text)]">WhatsApp Gateway</Link>
+              <span>/</span>
+              <span className="text-emerald-500 font-semibold">Laporan Trafik WhatsApp</span>
             </div>
-            <h1 className="text-xl font-black text-white tracking-tight">WhatsApp Report</h1>
-            <p className="text-[10px] text-gray-400 mt-0.5">Laporan performa komunikasi dan interaksi WhatsApp dengan pelanggan.</p>
+            <h1 className="text-xl md:text-2xl font-bold tracking-tight text-[var(--app-text)]">
+              Analitik Pengiriman Pesan & Delivery Telemetry
+            </h1>
+            <p className="text-xs text-[var(--app-muted)]">
+              Statistik pengiriman broadcast, status pesan (Sent, Delivered, Read), response time CS, dan jam sibuk trafik.
+            </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 w-full xl:w-auto">
-            {/* Date + Status */}
-            <div className="flex items-center gap-2 bg-[#0b1329] border border-[#131d35] px-3 py-1.5 rounded-lg text-[9px] text-gray-300">
-              <Calendar size={11} className="text-blue-400" />
-              <span>01 Jul 2026</span>
-              <span className="text-gray-600">|</span>
-              <span className="text-[9px] font-bold">08:35 WIB</span>
-            </div>
-            <div className="flex items-center gap-1.5 bg-[#0b1329] border border-[#131d35] px-3 py-1.5 rounded-lg">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-              <span className="text-[9px] text-green-400 font-bold">Status Sistem</span>
-              <span className="text-[9px] text-gray-400">Norma</span>
-            </div>
-
-            {/* Search */}
-            <div className="relative">
-              <Search size={11} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
-              <input type="text" placeholder="Cari invoice, customer, paket, nomor invoice..."
-                className="bg-[#0b1329] border border-[#131d35] text-[9px] pl-8 pr-3 py-1.5 rounded-lg text-white focus:outline-none focus:border-blue-500 w-56" />
-              <kbd className="absolute right-2 top-1/2 -translate-y-1/2 text-[7px] text-gray-500 bg-[#131d35] px-1 py-0.5 rounded">Ctrl K</kbd>
-            </div>
-
-            {/* Actions */}
-            <div className="flex items-center gap-1.5">
-              <button className="relative p-1.5 bg-[#0b1329] border border-[#131d35] rounded-lg hover:bg-[#121c38] text-gray-400">
-                <Bell size={13} />
-                <span className="absolute -top-1 -right-1 bg-red-500 text-[7px] text-white w-3.5 h-3.5 rounded-full flex items-center justify-center font-bold">13</span>
-              </button>
-              <button className="relative p-1.5 bg-[#0b1329] border border-[#131d35] rounded-lg hover:bg-[#121c38] text-gray-400">
-                <Mail size={13} />
-                <span className="absolute -top-1 -right-1 bg-red-500 text-[7px] text-white w-3.5 h-3.5 rounded-full flex items-center justify-center font-bold">5</span>
-              </button>
-              <div className="flex items-center gap-1.5 pl-2 border-l border-[#131d35]">
-                <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-black text-[9px]">AR</div>
-                <div className="hidden md:block">
-                  <div className="text-[9px] font-bold text-white leading-none">Agus Dwi Rianto</div>
-                  <div className="text-[8px] text-gray-500 font-bold uppercase">Super Admin</div>
-                </div>
-              </div>
-            </div>
+          <div className="flex items-center gap-2.5">
+            <Link
+              href="/whatsapp/campaigns"
+              className="px-3 py-2 bg-[var(--app-card)] hover:bg-[var(--app-border)]/20 border border-[var(--app-border)] text-[var(--app-text)] text-xs font-semibold rounded-lg transition-all"
+            >
+              Semua Kampanye
+            </Link>
           </div>
         </div>
 
@@ -596,29 +570,29 @@ export default function WhatsappReportsPage() {
                 <Download size={12} /> Export <ChevronDown size={10} className={`transition-transform ${showExport ? 'rotate-180' : ''}`} />
               </button>
               {showExport && (
-                <div className="absolute left-0 top-full mt-1 z-10 bg-[#0b1329] border border-[#131d35] rounded-xl shadow-xl overflow-hidden w-40">
+                <div className="absolute left-0 top-full mt-1 z-10 bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl shadow-xl overflow-hidden w-40">
                   {[
                     { label: 'Export PDF', icon: FileDown, color: 'text-red-400' },
                     { label: 'Export Excel', icon: FileSpreadsheet, color: 'text-green-400' },
                     { label: 'Export CSV', icon: Download, color: 'text-blue-400' },
                   ].map(e => (
-                    <button key={e.label} className="w-full flex items-center gap-2 px-3 py-2 text-[10px] text-gray-300 hover:bg-[#121c38] transition-colors">
+                    <button key={e.label} className="w-full flex items-center gap-2 px-3 py-2 text-[10px] text-[var(--app-text)]/80 hover:bg-[var(--app-border)]/30 transition-colors">
                       <e.icon size={12} className={e.color} />{e.label}
                     </button>
                   ))}
                 </div>
               )}
             </div>
-            <button className="flex items-center gap-1.5 bg-[#0b1329] border border-[#131d35] hover:bg-[#121c38] text-white text-[10px] font-bold px-3 py-1.5 rounded-lg transition-colors">
+            <button className="flex items-center gap-1.5 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg transition-colors">
               <Calendar size={12} className="text-blue-400" /> Jadwalkan Laporan
             </button>
-            <button className="p-1.5 bg-[#0b1329] border border-[#131d35] rounded-lg hover:bg-[#121c38] text-gray-400">
+            <button className="p-1.5 bg-[var(--app-card)] border border-[var(--app-border)] rounded-lg hover:bg-[var(--app-border)]/30 text-[var(--app-muted)]">
               <MoreVertical size={13} />
             </button>
           </div>
-          <div className="flex items-center gap-2 text-[9px] text-gray-400">
-            <RefreshCw size={11} className="text-gray-500" />
-            <span>Data diperbarui: 01/07/2026 08:30 WIB</span>
+          <div className="flex items-center gap-2 text-[9px] text-[var(--app-muted)]">
+            <RefreshCw size={11} className="text-[var(--app-muted)]" />
+            <span>Data diperbarui: 22/10/2026 08:30 WIB</span>
             <span className="text-gray-600">|</span>
             <span>Auto-Update</span>
             <button onClick={() => setAutoUpdate(v => !v)}
@@ -629,11 +603,11 @@ export default function WhatsappReportsPage() {
         </div>
 
         {/* ─── Sub-Tabs ─────────────────────────────────────────────────── */}
-        <div className="flex items-center justify-between border-b border-[#131d35] pb-px overflow-x-auto">
-          <div className="flex gap-0.5 shrink-0">
+        <div className="flex items-center justify-between border-b border-[var(--app-border)] pb-px overflow-x-auto">
+          <div className="flex gap-1 shrink-0">
             {SUB_TABS.map(tab => (
               <button key={tab} onClick={() => setActiveTab(tab)}
-                className={`px-3 py-2 text-[9px] font-bold whitespace-nowrap border-b-2 transition-all ${activeTab === tab ? 'border-blue-500 text-white' : 'border-transparent text-gray-500 hover:text-gray-300'}`}>
+                className={`px-3.5 py-2 text-xs font-semibold whitespace-nowrap border-b-2 transition-all ${activeTab === tab ? 'border-blue-600 text-blue-600 dark:text-blue-400 font-bold' : 'border-transparent text-[var(--app-text-muted)] hover:text-[var(--app-text)]'}`}>
                 {tab}
               </button>
             ))}
@@ -641,7 +615,7 @@ export default function WhatsappReportsPage() {
         </div>
 
         {/* ─── Primary Filters ──────────────────────────────────────────── */}
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2.5">
           {[
             { label: 'Periode', opt: 'Juni 2026' },
             { label: 'Dibandingkan Dengan', opt: 'Mei 2026' },
@@ -650,18 +624,18 @@ export default function WhatsappReportsPage() {
             { label: 'Area / Region', opt: 'Semua Area' },
             { label: 'CS / Agent', opt: 'Semua Agent' },
           ].map(f => (
-            <div key={f.label} className="flex flex-col gap-0.5">
-              <span className="text-[7px] text-gray-500 font-bold uppercase px-0.5">{f.label}</span>
-              <select className="bg-[#0b1329] border border-[#131d35] text-[9px] py-1.5 px-2.5 rounded-lg text-white focus:outline-none hover:border-blue-500/50 transition-colors">
+            <div key={f.label} className="flex flex-col gap-1">
+              <span className="text-[10px] text-[var(--app-text-muted)] font-semibold uppercase px-0.5">{f.label}</span>
+              <select className="bg-[var(--app-card)] border border-[var(--app-border)] text-xs py-1.5 px-2.5 rounded-lg text-[var(--app-text)] focus:outline-none focus:border-blue-500 transition-colors">
                 <option>{f.opt}</option>
               </select>
             </div>
           ))}
           <div className="flex gap-1.5 self-end">
-            <button className="flex items-center gap-1.5 bg-[#0b1329] border border-[#131d35] hover:bg-[#121c38] text-gray-300 text-[9px] font-bold px-3 py-1.5 rounded-lg transition-colors">
-              <Filter size={10} /> Filter Lainnya
+            <button className="flex items-center gap-1.5 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-card-subtle)] text-[var(--app-text)] text-xs font-medium px-3 py-1.5 rounded-lg transition-colors shadow-xs">
+              <Filter size={12} /> Filter Lainnya
             </button>
-            <button className="text-[9px] font-bold text-gray-400 hover:text-white px-2 py-1.5 border border-[#131d35] rounded-lg hover:bg-[#121c38] transition-colors bg-[#0b1329]">
+            <button className="text-xs font-medium text-[var(--app-text-muted)] hover:text-[var(--app-text)] px-2.5 py-1.5 border border-[var(--app-border)] rounded-lg hover:bg-[var(--app-card-subtle)] bg-[var(--app-card)] transition-colors shadow-xs">
               Reset
             </button>
           </div>

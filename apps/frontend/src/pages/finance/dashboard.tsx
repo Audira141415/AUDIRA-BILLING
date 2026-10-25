@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
@@ -62,7 +63,7 @@ const COLORS_EXPENSE = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
 export default function FinanceDashboard() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [dateRange, setDateRange] = useState('25 Juni 2026 - 01 Juli 2026');
+  const [dateRange, setDateRange] = useState('25 Juni 2026 - 22 Oktober 2026');
   const [searchTerm, setSearchTerm] = useState('');
   const [systemStatus, setSystemStatus] = useState('Normal');
 
@@ -120,9 +121,9 @@ export default function FinanceDashboard() {
 
   // 5. Transaksi Terbaru
   const [transactions, setTransactions] = useState([
-    { id: '1', waktu: '01/07/2026 08:32', jenis: 'Pemasukan', kategori: 'Paket Berlangganan', deskripsi: 'Pembayaran paket internet Juli 2026 - Budi Santoso', metode: 'Transfer Bank', jumlah: 550000, status: 'Selesai' },
-    { id: '2', waktu: '01/07/2026 07:45', jenis: 'Pemasukan', kategori: 'Layanan Tambahan', deskripsi: 'Add-on IP Public - Andi Pratama', metode: 'E-Wallet', jumlah: 150000, status: 'Selesai' },
-    { id: '3', waktu: '01/07/2026 06:20', jenis: 'Pengeluaran', kategori: 'Biaya Server', deskripsi: 'Pembayaran VPS Server Juni 2026', metode: 'Transfer Bank', jumlah: 2500000, status: 'Selesai' },
+    { id: '1', waktu: '22/10/2026 08:32', jenis: 'Pemasukan', kategori: 'Paket Berlangganan', deskripsi: 'Pembayaran paket internet Juli 2026 - Budi Santoso', metode: 'Transfer Bank', jumlah: 550000, status: 'Selesai' },
+    { id: '2', waktu: '22/10/2026 07:45', jenis: 'Pemasukan', kategori: 'Layanan Tambahan', deskripsi: 'Add-on IP Public - Andi Pratama', metode: 'E-Wallet', jumlah: 150000, status: 'Selesai' },
+    { id: '3', waktu: '22/10/2026 06:20', jenis: 'Pengeluaran', kategori: 'Biaya Server', deskripsi: 'Pembayaran VPS Server Juni 2026', metode: 'Transfer Bank', jumlah: 2500000, status: 'Selesai' },
     { id: '4', waktu: '30/06/2026 22:15', jenis: 'Pemasukan', kategori: 'Paket Berlangganan', deskripsi: 'Pembayaran paket internet Juli 2026 - Siti Aminah', metode: 'Transfer Bank', jumlah: 350000, status: 'Selesai' },
     { id: '5', waktu: '30/06/2026 19:30', jenis: 'Pengeluaran', kategori: 'Gaji Karyawan', deskripsi: 'Gaji bulan Juni 2026', metode: 'Transfer Bank', jumlah: 8500000, status: 'Selesai' }
   ]);
@@ -164,76 +165,25 @@ export default function FinanceDashboard() {
 
   return (
     <Layout>
-      <div className="bg-[#050B14] text-gray-100 min-h-screen p-6 font-sans antialiased">
-        {/* Custom Header Area (Mockup Header Inside Content for Precision Visual) */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 pb-6 border-b border-blue-950">
-          <div className="flex items-center gap-4">
-            <div className="bg-[#091526] px-4 py-2 rounded-lg border border-blue-900/60 flex items-center gap-3">
-              <Calendar className="w-4 h-4 text-cyan-400" />
-              <div className="text-xs">
-                <p className="text-gray-400 font-semibold">01 Juli 2026</p>
-                <p className="text-cyan-400 text-[10px]">08.35 WIB</p>
-              </div>
-            </div>
-            <div className="bg-[#091526] px-4 py-2 rounded-lg border border-blue-900/60 flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              <div className="text-xs">
-                <p className="text-gray-400 font-semibold">Status Sistem</p>
-                <p className="text-emerald-400 text-[10px]">● Normal</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4 w-full md:w-auto">
-            <div className="relative w-full md:w-64">
-              <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Cari invoice, customer, transaksi..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 rounded-lg bg-[#091526] border border-blue-900/60 text-xs focus:outline-none focus:border-cyan-500 placeholder-gray-500 text-gray-200"
-              />
-              <span className="absolute right-3 top-2 px-1.5 py-0.5 rounded bg-blue-900/40 text-[9px] text-gray-400 font-mono">⌘ K</span>
-            </div>
-
-            {/* Notification icons */}
-            <div className="flex items-center gap-2.5">
-              <button className="p-2 rounded-lg bg-[#091526] border border-blue-900/40 hover:border-cyan-500/50 relative">
-                <Bell className="w-4 h-4 text-gray-300" />
-                <span className="absolute -top-1 -right-1 w-4.5 h-4.5 bg-red-500 rounded-full text-[9px] font-bold flex items-center justify-center text-white px-1">12</span>
-              </button>
-              <button className="p-2 rounded-lg bg-[#091526] border border-blue-900/40 hover:border-cyan-500/50 relative">
-                <Mail className="w-4 h-4 text-gray-300" />
-                <span className="absolute -top-1 -right-1 w-4.5 h-4.5 bg-red-500 rounded-full text-[9px] font-bold flex items-center justify-center text-white px-1">6</span>
-              </button>
-              <button className="p-2 rounded-lg bg-[#091526] border border-blue-900/40 hover:border-cyan-500/50">
-                <Settings className="w-4 h-4 text-gray-300" />
-              </button>
-            </div>
-
-            {/* Profile widget */}
-            <div className="flex items-center gap-3 pl-3 border-l border-blue-950">
-              <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center font-bold text-xs text-white ring-2 ring-cyan-500/30">
-                AD
-              </div>
-              <div className="text-left hidden lg:block">
-                <p className="text-xs font-semibold text-gray-200">Agus Dwi Rianto</p>
-                <p className="text-[10px] text-gray-400">Super Admin</p>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className="bg-[var(--app-bg)] text-[var(--app-text)] min-h-screen p-6 font-sans antialiased">
+        
 
         {/* Dashboard Title & Top Bar */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 border-b border-[var(--app-border)] pb-5">
           <div>
+            <div className="flex items-center gap-2 text-xs text-[var(--app-muted)] font-mono mb-1.5">
+              <Link href="/" className="hover:text-[var(--app-text)]">AUDIRA</Link>
+              <span>/</span>
+              <Link href="/finance/dashboard" className="hover:text-[var(--app-text)]">Keuangan & Akuntansi</Link>
+              <span>/</span>
+              <span className="text-emerald-500 font-semibold">Executive Summary</span>
+            </div>
             <h1 className="text-2xl font-bold tracking-tight text-white">Dashboard Finance</h1>
-            <p className="text-xs text-gray-400 mt-1">Ringkasan keuangan WhatsApp Business API secara real-time</p>
+            <p className="text-xs text-[var(--app-muted)] mt-1">Ringkasan keuangan WhatsApp Business API secara real-time</p>
           </div>
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#091526] border border-blue-900/40 text-xs">
-              <span className="text-gray-400 font-medium">{dateRange}</span>
+            <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--app-card)] border border-[var(--app-border)] text-xs">
+              <span className="text-[var(--app-muted)] font-medium">{dateRange}</span>
             </div>
             <button 
               onClick={() => setShowFilterModal(true)}
@@ -244,11 +194,11 @@ export default function FinanceDashboard() {
             </button>
             <button 
               onClick={handleExport}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white border border-blue-900/40 transition-colors"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white border border-[var(--app-border)] transition-colors"
             >
               <Download className="w-3.5 h-3.5" />
               <span>Ekspor</span>
-              <ChevronDown className="w-3 h-3 text-gray-400" />
+              <ChevronDown className="w-3 h-3 text-[var(--app-muted)]" />
             </button>
           </div>
         </div>
@@ -256,10 +206,10 @@ export default function FinanceDashboard() {
         {/* Top Metric Cards with Sparklines */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
           {/* Card 1: Total Pendapatan */}
-          <div className="bg-[#0A1629]/70 border border-blue-900/40 rounded-xl p-4 flex flex-col justify-between hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 flex flex-col justify-between hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start">
               <div>
-                <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Total Pendapatan</p>
+                <p className="text-[11px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Total Pendapatan</p>
                 <h3 className="text-lg font-bold text-white mt-1">Rp 125.860.500</h3>
               </div>
               <div className="p-2 rounded-lg bg-blue-600/10 border border-blue-600/20 text-blue-400">
@@ -271,7 +221,7 @@ export default function FinanceDashboard() {
                 <TrendingUp className="w-3.5 h-3.5 mr-1" />
                 ▲ 12.5%
               </span>
-              <span className="text-[9px] text-gray-500">dari periode lalu</span>
+              <span className="text-[9px] text-[var(--app-muted)]">dari periode lalu</span>
             </div>
             <div className="h-10 mt-3">
               <ResponsiveContainer width="100%" height="100%">
@@ -283,10 +233,10 @@ export default function FinanceDashboard() {
           </div>
 
           {/* Card 2: Total Biaya */}
-          <div className="bg-[#0A1629]/70 border border-blue-900/40 rounded-xl p-4 flex flex-col justify-between hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 flex flex-col justify-between hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start">
               <div>
-                <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Total Biaya</p>
+                <p className="text-[11px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Total Biaya</p>
                 <h3 className="text-lg font-bold text-white mt-1">Rp 45.230.000</h3>
               </div>
               <div className="p-2 rounded-lg bg-rose-600/10 border border-rose-600/20 text-rose-400">
@@ -298,7 +248,7 @@ export default function FinanceDashboard() {
                 <TrendingDown className="w-3.5 h-3.5 mr-1" />
                 ▼ 5.3%
               </span>
-              <span className="text-[9px] text-gray-500">dari periode lalu</span>
+              <span className="text-[9px] text-[var(--app-muted)]">dari periode lalu</span>
             </div>
             <div className="h-10 mt-3">
               <ResponsiveContainer width="100%" height="100%">
@@ -310,10 +260,10 @@ export default function FinanceDashboard() {
           </div>
 
           {/* Card 3: Laba Bersih */}
-          <div className="bg-[#0A1629]/70 border border-blue-900/40 rounded-xl p-4 flex flex-col justify-between hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 flex flex-col justify-between hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start">
               <div>
-                <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Laba Bersih</p>
+                <p className="text-[11px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Laba Bersih</p>
                 <h3 className="text-lg font-bold text-white mt-1">Rp 80.630.500</h3>
               </div>
               <div className="p-2 rounded-lg bg-emerald-600/10 border border-emerald-600/20 text-emerald-400">
@@ -325,7 +275,7 @@ export default function FinanceDashboard() {
                 <TrendingUp className="w-3.5 h-3.5 mr-1" />
                 ▲ 15.8%
               </span>
-              <span className="text-[9px] text-gray-500">dari periode lalu</span>
+              <span className="text-[9px] text-[var(--app-muted)]">dari periode lalu</span>
             </div>
             <div className="h-10 mt-3">
               <ResponsiveContainer width="100%" height="100%">
@@ -337,10 +287,10 @@ export default function FinanceDashboard() {
           </div>
 
           {/* Card 4: Arus Kas */}
-          <div className="bg-[#0A1629]/70 border border-blue-900/40 rounded-xl p-4 flex flex-col justify-between hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 flex flex-col justify-between hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start">
               <div>
-                <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Arus Kas</p>
+                <p className="text-[11px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Arus Kas</p>
                 <h3 className="text-lg font-bold text-white mt-1">Rp 68.420.000</h3>
               </div>
               <div className="p-2 rounded-lg bg-amber-600/10 border border-amber-600/20 text-amber-400">
@@ -352,7 +302,7 @@ export default function FinanceDashboard() {
                 <TrendingUp className="w-3.5 h-3.5 mr-1" />
                 ▲ 9.7%
               </span>
-              <span className="text-[9px] text-gray-500">dari periode lalu</span>
+              <span className="text-[9px] text-[var(--app-muted)]">dari periode lalu</span>
             </div>
             <div className="h-10 mt-3">
               <ResponsiveContainer width="100%" height="100%">
@@ -364,10 +314,10 @@ export default function FinanceDashboard() {
           </div>
 
           {/* Card 5: Transaksi */}
-          <div className="bg-[#0A1629]/70 border border-blue-900/40 rounded-xl p-4 flex flex-col justify-between hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 flex flex-col justify-between hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start">
               <div>
-                <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Transaksi</p>
+                <p className="text-[11px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Transaksi</p>
                 <h3 className="text-lg font-bold text-white mt-1">2.548</h3>
               </div>
               <div className="p-2 rounded-lg bg-cyan-600/10 border border-cyan-600/20 text-cyan-400">
@@ -379,7 +329,7 @@ export default function FinanceDashboard() {
                 <TrendingUp className="w-3.5 h-3.5 mr-1" />
                 ▲ 10.2%
               </span>
-              <span className="text-[9px] text-gray-500">dari periode lalu</span>
+              <span className="text-[9px] text-[var(--app-muted)]">dari periode lalu</span>
             </div>
             <div className="h-10 mt-3">
               <ResponsiveContainer width="100%" height="100%">
@@ -396,8 +346,8 @@ export default function FinanceDashboard() {
           {/* Chart 1: Grafik Pendapatan & Biaya */}
           <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4 lg:col-span-1">
             <div className="flex justify-between items-center mb-4">
-              <h4 className="text-xs font-bold text-gray-200 tracking-wide uppercase">Grafik Pendapatan & Biaya</h4>
-              <span className="text-[10px] text-gray-400 bg-blue-950/60 px-2 py-0.5 rounded border border-blue-900/30">7 Hari Terakhir</span>
+              <h4 className="text-xs font-bold text-[var(--app-text)] tracking-wide uppercase">Grafik Pendapatan & Biaya</h4>
+              <span className="text-[10px] text-[var(--app-muted)] bg-blue-950/60 px-2 py-0.5 rounded border border-blue-900/30">7 Hari Terakhir</span>
             </div>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
@@ -416,7 +366,7 @@ export default function FinanceDashboard() {
           {/* Chart 2: Distribusi Pendapatan */}
           <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4 flex flex-col justify-between">
             <div>
-              <h4 className="text-xs font-bold text-gray-200 tracking-wide uppercase mb-4">Distribusi Pendapatan</h4>
+              <h4 className="text-xs font-bold text-[var(--app-text)] tracking-wide uppercase mb-4">Distribusi Pendapatan</h4>
               <div className="flex flex-col md:flex-row items-center gap-4">
                 <div className="relative w-36 h-36 flex-shrink-0">
                   <ResponsiveContainer width="100%" height="100%">
@@ -437,7 +387,7 @@ export default function FinanceDashboard() {
                     </PieChart>
                   </ResponsiveContainer>
                   <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                    <p className="text-[10px] text-gray-400">Total</p>
+                    <p className="text-[10px] text-[var(--app-muted)]">Total</p>
                     <p className="text-[10px] font-bold text-white mt-0.5">Rp 125M</p>
                   </div>
                 </div>
@@ -447,11 +397,11 @@ export default function FinanceDashboard() {
                     <div key={index} className="flex justify-between items-center text-xs">
                       <div className="flex items-center gap-1.5">
                         <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: COLORS_DISTRIBUTION[index] }}></span>
-                        <span className="text-gray-300 text-[10px] font-medium truncate max-w-[120px]">{d.name}</span>
+                        <span className="text-[var(--app-text)]/90 text-[10px] font-medium truncate max-w-[120px]">{d.name}</span>
                       </div>
                       <div className="text-right">
-                        <span className="text-white font-semibold block text-[10px]">{formatRupiah(d.value)}</span>
-                        <span className="text-[9px] text-gray-400">
+                        <span className="text-[var(--app-text)] font-semibold block text-[10px]">{formatRupiah(d.value)}</span>
+                        <span className="text-[9px] text-[var(--app-muted)]">
                           {((d.value / 125860500) * 100).toFixed(1)}%
                         </span>
                       </div>
@@ -465,8 +415,8 @@ export default function FinanceDashboard() {
           {/* Chart 3: Arus Kas */}
           <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4 lg:col-span-1">
             <div className="flex justify-between items-center mb-4">
-              <h4 className="text-xs font-bold text-gray-200 tracking-wide uppercase">Arus Kas (Masuk vs Keluar)</h4>
-              <span className="text-[10px] text-gray-400 bg-blue-950/60 px-2 py-0.5 rounded border border-blue-900/30">7 Hari Terakhir</span>
+              <h4 className="text-xs font-bold text-[var(--app-text)] tracking-wide uppercase">Arus Kas (Masuk vs Keluar)</h4>
+              <span className="text-[10px] text-[var(--app-muted)] bg-blue-950/60 px-2 py-0.5 rounded border border-blue-900/30">7 Hari Terakhir</span>
             </div>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
@@ -488,7 +438,7 @@ export default function FinanceDashboard() {
           {/* Column 1 & 2: Recent Transactions */}
           <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4 lg:col-span-2">
             <div className="flex justify-between items-center mb-4">
-              <h4 className="text-xs font-bold text-gray-200 tracking-wide uppercase">Transaksi Terbaru</h4>
+              <h4 className="text-xs font-bold text-[var(--app-text)] tracking-wide uppercase">Transaksi Terbaru</h4>
               <button 
                 onClick={handleAddTransaction}
                 className="text-[10px] font-semibold text-cyan-400 hover:text-cyan-300 flex items-center gap-1"
@@ -500,7 +450,7 @@ export default function FinanceDashboard() {
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
-                  <tr className="border-b border-blue-950 text-gray-400">
+                  <tr className="border-b border-[var(--app-border)] text-[var(--app-muted)]">
                     <th className="py-2.5 font-medium">Waktu</th>
                     <th className="py-2.5 font-medium">Jenis</th>
                     <th className="py-2.5 font-medium">Kategori</th>
@@ -510,10 +460,10 @@ export default function FinanceDashboard() {
                     <th className="py-2.5 font-medium text-center">Aksi</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-blue-950/40 text-gray-300">
+                <tbody className="divide-y divide-blue-950/40 text-[var(--app-text)]/90">
                   {transactions.filter(t => t.deskripsi.toLowerCase().includes(searchTerm.toLowerCase())).map((tx) => (
                     <tr key={tx.id} className="hover:bg-blue-950/20">
-                      <td className="py-3 whitespace-nowrap text-[11px] text-gray-400">{tx.waktu}</td>
+                      <td className="py-3 whitespace-nowrap text-[11px] text-[var(--app-muted)]">{tx.waktu}</td>
                       <td className="py-3 whitespace-nowrap">
                         <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium ${tx.jenis === 'Pemasukan' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}`}>
                           {tx.jenis}
@@ -529,7 +479,7 @@ export default function FinanceDashboard() {
                       </td>
                       <td className="py-3 text-center whitespace-nowrap">
                         <div className="flex items-center justify-center gap-1.5">
-                          <button className="p-1 text-gray-400 hover:text-cyan-400">
+                          <button className="p-1 text-[var(--app-muted)] hover:text-cyan-400">
                             <Edit className="w-3 h-3" />
                           </button>
                           <button 
@@ -538,7 +488,7 @@ export default function FinanceDashboard() {
                                 setTransactions(transactions.filter(t => t.id !== tx.id));
                               }
                             }}
-                            className="p-1 text-gray-400 hover:text-rose-500"
+                            className="p-1 text-[var(--app-muted)] hover:text-rose-500"
                           >
                             <Trash className="w-3 h-3" />
                           </button>
@@ -558,26 +508,26 @@ export default function FinanceDashboard() {
           <div className="space-y-6">
             {/* Card: Ringkasan Saldo */}
             <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4">
-              <h4 className="text-xs font-bold text-gray-200 tracking-wide uppercase mb-3.5">Ringkasan Saldo</h4>
+              <h4 className="text-xs font-bold text-[var(--app-text)] tracking-wide uppercase mb-3.5">Ringkasan Saldo</h4>
               <div className="space-y-3.5">
-                <div className="flex justify-between items-center text-xs pb-2 border-b border-blue-950/60">
+                <div className="flex justify-between items-center text-xs pb-2 border-b border-[var(--app-border)]/60">
                   <div className="flex items-center gap-2">
                     <CreditCard className="w-3.5 h-3.5 text-cyan-400" />
-                    <span className="text-gray-300">Saldo Kas</span>
+                    <span className="text-[var(--app-text)]/90">Saldo Kas</span>
                   </div>
                   <span className="font-bold text-white">{formatRupiah(68420000)}</span>
                 </div>
                 <div className="flex justify-between items-center text-xs pb-2 border-b border-b-blue-950/60">
                   <div className="flex items-center gap-2">
                     <Building className="w-3.5 h-3.5 text-blue-400" />
-                    <span className="text-gray-300">Saldo Bank</span>
+                    <span className="text-[var(--app-text)]/90">Saldo Bank</span>
                   </div>
                   <span className="font-bold text-white">{formatRupiah(152840000)}</span>
                 </div>
                 <div className="flex justify-between items-center text-xs pb-2 border-b border-b-blue-950/60">
                   <div className="flex items-center gap-2">
                     <Layers className="w-3.5 h-3.5 text-amber-400" />
-                    <span className="text-gray-300">Saldo E-Wallet</span>
+                    <span className="text-[var(--app-text)]/90">Saldo E-Wallet</span>
                   </div>
                   <span className="font-bold text-white">{formatRupiah(32150000)}</span>
                 </div>
@@ -591,14 +541,14 @@ export default function FinanceDashboard() {
             {/* Card: Top 5 Pendapatan */}
             <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4">
               <div className="flex justify-between items-center mb-3">
-                <h4 className="text-xs font-bold text-gray-200 tracking-wide uppercase">Top 5 Pendapatan</h4>
+                <h4 className="text-xs font-bold text-[var(--app-text)] tracking-wide uppercase">Top 5 Pendapatan</h4>
                 <button className="text-[10px] font-semibold text-cyan-400 hover:underline">Lihat Semua</button>
               </div>
               <div className="space-y-3 text-xs">
                 {distributionData.map((d, index) => (
                   <div key={index} className="space-y-1">
                     <div className="flex justify-between items-center">
-                      <span className="text-[11px] text-gray-300 font-medium">{index + 1}. {d.name}</span>
+                      <span className="text-[11px] text-[var(--app-text)]/90 font-medium">{index + 1}. {d.name}</span>
                       <span className="font-semibold text-white">{formatRupiah(d.value)}</span>
                     </div>
                     {/* Progress bar */}
@@ -620,23 +570,23 @@ export default function FinanceDashboard() {
           {/* Laba Rugi */}
           <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4">
             <div className="flex justify-between items-center mb-4">
-              <h4 className="text-xs font-bold text-gray-200 tracking-wide uppercase">Laba Rugi (Ringkas)</h4>
-              <span className="text-[10px] text-gray-400 bg-blue-950/60 px-2 py-0.5 rounded border border-blue-900/30">Bulan Ini</span>
+              <h4 className="text-xs font-bold text-[var(--app-text)] tracking-wide uppercase">Laba Rugi (Ringkas)</h4>
+              <span className="text-[10px] text-[var(--app-muted)] bg-blue-950/60 px-2 py-0.5 rounded border border-blue-900/30">Bulan Ini</span>
             </div>
-            <div className="space-y-2.5 text-xs text-gray-300">
-              <div className="flex justify-between pb-1.5 border-b border-blue-950/40">
+            <div className="space-y-2.5 text-xs text-[var(--app-text)]/90">
+              <div className="flex justify-between pb-1.5 border-b border-[var(--app-border)]/40">
                 <span>Total Pendapatan</span>
                 <span className="font-semibold text-white">Rp 125.860.500</span>
               </div>
-              <div className="flex justify-between pb-1.5 border-b border-blue-950/40">
+              <div className="flex justify-between pb-1.5 border-b border-[var(--app-border)]/40">
                 <span>Total Biaya</span>
                 <span className="font-semibold text-white">Rp 45.230.000</span>
               </div>
-              <div className="flex justify-between pb-1.5 border-b border-blue-950/40">
-                <span className="font-bold text-gray-200">Laba Kotor</span>
+              <div className="flex justify-between pb-1.5 border-b border-[var(--app-border)]/40">
+                <span className="font-bold text-[var(--app-text)]">Laba Kotor</span>
                 <span className="font-bold text-white">Rp 80.630.500</span>
               </div>
-              <div className="flex justify-between pb-1.5 border-b border-blue-950/40">
+              <div className="flex justify-between pb-1.5 border-b border-[var(--app-border)]/40">
                 <span>Biaya Operasional</span>
                 <span className="font-semibold text-white">Rp 7.000.000</span>
               </div>
@@ -650,21 +600,21 @@ export default function FinanceDashboard() {
           {/* Neraca */}
           <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4">
             <div className="flex justify-between items-center mb-4">
-              <h4 className="text-xs font-bold text-gray-200 tracking-wide uppercase">Neraca (Ringkas)</h4>
-              <span className="text-[10px] text-gray-400 bg-blue-950/60 px-2 py-0.5 rounded border border-blue-900/30">Per 01 Juli 2026</span>
+              <h4 className="text-xs font-bold text-[var(--app-text)] tracking-wide uppercase">Neraca (Ringkas)</h4>
+              <span className="text-[10px] text-[var(--app-muted)] bg-blue-950/60 px-2 py-0.5 rounded border border-blue-900/30">Per 22 Oktober 2026</span>
             </div>
-            <div className="grid grid-cols-2 gap-3 text-[11px] text-gray-300">
+            <div className="grid grid-cols-2 gap-3 text-[11px] text-[var(--app-text)]/90">
               <div className="space-y-2">
                 <p className="font-bold text-white uppercase text-[10px] tracking-wider">Aset</p>
                 <div className="flex justify-between">
                   <span>Aset Lancar</span>
-                  <span className="text-gray-400">Rp 210M</span>
+                  <span className="text-[var(--app-muted)]">Rp 210M</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Aset Tetap</span>
-                  <span className="text-gray-400">Rp 185M</span>
+                  <span className="text-[var(--app-muted)]">Rp 185M</span>
                 </div>
-                <div className="flex justify-between pt-1 border-t border-blue-950">
+                <div className="flex justify-between pt-1 border-t border-[var(--app-border)]">
                   <span className="font-bold">Total Aset</span>
                   <span className="font-bold text-white">Rp 395M</span>
                 </div>
@@ -673,17 +623,17 @@ export default function FinanceDashboard() {
                 <p className="font-bold text-white uppercase text-[10px] tracking-wider">Liabilitas & Ekuitas</p>
                 <div className="flex justify-between">
                   <span>Liabilitas Lancar</span>
-                  <span className="text-gray-400">Rp 85M</span>
+                  <span className="text-[var(--app-muted)]">Rp 85M</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Liabilitas Jk Panjang</span>
-                  <span className="text-gray-400">Rp 25M</span>
+                  <span className="text-[var(--app-muted)]">Rp 25M</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Ekuitas</span>
-                  <span className="text-gray-400">Rp 285M</span>
+                  <span className="text-[var(--app-muted)]">Rp 285M</span>
                 </div>
-                <div className="flex justify-between pt-1 border-t border-blue-950">
+                <div className="flex justify-between pt-1 border-t border-[var(--app-border)]">
                   <span className="font-bold">Total L & E</span>
                   <span className="font-bold text-white">Rp 395M</span>
                 </div>
@@ -697,24 +647,24 @@ export default function FinanceDashboard() {
           {/* Arus Kas Ringkas */}
           <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4">
             <div className="flex justify-between items-center mb-4">
-              <h4 className="text-xs font-bold text-gray-200 tracking-wide uppercase">Arus Kas (Ringkas)</h4>
-              <span className="text-[10px] text-gray-400 bg-blue-950/60 px-2 py-0.5 rounded border border-blue-900/30">Bulan Ini</span>
+              <h4 className="text-xs font-bold text-[var(--app-text)] tracking-wide uppercase">Arus Kas (Ringkas)</h4>
+              <span className="text-[10px] text-[var(--app-muted)] bg-blue-950/60 px-2 py-0.5 rounded border border-blue-900/30">Bulan Ini</span>
             </div>
-            <div className="space-y-2.5 text-xs text-gray-300">
-              <div className="flex justify-between pb-1.5 border-b border-blue-950/40">
+            <div className="space-y-2.5 text-xs text-[var(--app-text)]/90">
+              <div className="flex justify-between pb-1.5 border-b border-[var(--app-border)]/40">
                 <span>Arus Kas Operasional</span>
                 <span className="font-semibold text-white">Rp 68.420.000</span>
               </div>
-              <div className="flex justify-between pb-1.5 border-b border-blue-950/40">
+              <div className="flex justify-between pb-1.5 border-b border-[var(--app-border)]/40">
                 <span>Arus Kas Investasi</span>
                 <span className="font-semibold text-rose-400">-Rp 15.300.000</span>
               </div>
-              <div className="flex justify-between pb-1.5 border-b border-blue-950/40">
+              <div className="flex justify-between pb-1.5 border-b border-[var(--app-border)]/40">
                 <span>Arus Kas Pendanaan</span>
                 <span className="font-semibold text-white">Rp 0</span>
               </div>
-              <div className="flex justify-between pb-1.5 border-b border-blue-950/40">
-                <span className="font-bold text-gray-200">Kenaikan (Penurunan) Kas</span>
+              <div className="flex justify-between pb-1.5 border-b border-[var(--app-border)]/40">
+                <span className="font-bold text-[var(--app-text)]">Kenaikan (Penurunan) Kas</span>
                 <span className="font-bold text-white">Rp 53.120.000</span>
               </div>
               <div className="flex justify-between pt-1">
@@ -730,8 +680,8 @@ export default function FinanceDashboard() {
           {/* Pengeluaran per Kategori Donut */}
           <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4 flex flex-col justify-between">
             <div className="flex justify-between items-center mb-2">
-              <h4 className="text-xs font-bold text-gray-200 tracking-wide uppercase">Pengeluaran per Kategori</h4>
-              <span className="text-[10px] text-gray-400 bg-blue-950/60 px-2 py-0.5 rounded border border-blue-900/30">Bulan Ini</span>
+              <h4 className="text-xs font-bold text-[var(--app-text)] tracking-wide uppercase">Pengeluaran per Kategori</h4>
+              <span className="text-[10px] text-[var(--app-muted)] bg-blue-950/60 px-2 py-0.5 rounded border border-blue-900/30">Bulan Ini</span>
             </div>
             <div className="flex items-center gap-3">
               <div className="relative w-24 h-24 flex-shrink-0">
@@ -753,7 +703,7 @@ export default function FinanceDashboard() {
                   </PieChart>
                 </ResponsiveContainer>
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                  <p className="text-[8px] text-gray-400 font-semibold uppercase">Total</p>
+                  <p className="text-[8px] text-[var(--app-muted)] font-semibold uppercase">Total</p>
                   <p className="text-[9px] font-bold text-white">45.2M</p>
                 </div>
               </div>
@@ -763,7 +713,7 @@ export default function FinanceDashboard() {
                   <div key={index} className="flex justify-between items-center">
                     <div className="flex items-center gap-1">
                       <span className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS_EXPENSE[index] }}></span>
-                      <span className="text-gray-300 max-w-[80px] truncate">{e.name}</span>
+                      <span className="text-[var(--app-text)]/90 max-w-[80px] truncate">{e.name}</span>
                     </div>
                     <span className="font-bold text-white">{e.value}%</span>
                   </div>
@@ -786,7 +736,7 @@ export default function FinanceDashboard() {
               <DollarSign className="w-4 h-4 text-cyan-400" />
             </div>
             <span className="text-[11px] font-bold text-white">Pendapatan</span>
-            <span className="text-[9px] text-gray-400 mt-0.5 line-clamp-2">Kelola semua sumber pendapatan & laporan</span>
+            <span className="text-[9px] text-[var(--app-muted)] mt-0.5 line-clamp-2">Kelola semua sumber pendapatan & laporan</span>
           </button>
 
           <button 
@@ -797,7 +747,7 @@ export default function FinanceDashboard() {
               <TrendingDown className="w-4 h-4 text-pink-400" />
             </div>
             <span className="text-[11px] font-bold text-white">Pengeluaran</span>
-            <span className="text-[9px] text-gray-400 mt-0.5 line-clamp-2">Kelola biaya operasional & pengeluaran</span>
+            <span className="text-[9px] text-[var(--app-muted)] mt-0.5 line-clamp-2">Kelola biaya operasional & pengeluaran</span>
           </button>
 
           <button 
@@ -808,7 +758,7 @@ export default function FinanceDashboard() {
               <Briefcase className="w-4 h-4 text-emerald-400" />
             </div>
             <span className="text-[11px] font-bold text-white">Buat Anggaran</span>
-            <span className="text-[9px] text-gray-400 mt-0.5 line-clamp-2">Buat & kelola anggaran perusahaan</span>
+            <span className="text-[9px] text-[var(--app-muted)] mt-0.5 line-clamp-2">Buat & kelola anggaran perusahaan</span>
           </button>
 
           <button 
@@ -819,7 +769,7 @@ export default function FinanceDashboard() {
               <Layers className="w-4 h-4 text-purple-400" />
             </div>
             <span className="text-[11px] font-bold text-white">Pajak</span>
-            <span className="text-[9px] text-gray-400 mt-0.5 line-clamp-2">Kelola pajak, PPN & pelaporan pajak</span>
+            <span className="text-[9px] text-[var(--app-muted)] mt-0.5 line-clamp-2">Kelola pajak, PPN & pelaporan pajak</span>
           </button>
 
           <button 
@@ -830,7 +780,7 @@ export default function FinanceDashboard() {
               <RefreshCw className="w-4 h-4 text-blue-400" />
             </div>
             <span className="text-[11px] font-bold text-white">Rekonsiliasi</span>
-            <span className="text-[9px] text-gray-400 mt-0.5 line-clamp-2">Cocokkan transaksi dengan bank</span>
+            <span className="text-[9px] text-[var(--app-muted)] mt-0.5 line-clamp-2">Cocokkan transaksi dengan bank</span>
           </button>
 
           <button 
@@ -841,7 +791,7 @@ export default function FinanceDashboard() {
               <CreditCard className="w-4 h-4 text-amber-400" />
             </div>
             <span className="text-[11px] font-bold text-white">Multi Metode Bayar</span>
-            <span className="text-[9px] text-gray-400 mt-0.5 line-clamp-2">Cash, Bank, E-Wallet & lainnya</span>
+            <span className="text-[9px] text-[var(--app-muted)] mt-0.5 line-clamp-2">Cash, Bank, E-Wallet & lainnya</span>
           </button>
 
           <button 
@@ -852,7 +802,7 @@ export default function FinanceDashboard() {
               <FileSpreadsheet className="w-4 h-4 text-indigo-400" />
             </div>
             <span className="text-[11px] font-bold text-white">Laporan Otomatis</span>
-            <span className="text-[9px] text-gray-400 mt-0.5 line-clamp-2">Laporan keuangan otomatis</span>
+            <span className="text-[9px] text-[var(--app-muted)] mt-0.5 line-clamp-2">Laporan keuangan otomatis</span>
           </button>
 
           <button 
@@ -863,7 +813,7 @@ export default function FinanceDashboard() {
               <Download className="w-4 h-4 text-emerald-400" />
             </div>
             <span className="text-[11px] font-bold text-white">Ekspor Data</span>
-            <span className="text-[9px] text-gray-400 mt-0.5 line-clamp-2">Export ke Excel, PDF, CSV</span>
+            <span className="text-[9px] text-[var(--app-muted)] mt-0.5 line-clamp-2">Export ke Excel, PDF, CSV</span>
           </button>
         </div>
 
@@ -873,15 +823,15 @@ export default function FinanceDashboard() {
             <div className="bg-[#0A1629] border border-blue-900 rounded-xl max-w-sm w-full p-6 space-y-4">
               <h3 className="text-sm font-bold text-white uppercase tracking-wider">Filter Periode Waktu</h3>
               <div className="space-y-2">
-                <label className="text-[10px] text-gray-400 font-semibold uppercase">Pilih Periode</label>
+                <label className="text-[10px] text-[var(--app-muted)] font-semibold uppercase">Pilih Periode</label>
                 <select 
                   onChange={(e) => {
                     setDateRange(e.target.value);
                     setShowFilterModal(false);
                   }}
-                  className="w-full p-2 rounded bg-blue-950 border border-blue-900/60 text-xs text-white"
+                  className="w-full p-2 rounded bg-blue-950 border border-[var(--app-border)] text-xs text-white"
                 >
-                  <option value="25 Juni 2026 - 01 Juli 2026">25 Juni 2026 - 01 Juli 2026 (7 Hari)</option>
+                  <option value="25 Juni 2026 - 22 Oktober 2026">25 Juni 2026 - 22 Oktober 2026 (7 Hari)</option>
                   <option value="01 Juni 2026 - 30 Juni 2026">01 Juni 2026 - 30 Juni 2026 (Bulan Ini)</option>
                   <option value="01 Mei 2026 - 31 Mei 2026">01 Mei 2026 - 31 Mei 2026 (Bulan Lalu)</option>
                 </select>
@@ -889,7 +839,7 @@ export default function FinanceDashboard() {
               <div className="flex justify-end gap-2 pt-2">
                 <button 
                   onClick={() => setShowFilterModal(false)}
-                  className="px-3 py-1.5 rounded bg-blue-950 text-xs font-semibold text-gray-300 hover:text-white"
+                  className="px-3 py-1.5 rounded bg-blue-950 text-xs font-semibold text-[var(--app-text)]/90 hover:text-white"
                 >
                   Batal
                 </button>

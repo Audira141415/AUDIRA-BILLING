@@ -9,6 +9,7 @@ import { JwtAuthGuard } from './jwt-auth.guard';
 import { RolesGuard } from './roles.guard';
 import { PrismaModule } from '../prisma/prisma.module';
 import { AuditModule } from '../audit/audit.module';
+import { WhatsAppModule } from '../whatsapp/whatsapp.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { AuditModule } from '../audit/audit.module';
     }),
     PrismaModule,
     AuditModule,
+    WhatsAppModule,
   ],
   controllers: [AuthController, CustomerAuthController],
   providers: [AuthService, JwtStrategy, JwtAuthGuard, RolesGuard],

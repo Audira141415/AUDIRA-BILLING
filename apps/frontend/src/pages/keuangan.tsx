@@ -264,7 +264,7 @@ export default function Keuangan() {
               <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-500 text-xs font-semibold uppercase tracking-wider">Total Pendapatan</p>
+                    <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Total Pendapatan</p>
                     <p className="text-2xl font-bold text-green-600 mt-1">
                       Rp {stats.totalRevenue.toLocaleString('id-ID')}
                     </p>
@@ -278,7 +278,7 @@ export default function Keuangan() {
               <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-500 text-xs font-semibold uppercase tracking-wider">Invoice Lunas</p>
+                    <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Invoice Lunas</p>
                     <p className="text-2xl font-bold text-gray-800 mt-1">{stats.paidInvoices} invoice</p>
                   </div>
                   <div className="bg-blue-50 p-3 rounded-lg text-blue-600">
@@ -290,7 +290,7 @@ export default function Keuangan() {
               <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-500 text-xs font-semibold uppercase tracking-wider">Total Piutang Pending</p>
+                    <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Total Piutang Pending</p>
                     <p className="text-2xl font-bold text-yellow-600 mt-1">
                       Rp {stats.unpaidAmount.toLocaleString('id-ID')}
                     </p>
@@ -304,7 +304,7 @@ export default function Keuangan() {
               <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-500 text-xs font-semibold uppercase tracking-wider">Total Tunggakan Jatuh Tempo</p>
+                    <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Total Tunggakan Jatuh Tempo</p>
                     <p className="text-2xl font-bold text-red-600 mt-1">
                       Rp {stats.overdueAmount.toLocaleString('id-ID')}
                     </p>
@@ -320,7 +320,7 @@ export default function Keuangan() {
             <div className="bg-white rounded-xl shadow-sm p-4 mb-6 border border-gray-100">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500" size={20} />
                   <input
                     type="text"
                     placeholder="Cari berdasarkan nomor invoice atau nama pelanggan..."
@@ -448,9 +448,9 @@ export default function Keuangan() {
 
               {filteredInvoices.length === 0 && (
                 <div className="text-center py-16">
-                  <FileText size={64} className="mx-auto text-gray-400 mb-4 opacity-40" />
+                  <FileText size={64} className="mx-auto text-slate-500 mb-4 opacity-40" />
                   <h3 className="text-lg font-semibold text-gray-900 mb-1">Tidak ada invoice ditemukan</h3>
-                  <p className="text-gray-500 text-sm">Coba ubah kata kunci pencarian atau filter Anda</p>
+                  <p className="text-slate-400 text-sm">Coba ubah kata kunci pencarian atau filter Anda</p>
                 </div>
               )}
             </div>
@@ -469,7 +469,7 @@ export default function Keuangan() {
                   <User className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-white">
+                  <h2 className="text-2xl font-bold text-slate-800">
                     {modalLoading ? 'Memuat data...' : selectedCustomer?.name}
                   </h2>
                   <p className="text-blue-100 text-sm">Detail Informasi Pelanggan & Keuangan</p>
@@ -486,7 +486,7 @@ export default function Keuangan() {
             {/* Content */}
             <div className="p-6">
               {modalLoading ? (
-                <div className="flex flex-col items-center justify-center py-20 text-gray-400">
+                <div className="flex flex-col items-center justify-center py-20 text-slate-500">
                   <Loader2 className="animate-spin text-blue-600 mb-2" size={32} />
                   <span>Mengambil data dari server...</span>
                 </div>
@@ -521,7 +521,7 @@ export default function Keuangan() {
                       <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
                         <Mail className="h-5 w-5 text-blue-600 mt-0.5" />
                         <div>
-                          <p className="text-xs text-gray-500">Email</p>
+                          <p className="text-xs text-slate-400">Email</p>
                           <p className="font-medium text-gray-900">{selectedCustomer.email || '-'}</p>
                         </div>
                       </div>
@@ -529,7 +529,7 @@ export default function Keuangan() {
                       <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
                         <Phone className="h-5 w-5 text-green-600 mt-0.5" />
                         <div>
-                          <p className="text-xs text-gray-500">No. Telepon</p>
+                          <p className="text-xs text-slate-400">No. Telepon</p>
                           <p className="font-medium text-gray-900">{selectedCustomer.phone}</p>
                         </div>
                       </div>
@@ -537,7 +537,7 @@ export default function Keuangan() {
                       <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
                         <MapPin className="h-5 w-5 text-red-600 mt-0.5" />
                         <div>
-                          <p className="text-xs text-gray-500">Alamat</p>
+                          <p className="text-xs text-slate-400">Alamat</p>
                           <p className="font-medium text-gray-900">{selectedCustomer.address || '-'}</p>
                         </div>
                       </div>
@@ -553,7 +553,7 @@ export default function Keuangan() {
                       <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
                         <Package className="h-5 w-5 text-purple-600 mt-0.5" />
                         <div>
-                          <p className="text-xs text-gray-500">Paket Layanan</p>
+                          <p className="text-xs text-slate-400">Paket Layanan</p>
                           <p className="font-bold text-gray-900">
                             {selectedCustomer.packages && selectedCustomer.packages.length > 0
                               ? selectedCustomer.packages[0].name
@@ -570,7 +570,7 @@ export default function Keuangan() {
                       <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
                         <Calendar className="h-5 w-5 text-blue-600 mt-0.5" />
                         <div>
-                          <p className="text-xs text-gray-500">Tanggal Bergabung</p>
+                          <p className="text-xs text-slate-400">Tanggal Bergabung</p>
                           <p className="font-medium text-gray-900">
                             {new Date(selectedCustomer.createdAt).toLocaleDateString('id-ID')}
                           </p>
@@ -591,10 +591,10 @@ export default function Keuangan() {
                         {selectedCustomer.invoices.map((inv) => (
                           <div key={inv.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                             <div className="flex items-center gap-3">
-                              <FileText className="h-5 w-5 text-gray-400" />
+                              <FileText className="h-5 w-5 text-slate-500" />
                               <div>
                                 <p className="font-mono font-semibold text-sm text-gray-900">{inv.invoiceNumber}</p>
-                                <p className="text-xs text-gray-500">Jatuh tempo: {new Date(inv.dueDate).toLocaleDateString('id-ID')}</p>
+                                <p className="text-xs text-slate-400">Jatuh tempo: {new Date(inv.dueDate).toLocaleDateString('id-ID')}</p>
                               </div>
                             </div>
                             <div className="flex items-center gap-3">
@@ -609,7 +609,7 @@ export default function Keuangan() {
                     </div>
                   ) : (
                     <div className="text-center py-6 bg-gray-50 rounded-lg">
-                      <p className="text-gray-500 text-sm">Belum ada riwayat tagihan/invoice untuk pelanggan ini.</p>
+                      <p className="text-slate-400 text-sm">Belum ada riwayat tagihan/invoice untuk pelanggan ini.</p>
                     </div>
                   )}
 
@@ -643,11 +643,11 @@ export default function Keuangan() {
             </div>
             <div className="p-6 space-y-4">
               <div className="bg-gray-50 rounded-xl p-4">
-                <p className="text-xs text-gray-500 uppercase font-semibold">Invoice</p>
+                <p className="text-xs text-slate-400 uppercase font-semibold">Invoice</p>
                 <p className="font-mono font-bold text-blue-700">{selectedInvoice.invoiceNumber}</p>
-                <p className="text-xs text-gray-500 uppercase font-semibold mt-2">Pelanggan</p>
+                <p className="text-xs text-slate-400 uppercase font-semibold mt-2">Pelanggan</p>
                 <p className="font-semibold text-gray-800">{selectedInvoice.customer.name}</p>
-                <p className="text-xs text-gray-500 uppercase font-semibold mt-2">Jumlah Tagihan</p>
+                <p className="text-xs text-slate-400 uppercase font-semibold mt-2">Jumlah Tagihan</p>
                 <p className="text-2xl font-bold text-gray-800">Rp {selectedInvoice.amount.toLocaleString('id-ID')}</p>
               </div>
               <div>

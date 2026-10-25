@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { API_BASE_URL, API_ENDPOINTS } from '../config/api';
 import { useRouter } from 'next/router';
@@ -236,7 +237,7 @@ export default function TechnicianCheckIn() {
       'pending': { color: 'bg-yellow-100 text-yellow-800', text: 'Belum Mulai' },
       'assigned': { color: 'bg-blue-100 text-blue-800', text: 'Ditugaskan' },
       'in-progress': { color: 'bg-green-100 text-green-800', text: 'Sedang Dikerjakan' },
-      'completed': { color: 'bg-gray-100 text-gray-800', text: 'Selesai' },
+      'completed': { color: 'bg-gray-100 text-[var(--app-text)]', text: 'Selesai' },
     };
     const badge = badges[status] || badges['pending'];
     return (
@@ -260,15 +261,15 @@ export default function TechnicianCheckIn() {
     <Layout>
       <div className="max-w-4xl mx-auto p-4">
         {/* Header */}
-        <div className="bg-white rounded-lg shadow p-6 mb-6">
+        <div className="bg-[var(--app-card)] rounded-lg shadow p-6 mb-6">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
               {user?.name?.charAt(0) || 'T'}
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">{user?.name || 'Teknisi'}</h1>
-              <p className="text-gray-600">{user?.email}</p>
-              <p className="text-sm text-gray-500 flex items-center gap-2 mt-1">
+              <h1 className="text-2xl font-bold text-[var(--app-text)]">{user?.name || 'Teknisi'}</h1>
+              <p className="text-[var(--app-muted)]">{user?.email}</p>
+              <p className="text-sm text-[var(--app-muted)] flex items-center gap-2 mt-1">
                 <Calendar size={16} />
                 {new Date().toLocaleDateString('id-ID', { 
                   weekday: 'long', 
@@ -297,7 +298,7 @@ export default function TechnicianCheckIn() {
               </div>
             </div>
             
-            <div className="bg-white bg-opacity-20 rounded-lg p-4 mb-4">
+            <div className="bg-[var(--app-card)] bg-opacity-20 rounded-lg p-4 mb-4">
               <h3 className="font-bold text-lg mb-2">{activeJob.title}</h3>
               <p className="text-sm opacity-90 mb-3">{activeJob.description}</p>
               
@@ -323,7 +324,7 @@ export default function TechnicianCheckIn() {
               {activeJob.latitude && activeJob.longitude && (
                 <button
                   onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${activeJob.latitude},${activeJob.longitude}`, '_blank')}
-                  className="flex-1 bg-white text-green-600 px-4 py-3 rounded-lg font-semibold hover:bg-gray-100 flex items-center justify-center gap-2"
+                  className="flex-1 bg-[var(--app-card)] text-green-600 px-4 py-3 rounded-lg font-semibold hover:bg-gray-100 flex items-center justify-center gap-2"
                 >
                   <Navigation size={20} />
                   Navigasi
@@ -331,7 +332,7 @@ export default function TechnicianCheckIn() {
               )}
               <button
                 onClick={() => router.push(`/work-order-detail?id=${activeJob.id}`)}
-                className="flex-1 bg-white text-green-600 px-4 py-3 rounded-lg font-semibold hover:bg-gray-100 flex items-center justify-center gap-2"
+                className="flex-1 bg-[var(--app-card)] text-green-600 px-4 py-3 rounded-lg font-semibold hover:bg-gray-100 flex items-center justify-center gap-2"
               >
                 <Camera size={20} />
                 Upload Foto
@@ -348,29 +349,29 @@ export default function TechnicianCheckIn() {
         )}
 
         {/* Today's Jobs */}
-        <div className="bg-white rounded-lg shadow">
+        <div className="bg-[var(--app-card)] rounded-lg shadow">
           <div className="p-6 border-b">
-            <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+            <h2 className="text-xl font-bold text-[var(--app-text)] flex items-center gap-2">
               <Calendar size={24} className="text-blue-600" />
               Jadwal Hari Ini ({jobs.length})
             </h2>
           </div>
 
           {jobs.length === 0 ? (
-            <div className="p-12 text-center text-gray-500">
-              <AlertCircle className="w-12 h-12 mx-auto mb-3 text-gray-400" />
+            <div className="p-12 text-center text-[var(--app-muted)]">
+              <AlertCircle className="w-12 h-12 mx-auto mb-3 text-[var(--app-muted)]" />
               <p>Tidak ada jadwal untuk hari ini</p>
             </div>
           ) : (
             <div className="divide-y">
               {jobs.map((job) => (
-                <div key={job.id} className="p-6 hover:bg-gray-50">
+                <div key={job.id} className="p-6 hover:bg-[var(--app-bg)]">
                   <div className="flex justify-between items-start mb-3">
                     <div className="flex-1">
-                      <h3 className="font-bold text-gray-900 mb-1">{job.title}</h3>
-                      <p className="text-sm text-gray-600 mb-2">{job.description}</p>
+                      <h3 className="font-bold text-[var(--app-text)] mb-1">{job.title}</h3>
+                      <p className="text-sm text-[var(--app-muted)] mb-2">{job.description}</p>
                       
-                      <div className="flex items-center gap-4 text-sm text-gray-500 mb-2">
+                      <div className="flex items-center gap-4 text-sm text-[var(--app-muted)] mb-2">
                         <span className="flex items-center gap-1">
                           <Clock size={14} />
                           {formatTime(job.scheduledAt)}
@@ -378,7 +379,7 @@ export default function TechnicianCheckIn() {
                         <span className={`px-2 py-1 rounded text-xs ${
                           job.priority === 'urgent' ? 'bg-red-100 text-red-800' :
                           job.priority === 'high' ? 'bg-orange-100 text-orange-800' :
-                          'bg-gray-100 text-gray-800'
+                          'bg-gray-100 text-[var(--app-text)]'
                         }`}>
                           {job.priority.toUpperCase()}
                         </span>
@@ -386,7 +387,7 @@ export default function TechnicianCheckIn() {
 
                       <div className="text-sm text-gray-700">
                         <p className="font-medium">{job.customer.name}</p>
-                        <p className="text-gray-500">{job.customer.address}</p>
+                        <p className="text-[var(--app-muted)]">{job.customer.address}</p>
                       </div>
                     </div>
                     
@@ -430,7 +431,7 @@ export default function TechnicianCheckIn() {
         {/* Camera Modal */}
         {showCamera && (
           <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg max-w-lg w-full p-6">
+            <div className="bg-[var(--app-card)] rounded-lg max-w-lg w-full p-6">
               <h3 className="text-xl font-bold mb-4">Foto Selfie Check-In</h3>
               
               {!capturedPhoto ? (
@@ -453,7 +454,7 @@ export default function TechnicianCheckIn() {
                     </button>
                     <button
                       onClick={cancelCheckIn}
-                      className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50"
+                      className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-[var(--app-bg)]"
                     >
                       Batal
                     </button>
@@ -464,13 +465,13 @@ export default function TechnicianCheckIn() {
                   <div className="relative rounded-lg overflow-hidden">
                     <img src={capturedPhoto} alt="Preview" className="w-full" />
                   </div>
-                  <p className="text-sm text-gray-600 text-center">
+                  <p className="text-sm text-[var(--app-muted)] text-center">
                     Pastikan wajah Anda terlihat jelas
                   </p>
                   <div className="flex gap-3">
                     <button
                       onClick={() => setCapturedPhoto(null)}
-                      className="flex-1 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50"
+                      className="flex-1 px-4 py-3 border border-gray-300 rounded-lg hover:bg-[var(--app-bg)]"
                     >
                       Ulangi
                     </button>

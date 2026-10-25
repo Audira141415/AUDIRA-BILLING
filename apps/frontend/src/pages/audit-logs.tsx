@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
 import { API_BASE_URL, API_ENDPOINTS } from '../config/api';
 import Layout from '@/components/Layout';
@@ -79,7 +80,7 @@ export default function AuditLogs() {
     if (action.includes('DELETE')) return 'bg-red-100 text-red-800';
     if (action.includes('PAYMENT')) return 'bg-purple-100 text-purple-800';
     if (action.includes('SERVICE')) return 'bg-indigo-100 text-indigo-800';
-    return 'bg-gray-100 text-gray-800';
+    return 'bg-gray-100 text-[var(--app-text)]';
   };
 
   const getStatusBadgeColor = (status: string) => {
@@ -132,18 +133,18 @@ export default function AuditLogs() {
         <div className="flex items-center space-x-3 mb-2">
           <Activity className="w-8 h-8 text-blue-600" />
           <div>
-            <h1 className="text-3xl font-bold text-gray-800">Audit Logs</h1>
-            <p className="text-gray-600">System activity and security audit trail</p>
+            <h1 className="text-3xl font-bold text-[var(--app-text)]">Audit Logs</h1>
+            <p className="text-[var(--app-muted)]">System activity and security audit trail</p>
           </div>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg shadow p-6 mb-6">
+      <div className="bg-[var(--app-card)] rounded-lg shadow p-6 mb-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <Filter className="w-5 h-5 text-gray-600" />
-            <h2 className="text-lg font-semibold text-gray-800">Filters</h2>
+            <Filter className="w-5 h-5 text-[var(--app-muted)]" />
+            <h2 className="text-lg font-semibold text-[var(--app-text)]">Filters</h2>
           </div>
           <button
             onClick={clearFilters}
@@ -154,7 +155,7 @@ export default function AuditLogs() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Action</label>
+            <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">Action</label>
             <select
               value={filters.action}
               onChange={(e) => handleFilterChange('action', e.target.value)}
@@ -173,7 +174,7 @@ export default function AuditLogs() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+            <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">Status</label>
             <select
               value={filters.status}
               onChange={(e) => handleFilterChange('status', e.target.value)}
@@ -186,7 +187,7 @@ export default function AuditLogs() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Entity Type</label>
+            <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">Entity Type</label>
             <input
               type="text"
               value={filters.entityType}
@@ -197,7 +198,7 @@ export default function AuditLogs() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+            <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">Start Date</label>
             <input
               type="date"
               value={filters.startDate}
@@ -207,7 +208,7 @@ export default function AuditLogs() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">End Date</label>
+            <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">End Date</label>
             <input
               type="date"
               value={filters.endDate}
@@ -226,7 +227,7 @@ export default function AuditLogs() {
           </button>
           <button
             onClick={clearFilters}
-            className="bg-gray-300 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-400"
+            className="bg-gray-300 text-[var(--app-text)]/90 px-6 py-2 rounded-lg hover:bg-gray-400"
           >
             Clear Filters
           </button>
@@ -235,58 +236,58 @@ export default function AuditLogs() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-[var(--app-card)] rounded-lg shadow p-6">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-gray-600">Total Logs</h3>
+            <h3 className="text-sm font-medium text-[var(--app-muted)]">Total Logs</h3>
             <svg className="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
           </div>
-          <p className="text-3xl font-bold text-gray-800">{pagination.total}</p>
+          <p className="text-3xl font-bold text-[var(--app-text)]">{pagination.total}</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-[var(--app-card)] rounded-lg shadow p-6">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-gray-600">Success Rate</h3>
+            <h3 className="text-sm font-medium text-[var(--app-muted)]">Success Rate</h3>
             <svg className="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <p className="text-3xl font-bold text-gray-800">
+          <p className="text-3xl font-bold text-[var(--app-text)]">
             {logs.length > 0 
               ? Math.round((logs.filter(l => l.status === 'SUCCESS').length / logs.length) * 100)
               : 0}%
           </p>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-[var(--app-card)] rounded-lg shadow p-6">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-gray-600">Current Page</h3>
+            <h3 className="text-sm font-medium text-[var(--app-muted)]">Current Page</h3>
             <svg className="w-8 h-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
             </svg>
           </div>
-          <p className="text-3xl font-bold text-gray-800">
+          <p className="text-3xl font-bold text-[var(--app-text)]">
             {pagination.page} / {pagination.totalPages}
           </p>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-[var(--app-card)] rounded-lg shadow p-6">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-gray-600">Showing</h3>
+            <h3 className="text-sm font-medium text-[var(--app-muted)]">Showing</h3>
             <svg className="w-8 h-8 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
             </svg>
           </div>
-          <p className="text-3xl font-bold text-gray-800">{logs.length}</p>
+          <p className="text-3xl font-bold text-[var(--app-text)]">{logs.length}</p>
         </div>
       </div>
 
       {/* Logs Table */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-xl font-bold text-gray-800">Activity Logs</h2>
+      <div className="bg-[var(--app-card)] rounded-lg shadow overflow-hidden">
+        <div className="px-6 py-4 border-b border-[var(--app-border)]">
+          <h2 className="text-xl font-bold text-[var(--app-text)]">Activity Logs</h2>
         </div>
 
         {loading ? (
@@ -294,8 +295,8 @@ export default function AuditLogs() {
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
           </div>
         ) : logs.length === 0 ? (
-          <div className="p-12 text-center text-gray-500">
-            <svg className="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="p-12 text-center text-[var(--app-muted)]">
+            <svg className="w-16 h-16 mx-auto mb-4 text-[var(--app-text)]/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
             <p className="text-lg">No audit logs found</p>
@@ -303,35 +304,35 @@ export default function AuditLogs() {
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+              <thead className="bg-[var(--app-bg)]">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--app-muted)] uppercase tracking-wider">
                     Timestamp
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--app-muted)] uppercase tracking-wider">
                     Action
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--app-muted)] uppercase tracking-wider">
                     User
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--app-muted)] uppercase tracking-wider">
                     Entity
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--app-muted)] uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--app-muted)] uppercase tracking-wider">
                     IP Address
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-right text-xs font-medium text-[var(--app-muted)] uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-[var(--app-card)] divide-y divide-gray-200">
                 {logs.map((log) => (
-                  <tr key={log.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <tr key={log.id} className="hover:bg-[var(--app-bg)]">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--app-text)]">
                       {formatDate(log.created_at)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -339,10 +340,10 @@ export default function AuditLogs() {
                         {log.action}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--app-text)]">
                       {log.user_email || '-'}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--app-muted)]">
                       {log.entity_type ? `${log.entity_type}: ${log.entity_id}` : '-'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -350,7 +351,7 @@ export default function AuditLogs() {
                         {log.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--app-muted)]">
                       {log.ip_address || '-'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -370,8 +371,8 @@ export default function AuditLogs() {
 
         {/* Pagination */}
         {pagination.totalPages > 1 && (
-          <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-            <div className="text-sm text-gray-700">
+          <div className="px-6 py-4 border-t border-[var(--app-border)] flex items-center justify-between">
+            <div className="text-sm text-[var(--app-text)]/90">
               Showing <span className="font-medium">{(pagination.page - 1) * pagination.limit + 1}</span> to{' '}
               <span className="font-medium">
                 {Math.min(pagination.page * pagination.limit, pagination.total)}
@@ -382,14 +383,14 @@ export default function AuditLogs() {
               <button
                 onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
                 disabled={pagination.page === 1}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-[var(--app-text)]/90 bg-[var(--app-card)] hover:bg-[var(--app-bg)] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Previous
               </button>
               <button
                 onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
                 disabled={pagination.page === pagination.totalPages}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-[var(--app-text)]/90 bg-[var(--app-card)] hover:bg-[var(--app-bg)] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Next
               </button>
@@ -401,12 +402,12 @@ export default function AuditLogs() {
       {/* Details Modal */}
       {selectedLog && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-              <h3 className="text-xl font-bold text-gray-800">Audit Log Details</h3>
+          <div className="bg-[var(--app-card)] rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="px-6 py-4 border-b border-[var(--app-border)] flex items-center justify-between">
+              <h3 className="text-xl font-bold text-[var(--app-text)]">Audit Log Details</h3>
               <button
                 onClick={() => setSelectedLog(null)}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-[var(--app-muted)] hover:text-[var(--app-muted)]"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -415,21 +416,21 @@ export default function AuditLogs() {
             </div>
             <div className="px-6 py-4 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700">Action</label>
-                <p className="mt-1 text-sm text-gray-900">{selectedLog.action}</p>
+                <label className="block text-sm font-medium text-[var(--app-text)]/90">Action</label>
+                <p className="mt-1 text-sm text-[var(--app-text)]">{selectedLog.action}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">User Email</label>
-                <p className="mt-1 text-sm text-gray-900">{selectedLog.user_email || '-'}</p>
+                <label className="block text-sm font-medium text-[var(--app-text)]/90">User Email</label>
+                <p className="mt-1 text-sm text-[var(--app-text)]">{selectedLog.user_email || '-'}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Entity</label>
-                <p className="mt-1 text-sm text-gray-900">
+                <label className="block text-sm font-medium text-[var(--app-text)]/90">Entity</label>
+                <p className="mt-1 text-sm text-[var(--app-text)]">
                   {selectedLog.entity_type ? `${selectedLog.entity_type}: ${selectedLog.entity_id}` : '-'}
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Status</label>
+                <label className="block text-sm font-medium text-[var(--app-text)]/90">Status</label>
                 <p className="mt-1">
                   <span className={`px-2 py-1 text-xs font-semibold rounded ${getStatusBadgeColor(selectedLog.status)}`}>
                     {selectedLog.status}
@@ -438,32 +439,32 @@ export default function AuditLogs() {
               </div>
               {selectedLog.error_message && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Error Message</label>
+                  <label className="block text-sm font-medium text-[var(--app-text)]/90">Error Message</label>
                   <p className="mt-1 text-sm text-red-600">{selectedLog.error_message}</p>
                 </div>
               )}
               <div>
-                <label className="block text-sm font-medium text-gray-700">IP Address</label>
-                <p className="mt-1 text-sm text-gray-900">{selectedLog.ip_address || '-'}</p>
+                <label className="block text-sm font-medium text-[var(--app-text)]/90">IP Address</label>
+                <p className="mt-1 text-sm text-[var(--app-text)]">{selectedLog.ip_address || '-'}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">User Agent</label>
-                <p className="mt-1 text-sm text-gray-900 break-all">{selectedLog.user_agent || '-'}</p>
+                <label className="block text-sm font-medium text-[var(--app-text)]/90">User Agent</label>
+                <p className="mt-1 text-sm text-[var(--app-text)] break-all">{selectedLog.user_agent || '-'}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Timestamp</label>
-                <p className="mt-1 text-sm text-gray-900">{formatDate(selectedLog.created_at)}</p>
+                <label className="block text-sm font-medium text-[var(--app-text)]/90">Timestamp</label>
+                <p className="mt-1 text-sm text-[var(--app-text)]">{formatDate(selectedLog.created_at)}</p>
               </div>
               {selectedLog.details && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Details</label>
-                  <pre className="mt-1 text-xs text-gray-900 bg-gray-50 p-4 rounded border border-gray-200 overflow-x-auto">
+                  <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">Details</label>
+                  <pre className="mt-1 text-xs text-[var(--app-text)] bg-[var(--app-bg)] p-4 rounded border border-[var(--app-border)] overflow-x-auto">
                     {JSON.stringify(selectedLog.details, null, 2)}
                   </pre>
                 </div>
               )}
             </div>
-            <div className="px-6 py-4 border-t border-gray-200">
+            <div className="px-6 py-4 border-t border-[var(--app-border)]">
               <button
                 onClick={() => setSelectedLog(null)}
                 className="w-full bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700"

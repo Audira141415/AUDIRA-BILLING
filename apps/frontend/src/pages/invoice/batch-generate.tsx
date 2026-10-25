@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React, { useState } from 'react';
 import Layout from '@/components/Layout';
 import {
@@ -185,68 +186,36 @@ export default function BatchGeneratePage() {
       <div className="min-h-screen bg-[#070c19] text-gray-200 p-4 md:p-6 space-y-6">
         
         {/* ─── Top Header bar ────────────────────────────────────────────── */}
-        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 border-b border-[#131d35] pb-5">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-[var(--app-border)] pb-5">
           <div className="space-y-1">
-            <div className="flex items-center gap-2 text-xs text-gray-400 font-medium">
-              <span>Home</span>
-              <span>&gt;</span>
-              <span>Invoice</span>
-              <span>&gt;</span>
-              <span className="text-blue-400">Batch Generate</span>
+            <div className="flex items-center gap-2 text-xs text-[var(--app-muted)] font-mono mb-1">
+              <Link href="/" className="hover:text-[var(--app-text)]">AUDIRA</Link>
+              <span>/</span>
+              <Link href="/invoice" className="hover:text-[var(--app-text)]">Billing & Tagihan</Link>
+              <span>/</span>
+              <span className="text-blue-500 font-semibold">Batch Generate</span>
             </div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">Batch Generate Invoice</h1>
+            <h1 className="text-xl md:text-2xl font-bold tracking-tight text-[var(--app-text)]">
+              Pembuatan Invoice Massal (Batch Generate)
+            </h1>
+            <p className="text-xs text-[var(--app-muted)]">
+              Eksekusi penerbitan invoice kolektif per area, paket, atau siklus billing pelanggan secara otomatis.
+            </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-4 w-full xl:w-auto">
-            {/* Calendar */}
-            <div className="flex items-center gap-2 bg-[#0b1329] border border-[#131d35] px-3 py-2 rounded-xl text-xs text-gray-300">
-              <Calendar size={14} className="text-blue-400" />
-              <span>01 Juli 2026</span>
-              <span className="text-[10px] text-gray-500">08:35 WIB</span>
-            </div>
-            
-            {/* Status Sistem */}
-            <div className="flex items-center gap-2 bg-[#0b1329] border border-[#131d35] px-3 py-2 rounded-xl text-xs">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-              <span className="text-gray-400">Status Sistem</span>
-              <span className="text-green-400 font-bold">Normal</span>
-            </div>
-
-            {/* Global Search */}
-            <div className="relative w-full sm:w-60">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <input 
-                type="text" 
-                placeholder="Cari customer, invoice, tagihan..."
-                className="w-full bg-[#0b1329] border border-[#131d35] rounded-xl text-xs pl-9 pr-4 py-2 text-white focus:outline-none focus:border-blue-500"
-              />
-            </div>
-
-            {/* Notification and Profile icons */}
-            <div className="flex items-center gap-3">
-              <button className="relative p-2 bg-[#0b1329] border border-[#131d35] rounded-xl hover:bg-[#121c38] transition-colors">
-                <Bell size={16} className="text-gray-400" />
-                <span className="absolute -top-1 -right-1 bg-red-500 text-[9px] font-bold text-white px-1.5 py-0.5 rounded-full scale-75">12</span>
-              </button>
-              <button className="relative p-2 bg-[#0b1329] border border-[#131d35] rounded-xl hover:bg-[#121c38] transition-colors">
-                <Mail size={16} className="text-gray-400" />
-                <span className="absolute -top-1 -right-1 bg-red-500 text-[9px] font-bold text-white px-1.5 py-0.5 rounded-full scale-75">6</span>
-              </button>
-              <button className="p-2 bg-[#0b1329] border border-[#131d35] rounded-xl hover:bg-[#121c38] transition-colors max-sm:hidden">
-                <Maximize2 size={16} className="text-gray-400" />
-              </button>
-              
-              {/* Profile */}
-              <div className="flex items-center gap-2 pl-2 border-l border-[#131d35]">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xs overflow-hidden">
-                  <span className="text-xs">AR</span>
-                </div>
-                <div className="hidden md:block text-left">
-                  <div className="text-xs font-semibold text-white">Agus Dwi Rianto</div>
-                  <div className="text-[9px] text-gray-500 font-bold uppercase">Super Admin</div>
-                </div>
-              </div>
-            </div>
+          <div className="flex items-center gap-2.5">
+            <Link
+              href="/invoice/semua"
+              className="px-3 py-2 bg-[var(--app-card)] hover:bg-[var(--app-border)]/20 border border-[var(--app-border)] text-[var(--app-text)] text-xs font-semibold rounded-lg transition-all"
+            >
+              Lihat Semua Invoice
+            </Link>
+            <Link
+              href="/invoice/generate"
+              className="px-3 py-2 bg-[var(--app-card)] hover:bg-[var(--app-border)]/20 border border-[var(--app-border)] text-[var(--app-text)] text-xs font-semibold rounded-lg transition-all"
+            >
+              Single Generate
+            </Link>
           </div>
         </div>
 
@@ -295,7 +264,7 @@ export default function BatchGeneratePage() {
             </div>
             <div>
               <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Periode Invoice</p>
-              <p className="text-[11px] font-black text-white mt-1 leading-none">01 Jul 2026 - 31 Jul 2026</p>
+              <p className="text-[11px] font-black text-white mt-1 leading-none">22 Okt 2026 - 31 Jul 2026</p>
               <p className="text-[10px] text-gray-400 mt-1 font-medium">Billing Period</p>
             </div>
           </div>

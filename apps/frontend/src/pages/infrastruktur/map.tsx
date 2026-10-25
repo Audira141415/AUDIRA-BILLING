@@ -224,65 +224,65 @@ export default function MapPerangkat() {
       case 'warning':
         return 'bg-orange-500/10 text-orange-400 border border-orange-500/20'
       default:
-        return 'bg-gray-500/10 text-gray-400'
+        return 'bg-gray-500/10 text-slate-500'
     }
   }
 
   return (
     <Layout>
-      <div className="min-h-screen bg-slate-950 text-slate-100 p-4 md:p-8">
+      <div className="min-h-screen p-4 md:p-8 text-[var(--app-text)]">
         
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight text-white flex items-center gap-2">
+            <h1 className="text-3xl font-extrabold tracking-tight text-[var(--app-text)] flex items-center gap-2">
               <MapIcon className="text-blue-500 animate-pulse" />
               NOC Cyber-Map Dashboard
             </h1>
-            <p className="text-slate-400 mt-1">Sistem visualisasi infrastruktur jaringan dan distribusi ODP real-time</p>
+            <p className="text-[var(--app-text-muted)] mt-1">Sistem visualisasi infrastruktur jaringan dan distribusi ODP real-time</p>
           </div>
-          <div className="flex bg-slate-900 border border-slate-800 p-1.5 rounded-lg text-sm">
+          <div className="flex bg-[var(--app-card)] border border-[var(--app-border)] p-1.5 rounded-lg text-sm shadow-sm">
             <div className="flex items-center gap-1.5 px-3 py-1">
               <span className="w-2.5 h-2.5 rounded-full bg-green-500 animate-ping" />
-              <span className="text-xs font-semibold text-slate-300">Live Network Stream Active</span>
+              <span className="text-xs font-semibold text-[var(--app-text)]">Live Network Stream Active</span>
             </div>
           </div>
         </div>
 
         {/* Top Indicators */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition-colors">
-            <p className="text-slate-400 text-xs font-medium uppercase tracking-wider">Total Perangkat</p>
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-5 hover:border-[var(--app-border-strong)] transition-colors shadow-sm">
+            <p className="text-[var(--app-text-muted)] text-xs font-medium uppercase tracking-wider">Total Perangkat</p>
             <div className="flex items-baseline gap-2 mt-1">
-              <span className="text-3xl font-extrabold text-white">{devices.length}</span>
-              <span className="text-xs text-slate-500">Nodes</span>
+              <span className="text-3xl font-extrabold text-[var(--app-text)]">{devices.length}</span>
+              <span className="text-xs text-[var(--app-text-dim)]">Nodes</span>
             </div>
           </div>
-          <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition-colors">
-            <p className="text-slate-400 text-xs font-medium uppercase tracking-wider">Online</p>
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-5 hover:border-[var(--app-border-strong)] transition-colors shadow-sm">
+            <p className="text-[var(--app-text-muted)] text-xs font-medium uppercase tracking-wider">Online</p>
             <div className="flex items-baseline gap-2 mt-1">
               <span className="text-3xl font-extrabold text-green-500">
                 {devices.filter(d => d.status === 'online').length}
               </span>
-              <span className="text-xs text-slate-500">Normal</span>
+              <span className="text-xs text-[var(--app-text-dim)]">Normal</span>
             </div>
           </div>
-          <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition-colors">
-            <p className="text-slate-400 text-xs font-medium uppercase tracking-wider">Warning State</p>
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-5 hover:border-[var(--app-border-strong)] transition-colors shadow-sm">
+            <p className="text-[var(--app-text-muted)] text-xs font-medium uppercase tracking-wider">Warning State</p>
             <div className="flex items-baseline gap-2 mt-1">
               <span className="text-3xl font-extrabold text-orange-500">
                 {devices.filter(d => d.status === 'warning').length}
               </span>
-              <span className="text-xs text-slate-500">Latency High</span>
+              <span className="text-xs text-[var(--app-text-dim)]">Latency High</span>
             </div>
           </div>
-          <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition-colors">
-            <p className="text-slate-400 text-xs font-medium uppercase tracking-wider">Offline State</p>
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-5 hover:border-[var(--app-border-strong)] transition-colors shadow-sm">
+            <p className="text-[var(--app-text-muted)] text-xs font-medium uppercase tracking-wider">Offline State</p>
             <div className="flex items-baseline gap-2 mt-1">
               <span className="text-3xl font-extrabold text-red-500">
                 {devices.filter(d => d.status === 'offline').length}
               </span>
-              <span className="text-xs text-slate-500">No Ping</span>
+              <span className="text-xs text-[var(--app-text-dim)]">No Ping</span>
             </div>
           </div>
         </div>
@@ -291,15 +291,15 @@ export default function MapPerangkat() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
           
           {/* Interactive SVG Network Map */}
-          <div className="lg:col-span-2 bg-slate-900/40 border border-slate-800 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between h-[450px]">
-            <div className="absolute inset-0 bg-slate-950/20 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:30px_30px] opacity-40" />
+          <div className="lg:col-span-2 bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between h-[450px] shadow-sm">
+            <div className="absolute inset-0 bg-[var(--app-card-subtle)]/50 bg-[linear-gradient(to_right,rgba(100,116,139,0.1)_1px,transparent_1px),linear-gradient(to_bottom,rgba(100,116,139,0.1)_1px,transparent_1px)] bg-[size:30px_30px] opacity-40 pointer-events-none" />
             
             <div className="flex items-center justify-between mb-4 z-10">
-              <h2 className="text-lg font-bold text-white flex items-center gap-2">
+              <h2 className="text-lg font-bold text-[var(--app-text)] flex items-center gap-2">
                 <Wifi size={18} className="text-blue-500" />
                 Topologi Jaringan & Distribusi ODP
               </h2>
-              <span className="text-xs text-slate-500 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-md">
+              <span className="text-xs text-[var(--app-text-muted)] bg-[var(--app-card-subtle)] border border-[var(--app-border)] px-2.5 py-1 rounded-md">
                 Klik perangkat untuk menguji
               </span>
             </div>
@@ -402,7 +402,7 @@ export default function MapPerangkat() {
                       <text 
                         y="-26" 
                         textAnchor="middle" 
-                        className="fill-slate-200 text-[11px] font-semibold bg-slate-950/80 pointer-events-none select-none"
+                        className="fill-slate-200 text-[11px] font-semibold bg-slate-50/80 pointer-events-none select-none"
                       >
                         {dev.name}
                       </text>
@@ -413,7 +413,7 @@ export default function MapPerangkat() {
             </div>
             
             {/* Map Legend */}
-            <div className="flex gap-4 text-xs text-slate-400 mt-2 z-10 bg-slate-950/40 p-2 rounded-lg border border-slate-800/50 justify-center">
+            <div className="flex gap-4 text-xs text-slate-400 mt-2 z-10 bg-slate-50/40 p-2 rounded-lg border border-slate-800/50 justify-center">
               <div className="flex items-center gap-1.5">
                 <span className="w-2.5 h-2.5 rounded-full bg-green-500" /> Router Central
               </div>
@@ -430,7 +430,7 @@ export default function MapPerangkat() {
           </div>
 
           {/* Interactive Control & Details Side Panel */}
-          <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-6 flex flex-col justify-between shadow-sm">
             {selectedDevice ? (
               <div className="flex-1 flex flex-col justify-between">
                 
@@ -440,22 +440,22 @@ export default function MapPerangkat() {
                     <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${getStatusBadge(selectedDevice.status)}`}>
                       {selectedDevice.status.toUpperCase()}
                     </span>
-                    <span className="text-xs text-slate-500">ID: {selectedDevice.id}</span>
+                    <span className="text-xs text-[var(--app-text-dim)]">ID: {selectedDevice.id}</span>
                   </div>
 
-                  <h3 className="text-xl font-bold text-white flex items-center gap-2 mb-1">
+                  <h3 className="text-xl font-bold text-[var(--app-text)] flex items-center gap-2 mb-1">
                     {getDeviceIcon(selectedDevice.type, selectedDevice.status)}
                     {selectedDevice.name}
                   </h3>
-                  <p className="text-xs text-slate-400 font-mono mb-4">{selectedDevice.ipAddress || 'IP: N/A'}</p>
-                  <p className="text-sm text-slate-300 bg-slate-950/30 p-3 rounded-lg border border-slate-800/40 mb-4">
+                  <p className="text-xs text-[var(--app-text-muted)] font-mono mb-4">{selectedDevice.ipAddress || 'IP: N/A'}</p>
+                  <p className="text-sm text-[var(--app-text)] bg-[var(--app-card-subtle)] p-3 rounded-lg border border-[var(--app-border)] mb-4">
                     {selectedDevice.description}
                   </p>
 
                   {/* Sparkline Latency simulation */}
                   <div className="mb-4">
-                    <p className="text-xs text-slate-400 mb-2 font-semibold">Latency Real-Time (Last 10 pings)</p>
-                    <div className="flex items-end gap-1 h-14 bg-slate-950/40 p-2 rounded-lg border border-slate-800/50">
+                    <p className="text-xs text-[var(--app-text-muted)] mb-2 font-semibold">Latency Real-Time (Last 10 pings)</p>
+                    <div className="flex items-end gap-1 h-14 bg-[var(--app-card-subtle)] p-2 rounded-lg border border-[var(--app-border)]">
                       {selectedDevice.latencyHistory.map((lat, idx) => {
                         const maxH = 40
                         const h = Math.min(maxH, (lat / 120) * maxH)
@@ -477,7 +477,7 @@ export default function MapPerangkat() {
                     <button 
                       onClick={startPing}
                       disabled={isPingRunning || isRebooting || selectedDevice.status === 'offline'}
-                      className="flex items-center justify-center gap-1.5 px-3 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-800 disabled:text-slate-500 text-white rounded-lg text-sm font-semibold transition-colors shadow-sm"
+                      className="flex items-center justify-center gap-1.5 px-3 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-lg text-sm font-semibold transition-colors shadow-sm"
                     >
                       <Play size={16} />
                       Ping Test
@@ -485,7 +485,7 @@ export default function MapPerangkat() {
                     <button 
                       onClick={startReboot}
                       disabled={isRebooting || isPingRunning}
-                      className="flex items-center justify-center gap-1.5 px-3 py-2 bg-slate-800 hover:bg-slate-700 disabled:bg-slate-800 disabled:text-slate-500 text-slate-100 rounded-lg text-sm font-semibold border border-slate-700/50 transition-colors"
+                      className="flex items-center justify-center gap-1.5 px-3 py-2 bg-[var(--app-card-subtle)] hover:bg-[var(--app-card-hover)] disabled:opacity-50 text-[var(--app-text)] rounded-lg text-sm font-semibold border border-[var(--app-border)] transition-colors shadow-sm"
                     >
                       <RefreshCw size={14} className={isRebooting ? 'animate-spin' : ''} />
                       Reboot Node
@@ -494,7 +494,7 @@ export default function MapPerangkat() {
                 </div>
 
                 {/* Cyber Console Terminal */}
-                <div className="bg-slate-950 rounded-xl border border-slate-800 p-4 font-mono text-xs text-green-400 h-44 overflow-y-auto flex flex-col justify-between">
+                <div className="bg-slate-950 rounded-xl border border-slate-800 p-4 font-mono text-xs text-emerald-400 h-44 overflow-y-auto flex flex-col justify-between shadow-inner">
                   <div className="space-y-1">
                     {terminalLogs.map((log, idx) => (
                       <div key={idx} className="flex gap-1.5">
@@ -512,9 +512,9 @@ export default function MapPerangkat() {
               </div>
             ) : (
               <div className="flex-1 flex flex-col items-center justify-center text-center py-12">
-                <MapPin className="text-slate-700 animate-bounce mb-4" size={48} />
-                <h3 className="text-lg font-bold text-white mb-2">Pilih Perangkat</h3>
-                <p className="text-slate-400 text-sm max-w-[250px]">
+                <MapPin className="text-[var(--app-text-dim)] animate-bounce mb-4" size={48} />
+                <h3 className="text-lg font-bold text-[var(--app-text)] mb-2">Pilih Perangkat</h3>
+                <p className="text-[var(--app-text-muted)] text-sm max-w-[250px]">
                   Klik salah satu node di peta untuk memuat data monitoring, statistik ping, dan kontrol perangkat.
                 </p>
               </div>
@@ -524,14 +524,14 @@ export default function MapPerangkat() {
         </div>
 
         {/* Filters & Search */}
-        <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-4 mb-8">
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4 mb-8 shadow-sm">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500" size={18} />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--app-text-dim)]" size={18} />
               <input
                 type="text"
                 placeholder="Cari berdasarkan nama perangkat atau IP address..."
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-10 pr-4 py-2.5 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent"
+                className="w-full bg-[var(--app-surface)] border border-[var(--app-border)] rounded-lg pl-10 pr-4 py-2.5 text-sm text-[var(--app-text)] placeholder-[var(--app-text-dim)] focus:outline-none focus:border-[var(--app-primary)] focus:ring-1 focus:ring-[var(--app-primary)]"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -544,8 +544,8 @@ export default function MapPerangkat() {
                   onClick={() => setTypeFilter(type)}
                   className={`px-4 py-2 rounded-lg text-xs font-semibold border transition-all ${
                     typeFilter === type 
-                      ? 'bg-blue-600 border-blue-500 text-white shadow-md shadow-blue-900/20' 
-                      : 'bg-slate-950 border-slate-800 text-slate-400 hover:bg-slate-900'
+                      ? 'bg-blue-600 border-blue-500 text-white shadow-sm' 
+                      : 'bg-[var(--app-card-subtle)] border-[var(--app-border)] text-[var(--app-text-muted)] hover:bg-[var(--app-card-hover)] hover:text-[var(--app-text)]'
                   }`}
                 >
                   {type === 'all' ? 'Semua' : type === 'access-point' ? 'Access Point' : type.toUpperCase()}
@@ -556,44 +556,44 @@ export default function MapPerangkat() {
         </div>
 
         {/* Devices List Table */}
-        <div className="bg-slate-900/30 border border-slate-800 rounded-xl overflow-hidden">
-          <table className="min-w-full divide-y divide-slate-800">
-            <thead className="bg-slate-900/60">
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl overflow-hidden shadow-sm">
+          <table className="min-w-full divide-y divide-[var(--app-border)]">
+            <thead className="bg-[var(--app-card-subtle)]">
               <tr>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Perangkat</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">IP Address</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Koordinat</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Aksi</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--app-text-muted)] uppercase tracking-wider">Perangkat</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--app-text-muted)] uppercase tracking-wider">IP Address</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--app-text-muted)] uppercase tracking-wider">Koordinat</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--app-text-muted)] uppercase tracking-wider">Status</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--app-text-muted)] uppercase tracking-wider">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800 bg-slate-950/20">
+            <tbody className="divide-y divide-[var(--app-border)] bg-[var(--app-card)]">
               {filteredDevices.map(device => (
-                <tr key={device.id} className="hover:bg-slate-900/20 transition-colors">
+                <tr key={device.id} className="hover:bg-[var(--app-card-subtle)] transition-colors">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center gap-3">
-                      <div className="bg-slate-900 p-2 rounded-lg border border-slate-800">
+                      <div className="bg-[var(--app-card-subtle)] p-2 rounded-lg border border-[var(--app-border)]">
                         {getDeviceIcon(device.type, device.status)}
                       </div>
                       <div>
-                        <div className="font-bold text-white">{device.name}</div>
-                        <div className="text-xs text-slate-500 uppercase">{device.type}</div>
+                        <div className="font-bold text-[var(--app-text)]">{device.name}</div>
+                        <div className="text-xs text-[var(--app-text-dim)] uppercase">{device.type}</div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-slate-300">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-[var(--app-text)]">
                     {device.ipAddress || '-'}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-xs font-mono text-slate-400">
+                  <td className="px-6 py-4 whitespace-nowrap text-xs font-mono text-[var(--app-text-muted)]">
                     {device.latitude.toFixed(4)}, {device.longitude.toFixed(4)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`inline-flex px-2 py-0.5 rounded text-[10px] font-bold ${
                       device.status === 'online' 
-                        ? 'bg-green-500/10 text-green-400 border border-green-500/20' 
+                        ? 'bg-green-500/10 text-green-500 border border-green-500/20' 
                         : device.status === 'warning'
-                        ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20'
-                        : 'bg-red-500/10 text-red-400 border border-red-500/20'
+                        ? 'bg-orange-500/10 text-orange-500 border border-orange-500/20'
+                        : 'bg-red-500/10 text-red-500 border border-red-500/20'
                     }`}>
                       {device.status.toUpperCase()}
                     </span>
@@ -601,7 +601,7 @@ export default function MapPerangkat() {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <button 
                       onClick={() => handleSelectDevice(device)}
-                      className="text-xs font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1"
+                      className="text-xs font-bold text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 flex items-center gap-1"
                     >
                       Diagnostik <ArrowRight size={14} />
                     </button>
@@ -610,7 +610,7 @@ export default function MapPerangkat() {
               ))}
               {filteredDevices.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-slate-500 text-sm">
+                  <td colSpan={5} className="px-6 py-12 text-center text-[var(--app-text-dim)] text-sm">
                     Tidak ada perangkat yang cocok dengan pencarian.
                   </td>
                 </tr>

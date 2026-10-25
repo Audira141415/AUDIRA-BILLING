@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React, { useState } from 'react';
 import Layout from '@/components/Layout';
 import {
@@ -57,7 +58,7 @@ const mockRefunds: RefundRow[] = [
     nominal: 375000,
     method: 'Transfer Bank',
     status: 'Selesai',
-    refundDate: '01/07/2026',
+    refundDate: '22/10/2026',
     createdBy: 'Agus Dwi Rianto'
   },
   {
@@ -70,7 +71,7 @@ const mockRefunds: RefundRow[] = [
     nominal: 250000,
     method: 'QRIS',
     status: 'Diproses',
-    refundDate: '01/07/2026',
+    refundDate: '22/10/2026',
     createdBy: 'Rina Marlina'
   },
   {
@@ -207,172 +208,129 @@ export default function RefundPage() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-[#070c19] text-gray-200 p-4 md:p-6 space-y-6">
+      <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] p-4 md:p-6 space-y-6">
         
         {/* ─── Top Header bar ────────────────────────────────────────────── */}
-        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 border-b border-[#131d35] pb-5">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-[var(--app-border)] pb-5">
           <div className="space-y-1">
-            <div className="flex items-center gap-2 text-xs text-gray-400 font-medium">
-              <span>Home</span>
-              <span>&gt;</span>
-              <span>Invoice</span>
-              <span>&gt;</span>
-              <span className="text-blue-400">Refund</span>
+            <div className="flex items-center gap-2 text-xs text-[var(--app-muted)] font-mono mb-1">
+              <Link href="/" className="hover:text-[var(--app-text)]">AUDIRA</Link>
+              <span>/</span>
+              <Link href="/invoice" className="hover:text-[var(--app-text)]">Billing & Tagihan</Link>
+              <span>/</span>
+              <span className="text-blue-500 font-semibold">Pengembalian Dana (Refund)</span>
             </div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">Refund</h1>
+            <h1 className="text-xl md:text-2xl font-bold tracking-tight text-[var(--app-text)]">
+              Pencatatan & Verifikasi Pengembalian Dana
+            </h1>
+            <p className="text-xs text-[var(--app-muted)]">
+              Proses pengembalian kelebihan bayar, deposit instalasi, dan kompensasi gangguan jaringan terverifikasi.
+            </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-4 w-full xl:w-auto">
-            {/* Calendar */}
-            <div className="flex items-center gap-2 bg-[#0b1329] border border-[#131d35] px-3 py-2 rounded-xl text-xs text-gray-300">
-              <Calendar size={14} className="text-blue-400" />
-              <span>01 Juli 2026</span>
-              <span className="text-[10px] text-gray-500">08:35 WIB</span>
-            </div>
-            
-            {/* Status Sistem */}
-            <div className="flex items-center gap-2 bg-[#0b1329] border border-[#131d35] px-3 py-2 rounded-xl text-xs">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-              <span className="text-gray-400">Status Sistem</span>
-              <span className="text-green-400 font-bold">Normal</span>
-            </div>
-
-            {/* Global Search */}
-            <div className="relative w-full sm:w-60">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <input 
-                type="text" 
-                placeholder="Cari customer, invoice, tagihan..."
-                className="w-full bg-[#0b1329] border border-[#131d35] rounded-xl text-xs pl-9 pr-4 py-2 text-white focus:outline-none focus:border-blue-500"
-              />
-            </div>
-
-            {/* Notification and Profile icons */}
-            <div className="flex items-center gap-3">
-              <button className="relative p-2 bg-[#0b1329] border border-[#131d35] rounded-xl hover:bg-[#121c38] transition-colors">
-                <Bell size={16} className="text-gray-400" />
-                <span className="absolute -top-1 -right-1 bg-red-500 text-[9px] font-bold text-white px-1.5 py-0.5 rounded-full scale-75">12</span>
-              </button>
-              <button className="relative p-2 bg-[#0b1329] border border-[#131d35] rounded-xl hover:bg-[#121c38] transition-colors">
-                <Mail size={16} className="text-gray-400" />
-                <span className="absolute -top-1 -right-1 bg-red-500 text-[9px] font-bold text-white px-1.5 py-0.5 rounded-full scale-75">6</span>
-              </button>
-              <button className="p-2 bg-[#0b1329] border border-[#131d35] rounded-xl hover:bg-[#121c38] transition-colors max-sm:hidden">
-                <Maximize2 size={16} className="text-gray-400" />
-              </button>
-              
-              {/* Profile */}
-              <div className="flex items-center gap-2 pl-2 border-l border-[#131d35]">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xs overflow-hidden">
-                  <span className="text-xs">AR</span>
-                </div>
-                <div className="hidden md:block text-left">
-                  <div className="text-xs font-semibold text-white">Agus Dwi Rianto</div>
-                  <div className="text-[9px] text-gray-500 font-bold uppercase">Super Admin</div>
-                </div>
-              </div>
-            </div>
+          <div className="flex items-center gap-2.5">
+            <Link href="/payment/history" className="px-3 py-2 bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)] text-xs font-semibold rounded-lg">Riwayat Bayar</Link>
           </div>
         </div>
 
         {/* ─── KPI Cards Row ─────────────────────────────────────────────── */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
           {/* Card 1: Total Refund */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex items-center gap-4">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4 flex items-center gap-4">
             <div className="p-3.5 bg-purple-500/10 text-purple-400 border border-purple-500/20 rounded-xl">
               <FileText size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Total Refund</p>
-              <p className="text-2xl font-black text-white mt-0.5">28</p>
-              <p className="text-[10px] text-gray-400 mt-0.5 font-medium">Semua Refund</p>
+              <p className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider">Total Refund</p>
+              <p className="text-2xl font-black text-[var(--app-text)] mt-0.5">28</p>
+              <p className="text-[10px] text-[var(--app-muted)] mt-0.5 font-medium">Semua Refund</p>
             </div>
           </div>
 
           {/* Card 2: Total Nominal Refund */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex items-center gap-4">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4 flex items-center gap-4">
             <div className="p-3.5 bg-green-500/10 text-green-400 border border-green-500/20 rounded-xl">
               <Wallet size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Total Nominal Refund</p>
-              <p className="text-xl font-black text-white mt-0.5">Rp 12.850.000</p>
-              <p className="text-[10px] text-gray-400 mt-0.5 font-medium">Semua Refund</p>
+              <p className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider">Total Nominal Refund</p>
+              <p className="text-xl font-black text-[var(--app-text)] mt-0.5">Rp 12.850.000</p>
+              <p className="text-[10px] text-[var(--app-muted)] mt-0.5 font-medium">Semua Refund</p>
             </div>
           </div>
 
           {/* Card 3: Selesai */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex items-center gap-4">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4 flex items-center gap-4">
             <div className="p-3.5 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-xl">
               <CheckCircle size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Selesai</p>
-              <p className="text-2xl font-black text-white mt-0.5">22</p>
-              <p className="text-[10px] text-gray-400 mt-0.5 font-medium">78.6% dari total</p>
+              <p className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider">Selesai</p>
+              <p className="text-2xl font-black text-[var(--app-text)] mt-0.5">22</p>
+              <p className="text-[10px] text-[var(--app-muted)] mt-0.5 font-medium">78.6% dari total</p>
             </div>
           </div>
 
           {/* Card 4: Diproses */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex items-center gap-4">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4 flex items-center gap-4">
             <div className="p-3.5 bg-orange-500/10 text-orange-400 border border-orange-500/20 rounded-xl">
               <Clock size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Diproses</p>
-              <p className="text-2xl font-black text-white mt-0.5">4</p>
-              <p className="text-[10px] text-gray-400 mt-0.5 font-medium">14.3% dari total</p>
+              <p className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider">Diproses</p>
+              <p className="text-2xl font-black text-[var(--app-text)] mt-0.5">4</p>
+              <p className="text-[10px] text-[var(--app-muted)] mt-0.5 font-medium">14.3% dari total</p>
             </div>
           </div>
 
           {/* Card 5: Ditolak */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex items-center gap-4">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4 flex items-center gap-4">
             <div className="p-3.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded-xl">
               <XCircle size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Ditolak</p>
-              <p className="text-2xl font-black text-white mt-0.5">2</p>
-              <p className="text-[10px] text-gray-400 mt-0.5 font-medium">7.1% dari total</p>
+              <p className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider">Ditolak</p>
+              <p className="text-2xl font-black text-[var(--app-text)] mt-0.5">2</p>
+              <p className="text-[10px] text-[var(--app-muted)] mt-0.5 font-medium">7.1% dari total</p>
             </div>
           </div>
         </div>
 
         {/* ─── Filter Bar ────────────────────────────────────────────────── */}
-        <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4">
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4">
           <div className="flex flex-wrap items-center gap-4">
             <div className="relative flex-1 min-w-[240px]">
-              <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-gray-500 w-4 h-4" />
+              <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-[var(--app-muted)] w-4 h-4" />
               <input 
                 type="text" 
                 placeholder="Cari refund, invoice, customer..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-[#080d19] border border-[#131d35] text-xs pl-10 pr-4 py-2.5 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
+                className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] text-xs pl-10 pr-4 py-2.5 rounded-xl text-[var(--app-text)] placeholder-slate-400 focus:outline-none focus:border-blue-500 transition-colors"
               />
             </div>
 
-            <select className="bg-[#080d19] border border-[#131d35] text-xs py-2.5 px-4 rounded-xl text-gray-300 focus:outline-none min-w-[140px]">
+            <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]">
               <option>Semua Status</option>
             </select>
 
-            <select className="bg-[#080d19] border border-[#131d35] text-xs py-2.5 px-4 rounded-xl text-gray-300 focus:outline-none min-w-[140px]">
+            <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]">
               <option>Semua Metode</option>
             </select>
 
-            <select className="bg-[#080d19] border border-[#131d35] text-xs py-2.5 px-4 rounded-xl text-gray-300 focus:outline-none min-w-[140px]">
+            <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]">
               <option>Semua Sales</option>
             </select>
             
             {/* Date range picker mock */}
-            <div className="flex items-center gap-2 bg-[#080d19] border border-[#131d35] px-3 py-2.5 rounded-xl text-xs text-gray-300 cursor-pointer">
-              <Calendar size={14} className="text-gray-500" />
-              <span>01/06/2026 - 01/07/2026</span>
+            <div className="flex items-center gap-2 bg-[var(--app-bg)] border border-[var(--app-border)] px-3 py-2.5 rounded-xl text-xs text-[var(--app-text)]/80 cursor-pointer">
+              <Calendar size={14} className="text-[var(--app-muted)]" />
+              <span>01/06/2026 - 22/10/2026</span>
             </div>
 
             <button 
               onClick={() => { setSearchTerm(''); }}
-              className="text-xs font-semibold text-gray-400 hover:text-white px-4 py-2.5 rounded-xl border border-transparent hover:border-[#131d35] transition-all ml-auto"
+              className="text-xs font-semibold text-[var(--app-muted)] hover:text-[var(--app-text)] px-4 py-2.5 rounded-xl border border-transparent hover:border-[var(--app-border)] transition-all ml-auto"
             >
               Reset
             </button>
@@ -387,45 +345,45 @@ export default function RefundPage() {
               <span>Buat Refund</span>
             </button>
 
-            <button className="flex items-center gap-2 bg-[#0b1329] border border-[#131d35] hover:bg-[#121c38] text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-sm border-gray-800">
-              <Download size={14} className="text-gray-400" />
+            <button className="flex items-center gap-2 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-sm border-gray-800">
+              <Download size={14} className="text-[var(--app-muted)]" />
               <span>Export</span>
             </button>
           </div>
         </div>
 
         {/* ─── Mass Action bar ────────────────────────────────────────────── */}
-        <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex flex-wrap items-center gap-3">
-          <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider mr-2">
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4 flex flex-wrap items-center gap-3">
+          <span className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider mr-2">
             Mass Action ({selectedIds.length} dipilih)
           </span>
           
-          <button className="flex items-center gap-1.5 bg-[#080d19] border border-[#131d35] text-gray-400 hover:text-white text-xs px-3.5 py-2 rounded-xl transition-all">
+          <button className="flex items-center gap-1.5 bg-[var(--app-bg)] border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] text-xs px-3.5 py-2 rounded-xl transition-all">
             <CheckCircle size={13} className="text-green-500" />
             <span>Proses Refund</span>
           </button>
 
-          <button className="flex items-center gap-1.5 bg-[#080d19] border border-[#131d35] text-gray-400 hover:text-white text-xs px-3.5 py-2 rounded-xl transition-all">
+          <button className="flex items-center gap-1.5 bg-[var(--app-bg)] border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] text-xs px-3.5 py-2 rounded-xl transition-all">
             <Mail size={13} />
             <span>Kirim Email</span>
           </button>
 
-          <button className="flex items-center gap-1.5 bg-[#080d19] border border-[#131d35] text-gray-400 hover:text-white text-xs px-3.5 py-2 rounded-xl transition-all">
+          <button className="flex items-center gap-1.5 bg-[var(--app-bg)] border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] text-xs px-3.5 py-2 rounded-xl transition-all">
             <FileText size={13} />
             <span>Cetak PDF</span>
           </button>
 
-          <button className="flex items-center gap-1.5 bg-[#080d19] border border-[#131d35] text-gray-400 hover:text-red-400 text-xs px-3.5 py-2 rounded-xl transition-all">
+          <button className="flex items-center gap-1.5 bg-[var(--app-bg)] border border-[var(--app-border)] text-[var(--app-muted)] hover:text-red-400 text-xs px-3.5 py-2 rounded-xl transition-all">
             <XCircle size={13} className="text-red-500" />
             <span>Batalkan</span>
           </button>
 
-          <button className="flex items-center gap-1.5 bg-[#080d19] border border-[#131d35] text-gray-400 hover:text-white text-xs px-3.5 py-2 rounded-xl transition-all">
+          <button className="flex items-center gap-1.5 bg-[var(--app-bg)] border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] text-xs px-3.5 py-2 rounded-xl transition-all">
             <Send size={13} />
             <span>Export</span>
           </button>
 
-          <button className="p-2 bg-[#080d19] border border-[#131d35] hover:bg-[#121c38] rounded-xl text-gray-400">
+          <button className="p-2 bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 rounded-xl text-[var(--app-muted)]">
             <MoreVertical size={13} />
           </button>
         </div>
@@ -437,17 +395,17 @@ export default function RefundPage() {
           <div className="lg:col-span-9 space-y-6">
             
             {/* Table Card */}
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl overflow-hidden">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="border-b border-[#131d35] bg-[#101935]/40 text-gray-400 text-[10px] font-bold uppercase tracking-wider">
+                    <tr className="border-b border-[var(--app-border)] bg-[var(--app-border)]/10 text-[var(--app-muted)] text-[10px] font-bold uppercase tracking-wider">
                       <th className="p-4 w-10">
                         <input 
                           type="checkbox" 
                           checked={selectedIds.length > 0}
                           onChange={handleSelectAll}
-                          className="rounded bg-[#080d19] border-[#131d35] text-blue-600 focus:ring-0" 
+                          className="rounded bg-[var(--app-bg)] border-[var(--app-border)] text-blue-600 focus:ring-0" 
                         />
                       </th>
                       <th className="p-4 w-12">NO</th>
@@ -463,37 +421,37 @@ export default function RefundPage() {
                       <th className="p-4 w-20 text-center">AKSI</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#131d35] text-xs text-gray-300">
+                  <tbody className="divide-y divide-[var(--app-border)] text-xs text-[var(--app-text)]/80">
                     {mockRefunds.map((d, idx) => {
                       const isSelected = selectedIds.includes(d.id);
                       return (
                         <tr 
                           key={d.id}
                           onClick={() => handleSelectRow(d.id)}
-                          className={`hover:bg-[#121c38]/40 transition-colors cursor-pointer ${isSelected ? 'bg-[#121c38]/50' : ''}`}
+                          className={`hover:bg-[var(--app-border)]/20 transition-colors cursor-pointer ${isSelected ? 'bg-[var(--app-border)]/20/50' : ''}`}
                         >
                           <td className="p-4" onClick={(e) => e.stopPropagation()}>
                             <input 
                               type="checkbox" 
                               checked={isSelected}
                               onChange={() => handleSelectRow(d.id)}
-                              className="rounded bg-[#080d19] border-[#131d35] text-blue-600 focus:ring-0" 
+                              className="rounded bg-[var(--app-bg)] border-[var(--app-border)] text-blue-600 focus:ring-0" 
                             />
                           </td>
-                          <td className="p-4 text-gray-500 font-medium">{idx + 1}</td>
+                          <td className="p-4 text-[var(--app-muted)] font-medium">{idx + 1}</td>
                           <td className="p-4 font-mono font-semibold text-white tracking-wider">
                             <span className="text-blue-400 font-bold">{d.rfNumber}</span>
                           </td>
-                          <td className="p-4 font-mono font-semibold text-gray-400">{d.invoiceNumber}</td>
+                          <td className="p-4 font-mono font-semibold text-[var(--app-muted)]">{d.invoiceNumber}</td>
                           <td className="p-4">
                             <div className="space-y-0.5">
-                              <span className="font-bold text-white block">{d.customerName}</span>
-                              <span className="text-[10px] text-gray-500 block font-semibold">{d.customerNo}</span>
+                              <span className="font-bold text-[var(--app-text)] block">{d.customerName}</span>
+                              <span className="text-[10px] text-[var(--app-muted)] block font-semibold">{d.customerNo}</span>
                             </div>
                           </td>
-                          <td className="p-4 font-semibold text-gray-300">{d.reason}</td>
-                          <td className="p-4 font-bold text-white">{formatCurrency(d.nominal)}</td>
-                          <td className="p-4 text-gray-400 font-medium">{d.method}</td>
+                          <td className="p-4 font-semibold text-[var(--app-text)]/80">{d.reason}</td>
+                          <td className="p-4 font-bold text-[var(--app-text)]">{formatCurrency(d.nominal)}</td>
+                          <td className="p-4 text-[var(--app-muted)] font-medium">{d.method}</td>
                           <td className="p-4">
                             <span className={`px-2.5 py-1 text-[10px] font-bold rounded-full ${
                               d.status === 'Selesai' 
@@ -505,17 +463,17 @@ export default function RefundPage() {
                               {d.status}
                             </span>
                           </td>
-                          <td className="p-4 text-gray-400 font-medium">{d.refundDate}</td>
-                          <td className="p-4 text-gray-400 font-medium">{d.createdBy}</td>
+                          <td className="p-4 text-[var(--app-muted)] font-medium">{d.refundDate}</td>
+                          <td className="p-4 text-[var(--app-muted)] font-medium">{d.createdBy}</td>
                           <td className="p-4" onClick={(e) => e.stopPropagation()}>
                             <div className="flex items-center justify-center gap-1.5">
-                              <button className="p-1.5 hover:bg-[#1b2647] rounded-lg text-gray-400 hover:text-white transition-colors">
+                              <button className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors">
                                 <Eye size={13} />
                               </button>
-                              <button className="p-1.5 hover:bg-[#1b2647] rounded-lg text-gray-400 hover:text-white transition-colors">
+                              <button className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors">
                                 <Edit2 size={13} />
                               </button>
-                              <button className="p-1.5 hover:bg-[#1b2647] rounded-lg text-gray-400 hover:text-white transition-colors">
+                              <button className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors">
                                 <MoreVertical size={13} />
                               </button>
                             </div>
@@ -528,8 +486,8 @@ export default function RefundPage() {
               </div>
 
               {/* Table pagination */}
-              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-t border-[#131d35] bg-[#0b1329]/60">
-                <span className="text-xs text-gray-500">
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-t border-[var(--app-border)] bg-white/60">
+                <span className="text-xs text-[var(--app-muted)]">
                   Menampilkan <span className="font-semibold text-white">1 - 10</span> dari <span className="font-semibold text-white">28</span> data
                 </span>
                 
@@ -537,20 +495,20 @@ export default function RefundPage() {
                   <div className="flex items-center gap-2">
                     <button 
                       disabled
-                      className="p-2 border border-[#131d35] hover:bg-[#121c38] rounded-xl text-gray-500 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                      className="p-2 border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 rounded-xl text-[var(--app-muted)] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                     >
                       <ChevronLeft size={14} />
                     </button>
                     <button className="w-8 h-8 rounded-xl text-xs font-semibold border bg-[#0052cc] text-white border-[#0052cc]">1</button>
-                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border border-[#131d35] text-gray-400 hover:text-white hover:bg-[#121c38]">2</button>
-                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border border-[#131d35] text-gray-400 hover:text-white hover:bg-[#121c38]">3</button>
-                    <button className="p-2 border border-[#131d35] hover:bg-[#121c38] rounded-xl text-gray-400 transition-colors">
+                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/30">2</button>
+                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/30">3</button>
+                    <button className="p-2 border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 rounded-xl text-[var(--app-muted)] transition-colors">
                       <ChevronRight size={14} />
                     </button>
                   </div>
 
                   <select
-                    className="bg-[#080d19] border border-[#131d35] text-xs py-1.5 px-3 rounded-lg text-gray-300 focus:outline-none"
+                    className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-1.5 px-3 rounded-lg text-[var(--app-text)]/80 focus:outline-none"
                   >
                     <option value={10}>10 / halaman</option>
                   </select>
@@ -562,39 +520,39 @@ export default function RefundPage() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
               
               {/* Status Refund */}
-              <div className="lg:col-span-4 bg-[#0b1329] border border-[#131d35] rounded-2xl p-5 space-y-4">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400">Status Refund</h4>
+              <div className="lg:col-span-4 bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-4">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Status Refund</h4>
                 
                 <div className="grid grid-cols-3 gap-2 text-center">
                   <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-xl space-y-1">
                     <CheckCircle size={16} className="text-green-500 mx-auto" />
-                    <p className="text-lg font-black text-white">22</p>
-                    <p className="text-[9px] text-gray-500 font-bold uppercase">Selesai</p>
+                    <p className="text-lg font-black text-[var(--app-text)]">22</p>
+                    <p className="text-[9px] text-[var(--app-muted)] font-bold uppercase">Selesai</p>
                   </div>
                   <div className="p-3 bg-orange-500/10 border border-orange-500/20 rounded-xl space-y-1">
                     <Clock size={16} className="text-orange-400 mx-auto" />
-                    <p className="text-lg font-black text-white">4</p>
-                    <p className="text-[9px] text-gray-500 font-bold uppercase">Diproses</p>
+                    <p className="text-lg font-black text-[var(--app-text)]">4</p>
+                    <p className="text-[9px] text-[var(--app-muted)] font-bold uppercase">Diproses</p>
                   </div>
                   <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl space-y-1">
                     <XCircle size={16} className="text-red-500 mx-auto" />
-                    <p className="text-lg font-black text-white">2</p>
-                    <p className="text-[9px] text-gray-500 font-bold uppercase">Ditolak</p>
+                    <p className="text-lg font-black text-[var(--app-text)]">2</p>
+                    <p className="text-[9px] text-[var(--app-muted)] font-bold uppercase">Ditolak</p>
                   </div>
                 </div>
               </div>
 
               {/* Refund Bulanan Line Chart */}
-              <div className="lg:col-span-5 bg-[#0b1329] border border-[#131d35] rounded-2xl p-5 space-y-3">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400">Refund Bulanan (Nominal)</h4>
+              <div className="lg:col-span-5 bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-3">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Refund Bulanan (Nominal)</h4>
                 
                 {/* SVG Line Chart */}
                 <div className="h-28 w-full mt-2">
                   <svg viewBox="0 0 300 100" className="w-full h-full overflow-visible">
                     {/* Grids */}
-                    <line x1="0" y1="20" x2="300" y2="20" stroke="#131d35" strokeDasharray="3 3" />
-                    <line x1="0" y1="50" x2="300" y2="50" stroke="#131d35" strokeDasharray="3 3" />
-                    <line x1="0" y1="80" x2="300" y2="80" stroke="#131d35" strokeDasharray="3 3" />
+                    <line x1="0" y1="20" x2="300" y2="20" stroke="#e2e8f0" strokeDasharray="3 3" />
+                    <line x1="0" y1="50" x2="300" y2="50" stroke="#e2e8f0" strokeDasharray="3 3" />
+                    <line x1="0" y1="80" x2="300" y2="80" stroke="#e2e8f0" strokeDasharray="3 3" />
                     
                     {/* Labels */}
                     <text x="5" y="16" fill="#4a5568" fontSize="8" fontWeight="bold">Rp 6M</text>
@@ -626,32 +584,32 @@ export default function RefundPage() {
               </div>
 
               {/* Aksi Cepat */}
-              <div className="lg:col-span-3 bg-[#0b1329] border border-[#131d35] rounded-2xl p-5 space-y-3.5">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400">Aksi Cepat</h4>
+              <div className="lg:col-span-3 bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-3.5">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Aksi Cepat</h4>
                 
-                <div className="space-y-2 text-[10px] font-bold text-gray-400">
-                  <div className="flex items-center justify-between p-2 bg-[#080d19] border border-[#131d35] rounded-xl hover:bg-[#121c38]/40 cursor-pointer">
+                <div className="space-y-2 text-[10px] font-bold text-[var(--app-muted)]">
+                  <div className="flex items-center justify-between p-2 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl hover:bg-[var(--app-border)]/20 cursor-pointer">
                     <div className="flex items-center gap-2">
                       <Plus size={12} className="text-blue-500" />
                       <span>Buat Refund</span>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between p-2 bg-[#080d19] border border-[#131d35] rounded-xl hover:bg-[#121c38]/40 cursor-pointer">
+                  <div className="flex items-center justify-between p-2 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl hover:bg-[var(--app-border)]/20 cursor-pointer">
                     <div className="flex items-center gap-2">
                       <FileText size={12} className="text-purple-400" />
                       <span>Refund dari Invoice</span>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between p-2 bg-[#080d19] border border-[#131d35] rounded-xl hover:bg-[#121c38]/40 cursor-pointer">
+                  <div className="flex items-center justify-between p-2 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl hover:bg-[var(--app-border)]/20 cursor-pointer">
                     <div className="flex items-center gap-2">
                       <Clock size={12} className="text-yellow-500" />
                       <span>Riwayat Refund</span>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between p-2 bg-[#080d19] border border-[#131d35] rounded-xl hover:bg-[#121c38]/40 cursor-pointer">
+                  <div className="flex items-center justify-between p-2 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl hover:bg-[var(--app-border)]/20 cursor-pointer">
                     <div className="flex items-center gap-2">
                       <Download size={12} className="text-green-500" />
                       <span>Export Data</span>
@@ -668,8 +626,8 @@ export default function RefundPage() {
           <div className="lg:col-span-3 space-y-6">
             
             {/* Card 1: Ringkasan Refund Donut */}
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-5 space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400">Ringkasan Refund</h3>
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Ringkasan Refund</h3>
               
               <div className="relative flex justify-center py-2">
                 <svg width="140" height="140" viewBox="0 0 42 42" className="transform -rotate-90">
@@ -695,13 +653,13 @@ export default function RefundPage() {
                 </svg>
                 {/* Center text */}
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-                  <p className="text-xl font-black text-white">28</p>
-                  <p className="text-[9px] text-gray-500 font-bold uppercase">Total</p>
+                  <p className="text-xl font-black text-[var(--app-text)]">28</p>
+                  <p className="text-[9px] text-[var(--app-muted)] font-bold uppercase">Total</p>
                 </div>
               </div>
 
               {/* Legends */}
-              <div className="space-y-2 text-[11px] text-gray-400">
+              <div className="space-y-2 text-[11px] text-[var(--app-muted)]">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded bg-[#10b981] inline-block"></span>
@@ -727,10 +685,10 @@ export default function RefundPage() {
             </div>
 
             {/* Card 2: Total Nominal Refund */}
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-5 flex items-center justify-between relative overflow-hidden">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs flex items-center justify-between relative overflow-hidden">
               <div className="space-y-1">
-                <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block">Total Nominal Refund</span>
-                <p className="text-lg font-black text-white">Rp 12.850.000</p>
+                <span className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider block">Total Nominal Refund</span>
+                <p className="text-lg font-black text-[var(--app-text)]">Rp 12.850.000</p>
               </div>
               <div className="w-10 h-10 rounded-xl bg-green-500/10 text-green-400 border border-green-500/20 flex items-center justify-center flex-shrink-0">
                 <Wallet size={18} />
@@ -738,8 +696,8 @@ export default function RefundPage() {
             </div>
 
             {/* Card 3: Metode Refund */}
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-5 space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400">Metode Refund</h3>
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Metode Refund</h3>
               
               <div className="space-y-3.5">
                 {[
@@ -751,10 +709,10 @@ export default function RefundPage() {
                   return (
                     <div key={index} className="space-y-1">
                       <div className="flex items-center justify-between text-xs font-semibold">
-                        <span className="text-gray-300">{item.name}</span>
-                        <span className="text-gray-400">{formatCurrency(item.amount)} ({item.percentage}%)</span>
+                        <span className="text-[var(--app-text)]/80">{item.name}</span>
+                        <span className="text-[var(--app-muted)]">{formatCurrency(item.amount)} ({item.percentage}%)</span>
                       </div>
-                      <div className="w-full bg-[#101935] h-1.5 rounded-full overflow-hidden">
+                      <div className="w-full bg-[var(--app-bg)] h-1.5 rounded-full overflow-hidden">
                         <div 
                           className={`${item.color} h-full rounded-full transition-all duration-500`} 
                           style={{ width: `${item.percentage}%` }}
@@ -767,8 +725,8 @@ export default function RefundPage() {
             </div>
 
             {/* Card 4: Alasan Refund Terbanyak */}
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-5 space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400">Alasan Refund Terbanyak</h3>
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Alasan Refund Terbanyak</h3>
               
               <div className="space-y-3.5">
                 {[
@@ -779,7 +737,7 @@ export default function RefundPage() {
                   { name: '5. Penyesuaian Tagihan', count: 1, percentage: 3.6 }
                 ].map((item, idx) => (
                   <div key={idx} className="flex justify-between items-center text-xs font-semibold">
-                    <span className="text-gray-300">{item.name}</span>
+                    <span className="text-[var(--app-text)]/80">{item.name}</span>
                     <span className="text-white">{item.count} ({item.percentage}%)</span>
                   </div>
                 ))}
@@ -787,13 +745,13 @@ export default function RefundPage() {
             </div>
 
             {/* Tips Card */}
-            <div className="bg-[#0b1329]/40 border border-[#131d35] p-4.5 rounded-2xl flex items-start gap-3">
+            <div className="bg-white/40 border border-[var(--app-border)] p-4.5 rounded-2xl flex items-start gap-3">
               <div className="p-2 bg-yellow-500/10 text-yellow-500 rounded-lg">
                 <Lightbulb size={16} />
               </div>
               <div className="space-y-1">
-                <h5 className="text-[11px] font-bold text-white">Tips</h5>
-                <p className="text-[10px] text-gray-500 font-medium leading-relaxed">
+                <h5 className="text-[11px] font-bold text-[var(--app-text)]">Tips</h5>
+                <p className="text-[10px] text-[var(--app-muted)] font-medium leading-relaxed">
                   Pastikan alasan refund sudah sesuai kebijakan perusahaan sebelum memproses refund.
                 </p>
               </div>

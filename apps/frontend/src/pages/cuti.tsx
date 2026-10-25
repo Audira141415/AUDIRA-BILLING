@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../components/Layout';
@@ -135,7 +136,7 @@ export default function Cuti() {
       case 'approved': return 'bg-green-100 text-green-800';
       case 'rejected': return 'bg-red-100 text-red-800';
       case 'pending': return 'bg-yellow-100 text-yellow-800';
-      default: return 'bg-gray-100 text-gray-800';
+      default: return 'bg-gray-100 text-[var(--app-text)]';
     }
   };
 
@@ -153,14 +154,21 @@ export default function Cuti() {
 
   return (
     <Layout>
-      <div className="p-8">
+      <div className="p-4 md:p-8 space-y-6">
+        <div className="flex items-center gap-2 text-xs text-[var(--app-muted)] font-mono mb-2">
+            <Link href="/" className="hover:text-[var(--app-text)]">AUDIRA</Link>
+            <span>/</span>
+            <Link href="/hrm-dashboard" className="hover:text-[var(--app-text)]">Human Resource Management</Link>
+            <span>/</span>
+            <span className="text-blue-500 font-semibold">Permohonan Cuti</span>
+          </div>
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+            <h1 className="text-3xl font-bold text-[var(--app-text)] flex items-center gap-3">
               <Calendar className="text-blue-600" size={36} />
               Pengajuan Cuti
             </h1>
-            <p className="text-gray-600 mt-1">Kelola pengajuan cuti karyawan</p>
+            <p className="text-[var(--app-muted)] mt-1">Kelola pengajuan cuti karyawan</p>
           </div>
           <button
             onClick={handleCreate}
@@ -192,10 +200,10 @@ export default function Cuti() {
           </div>
         )}
 
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+        <div className="bg-[var(--app-card)] rounded-xl shadow-lg p-6 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="relative">
-              <Search className="absolute left-3 top-3 text-gray-400" size={20} />
+              <Search className="absolute left-3 top-3 text-[var(--app-muted)]" size={20} />
               <input
                 type="text"
                 placeholder="Cari karyawan..."
@@ -219,26 +227,26 @@ export default function Cuti() {
 
         <div className="grid grid-cols-1 gap-4">
           {loading ? (
-            <div className="bg-white rounded-xl shadow-lg p-12 text-center">Loading...</div>
+            <div className="bg-[var(--app-card)] rounded-xl shadow-lg p-12 text-center">Loading...</div>
           ) : filteredLeaves.length === 0 ? (
-            <div className="bg-white rounded-xl shadow-lg p-12 text-center">Tidak ada pengajuan cuti</div>
+            <div className="bg-[var(--app-card)] rounded-xl shadow-lg p-12 text-center">Tidak ada pengajuan cuti</div>
           ) : (
             filteredLeaves.map((leave) => (
-              <div key={leave.id} className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow">
+              <div key={leave.id} className="bg-[var(--app-card)] rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow">
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-4">
-                    <div className="h-12 w-12 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-bold text-xl">
+                    <div className="h-12 w-12 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-[var(--app-text)] font-bold text-xl">
                       {leave.employee?.fullName?.charAt(0) || '?'}
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-lg font-bold text-gray-900">{leave.employee?.fullName}</h3>
-                      <p className="text-sm text-gray-600">{leave.employee?.department} - {leave.employee?.position}</p>
+                      <h3 className="text-lg font-bold text-[var(--app-text)]">{leave.employee?.fullName}</h3>
+                      <p className="text-sm text-[var(--app-muted)]">{leave.employee?.department} - {leave.employee?.position}</p>
                       <div className="flex items-center gap-4 mt-2">
                         <span className={`px-3 py-1 text-xs font-semibold rounded-full ${getStatusColor(leave.status)}`}>
                           {leave.status === 'pending' ? 'Pending' : leave.status === 'approved' ? 'Disetujui' : 'Ditolak'}
                         </span>
-                        <span className="text-sm text-gray-500">{getLeaveTypeLabel(leave.leaveType)}</span>
-                        <span className="text-sm text-gray-500">{leave.totalDays} hari</span>
+                        <span className="text-sm text-[var(--app-muted)]">{getLeaveTypeLabel(leave.leaveType)}</span>
+                        <span className="text-sm text-[var(--app-muted)]">{leave.totalDays} hari</span>
                       </div>
                     </div>
                   </div>
@@ -261,18 +269,18 @@ export default function Cuti() {
                     </div>
                   )}
                 </div>
-                <div className="mt-4 pt-4 border-t border-gray-200">
+                <div className="mt-4 pt-4 border-t border-[var(--app-border)]">
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <p className="text-gray-500">Tanggal Mulai</p>
+                      <p className="text-[var(--app-muted)]">Tanggal Mulai</p>
                       <p className="font-medium">{new Date(leave.startDate).toLocaleDateString('id-ID')}</p>
                     </div>
                     <div>
-                      <p className="text-gray-500">Tanggal Selesai</p>
+                      <p className="text-[var(--app-muted)]">Tanggal Selesai</p>
                       <p className="font-medium">{new Date(leave.endDate).toLocaleDateString('id-ID')}</p>
                     </div>
                     <div className="col-span-2">
-                      <p className="text-gray-500">Alasan</p>
+                      <p className="text-[var(--app-muted)]">Alasan</p>
                       <p className="font-medium">{leave.reason}</p>
                     </div>
                   </div>
@@ -284,9 +292,9 @@ export default function Cuti() {
 
         {showModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full">
+            <div className="bg-[var(--app-card)] rounded-xl shadow-2xl max-w-2xl w-full">
               <div className="bg-blue-600 px-6 py-4 flex justify-between items-center rounded-t-xl">
-                <h2 className="text-2xl font-bold text-white">Ajukan Cuti</h2>
+                <h2 className="text-2xl font-bold text-[var(--app-text)]">Ajukan Cuti</h2>
                 <button onClick={() => setShowModal(false)} className="text-white hover:bg-blue-700 p-2 rounded-lg">
                   <X size={24} />
                 </button>
@@ -294,7 +302,7 @@ export default function Cuti() {
               <form onSubmit={handleSubmit} className="p-6">
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Karyawan *</label>
+                    <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">Karyawan *</label>
                     <select
                       required
                       value={formData.employeeId}
@@ -308,7 +316,7 @@ export default function Cuti() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Tipe Cuti *</label>
+                    <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">Tipe Cuti *</label>
                     <select
                       required
                       value={formData.leaveType}
@@ -325,7 +333,7 @@ export default function Cuti() {
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Tanggal Mulai *</label>
+                      <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">Tanggal Mulai *</label>
                       <input
                         type="date"
                         required
@@ -335,7 +343,7 @@ export default function Cuti() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Tanggal Selesai *</label>
+                      <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">Tanggal Selesai *</label>
                       <input
                         type="date"
                         required
@@ -346,7 +354,7 @@ export default function Cuti() {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Alasan *</label>
+                    <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">Alasan *</label>
                     <textarea
                       required
                       value={formData.reason}
@@ -357,7 +365,7 @@ export default function Cuti() {
                   </div>
                 </div>
                 <div className="flex justify-end gap-3 mt-6">
-                  <button type="button" onClick={() => setShowModal(false)} className="px-6 py-2 border rounded-lg hover:bg-gray-50">
+                  <button type="button" onClick={() => setShowModal(false)} className="px-6 py-2 border rounded-lg hover:bg-[var(--app-bg)]">
                     Batal
                   </button>
                   <button type="submit" className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">

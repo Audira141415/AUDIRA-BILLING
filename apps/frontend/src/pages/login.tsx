@@ -122,7 +122,7 @@ export default function Login() {
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Mail className="text-gray-400" size={20} />
+                    <Mail className="text-slate-500" size={20} />
                   </div>
                   <input
                     type="email"
@@ -142,7 +142,7 @@ export default function Login() {
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Lock className="text-gray-400" size={20} />
+                    <Lock className="text-slate-500" size={20} />
                   </div>
                   <input
                     type={showPassword ? 'text' : 'password'}
@@ -158,9 +158,9 @@ export default function Login() {
                     className="absolute inset-y-0 right-0 pr-4 flex items-center"
                   >
                     {showPassword ? (
-                      <EyeOff className="text-gray-400 hover:text-gray-600" size={20} />
+                      <EyeOff className="text-slate-500 hover:text-gray-600" size={20} />
                     ) : (
-                      <Eye className="text-gray-400 hover:text-gray-600" size={20} />
+                      <Eye className="text-slate-500 hover:text-gray-600" size={20} />
                     )}
                   </button>
                 </div>
@@ -199,7 +199,7 @@ export default function Login() {
 
             {/* Quick Login / Demo Access */}
             <div className="mt-6 pt-6 border-t border-gray-200">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider text-center mb-3">
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider text-center mb-3">
                 Akses Cepat (Tinggal Klik)
               </p>
               <div className="grid grid-cols-2 gap-3">
@@ -238,7 +238,7 @@ export default function Login() {
 
             {/* Footer */}
             <div className="mt-8 pt-6 border-t border-gray-200 text-center">
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-slate-400">
                 © 2025 AudiraNET. Platform ISP Management System.
               </p>
             </div>

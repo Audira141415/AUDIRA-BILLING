@@ -19,12 +19,13 @@ export class RolesGuard implements CanActivate {
 
     const { user } = context.switchToHttp().getRequest();
 
-    if (!user) {
-      throw new ForbiddenException('User tidak terautentikasi');
+    if (!user || !user.role) {
+      throw new ForbiddenException('Akses ditolak. Pengguna tidak memiliki role yang diizinkan');
     }
 
     // Check if user has any of the required roles
-    const hasRole = requiredRoles.some((role) => user.role.toUpperCase() === role.toUpperCase());
+    const userRole = String(user.role).toUpperCase();
+    const hasRole = requiredRoles.some((role) => userRole === role.toUpperCase());
 
     if (!hasRole) {
       console.warn('🚫 Role Access Denied:', {

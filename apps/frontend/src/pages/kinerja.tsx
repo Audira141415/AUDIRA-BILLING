@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../components/Layout';
@@ -183,14 +184,21 @@ export default function Kinerja() {
 
   return (
     <Layout>
-      <div className="p-8">
+      <div className="p-4 md:p-8 space-y-6">
+        <div className="flex items-center gap-2 text-xs text-[var(--app-muted)] font-mono mb-2">
+            <Link href="/" className="hover:text-[var(--app-text)]">AUDIRA</Link>
+            <span>/</span>
+            <Link href="/hrm-dashboard" className="hover:text-[var(--app-text)]">Human Resource Management</Link>
+            <span>/</span>
+            <span className="text-blue-500 font-semibold">Evaluasi Kinerja (KPI)</span>
+          </div>
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+            <h1 className="text-3xl font-bold text-[var(--app-text)] flex items-center gap-3">
               <TrendingUp className="text-orange-600" size={36} />
               Dashboard Kinerja
             </h1>
-            <p className="text-gray-600 mt-1">Monitor performa karyawan</p>
+            <p className="text-[var(--app-muted)] mt-1">Monitor performa karyawan</p>
           </div>
           <button
             onClick={handleCreate}
@@ -227,10 +235,10 @@ export default function Kinerja() {
           </div>
         )}
 
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+        <div className="bg-[var(--app-card)] rounded-xl shadow-lg p-6 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="relative">
-              <Search className="absolute left-3 top-3 text-gray-400" size={20} />
+              <Search className="absolute left-3 top-3 text-[var(--app-muted)]" size={20} />
               <input
                 type="text"
                 placeholder="Cari karyawan..."
@@ -254,29 +262,29 @@ export default function Kinerja() {
 
         <div className="grid grid-cols-1 gap-6">
           {loading ? (
-            <div className="bg-white rounded-xl shadow-lg p-12 text-center">Loading...</div>
+            <div className="bg-[var(--app-card)] rounded-xl shadow-lg p-12 text-center">Loading...</div>
           ) : filteredPerformances.length === 0 ? (
-            <div className="bg-white rounded-xl shadow-lg p-12 text-center">
-              <BarChart3 size={48} className="mx-auto text-gray-400 mb-4" />
-              <p className="text-gray-600">Belum ada data kinerja</p>
+            <div className="bg-[var(--app-card)] rounded-xl shadow-lg p-12 text-center">
+              <BarChart3 size={48} className="mx-auto text-[var(--app-muted)] mb-4" />
+              <p className="text-[var(--app-muted)]">Belum ada data kinerja</p>
             </div>
           ) : (
             filteredPerformances.map((perf) => (
-              <div key={perf.id} className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow">
+              <div key={perf.id} className="bg-[var(--app-card)] rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow">
                 <div className="flex items-start justify-between mb-6">
                   <div className="flex items-center gap-4">
-                    <div className="h-16 w-16 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold text-2xl">
+                    <div className="h-16 w-16 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-[var(--app-text)] font-bold text-2xl">
                       {perf.employee?.fullName?.charAt(0) || '?'}
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-gray-900">{perf.employee?.fullName}</h3>
-                      <p className="text-sm text-gray-600">{perf.employee?.department} - {perf.employee?.position}</p>
-                      <p className="text-sm text-gray-500 mt-1">Periode: {perf.period}</p>
+                      <h3 className="text-xl font-bold text-[var(--app-text)]">{perf.employee?.fullName}</h3>
+                      <p className="text-sm text-[var(--app-muted)]">{perf.employee?.department} - {perf.employee?.position}</p>
+                      <p className="text-sm text-[var(--app-muted)] mt-1">Periode: {perf.period}</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <div className="text-right">
-                      <p className="text-sm text-gray-500">Overall Score</p>
+                      <p className="text-sm text-[var(--app-muted)]">Overall Score</p>
                       <p className={`text-4xl font-bold ${getScoreColor(perf.overallScore || 0)}`}>
                         {perf.overallScore || 0}
                       </p>
@@ -323,10 +331,10 @@ export default function Kinerja() {
                     { label: 'Teamwork', value: perf.teamwork, icon: Users },
                     { label: 'Inisiatif', value: perf.initiative, icon: TrendingUp },
                   ].map((metric, idx) => (
-                    <div key={idx} className="bg-gray-50 rounded-lg p-4">
+                    <div key={idx} className="bg-[var(--app-bg)] rounded-lg p-4">
                       <div className="flex items-center gap-2 mb-2">
-                        <metric.icon size={16} className="text-gray-600" />
-                        <p className="text-xs text-gray-600 font-medium">{metric.label}</p>
+                        <metric.icon size={16} className="text-[var(--app-muted)]" />
+                        <p className="text-xs text-[var(--app-muted)] font-medium">{metric.label}</p>
                       </div>
                       <p className={`text-2xl font-bold ${getScoreColor(metric.value || 0)}`}>
                         {metric.value || 0}
@@ -336,17 +344,17 @@ export default function Kinerja() {
                 </div>
 
                 {(perf.achievements || perf.improvements) && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-6 border-t border-gray-200">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-6 border-t border-[var(--app-border)]">
                     {perf.achievements && (
                       <div>
-                        <p className="text-sm font-semibold text-gray-700 mb-2">Pencapaian:</p>
-                        <p className="text-sm text-gray-600">{perf.achievements}</p>
+                        <p className="text-sm font-semibold text-[var(--app-text)]/90 mb-2">Pencapaian:</p>
+                        <p className="text-sm text-[var(--app-muted)]">{perf.achievements}</p>
                       </div>
                     )}
                     {perf.improvements && (
                       <div>
-                        <p className="text-sm font-semibold text-gray-700 mb-2">Area Perbaikan:</p>
-                        <p className="text-sm text-gray-600">{perf.improvements}</p>
+                        <p className="text-sm font-semibold text-[var(--app-text)]/90 mb-2">Area Perbaikan:</p>
+                        <p className="text-sm text-[var(--app-muted)]">{perf.improvements}</p>
                       </div>
                     )}
                   </div>
@@ -358,9 +366,9 @@ export default function Kinerja() {
 
         {showModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-[var(--app-card)] rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
               <div className="bg-orange-600 px-6 py-4 flex justify-between items-center rounded-t-xl sticky top-0">
-                <h2 className="text-2xl font-bold text-white">
+                <h2 className="text-2xl font-bold text-[var(--app-text)]">
                   {editingPerformance ? 'Edit' : 'Buat'} Performance Review
                 </h2>
                 <button onClick={() => setShowModal(false)} className="text-white hover:bg-orange-700 p-2 rounded-lg">
@@ -371,7 +379,7 @@ export default function Kinerja() {
                 <div className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Karyawan *</label>
+                      <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">Karyawan *</label>
                       <select
                         required
                         value={formData.employeeId}
@@ -386,7 +394,7 @@ export default function Kinerja() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Periode *</label>
+                      <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">Periode *</label>
                       <input
                         type="month"
                         required
@@ -398,7 +406,7 @@ export default function Kinerja() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Tipe Review *</label>
+                    <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">Tipe Review *</label>
                     <select
                       required
                       value={formData.reviewType}
@@ -412,7 +420,7 @@ export default function Kinerja() {
                   </div>
 
                   <div className="border-t pt-6">
-                    <h3 className="text-lg font-bold text-gray-900 mb-4">KPI Scoring (0-100)</h3>
+                    <h3 className="text-lg font-bold text-[var(--app-text)] mb-4">KPI Scoring (0-100)</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {[
                         { key: 'productivity', label: 'Produktivitas' },
@@ -423,7 +431,7 @@ export default function Kinerja() {
                         { key: 'initiative', label: 'Inisiatif' },
                       ].map(({ key, label }) => (
                         <div key={key}>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                          <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">
                             {label}: <span className={`font-bold ${getScoreColor(formData[key])}`}>{formData[key]}</span>
                           </label>
                           <input
@@ -453,7 +461,7 @@ export default function Kinerja() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Pencapaian</label>
+                    <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">Pencapaian</label>
                     <textarea
                       value={formData.achievements}
                       onChange={(e) => setFormData({ ...formData, achievements: e.target.value })}
@@ -464,7 +472,7 @@ export default function Kinerja() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Area Perbaikan</label>
+                    <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">Area Perbaikan</label>
                     <textarea
                       value={formData.improvements}
                       onChange={(e) => setFormData({ ...formData, improvements: e.target.value })}
@@ -475,7 +483,7 @@ export default function Kinerja() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Target/Goals</label>
+                    <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">Target/Goals</label>
                     <textarea
                       value={formData.goals}
                       onChange={(e) => setFormData({ ...formData, goals: e.target.value })}
@@ -490,7 +498,7 @@ export default function Kinerja() {
                   <button
                     type="button"
                     onClick={() => setShowModal(false)}
-                    className="px-6 py-2 border rounded-lg hover:bg-gray-50"
+                    className="px-6 py-2 border rounded-lg hover:bg-[var(--app-bg)]"
                   >
                     Batal
                   </button>

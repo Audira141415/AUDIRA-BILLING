@@ -33,14 +33,14 @@ export default function JobDetailScreen({
       return;
     }
 
-    const result = await ImagePicker.launchImagePickerAsync({
+    const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsMultipleSelection: true,
       quality: 0.7,
     });
 
     if (!result.canceled && result.assets) {
-      const newPhotos = result.assets.map((asset) => asset.uri);
+      const newPhotos = result.assets.map((asset: any) => asset.uri);
       setPhotos([...photos, ...newPhotos]);
     }
   };

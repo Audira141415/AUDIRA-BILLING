@@ -1,27 +1,201 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ==========================================================================
+   AUDIRA CUSTOMER PORTAL — NEO-BRUTALISM + HIGH-TECH CYBERPUNK TOKENS
+   Standardized from F:\AUDIRA-DESAIN-UI-UX (UI/UX Pro Max v2.13.0)
+   Anti-AI-Slop Standard: Zero generic gradients, crisp contrast, vector SVG only
+   ========================================================================== */
+
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --color-primary: #0070f3;
+  --color-accent: #00dfd8;
+  --color-purple: #7928ca;
+  --color-emerald: #10b981;
+  --color-amber: #f59e0b;
+  --color-danger: #ef4444;
+
+  --bg-primary: #f8fafc;
+  --surface-card: #ffffff;
+  --border-card: #e2e8f0;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+
+  --shadow-neo: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
+  --shadow-neo-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.06);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+html.dark {
+  --bg-primary: #070b14;
+  --surface-card: #0c1322;
+  --border-card: #1e293b;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+
+  --shadow-neo: 0 4px 14px 0 rgba(0, 0, 0, 0.45);
+  --shadow-neo-sm: 0 2px 6px 0 rgba(0, 0, 0, 0.35);
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  font-family: 'Outfit', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  overflow-x: hidden;
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+html.dark ::-webkit-scrollbar-track {
+  background: #070b14;
+}
+
+html:not(.dark) ::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: #1f2937;
+  border-radius: 4px;
+  border: 1px solid #374151;
+}
+
+html:not(.dark) ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+  border: 1px solid #94a3b8;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00dfd8;
+}
+
+/* Accessibility Focus States */
+*:focus-visible {
+  outline: 2px solid #00dfd8;
+  outline-offset: 2px;
+}
+
+/* Standardized Modern Card & Button Tokens */
+.neo-card {
+  background-color: var(--surface-card);
+  border: 1px solid var(--border-card);
+  box-shadow: var(--shadow-neo);
+  border-radius: 12px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+html.dark .neo-card {
+  background-color: var(--surface-card);
+  border-color: var(--border-card);
+  box-shadow: var(--shadow-neo);
+}
+
+.neo-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px -2px rgba(15, 23, 42, 0.08);
+}
+
+html.dark .neo-card:hover {
+  box-shadow: 0 8px 20px 0 rgba(0, 0, 0, 0.6);
+}
+
+.neo-button-primary {
+  background-color: #00dfd8;
+  color: #042f2e;
+  font-weight: 800;
+  border: 1px solid #14b8a6;
+  box-shadow: 0 2px 8px 0 rgba(0, 223, 216, 0.25);
+  border-radius: 8px;
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.neo-button-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px 0 rgba(0, 223, 216, 0.4);
+  background-color: #22e6df;
+}
+
+.neo-button-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 4px 0 rgba(0, 223, 216, 0.2);
+}
+
+.neo-button-secondary {
+  background-color: var(--surface-card);
+  color: var(--text-main);
+  font-weight: 700;
+  border: 1px solid var(--border-card);
+  box-shadow: var(--shadow-neo-sm);
+  border-radius: 8px;
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+html.dark .neo-button-secondary {
+  background-color: #131c31;
+  color: #f8fafc;
+  border-color: #334155;
+  box-shadow: var(--shadow-neo-sm);
+}
+
+.neo-button-secondary:hover {
+  transform: translateY(-1px);
+  border-color: #94a3b8;
+}
+
+.neo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid currentColor;
+}
+
+/* ==========================================================================
+   GLOBAL THEME NORMALIZERS — ELIMINATE HARSH BLACK ARTIFACTS IN LIGHT MODE
+   ========================================================================== */
+
+/* 1. Normalizing harsh pure-black borders in Light Mode */
+html:not(.dark) .border-black {
+  border-color: #cbd5e1 !important;
+}
+
+html:not(.dark) [class*="border-2"][class*="border-black"] {
+  border-color: #cbd5e1 !important;
+  border-width: 1px !important;
+}
+
+/* 2. Normalizing harsh solid black shadows to modern clean elevation */
+html:not(.dark) [class*="shadow-"][class*="#000"] {
+  box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.04) !important;
+}
+
+html:not(.dark) [class*="shadow-"][class*="#00dfd8"],
+html:not(.dark) [class*="shadow-"][class*="#06b6d4"] {
+  box-shadow: 0 4px 14px -1px rgba(6, 182, 212, 0.25) !important;
+}
+
+/* 3. Softening shadows in Dark Mode for smooth depth */
+html.dark [class*="shadow-"][class*="#000"] {
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.45) !important;
 }

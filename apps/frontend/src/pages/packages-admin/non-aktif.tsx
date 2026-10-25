@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 import Layout from '@/components/Layout';
 import { 
   Plus, 
@@ -164,71 +165,33 @@ export default function PaketNonAktifPage() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-[#070c19] text-gray-200 p-4 md:p-6 space-y-6">
+      <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] p-4 md:p-6 space-y-6">
         
         {/* ─── Top Header bar ────────────────────────────────────────────── */}
-        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 border-b border-[#131d35] pb-5">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-[var(--app-border)] pb-5">
           <div className="space-y-1">
-            <div className="flex items-center gap-2 text-xs text-gray-400 font-medium">
-              <span>Home</span>
-              <span>&gt;</span>
-              <span>Package</span>
-              <span>&gt;</span>
-              <span className="text-blue-400">Paket Non Aktif</span>
+            <div className="flex items-center gap-2 text-xs text-[var(--app-muted)] font-mono mb-1">
+              <Link href="/" className="hover:text-[var(--app-text)]">AUDIRA</Link>
+              <span>/</span>
+              <Link href="/packages-admin" className="hover:text-[var(--app-text)]">Paket & Layanan</Link>
+              <span>/</span>
+              <span className="text-[var(--app-muted)]">Paket Arsip / Non-Aktif</span>
             </div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">Paket Non Aktif</h1>
+            <h1 className="text-xl md:text-2xl font-bold tracking-tight text-[var(--app-text)]">
+              Arsip Paket Internet Non-Aktif
+            </h1>
+            <p className="text-xs text-[var(--app-muted)]">
+              Daftar paket lama yang telah di-depresiasi atau tidak lagi dijual untuk pendaftaran pelanggan baru.
+            </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-4 w-full xl:w-auto">
-            {/* Calendar */}
-            <div className="flex items-center gap-2 bg-[#0b1329] border border-[#131d35] px-3 py-2 rounded-xl text-xs text-gray-300">
-              <Calendar size={14} className="text-blue-400" />
-              <span>01 Juli 2026</span>
-              <span className="text-[10px] text-gray-500">08:35 WIB</span>
-            </div>
-            
-            {/* Status Sistem */}
-            <div className="flex items-center gap-2 bg-[#0b1329] border border-[#131d35] px-3 py-2 rounded-xl text-xs">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-              <span className="text-gray-400">Status Sistem</span>
-              <span className="text-green-400 font-bold">Normal</span>
-            </div>
-
-            {/* Global Search */}
-            <div className="relative w-full sm:w-60">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <input 
-                type="text" 
-                placeholder="Cari customer, invoice, tagihan..."
-                className="w-full bg-[#0b1329] border border-[#131d35] rounded-xl text-xs pl-9 pr-4 py-2 text-white focus:outline-none focus:border-blue-500"
-              />
-            </div>
-
-            {/* Notification and Profile icons */}
-            <div className="flex items-center gap-3">
-              <button className="relative p-2 bg-[#0b1329] border border-[#131d35] rounded-xl hover:bg-[#121c38] transition-colors">
-                <Bell size={16} className="text-gray-400" />
-                <span className="absolute -top-1 -right-1 bg-red-500 text-[9px] font-bold text-white px-1.5 py-0.5 rounded-full scale-75">12</span>
-              </button>
-              <button className="relative p-2 bg-[#0b1329] border border-[#131d35] rounded-xl hover:bg-[#121c38] transition-colors">
-                <Mail size={16} className="text-gray-400" />
-                <span className="absolute -top-1 -right-1 bg-red-500 text-[9px] font-bold text-white px-1.5 py-0.5 rounded-full scale-75">8</span>
-              </button>
-              <button className="p-2 bg-[#0b1329] border border-[#131d35] rounded-xl hover:bg-[#121c38] transition-colors max-sm:hidden">
-                <Maximize2 size={16} className="text-gray-400" />
-              </button>
-              
-              {/* Profile */}
-              <div className="flex items-center gap-2 pl-2 border-l border-[#131d35]">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xs overflow-hidden">
-                  <span className="text-xs">AR</span>
-                </div>
-                <div className="hidden md:block text-left">
-                  <div className="text-xs font-semibold text-white">Agus Dwi Rianto</div>
-                  <div className="text-[9px] text-gray-500 font-bold uppercase">Super Admin</div>
-                </div>
-              </div>
-            </div>
+          <div className="flex items-center gap-2.5">
+            <Link
+              href="/packages-admin"
+              className="px-4 py-2 border border-[var(--app-border)] bg-[var(--app-card)] hover:bg-[var(--app-border)] text-[var(--app-text)] text-xs font-semibold rounded-lg transition-all flex items-center gap-2 shadow-xs"
+            >
+              Kembali ke Katalog
+            </Link>
           </div>
         </div>
 
@@ -245,84 +208,84 @@ export default function PaketNonAktifPage() {
         {/* ─── Stat Cards ────────────────────────────────────────────────── */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           {/* Card 1: Total Paket Non Aktif */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex items-center gap-4">
+          <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs p-4 flex items-center gap-4">
             <div className="p-3.5 bg-purple-500/10 text-purple-400 border border-purple-500/20 rounded-xl">
               <Gift size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Total Paket Non Aktif</p>
-              <p className="text-2xl font-black text-white mt-0.5">{totalInactive}</p>
-              <p className="text-[10px] text-gray-400 mt-0.5">Semua paket non aktif</p>
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Total Paket Non Aktif</p>
+              <p className="text-2xl font-black text-slate-900 mt-0.5">{totalInactive}</p>
+              <p className="text-[10px] text-slate-500 mt-0.5">Semua paket non aktif</p>
             </div>
           </div>
 
           {/* Card 2: Kadaluarsa */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex items-center gap-4">
+          <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs p-4 flex items-center gap-4">
             <div className="p-3.5 bg-green-500/10 text-green-400 border border-green-500/20 rounded-xl">
               <Clock size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Kadaluarsa</p>
-              <p className="text-2xl font-black text-white mt-0.5">{expiredCount}</p>
-              <p className="text-[10px] text-gray-400 mt-0.5">Paket kadaluarsa</p>
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Kadaluarsa</p>
+              <p className="text-2xl font-black text-slate-900 mt-0.5">{expiredCount}</p>
+              <p className="text-[10px] text-slate-500 mt-0.5">Paket kadaluarsa</p>
             </div>
           </div>
 
           {/* Card 3: Dihentikan Customer */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex items-center gap-4">
+          <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs p-4 flex items-center gap-4">
             <div className="p-3.5 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-xl">
               <Sliders size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Dihentikan Customer</p>
-              <p className="text-2xl font-black text-white mt-0.5">{stoppedCount}</p>
-              <p className="text-[10px] text-gray-400 mt-0.5">Paket dihentikan</p>
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Dihentikan Customer</p>
+              <p className="text-2xl font-black text-slate-900 mt-0.5">{stoppedCount}</p>
+              <p className="text-[10px] text-slate-500 mt-0.5">Paket dihentikan</p>
             </div>
           </div>
 
           {/* Card 4: Tidak Digunakan */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex items-center gap-4">
-            <div className="p-3.5 bg-gray-500/10 text-gray-400 border border-gray-500/20 rounded-xl">
+          <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs p-4 flex items-center gap-4">
+            <div className="p-3.5 bg-gray-500/10 text-slate-500 border border-gray-500/20 rounded-xl">
               <X size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Tidak Digunakan</p>
-              <p className="text-2xl font-black text-white mt-0.5">{unusedCount}</p>
-              <p className="text-[10px] text-gray-400 mt-0.5">Paket tidak digunakan</p>
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Tidak Digunakan</p>
+              <p className="text-2xl font-black text-slate-900 mt-0.5">{unusedCount}</p>
+              <p className="text-[10px] text-slate-500 mt-0.5">Paket tidak digunakan</p>
             </div>
           </div>
 
           {/* Card 5: Pendapatan Hilang */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex items-center gap-4 col-span-2 md:col-span-1">
+          <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs p-4 flex items-center gap-4 col-span-2 md:col-span-1">
             <div className="p-3.5 bg-purple-500/10 text-purple-400 border border-purple-500/20 rounded-xl">
               <Percent size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Pendapatan Hilang</p>
-              <p className="text-base font-black text-white mt-0.5">{formatCurrency(totalRevenueLost)}</p>
-              <p className="text-[10px] text-gray-400 mt-0.5">Potensi pendapatan hilang</p>
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Pendapatan Hilang</p>
+              <p className="text-base font-black text-slate-900 mt-0.5">{formatCurrency(totalRevenueLost)}</p>
+              <p className="text-[10px] text-slate-500 mt-0.5">Potensi pendapatan hilang</p>
             </div>
           </div>
         </div>
 
         {/* ─── Filter Bar ────────────────────────────────────────────────── */}
-        <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4">
+        <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs p-4">
           <div className="flex flex-wrap items-center gap-4">
             <div className="relative flex-1 min-w-[240px]">
-              <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-gray-500 w-4 h-4" />
+              <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
               <input 
                 type="text" 
                 placeholder="Cari nama paket, tipe, keterangan..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full bg-[#080d19] border border-[#131d35] text-xs pl-10 pr-4 py-2.5 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
+                className="w-full bg-slate-50 border border-slate-200 text-xs pl-10 pr-4 py-2.5 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition-colors"
               />
             </div>
 
             <select 
               value={reasonFilter}
               onChange={(e) => setReasonFilter(e.target.value)}
-              className="bg-[#080d19] border border-[#131d35] text-xs py-2.5 px-4 rounded-xl text-gray-300 focus:outline-none focus:border-blue-500 min-w-[140px]"
+              className="bg-slate-50 border border-slate-200 text-xs py-2.5 px-4 rounded-xl text-slate-600 focus:outline-none focus:border-blue-500 min-w-[140px]"
             >
               <option value="all">Semua Alasan</option>
               <option value="kadaluarsa">Kadaluarsa</option>
@@ -331,7 +294,7 @@ export default function PaketNonAktifPage() {
             </select>
 
             <select 
-              className="bg-[#080d19] border border-[#131d35] text-xs py-2.5 px-4 rounded-xl text-gray-300 focus:outline-none focus:border-blue-500 min-w-[140px]"
+              className="bg-slate-50 border border-slate-200 text-xs py-2.5 px-4 rounded-xl text-slate-600 focus:outline-none focus:border-blue-500 min-w-[140px]"
             >
               <option value="all">Semua Tipe</option>
               <option value="internet">Internet</option>
@@ -339,7 +302,7 @@ export default function PaketNonAktifPage() {
             </select>
 
             <select 
-              className="bg-[#080d19] border border-[#131d35] text-xs py-2.5 px-4 rounded-xl text-gray-300 focus:outline-none focus:border-blue-500 min-w-[140px]"
+              className="bg-slate-50 border border-slate-200 text-xs py-2.5 px-4 rounded-xl text-slate-600 focus:outline-none focus:border-blue-500 min-w-[140px]"
             >
               <option value="all">Semua Kategori</option>
               <option value="promo">Promo</option>
@@ -349,7 +312,7 @@ export default function PaketNonAktifPage() {
             
             <button 
               onClick={handleResetFilters}
-              className="text-xs font-semibold text-gray-400 hover:text-white px-4 py-2.5 rounded-xl border border-transparent hover:border-[#131d35] transition-all ml-auto"
+              className="text-xs font-semibold text-slate-500 hover:text-slate-900 px-4 py-2.5 rounded-xl border border-transparent hover:border-slate-200 transition-all ml-auto"
             >
               Reset
             </button>
@@ -368,13 +331,13 @@ export default function PaketNonAktifPage() {
           
           {/* Left Column: Promos list & stats */}
           <div className="lg:col-span-9 space-y-6">
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl overflow-hidden">
+            <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="border-b border-[#131d35] bg-[#101935]/40 text-gray-400 text-[10px] font-bold uppercase tracking-wider">
+                    <tr className="border-b border-slate-200 bg-slate-50/40 text-slate-500 text-[10px] font-bold uppercase tracking-wider">
                       <th className="p-4 w-10">
-                        <input type="checkbox" className="rounded bg-[#080d19] border-[#131d35] text-blue-600 focus:ring-0" />
+                        <input type="checkbox" className="rounded bg-slate-50 border-slate-200 text-blue-600 focus:ring-0" />
                       </th>
                       <th className="p-4 w-16">NO</th>
                       <th className="p-4 w-52">NAMA PAKET</th>
@@ -387,37 +350,37 @@ export default function PaketNonAktifPage() {
                       <th className="p-4 w-24 text-center">AKSI</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#131d35] text-xs text-gray-300">
+                  <tbody className="divide-y divide-slate-200 text-xs text-slate-600">
                     {filteredPackages.length === 0 ? (
                       <tr>
-                        <td colSpan={10} className="p-12 text-center text-gray-500 font-semibold">
+                        <td colSpan={10} className="p-12 text-center text-slate-400 font-semibold">
                           Tidak ada paket non aktif ditemukan
                         </td>
                       </tr>
                     ) : (
                       filteredPackages.map((p, idx) => {
                         return (
-                          <tr key={p.id} className="hover:bg-[#121c38]/40 transition-colors">
+                          <tr key={p.id} className="hover:bg-slate-100/40 transition-colors">
                             <td className="p-4">
-                              <input type="checkbox" className="rounded bg-[#080d19] border-[#131d35] text-blue-600 focus:ring-0" />
+                              <input type="checkbox" className="rounded bg-slate-50 border-slate-200 text-blue-600 focus:ring-0" />
                             </td>
-                            <td className="p-4 text-gray-500 font-medium">{idx + 1}</td>
+                            <td className="p-4 text-slate-400 font-medium">{idx + 1}</td>
                             <td className="p-4">
                               <div className="space-y-1">
-                                <span className="font-bold text-white block">{p.name}</span>
+                                <span className="font-bold text-slate-800 block">{p.name}</span>
                                 <span className={`inline-block text-[8px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider ${p.tagColor}`}>
                                   {p.tag}
                                 </span>
                               </div>
                             </td>
-                            <td className="p-4 text-gray-400 font-medium">{p.type}</td>
-                            <td className="p-4 font-semibold text-gray-300">{p.speed}</td>
-                            <td className="p-4 font-bold text-white">{formatCurrency(p.price)}</td>
+                            <td className="p-4 text-slate-500 font-medium">{p.type}</td>
+                            <td className="p-4 font-semibold text-slate-600">{p.speed}</td>
+                            <td className="p-4 font-bold text-slate-800">{formatCurrency(p.price)}</td>
                             <td className="p-4">
                               <span className="font-semibold text-white block">{p.reason}</span>
-                              <span className="text-[10px] text-gray-500 block mt-0.5">{p.reasonDetail}</span>
+                              <span className="text-[10px] text-slate-400 block mt-0.5">{p.reasonDetail}</span>
                             </td>
-                            <td className="p-4 text-gray-400 font-medium leading-normal max-w-[130px]">{p.date}</td>
+                            <td className="p-4 text-slate-500 font-medium leading-normal max-w-[130px]">{p.date}</td>
                             <td className="p-4">
                               <span className={`px-2.5 py-1 text-[10px] font-bold rounded-full ${
                                 p.status === 'expired' 
@@ -431,10 +394,10 @@ export default function PaketNonAktifPage() {
                             </td>
                             <td className="p-4">
                               <div className="flex items-center justify-center gap-1.5">
-                                <button className="p-1.5 hover:bg-[#1b2647] rounded-lg text-gray-400 hover:text-white transition-colors">
+                                <button className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-slate-900 transition-colors">
                                   <Eye size={14} />
                                 </button>
-                                <button className="p-1.5 hover:bg-[#1b2647] rounded-lg text-blue-400 hover:text-blue-300 transition-colors">
+                                <button className="p-1.5 hover:bg-slate-100 rounded-lg text-blue-400 hover:text-blue-300 transition-colors">
                                   <RefreshCw size={14} />
                                 </button>
                                 <button className="p-1.5 hover:bg-red-500/10 rounded-lg text-red-400 hover:text-red-300 transition-colors">
@@ -451,8 +414,8 @@ export default function PaketNonAktifPage() {
               </div>
 
               {/* Table pagination */}
-              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-t border-[#131d35] bg-[#0b1329]/60">
-                <span className="text-xs text-gray-500">
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-t border-slate-200 bg-white/60">
+                <span className="text-xs text-slate-400">
                   Menampilkan <span className="font-semibold text-white">1</span> - <span className="font-semibold text-white">{filteredPackages.length}</span> dari <span className="font-semibold text-white">{totalInactive}</span> data
                 </span>
                 
@@ -460,14 +423,14 @@ export default function PaketNonAktifPage() {
                   <div className="flex items-center gap-2">
                     <button 
                       disabled
-                      className="p-2 border border-[#131d35] hover:bg-[#121c38] rounded-xl text-gray-500 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                      className="p-2 border border-slate-200 hover:bg-slate-100 rounded-xl text-slate-400 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                     >
                       <ChevronLeft size={14} />
                     </button>
                     <button className="w-8 h-8 rounded-xl text-xs font-semibold border bg-[#0052cc] text-white border-[#0052cc]">1</button>
                     <button 
                       disabled
-                      className="p-2 border border-[#131d35] hover:bg-[#121c38] rounded-xl text-gray-500 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                      className="p-2 border border-slate-200 hover:bg-slate-100 rounded-xl text-slate-400 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                     >
                       <ChevronRight size={14} />
                     </button>
@@ -476,7 +439,7 @@ export default function PaketNonAktifPage() {
                   <select
                     value={limit}
                     onChange={(e) => setLimit(Number(e.target.value))}
-                    className="bg-[#080d19] border border-[#131d35] text-xs py-1.5 px-3 rounded-lg text-gray-300 focus:outline-none"
+                    className="bg-slate-50 border border-slate-200 text-xs py-1.5 px-3 rounded-lg text-slate-600 focus:outline-none"
                   >
                     <option value={10}>10 / halaman</option>
                     <option value={25}>25 / halaman</option>
@@ -487,10 +450,10 @@ export default function PaketNonAktifPage() {
             </div>
 
             {/* Bottom Card banner */}
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div>
-                <h4 className="text-sm font-bold text-white">Kelola Paket Non Aktif dengan Mudah</h4>
-                <p className="text-[11px] text-gray-500 mt-1 leading-relaxed">Pantau paket yang tidak aktif, lihat alasan dan dampaknya, serta aktifkan kembali jika diperlukan.</p>
+                <h4 className="text-sm font-bold text-slate-800">Kelola Paket Non Aktif dengan Mudah</h4>
+                <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">Pantau paket yang tidak aktif, lihat alasan dan dampaknya, serta aktifkan kembali jika diperlukan.</p>
               </div>
               <button className="flex items-center gap-2 bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl transition-all shadow-md">
                 <Plus size={14} />
@@ -503,8 +466,8 @@ export default function PaketNonAktifPage() {
           <div className="lg:col-span-3 space-y-6">
             
             {/* Card 1: Distribusi Alasan Non Aktif */}
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-5 space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400">Distribusi Alasan Non Aktif</h3>
+            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">Distribusi Alasan Non Aktif</h3>
               
               <div className="relative flex justify-center py-2">
                 <svg width="140" height="140" viewBox="0 0 42 42" className="transform -rotate-90">
@@ -530,13 +493,13 @@ export default function PaketNonAktifPage() {
                 </svg>
                 {/* Center text */}
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-                  <p className="text-xl font-black text-white">{totalInactive}</p>
-                  <p className="text-[9px] text-gray-500 font-bold uppercase">Total</p>
+                  <p className="text-xl font-black text-slate-900">{totalInactive}</p>
+                  <p className="text-[9px] text-slate-400 font-bold uppercase">Total</p>
                 </div>
               </div>
 
               {/* Legends */}
-              <div className="space-y-2 text-[11px] text-gray-400">
+              <div className="space-y-2 text-[11px] text-slate-500">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded bg-red-500 inline-block"></span>
@@ -562,15 +525,15 @@ export default function PaketNonAktifPage() {
             </div>
 
             {/* Card 2: Ringkasan Dampak graph */}
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-5 space-y-3 relative overflow-hidden">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400">Ringkasan Dampak</h3>
-              <p className="text-[10px] text-gray-500 font-semibold">Potensi Pendapatan Hilang</p>
+            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-3 relative overflow-hidden">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">Ringkasan Dampak</h3>
+              <p className="text-[10px] text-slate-400 font-semibold">Potensi Pendapatan Hilang</p>
               
               <div className="flex items-center gap-2 mt-2">
-                <p className="text-base font-black text-white">{formatCurrency(totalRevenueLost)}</p>
+                <p className="text-base font-black text-slate-900">{formatCurrency(totalRevenueLost)}</p>
                 <span className="bg-red-500/10 text-red-400 border border-red-500/20 text-[9px] font-bold px-1.5 py-0.5 rounded-full">+18.5%</span>
               </div>
-              <p className="text-[9px] text-gray-500">Dari 6 paket non aktif</p>
+              <p className="text-[9px] text-slate-400">Dari 6 paket non aktif</p>
 
               {/* Sparkline chart SVG */}
               <div className="h-10 w-full mt-4">
@@ -598,43 +561,43 @@ export default function PaketNonAktifPage() {
             </div>
 
             {/* Card 3: Informasi */}
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-5 space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400">Informasi</h3>
+            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">Informasi</h3>
               
-              <div className="space-y-3.5 text-xs text-gray-300">
+              <div className="space-y-3.5 text-xs text-slate-600">
                 <div className="flex items-start gap-3">
                   <div className="p-1.5 bg-blue-500/10 text-blue-400 rounded-lg mt-0.5">
                     <Info size={12} />
                   </div>
-                  <p className="leading-relaxed text-[11px] text-gray-400">Paket akan masuk ke non aktif jika periode berakhir atau dihentikan.</p>
+                  <p className="leading-relaxed text-[11px] text-slate-500">Paket akan masuk ke non aktif jika periode berakhir atau dihentikan.</p>
                 </div>
                 <div className="flex items-start gap-3">
                   <div className="p-1.5 bg-blue-500/10 text-blue-400 rounded-lg mt-0.5">
                     <Info size={12} />
                   </div>
-                  <p className="leading-relaxed text-[11px] text-gray-400">Paket non aktif tidak dapat digunakan oleh customer baru.</p>
+                  <p className="leading-relaxed text-[11px] text-slate-500">Paket non aktif tidak dapat digunakan oleh customer baru.</p>
                 </div>
                 <div className="flex items-start gap-3">
                   <div className="p-1.5 bg-blue-500/10 text-blue-400 rounded-lg mt-0.5">
                     <Info size={12} />
                   </div>
-                  <p className="leading-relaxed text-[11px] text-gray-400">Anda dapat mengaktifkan kembali paket yang dihentikan.</p>
+                  <p className="leading-relaxed text-[11px] text-slate-500">Anda dapat mengaktifkan kembali paket yang dihentikan.</p>
                 </div>
               </div>
             </div>
 
             {/* Card 4: Aktivitas Terakhir */}
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-5 space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400">Aktivitas Terakhir</h3>
+            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">Aktivitas Terakhir</h3>
               
-              <div className="relative border-l-2 border-[#131d35] pl-4 ml-2.5 space-y-5 text-[11px] text-gray-400">
+              <div className="relative border-l-2 border-slate-200 pl-4 ml-2.5 space-y-5 text-[11px] text-slate-500">
                 
                 {/* Item 1 */}
                 <div className="relative">
-                  <span className="absolute -left-[23px] top-1 w-2.5 h-2.5 rounded-full bg-red-500 border-2 border-[#0b1329]" />
-                  <p className="text-[10px] text-gray-500 font-semibold flex items-center gap-1">
+                  <span className="absolute -left-[23px] top-1 w-2.5 h-2.5 rounded-full bg-red-500 border-2 border-slate-200" />
+                  <p className="text-[10px] text-slate-400 font-semibold flex items-center gap-1">
                     <Clock size={10} />
-                    <span>01 Jul 2026 08:25</span>
+                    <span>22 Okt 2026 08:25</span>
                   </p>
                   <p className="mt-1 leading-relaxed">
                     Paket <strong className="text-white">"Promo Ramadhan 2025"</strong> kadaluarsa
@@ -643,8 +606,8 @@ export default function PaketNonAktifPage() {
 
                 {/* Item 2 */}
                 <div className="relative">
-                  <span className="absolute -left-[23px] top-1 w-2.5 h-2.5 rounded-full bg-orange-500 border-2 border-[#0b1329]" />
-                  <p className="text-[10px] text-gray-500 font-semibold flex items-center gap-1">
+                  <span className="absolute -left-[23px] top-1 w-2.5 h-2.5 rounded-full bg-orange-500 border-2 border-slate-200" />
+                  <p className="text-[10px] text-slate-400 font-semibold flex items-center gap-1">
                     <Clock size={10} />
                     <span>30 Jun 2026 16:40</span>
                   </p>
@@ -655,8 +618,8 @@ export default function PaketNonAktifPage() {
 
                 {/* Item 3 */}
                 <div className="relative">
-                  <span className="absolute -left-[23px] top-1 w-2.5 h-2.5 rounded-full bg-blue-500 border-2 border-[#0b1329]" />
-                  <p className="text-[10px] text-gray-500 font-semibold flex items-center gap-1">
+                  <span className="absolute -left-[23px] top-1 w-2.5 h-2.5 rounded-full bg-blue-500 border-2 border-slate-200" />
+                  <p className="text-[10px] text-slate-400 font-semibold flex items-center gap-1">
                     <Clock size={10} />
                     <span>29 Jun 2026 10:15</span>
                   </p>

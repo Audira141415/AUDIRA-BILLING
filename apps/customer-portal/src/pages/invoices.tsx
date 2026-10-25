@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import CustomerLayout from '@/components/CustomerLayout';
+import { API_BASE_URL } from '@/config/api';
 import { 
   FileText, 
   Download, 
@@ -51,6 +52,11 @@ export default function Invoices() {
     const parsed = JSON.parse(customerData);
     setCustomer(parsed);
     fetchInvoices(parsed.id);
+
+    const inet = parsed.internetNumber || parsed.id || 'NET-100234';
+    if (!router.asPath.startsWith('/c/')) {
+      router.replace(`/c/${inet}/invoices`);
+    }
   }, [router]);
 
   const fetchInvoices = async (customerId: string) => {
@@ -58,7 +64,37 @@ export default function Invoices() {
     try {
       const token = localStorage.getItem('token');
       
-      // Mock data for now (replace with actual API call)
+      const response = await fetch(`${API_BASE_URL}/customer/invoices`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        const serverInvoices = result.data || [];
+        if (serverInvoices.length > 0) {
+          const mapped: Invoice[] = serverInvoices.map((inv: any) => ({
+            id: inv.id,
+            invoiceNumber: inv.invoiceNumber || `INV-${inv.id.substring(0, 8)}`,
+            month: inv.month || new Date(inv.createdAt).toISOString().substring(0, 7),
+            date: new Date(inv.createdAt),
+            dueDate: new Date(inv.dueDate),
+            amount: inv.amount,
+            status: (inv.status === 'paid' ? 'PAID' : inv.status === 'unpaid' ? 'PENDING' : 'OVERDUE') as any,
+            description: inv.description || 'Tagihan Layanan Internet',
+            paidAt: inv.paidAt ? new Date(inv.paidAt) : null,
+            paymentMethod: inv.paymentMethod || '-',
+            items: [
+              { description: inv.description || 'Layanan Internet Fiber', amount: inv.amount }
+            ],
+          }));
+          setInvoices(mapped);
+          return;
+        }
+      }
+
+      // Mock data for preview/demonstration if no server invoices yet
       const mockInvoices: Invoice[] = [
         {
           id: '1',
@@ -201,7 +237,7 @@ export default function Invoices() {
 
   const handlePayment = async (invoice: any) => {
     try {
-      const response = await fetch('http://localhost:4000/billing/create-payment', {
+      const response = await fetch(`${API_BASE_URL}/billing/create-payment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -224,7 +260,8 @@ export default function Invoices() {
   };
 
   const handleDownloadPDF = (invoice: Invoice) => {
-    generatePDF(invoice);
+    // Open official AUDIRA backend PDF stream (A4 format with official green stamp & digital security seal)
+    window.open(`${API_BASE_URL}/billing/invoices/${invoice.id}/receipt-pdf`, '_blank');
   };
 
   const filteredInvoices = invoices.filter(inv => {
@@ -235,16 +272,24 @@ export default function Invoices() {
   const getStatusBadge = (status: string) => {
     if (status === 'PAID') {
       return (
-        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-          <CheckCircle className="h-4 w-4 mr-1" />
-          Lunas
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-mono font-bold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-900 dark:text-emerald-300 border border-emerald-500/40">
+          <CheckCircle className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400 stroke-[2.5]" />
+          LUNAS
+        </span>
+      );
+    }
+    if (status === 'OVERDUE') {
+      return (
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-mono font-bold bg-rose-100 dark:bg-rose-950/60 text-rose-900 dark:text-rose-300 border border-rose-500/40">
+          <AlertCircle className="h-3.5 w-3.5 text-rose-600 dark:text-rose-400 stroke-[2.5]" />
+          JATUH TEMPO
         </span>
       );
     }
     return (
-      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
-        <Clock className="h-4 w-4 mr-1" />
-        Belum Dibayar
+      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-mono font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 border border-amber-500/40">
+        <Clock className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400 stroke-[2.5]" />
+        BELUM DIBAYAR
       </span>
     );
   };
@@ -252,131 +297,169 @@ export default function Invoices() {
   if (loading) {
     return (
       <CustomerLayout>
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="flex items-center justify-center h-64 font-mono text-xs text-slate-500 dark:text-slate-400">
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-8 h-8 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
+            <span>Memuat Riwayat Tagihan...</span>
+          </div>
         </div>
       </CustomerLayout>
     );
   }
 
+  const inetIdentifier = customer?.internetNumber || customer?.id || 'NET-100234';
+
   return (
     <CustomerLayout>
       <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+        {/* Header Banner */}
+        <div className="bg-white dark:bg-[#0c1322] border-2 border-black dark:border-gray-800 rounded-2xl p-6 sm:p-7 shadow-[4px_4px_0px_#000] flex flex-col md:flex-row md:items-center md:justify-between gap-5">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Tagihan</h1>
-            <p className="text-gray-600">Kelola tagihan dan pembayaran Anda</p>
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-cyan-500"></span>
+              <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-cyan-700 dark:text-cyan-400">
+                Billing & Payment Center
+              </span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-slate-950 dark:text-white">
+              Tagihan & Invoice
+            </h1>
+            <p className="text-xs text-slate-600 dark:text-gray-400 mt-1 max-w-xl">
+              Lihat riwayat invoice resmi, download salinan PDF, dan lakukan pembayaran tagihan internet fiber Anda.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2 p-3 bg-slate-50 dark:bg-[#070b14] border border-slate-200 dark:border-gray-800 rounded-xl shrink-0 font-mono text-xs">
+            <span className="text-slate-500 dark:text-gray-400 uppercase tracking-widest font-bold">
+              Total Invoice:
+            </span>
+            <span className="text-base font-black text-cyan-600 dark:text-cyan-400">
+              {invoices.length}
+            </span>
           </div>
         </div>
 
-        {/* Filters */}
-        <div className="bg-white rounded-lg shadow p-4">
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => setFilter('ALL')}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                filter === 'ALL'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              Semua
-            </button>
-            <button
-              onClick={() => setFilter('PENDING')}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                filter === 'PENDING'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              Belum Dibayar
-            </button>
-            <button
-              onClick={() => setFilter('PAID')}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                filter === 'PAID'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              Lunas
-            </button>
+        {/* Filter Controls */}
+        <div className="bg-white dark:bg-[#0c1322] border-2 border-black dark:border-gray-800 rounded-xl p-3.5 shadow-[3px_3px_0px_#000]">
+          <div className="flex flex-wrap items-center gap-2">
+            {[
+              { id: 'ALL', label: 'Semua Tagihan' },
+              { id: 'PENDING', label: 'Belum Dibayar' },
+              { id: 'PAID', label: 'Lunas' },
+            ].map((tab) => {
+              const isActive = filter === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setFilter(tab.id)}
+                  className={`px-4 py-2 rounded-lg font-mono text-xs font-bold uppercase tracking-wider transition-all border-2 ${
+                    isActive
+                      ? 'bg-cyan-400 text-black border-black shadow-[2px_2px_0px_#000]'
+                      : 'bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-gray-300 border-slate-300 dark:border-gray-700 hover:border-black dark:hover:border-white'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        {/* Invoices List */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Invoices Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
           {filteredInvoices.map((invoice) => (
-            <div key={invoice.id} className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
-              <div className="p-6">
-                <div className="flex items-start justify-between mb-4">
+            <div
+              key={invoice.id}
+              className="bg-white dark:bg-[#0c1322] border-2 border-black dark:border-gray-800 rounded-xl p-5 sm:p-6 shadow-[4px_4px_0px_#000] hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all flex flex-col justify-between"
+            >
+              <div>
+                <div className="flex items-start justify-between gap-3 mb-4">
                   <div>
-                    <h3 className="text-lg font-bold text-gray-900">{invoice.invoiceNumber}</h3>
-                    <p className="text-sm text-gray-600">{invoice.description}</p>
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-500 dark:text-gray-400 block mb-1">
+                      Nomor Dokumen
+                    </span>
+                    <h3 className="text-base sm:text-lg font-mono font-black text-slate-950 dark:text-white">
+                      {invoice.invoiceNumber}
+                    </h3>
+                    <p className="text-xs text-slate-600 dark:text-gray-400 mt-0.5">
+                      {invoice.description || 'Tagihan Bulanan Layanan Fiber Optic'}
+                    </p>
                   </div>
                   {getStatusBadge(invoice.status)}
                 </div>
 
-                <div className="space-y-2 mb-4">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Periode:</span>
-                    <span className="font-medium text-gray-900">{invoice.month}</span>
+                <div className="space-y-2.5 p-3.5 bg-slate-50 dark:bg-[#070b14] border border-slate-200 dark:border-gray-800 rounded-lg mb-4 text-xs font-mono">
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-500 dark:text-gray-400">Periode Billing:</span>
+                    <span className="font-bold text-slate-900 dark:text-white">{invoice.month}</span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Jatuh Tempo:</span>
-                    <span className="font-medium text-gray-900">
-                      {new Date(invoice.dueDate).toLocaleDateString('id-ID')}
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-500 dark:text-gray-400">Batas Jatuh Tempo:</span>
+                    <span className="font-bold text-slate-900 dark:text-white">
+                      {new Date(invoice.dueDate).toLocaleDateString('id-ID', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric',
+                      })}
                     </span>
                   </div>
                   {invoice.paidAt && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Dibayar:</span>
-                      <span className="font-medium text-green-600">
-                        {new Date(invoice.paidAt).toLocaleDateString('id-ID')}
+                    <div className="flex justify-between items-center pt-1 border-t border-slate-200 dark:border-gray-800">
+                      <span className="text-slate-500 dark:text-gray-400">Waktu Pembayaran:</span>
+                      <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                        {new Date(invoice.paidAt).toLocaleDateString('id-ID', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric',
+                        })}
                       </span>
                     </div>
                   )}
-                  <div className="flex justify-between pt-2 border-t">
-                    <span className="font-semibold text-gray-900">Total:</span>
-                    <span className="text-xl font-bold text-blue-600">
+                  <div className="flex justify-between items-baseline pt-2 border-t border-slate-200 dark:border-gray-800">
+                    <span className="text-slate-700 dark:text-gray-300 font-bold uppercase text-[11px]">
+                      Total Tagihan:
+                    </span>
+                    <span className="text-lg sm:text-xl font-black text-cyan-600 dark:text-cyan-400">
                       Rp {invoice.amount.toLocaleString('id-ID')}
                     </span>
                   </div>
                 </div>
+              </div>
 
-                <div className="flex gap-2">
+              <div className="flex flex-wrap items-center gap-2.5 pt-2">
+                <button
+                  onClick={() => handleDownloadPDF(invoice)}
+                  className="flex-1 min-h-[44px] flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border-2 border-black dark:border-gray-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-mono text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-800 shadow-[2px_2px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all"
+                >
+                  <Download className="h-4 w-4 stroke-[2.5]" />
+                  Unduh PDF
+                </button>
+                {invoice.status === 'PENDING' && (
                   <button
-                    onClick={() => handleDownloadPDF(invoice)}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                    onClick={() => handlePayment(invoice)}
+                    className="flex-1 min-h-[44px] flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border-2 border-black bg-cyan-400 hover:bg-cyan-300 text-black font-mono text-xs font-black shadow-[2px_2px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all"
                   >
-                    <Download className="h-4 w-4" />
-                    Download
+                    <CreditCard className="h-4 w-4 stroke-[2.5]" />
+                    Bayar via QRIS
                   </button>
-                  {invoice.status === 'PENDING' && (
-                    <button
-                      onClick={() => handlePayment(invoice)}
-                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                    >
-                      <CreditCard className="h-4 w-4" />
-                      Bayar Sekarang
-                    </button>
-                  )}
-                </div>
+                )}
               </div>
             </div>
           ))}
         </div>
 
         {filteredInvoices.length === 0 && (
-          <div className="bg-white rounded-lg shadow p-12 text-center">
-            <FileText className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Tidak ada tagihan</h3>
-            <p className="text-gray-600">
-              {filter === 'ALL' 
-                ? 'Belum ada tagihan untuk akun Anda' 
-                : `Tidak ada tagihan dengan status ${filter === 'PAID' ? 'Lunas' : 'Belum Dibayar'}`}
+          <div className="bg-white dark:bg-[#0c1322] border-2 border-black dark:border-gray-800 rounded-2xl p-10 sm:p-12 text-center shadow-[4px_4px_0px_#000]">
+            <div className="w-14 h-14 mx-auto mb-4 rounded-xl border-2 border-black dark:border-gray-700 bg-cyan-100 dark:bg-cyan-950 flex items-center justify-center">
+              <FileText className="h-7 w-7 text-cyan-600 dark:text-cyan-400 stroke-[2.5]" />
+            </div>
+            <h3 className="text-base sm:text-lg font-black uppercase text-slate-950 dark:text-white mb-1">
+              Tidak Ada Tagihan Ditemukan
+            </h3>
+            <p className="text-xs text-slate-600 dark:text-gray-400 font-mono">
+              {filter === 'ALL'
+                ? 'Belum ada catatan tagihan untuk akun Anda saat ini.'
+                : `Tidak ada tagihan dengan filter status "${filter === 'PAID' ? 'Lunas' : 'Belum Dibayar'}".`}
             </p>
           </div>
         )}

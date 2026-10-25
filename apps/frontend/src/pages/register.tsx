@@ -37,7 +37,8 @@ export default function Register() {
     }
 
     try {
-        const response = await fetch('http://localhost:1993/auth/register', {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3218'
+      const response = await fetch(`${apiUrl}/auth/register`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -94,7 +95,7 @@ export default function Register() {
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <User className="text-gray-400" size={20} />
+                    <User className="text-slate-500" size={20} />
                   </div>
                   <input
                     type="text"
@@ -115,7 +116,7 @@ export default function Register() {
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Mail className="text-gray-400" size={20} />
+                    <Mail className="text-slate-500" size={20} />
                   </div>
                   <input
                     type="email"
@@ -136,7 +137,7 @@ export default function Register() {
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Phone className="text-gray-400" size={20} />
+                    <Phone className="text-slate-500" size={20} />
                   </div>
                   <input
                     type="tel"
@@ -157,7 +158,7 @@ export default function Register() {
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Building2 className="text-gray-400" size={20} />
+                    <Building2 className="text-slate-500" size={20} />
                   </div>
                   <input
                     type="text"
@@ -178,7 +179,7 @@ export default function Register() {
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Lock className="text-gray-400" size={20} />
+                    <Lock className="text-slate-500" size={20} />
                   </div>
                   <input
                     type={showPassword ? 'text' : 'password'}
@@ -195,9 +196,9 @@ export default function Register() {
                     className="absolute inset-y-0 right-0 pr-4 flex items-center"
                   >
                     {showPassword ? (
-                      <EyeOff className="text-gray-400 hover:text-gray-600" size={20} />
+                      <EyeOff className="text-slate-500 hover:text-gray-600" size={20} />
                     ) : (
-                      <Eye className="text-gray-400 hover:text-gray-600" size={20} />
+                      <Eye className="text-slate-500 hover:text-gray-600" size={20} />
                     )}
                   </button>
                 </div>
@@ -210,7 +211,7 @@ export default function Register() {
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Lock className="text-gray-400" size={20} />
+                    <Lock className="text-slate-500" size={20} />
                   </div>
                   <input
                     type={showConfirmPassword ? 'text' : 'password'}
@@ -227,9 +228,9 @@ export default function Register() {
                     className="absolute inset-y-0 right-0 pr-4 flex items-center"
                   >
                     {showConfirmPassword ? (
-                      <EyeOff className="text-gray-400 hover:text-gray-600" size={20} />
+                      <EyeOff className="text-slate-500 hover:text-gray-600" size={20} />
                     ) : (
-                      <Eye className="text-gray-400 hover:text-gray-600" size={20} />
+                      <Eye className="text-slate-500 hover:text-gray-600" size={20} />
                     )}
                   </button>
                 </div>

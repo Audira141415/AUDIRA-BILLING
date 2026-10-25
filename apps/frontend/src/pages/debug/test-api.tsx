@@ -103,7 +103,7 @@ export default function TestAPI() {
                       ) : result.status === 'error' ? (
                         <XCircle className="h-5 w-5 text-red-600" />
                       ) : (
-                        <Loader className="h-5 w-5 text-gray-400 animate-spin" />
+                        <Loader className="h-5 w-5 text-slate-500 animate-spin" />
                       )}
                       <div>
                         <p className="font-semibold text-gray-900">{result.endpoint}</p>

@@ -6,13 +6,16 @@ interface User {
   id: string;
   name: string;
   email: string;
+  phone?: string;
+  internetNumber?: string;
+  address?: string;
   role: 'customer' | 'technician' | 'admin';
 }
 
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (identifier: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   register: (data: any) => Promise<void>;
 }
@@ -44,10 +47,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const login = async (email: string, password: string) => {
+  const login = async (identifier: string, password: string) => {
     try {
-      const response = await authAPI.login(email, password);
-      const { token, user: userData } = response.data;
+      const response = await authAPI.login(identifier, password);
+      const token = response.data.token || (response.data as any).access_token;
+      const rawUser = response.data.user || (response.data as any).customer;
+      const userData: User = {
+        ...rawUser,
+        role: rawUser.role || 'customer',
+      };
 
       await AsyncStorage.setItem('authToken', token);
       await AsyncStorage.setItem('user', JSON.stringify(userData));

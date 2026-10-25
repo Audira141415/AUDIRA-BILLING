@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
 import { API_BASE_URL, API_ENDPOINTS } from '../config/api';
 import Layout from '@/components/Layout';
@@ -23,7 +24,7 @@ export default function BackupManagement() {
   const fetchBackups = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('${API_BASE_URL}/backup/list');
+      const response = await axios.get(`${API_BASE_URL}/backup/list`);
       setBackups(response.data.backups);
       setTotalSize(response.data.totalSize);
     } catch (error) {
@@ -39,7 +40,7 @@ export default function BackupManagement() {
 
     try {
       setCreating(true);
-      const response = await axios.post('${API_BASE_URL}/backup/create');
+      const response = await axios.post(`${API_BASE_URL}/backup/create`);
       
       if (response.data.success) {
         alert(`Backup created successfully!\n${response.data.filename}\nSize: ${(response.data.size / (1024 * 1024)).toFixed(2)} MB`);
@@ -95,7 +96,7 @@ export default function BackupManagement() {
     if (!confirm('Clean old backups (older than 30 days)?')) return;
 
     try {
-      const response = await axios.post('${API_BASE_URL}/backup/clean');
+      const response = await axios.post(`${API_BASE_URL}/backup/clean`);
       alert(response.data.message);
       fetchBackups();
     } catch (error) {
@@ -139,8 +140,8 @@ export default function BackupManagement() {
           <div className="flex items-center space-x-3">
             <Database className="w-8 h-8 text-blue-600" />
             <div>
-              <h1 className="text-3xl font-bold text-gray-800">Database Backup</h1>
-              <p className="text-gray-600">Manage PostgreSQL database backups</p>
+              <h1 className="text-3xl font-bold text-[var(--app-text)]">Database Backup</h1>
+              <p className="text-[var(--app-muted)]">Manage PostgreSQL database backups</p>
             </div>
           </div>
           <button
@@ -156,40 +157,40 @@ export default function BackupManagement() {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-[var(--app-card)] rounded-lg shadow p-6">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-gray-600">Total Backups</h3>
+            <h3 className="text-sm font-medium text-[var(--app-muted)]">Total Backups</h3>
             <svg className="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
             </svg>
           </div>
-          <p className="text-3xl font-bold text-gray-800">{backups.length}</p>
+          <p className="text-3xl font-bold text-[var(--app-text)]">{backups.length}</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-[var(--app-card)] rounded-lg shadow p-6">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-gray-600">Total Size</h3>
+            <h3 className="text-sm font-medium text-[var(--app-muted)]">Total Size</h3>
             <svg className="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
             </svg>
           </div>
-          <p className="text-3xl font-bold text-gray-800">{formatBytes(totalSize)}</p>
+          <p className="text-3xl font-bold text-[var(--app-text)]">{formatBytes(totalSize)}</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-[var(--app-card)] rounded-lg shadow p-6">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-gray-600">Auto Backup</h3>
+            <h3 className="text-sm font-medium text-[var(--app-muted)]">Auto Backup</h3>
             <svg className="w-8 h-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <p className="text-xl font-bold text-gray-800">Daily at 2 AM</p>
-          <p className="text-sm text-gray-600 mt-1">Retention: 30 days</p>
+          <p className="text-xl font-bold text-[var(--app-text)]">Daily at 2 AM</p>
+          <p className="text-sm text-[var(--app-muted)] mt-1">Retention: 30 days</p>
         </div>
       </div>
 
       {/* Actions */}
-      <div className="bg-white rounded-lg shadow p-6 mb-6">
+      <div className="bg-[var(--app-card)] rounded-lg shadow p-6 mb-6">
         <div className="flex gap-4">
           <button
             onClick={createBackup}
@@ -234,14 +235,14 @@ export default function BackupManagement() {
       </div>
 
       {/* Backups List */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-xl font-bold text-gray-800">Backup Files</h2>
+      <div className="bg-[var(--app-card)] rounded-lg shadow overflow-hidden">
+        <div className="px-6 py-4 border-b border-[var(--app-border)]">
+          <h2 className="text-xl font-bold text-[var(--app-text)]">Backup Files</h2>
         </div>
 
         {backups.length === 0 ? (
-          <div className="p-12 text-center text-gray-500">
-            <svg className="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="p-12 text-center text-[var(--app-muted)]">
+            <svg className="w-16 h-16 mx-auto mb-4 text-[var(--app-text)]/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
             </svg>
             <p className="text-lg">No backups found</p>
@@ -250,37 +251,37 @@ export default function BackupManagement() {
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+              <thead className="bg-[var(--app-bg)]">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--app-muted)] uppercase tracking-wider">
                     Filename
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--app-muted)] uppercase tracking-wider">
                     Size
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--app-muted)] uppercase tracking-wider">
                     Created At
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-right text-xs font-medium text-[var(--app-muted)] uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-[var(--app-card)] divide-y divide-gray-200">
                 {backups.map((backup) => (
-                  <tr key={backup.filename} className="hover:bg-gray-50">
+                  <tr key={backup.filename} className="hover:bg-[var(--app-bg)]">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <svg className="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
-                        <span className="text-sm font-medium text-gray-900">{backup.filename}</span>
+                        <span className="text-sm font-medium text-[var(--app-text)]">{backup.filename}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--app-muted)]">
                       {formatBytes(backup.size)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--app-muted)]">
                       {formatDate(backup.createdAt)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

@@ -227,7 +227,7 @@ export default function Layanan() {
         <div className="bg-white rounded-xl shadow-sm p-4 mb-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
             <div className="relative flex-1 md:mr-4">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500" size={20} />
               <input
                 type="text"
                 placeholder="Cari berdasarkan nama layanan, pelanggan, atau paket..."
@@ -307,7 +307,7 @@ export default function Layanan() {
                     <td className="px-6 py-4">
                       <div>
                         <p className="font-semibold text-gray-900">{service.serviceName}</p>
-                        <p className="text-sm text-gray-500">{service.serviceType}</p>
+                        <p className="text-sm text-slate-400">{service.serviceType}</p>
                       </div>
                     </td>
                     <td className="px-6 py-4">
@@ -334,7 +334,7 @@ export default function Layanan() {
                           <span className="text-sm">Ya</span>
                         </span>
                       ) : (
-                        <span className="text-sm text-gray-500">Tidak</span>
+                        <span className="text-sm text-slate-400">Tidak</span>
                       )}
                     </td>
                     <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
@@ -364,7 +364,7 @@ export default function Layanan() {
 
           {filteredServices.length === 0 && (
             <div className="text-center py-12">
-              <Server size={64} className="mx-auto text-gray-400 mb-4" />
+              <Server size={64} className="mx-auto text-slate-500 mb-4" />
               <h3 className="text-xl font-semibold text-gray-900 mb-2">Tidak ada layanan ditemukan</h3>
               <p className="text-gray-600">Coba ubah kata kunci pencarian atau filter Anda</p>
             </div>
@@ -409,7 +409,7 @@ export default function Layanan() {
                       <span className="text-sm font-semibold">Auto Renew Aktif</span>
                     </span>
                   ) : (
-                    <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">Manual Renew</span>
+                    <span className="text-sm text-slate-400 bg-gray-100 px-3 py-1 rounded-full">Manual Renew</span>
                   )}
                 </div>
               </div>

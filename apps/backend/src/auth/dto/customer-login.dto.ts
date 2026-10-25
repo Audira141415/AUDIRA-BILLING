@@ -1,9 +1,8 @@
 import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
 
 export class CustomerLoginDto {
-  @IsNotEmpty({ message: 'Email tidak boleh kosong' })
-  @IsEmail({}, { message: 'Format email tidak valid' })
-  @IsString({ message: 'Email harus berupa string' })
+  @IsNotEmpty({ message: 'Email atau ID Pelanggan tidak boleh kosong' })
+  @IsString({ message: 'Email atau ID Pelanggan harus berupa string' })
   email: string;
 
   @IsNotEmpty({ message: 'Password tidak boleh kosong' })

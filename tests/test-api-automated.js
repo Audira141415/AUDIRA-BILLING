@@ -7,7 +7,7 @@
 const https = require('http');
 
 // Configuration
-const API_BASE = 'http://localhost:1993';
+const API_BASE = process.env.API_URL || 'http://localhost:3218';
 const COLORS = {
   reset: '\x1b[0m',
   green: '\x1b[32m',

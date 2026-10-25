@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
@@ -190,76 +191,21 @@ export default function AnggaranDashboard() {
 
   return (
     <Layout>
-      <div className="bg-[#050B14] text-gray-100 min-h-screen p-6 font-sans antialiased">
-        {/* Custom Header Area */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 pb-6 border-b border-blue-950">
-          <div>
-            <button onClick={() => router.push('/finance/dashboard')} className="flex items-center gap-1.5 text-xs text-cyan-400 hover:text-cyan-300 mb-2 transition-colors">
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Kembali ke Dashboard</span>
-            </button>
-            <div className="flex items-center gap-2 text-xs text-gray-400">
-              <span>Finance</span>
-              <span>&gt;</span>
-              <span className="text-cyan-400 font-medium">Anggaran</span>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-4 w-full md:w-auto">
-            <div className="bg-[#091526] px-4 py-2 rounded-lg border border-blue-900/60 flex items-center gap-3">
-              <Calendar className="w-4 h-4 text-cyan-400" />
-              <div className="text-xs">
-                <p className="text-gray-400 font-semibold">01 Juli 2026</p>
-                <p className="text-cyan-400 text-[10px]">08.35 WIB</p>
-              </div>
-            </div>
-            <div className="bg-[#091526] px-4 py-2 rounded-lg border border-blue-900/60 flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              <div className="text-xs">
-                <p className="text-gray-400 font-semibold">Status Sistem</p>
-                <p className="text-emerald-400 text-[10px]">● Normal</p>
-              </div>
-            </div>
-
-            {/* Search bar & profile */}
-            <div className="relative w-full md:w-64">
-              <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Cari anggaran, departemen, kategori..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 rounded-lg bg-[#091526] border border-blue-900/60 text-xs focus:outline-none focus:border-cyan-500 placeholder-gray-500 text-gray-200"
-              />
-            </div>
-            <div className="flex items-center gap-2.5">
-              <button className="p-2 rounded-lg bg-[#091526] border border-blue-900/40 hover:border-cyan-500/50 relative">
-                <Bell className="w-4 h-4 text-gray-300" />
-                <span className="absolute -top-1 -right-1 w-4.5 h-4.5 bg-red-500 rounded-full text-[9px] font-bold flex items-center justify-center text-white px-1">12</span>
-              </button>
-              <button className="p-2 rounded-lg bg-[#091526] border border-blue-900/40 hover:border-cyan-500/50 relative">
-                <Mail className="w-4 h-4 text-gray-300" />
-                <span className="absolute -top-1 -right-1 w-4.5 h-4.5 bg-red-500 rounded-full text-[9px] font-bold flex items-center justify-center text-white px-1">6</span>
-              </button>
-              <button className="p-2 rounded-lg bg-[#091526] border border-blue-900/40 hover:border-cyan-500/50">
-                <Settings className="w-4 h-4 text-gray-300" />
-              </button>
-            </div>
-            <div className="flex items-center gap-3 pl-3 border-l border-blue-950">
-              <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center font-bold text-xs text-white">AD</div>
-              <div className="text-left hidden lg:block">
-                <p className="text-xs font-semibold text-gray-200">Agus Dwi Rianto</p>
-                <p className="text-[10px] text-gray-400">Super Admin</p>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className="bg-[var(--app-bg)] text-[var(--app-text)] min-h-screen p-6 font-sans antialiased">
+        
 
         {/* Dashboard Title & Top Bar */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 border-b border-[var(--app-border)] pb-5">
           <div>
+            <div className="flex items-center gap-2 text-xs text-[var(--app-muted)] font-mono mb-1.5">
+              <Link href="/" className="hover:text-[var(--app-text)]">AUDIRA</Link>
+              <span>/</span>
+              <Link href="/finance/dashboard" className="hover:text-[var(--app-text)]">Keuangan & Akuntansi</Link>
+              <span>/</span>
+              <span className="text-emerald-500 font-semibold">Anggaran & Budgeting</span>
+            </div>
             <h1 className="text-2xl font-bold tracking-tight text-white">Anggaran</h1>
-            <p className="text-xs text-gray-400 mt-1">Kelola, pantau, dan analisis anggaran perusahaan secara efektif.</p>
+            <p className="text-xs text-[var(--app-muted)] mt-1">Kelola, pantau, dan analisis anggaran perusahaan secara efektif.</p>
           </div>
           <div className="flex items-center gap-3">
             <button 
@@ -269,17 +215,17 @@ export default function AnggaranDashboard() {
               <Plus className="w-3.5 h-3.5" />
               <span>Anggaran Baru</span>
             </button>
-            <button className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white border border-blue-900/40 transition-colors">
-              <FolderOpen className="w-3.5 h-3.5 text-gray-400" />
+            <button className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white border border-[var(--app-border)] transition-colors">
+              <FolderOpen className="w-3.5 h-3.5 text-[var(--app-muted)]" />
               <span>Import Anggaran</span>
             </button>
             <button 
               onClick={() => alert('Mengekspor anggaran...')}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#091526] hover:bg-slate-800 text-xs font-semibold text-white border border-blue-900/40 transition-colors"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--app-card)] hover:bg-slate-800 text-xs font-semibold text-white border border-[var(--app-border)] transition-colors"
             >
               <Download className="w-3.5 h-3.5" />
               <span>Ekspor</span>
-              <ChevronDown className="w-3 h-3 text-gray-400" />
+              <ChevronDown className="w-3 h-3 text-[var(--app-muted)]" />
             </button>
           </div>
         </div>
@@ -287,21 +233,21 @@ export default function AnggaranDashboard() {
         {/* Top Metric Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
           {/* Total Anggaran */}
-          <div className="bg-[#0A1629]/70 border border-blue-900/40 rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Total Anggaran</p>
+              <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Total Anggaran</p>
               <div className="p-1.5 rounded-lg bg-blue-600/10 border border-blue-600/20 text-blue-400">
                 <Wallet className="w-3.5 h-3.5" />
               </div>
             </div>
             <h3 className="text-base font-bold text-white">{formatRupiah(totalLimit)}</h3>
-            <span className="text-[9px] text-gray-400 font-semibold mt-1">Tahun {filterYear}</span>
+            <span className="text-[9px] text-[var(--app-muted)] font-semibold mt-1">Tahun {filterYear}</span>
           </div>
 
           {/* Total Realisasi */}
-          <div className="bg-[#0A1629]/70 border border-blue-900/40 rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Total Realisasi</p>
+              <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Total Realisasi</p>
               <div className="p-1.5 rounded-lg bg-emerald-600/10 border border-emerald-600/20 text-emerald-400">
                 <CheckSquare className="w-3.5 h-3.5" />
               </div>
@@ -311,9 +257,9 @@ export default function AnggaranDashboard() {
           </div>
 
           {/* Sisa Anggaran */}
-          <div className="bg-[#0A1629]/70 border border-blue-900/40 rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Sisa Anggaran</p>
+              <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Sisa Anggaran</p>
               <div className="p-1.5 rounded-lg bg-orange-600/10 border border-orange-600/20 text-orange-400">
                 <Calculator className="w-3.5 h-3.5" />
               </div>
@@ -323,9 +269,9 @@ export default function AnggaranDashboard() {
           </div>
 
           {/* Proyeksi Akhir Tahun */}
-          <div className="bg-[#0A1629]/70 border border-blue-900/40 rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Proyeksi Akhir Tahun</p>
+              <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Proyeksi Akhir Tahun</p>
               <div className="p-1.5 rounded-lg bg-purple-600/10 border border-purple-600/20 text-purple-400">
                 <Layers className="w-3.5 h-3.5" />
               </div>
@@ -335,21 +281,21 @@ export default function AnggaranDashboard() {
           </div>
 
           {/* Kategori */}
-          <div className="bg-[#0A1629]/70 border border-blue-900/40 rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Kategori</p>
+              <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Kategori</p>
               <div className="p-1.5 rounded-lg bg-cyan-600/10 border border-cyan-600/20 text-cyan-400">
                 <FileText className="w-3.5 h-3.5" />
               </div>
             </div>
             <h3 className="text-base font-bold text-white">{totalCategories}</h3>
-            <span className="text-[9px] text-gray-400 font-semibold mt-1">Kategori Anggaran</span>
+            <span className="text-[9px] text-[var(--app-muted)] font-semibold mt-1">Kategori Anggaran</span>
           </div>
 
           {/* Status Persetujuan */}
-          <div className="bg-[#0A1629]/70 border border-blue-900/40 rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Status Persetujuan</p>
+              <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Status Persetujuan</p>
               <div className="p-1.5 rounded-lg bg-rose-600/10 border border-rose-600/20 text-rose-400">
                 <CheckSquare className="w-3.5 h-3.5" />
               </div>
@@ -360,7 +306,7 @@ export default function AnggaranDashboard() {
         </div>
 
         {/* Tab Selection */}
-        <div className="flex border-b border-blue-950/80 mb-6 gap-2 overflow-x-auto pb-1">
+        <div className="flex border-b border-[var(--app-border)]/80 mb-6 gap-2 overflow-x-auto pb-1">
           {['Ringkasan', 'Anggaran', 'Realisasi', 'Perbandingan', 'Persetujuan', 'Detail Kategori Anggaran', 'Pengaturan'].map((tab) => (
             <button
               key={tab}
@@ -368,7 +314,7 @@ export default function AnggaranDashboard() {
               className={`px-4 py-2 text-xs font-semibold whitespace-nowrap transition-all duration-200 border-b-2 -mb-[2px] ${
                 activeTab === tab 
                   ? 'border-blue-500 text-blue-400 font-bold' 
-                  : 'border-transparent text-gray-400 hover:text-gray-200'
+                  : 'border-transparent text-[var(--app-muted)] hover:text-[var(--app-text)]'
               }`}
             >
               {tab}
@@ -383,8 +329,8 @@ export default function AnggaranDashboard() {
             {/* Realisasi vs Anggaran (Composed Chart) */}
             <div className="lg:col-span-6 bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xs font-bold text-gray-200 uppercase tracking-wider">Realisasi vs Anggaran</h3>
-                <span className="text-[10px] text-gray-400 bg-[#071225] px-2.5 py-1 rounded border border-blue-950/60">Per Bulan</span>
+                <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider">Realisasi vs Anggaran</h3>
+                <span className="text-[10px] text-[var(--app-muted)] bg-[#071225] px-2.5 py-1 rounded border border-[var(--app-border)]/60">Per Bulan</span>
               </div>
               <div className="h-56">
                 <ResponsiveContainer width="100%" height="100%">
@@ -406,7 +352,7 @@ export default function AnggaranDashboard() {
 
             {/* Persentase Realisasi per Kategori (Donut chart) */}
             <div className="lg:col-span-3 bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5 flex flex-col items-center justify-center relative">
-              <h3 className="text-xs font-bold text-gray-200 uppercase tracking-wider mb-4 self-start">Persentase Realisasi per Kategori</h3>
+              <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-4 self-start">Persentase Realisasi per Kategori</h3>
               <div className="h-44 w-full relative flex items-center justify-center">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
@@ -428,10 +374,10 @@ export default function AnggaranDashboard() {
                 </ResponsiveContainer>
                 <div className="absolute text-center">
                   <p className="text-lg font-bold text-white">{realisasiPct}%</p>
-                  <p className="text-[8px] text-gray-400">Total Realisasi</p>
+                  <p className="text-[8px] text-[var(--app-muted)]">Total Realisasi</p>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-1.5 text-[8px] text-gray-400 border-t border-blue-950 w-full pt-2 mt-2">
+              <div className="grid grid-cols-2 gap-1.5 text-[8px] text-[var(--app-muted)] border-t border-[var(--app-border)] w-full pt-2 mt-2">
                 {categoryPieData.map((item, index) => (
                   <div key={item.name} className="flex items-center gap-1">
                     <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: COLORS_KATEGORI[index % COLORS_KATEGORI.length] }}></span>
@@ -443,7 +389,7 @@ export default function AnggaranDashboard() {
 
             {/* Realisasi per Kategori Top 5 (Horizontal Bar Chart) */}
             <div className="lg:col-span-3 bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
-              <h3 className="text-xs font-bold text-gray-200 uppercase tracking-wider mb-4">Realisasi per Kategori (Top 5)</h3>
+              <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-4">Realisasi per Kategori (Top 5)</h3>
               <div className="h-44">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={categoryBarData} layout="vertical">
@@ -457,7 +403,7 @@ export default function AnggaranDashboard() {
                   </BarChart>
                 </ResponsiveContainer>
               </div>
-              <div className="text-[10px] text-right text-gray-400 pt-2 border-t border-blue-950">
+              <div className="text-[10px] text-right text-[var(--app-muted)] pt-2 border-t border-[var(--app-border)]">
                 Berdasarkan Realisasi
               </div>
             </div>
@@ -472,7 +418,7 @@ export default function AnggaranDashboard() {
           <div className="lg:col-span-9 bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
             <div className="flex flex-wrap items-center gap-3 mb-4 text-xs">
               <div className="relative flex-1 min-w-[150px]">
-                <Search className="absolute left-2.5 top-2 w-3.5 h-3.5 text-gray-400" />
+                <Search className="absolute left-2.5 top-2 w-3.5 h-3.5 text-[var(--app-muted)]" />
                 <input
                   type="text"
                   placeholder="Cari anggaran..."
@@ -533,7 +479,7 @@ export default function AnggaranDashboard() {
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
-                  <tr className="border-b border-blue-950/80 text-gray-400 font-semibold">
+                  <tr className="border-b border-[var(--app-border)]/80 text-[var(--app-muted)] font-semibold">
                     <th className="py-2.5">KODE ANGGARAN</th>
                     <th className="py-2.5">NAMA ANGGARAN</th>
                     <th className="py-2.5">DEPARTEMEN</th>
@@ -545,7 +491,7 @@ export default function AnggaranDashboard() {
                     <th className="py-2.5">STATUS PERSETUJUAN</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-blue-950/40 text-gray-300">
+                <tbody className="divide-y divide-blue-950/40 text-[var(--app-text)]/90">
                   {filteredBudgets.map((b) => {
                     const spentPct = parseFloat((b.spent / b.limit * 100).toFixed(1));
                     const sisaNominal = b.limit - b.spent;
@@ -554,8 +500,8 @@ export default function AnggaranDashboard() {
                       <tr key={b.code} className="hover:bg-blue-950/20 transition-colors">
                         <td className="py-3 font-mono text-[11px] text-cyan-400">{b.code}</td>
                         <td className="py-3 font-semibold text-white">{b.name}</td>
-                        <td className="py-3 text-gray-400">{b.dept}</td>
-                        <td className="py-3 text-gray-400">{b.category}</td>
+                        <td className="py-3 text-[var(--app-muted)]">{b.dept}</td>
+                        <td className="py-3 text-[var(--app-muted)]">{b.category}</td>
                         <td className="py-3 text-right font-mono font-semibold">{formatRupiah(b.limit)}</td>
                         <td className="py-3 text-right font-mono text-emerald-400 font-semibold">{formatRupiah(b.spent)}</td>
                         <td className="py-3 text-right font-mono text-orange-400">{formatRupiah(sisaNominal)}</td>
@@ -575,11 +521,11 @@ export default function AnggaranDashboard() {
             </div>
 
             {/* Pagination */}
-            <div className="flex justify-between items-center mt-4 pt-4 border-t border-blue-950/60 text-[11px] text-gray-400">
+            <div className="flex justify-between items-center mt-4 pt-4 border-t border-[var(--app-border)]/60 text-[11px] text-[var(--app-muted)]">
               <span>Menampilkan 1 - {filteredBudgets.length} dari {budgets.length + 17} anggaran</span>
               <div className="flex items-center gap-1.5">
                 <button className="px-2 py-0.5 rounded bg-[#081225] hover:text-white">&lt;</button>
-                <button className="px-2 py-0.5 rounded bg-blue-600 text-white font-semibold">1</button>
+                <button className="px-2 py-0.5 rounded bg-blue-600 text-[var(--app-text)] font-semibold">1</button>
                 <button className="px-2 py-0.5 rounded bg-[#081225] hover:text-white">2</button>
                 <button className="px-2 py-0.5 rounded bg-[#081225] hover:text-white">3</button>
                 <button className="px-2 py-0.5 rounded bg-[#081225] hover:text-white">4</button>
@@ -593,44 +539,44 @@ export default function AnggaranDashboard() {
             
             {/* Ringkasan Anggaran */}
             <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5 space-y-3 text-xs">
-              <h3 className="text-xs font-bold text-gray-200 uppercase tracking-wider pb-2 border-b border-blue-950/60">Ringkasan Anggaran</h3>
-              <div className="space-y-2 text-gray-300">
+              <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider pb-2 border-b border-[var(--app-border)]/60">Ringkasan Anggaran</h3>
+              <div className="space-y-2 text-[var(--app-text)]/90">
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Total Anggaran:</span>
+                  <span className="text-[var(--app-muted)]">Total Anggaran:</span>
                   <span className="font-semibold text-white">{formatRupiah(totalLimit)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Total Realisasi:</span>
+                  <span className="text-[var(--app-muted)]">Total Realisasi:</span>
                   <span className="font-semibold text-emerald-400">{formatRupiah(totalSpent)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Sisa Anggaran:</span>
+                  <span className="text-[var(--app-muted)]">Sisa Anggaran:</span>
                   <span className="font-semibold text-orange-400">{formatRupiah(sisaLimit)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Proyeksi Akhir Tahun:</span>
+                  <span className="text-[var(--app-muted)]">Proyeksi Akhir Tahun:</span>
                   <span className="font-semibold text-purple-400">{formatRupiah(proyeksiAkhirTahun)}</span>
                 </div>
-                <div className="flex justify-between pt-2 border-t border-blue-950/60">
-                  <span className="text-gray-400">Rata-rata Realisasi:</span>
+                <div className="flex justify-between pt-2 border-t border-[var(--app-border)]/60">
+                  <span className="text-[var(--app-muted)]">Rata-rata Realisasi:</span>
                   <span className="font-semibold text-white">{realisasiPct}%</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Jumlah Anggaran:</span>
+                  <span className="text-[var(--app-muted)]">Jumlah Anggaran:</span>
                   <span className="font-semibold text-white">{budgets.length + 17}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Persetujuan Disetujui:</span>
+                  <span className="text-[var(--app-muted)]">Persetujuan Disetujui:</span>
                   <span className="font-semibold text-emerald-400">20 (85%)</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Persetujuan Menunggu:</span>
+                  <span className="text-[var(--app-muted)]">Persetujuan Menunggu:</span>
                   <span className="font-semibold text-orange-400">4 (15%)</span>
                 </div>
               </div>
               <button 
                 onClick={() => alert('Membuka laporan analisis anggaran...')}
-                className="w-full text-center text-cyan-400 hover:text-cyan-300 pt-2 border-t border-blue-950 block text-[11px]"
+                className="w-full text-center text-cyan-400 hover:text-cyan-300 pt-2 border-t border-[var(--app-border)] block text-[11px]"
               >
                 Lihat Laporan Lengkap →
               </button>
@@ -638,7 +584,7 @@ export default function AnggaranDashboard() {
 
             {/* Aksi Cepat */}
             <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5 space-y-3">
-              <h3 className="text-xs font-bold text-gray-200 uppercase tracking-wider">Aksi Cepat</h3>
+              <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider">Aksi Cepat</h3>
               <div className="space-y-2 text-xs">
                 <button 
                   onClick={() => setShowAddModal(true)}
@@ -646,16 +592,16 @@ export default function AnggaranDashboard() {
                 >
                   + Buat Anggaran Baru
                 </button>
-                <button className="w-full text-left py-2 px-3 rounded bg-blue-950/20 hover:bg-blue-950/40 text-gray-300 border border-blue-900/30 block">
+                <button className="w-full text-left py-2 px-3 rounded bg-blue-950/20 hover:bg-blue-950/40 text-[var(--app-text)]/90 border border-blue-900/30 block">
                   Import Anggaran
                 </button>
-                <button className="w-full text-left py-2 px-3 rounded bg-blue-950/20 hover:bg-blue-950/40 text-gray-300 border border-blue-900/30 block">
+                <button className="w-full text-left py-2 px-3 rounded bg-blue-950/20 hover:bg-blue-950/40 text-[var(--app-text)]/90 border border-blue-900/30 block">
                   Revisi Anggaran
                 </button>
-                <button className="w-full text-left py-2 px-3 rounded bg-blue-950/20 hover:bg-blue-950/40 text-gray-300 border border-blue-900/30 block">
+                <button className="w-full text-left py-2 px-3 rounded bg-blue-950/20 hover:bg-blue-950/40 text-[var(--app-text)]/90 border border-blue-900/30 block">
                   Laporan Anggaran
                 </button>
-                <button className="w-full text-left py-2 px-3 rounded bg-blue-950/20 hover:bg-blue-950/40 text-gray-300 border border-blue-900/30 block">
+                <button className="w-full text-left py-2 px-3 rounded bg-blue-950/20 hover:bg-blue-950/40 text-[var(--app-text)]/90 border border-blue-900/30 block">
                   Ekspor Data Anggaran
                 </button>
               </div>
@@ -663,7 +609,7 @@ export default function AnggaranDashboard() {
 
             {/* Notifikasi Anggaran */}
             <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5 space-y-3">
-              <h3 className="text-xs font-bold text-gray-200 uppercase tracking-wider">Notifikasi Anggaran</h3>
+              <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider">Notifikasi Anggaran</h3>
               <div className="space-y-2 text-xs">
                 <div className="flex items-start gap-2 text-orange-400">
                   <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
@@ -682,35 +628,35 @@ export default function AnggaranDashboard() {
         {/* Modal: Tambah Anggaran Baru */}
         {showAddModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-            <div className="w-full max-w-md bg-[#0A1629] border border-blue-900/60 rounded-xl p-6 shadow-2xl">
-              <div className="flex justify-between items-center mb-4 pb-3 border-b border-blue-950">
+            <div className="w-full max-w-md bg-[#0A1629] border border-[var(--app-border)] rounded-xl p-6 shadow-2xl">
+              <div className="flex justify-between items-center mb-4 pb-3 border-b border-[var(--app-border)]">
                 <h3 className="text-sm font-bold text-white">Buat Anggaran Baru</h3>
                 <button 
                   onClick={() => setShowAddModal(false)}
-                  className="text-gray-400 hover:text-white text-xs"
+                  className="text-[var(--app-muted)] hover:text-white text-xs"
                 >
                   Batal
                 </button>
               </div>
               <form onSubmit={handleAddBudget} className="space-y-4 text-xs">
                 <div>
-                  <label className="block text-gray-400 mb-1">Nama Anggaran</label>
+                  <label className="block text-[var(--app-muted)] mb-1">Nama Anggaran</label>
                   <input
                     type="text"
                     required
                     placeholder="Contoh: Anggaran Operasional R&D..."
                     value={newName}
                     onChange={(e) => setNewName(e.target.value)}
-                    className="w-full p-2.5 rounded bg-[#081225] border border-blue-900/40 text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500"
+                    className="w-full p-2.5 rounded bg-[#081225] border border-[var(--app-border)] text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-gray-400 mb-1">Departemen</label>
+                    <label className="block text-[var(--app-muted)] mb-1">Departemen</label>
                     <select
                       value={newDept}
                       onChange={(e) => setNewDept(e.target.value)}
-                      className="w-full p-2.5 rounded bg-[#081225] border border-blue-900/40 text-white focus:outline-none focus:border-cyan-500"
+                      className="w-full p-2.5 rounded bg-[#081225] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
                     >
                       <option>Operasional</option>
                       <option>Marketing</option>
@@ -720,11 +666,11 @@ export default function AnggaranDashboard() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-gray-400 mb-1">Kategori</label>
+                    <label className="block text-[var(--app-muted)] mb-1">Kategori</label>
                     <select
                       value={newCategory}
                       onChange={(e) => setNewCategory(e.target.value)}
-                      className="w-full p-2.5 rounded bg-[#081225] border border-blue-900/40 text-white focus:outline-none focus:border-cyan-500"
+                      className="w-full p-2.5 rounded bg-[#081225] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
                     >
                       <option>Operasional</option>
                       <option>Marketing</option>
@@ -736,33 +682,33 @@ export default function AnggaranDashboard() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-gray-400 mb-1">Batas Limit (Rp)</label>
+                    <label className="block text-[var(--app-muted)] mb-1">Batas Limit (Rp)</label>
                     <input
                       type="number"
                       required
                       placeholder="Contoh: 1500000000"
                       value={newLimit}
                       onChange={(e) => setNewLimit(e.target.value)}
-                      className="w-full p-2.5 rounded bg-[#081225] border border-blue-900/40 text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500"
+                      className="w-full p-2.5 rounded bg-[#081225] border border-[var(--app-border)] text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-gray-400 mb-1">Terpakai / Realisasi (Rp)</label>
+                    <label className="block text-[var(--app-muted)] mb-1">Terpakai / Realisasi (Rp)</label>
                     <input
                       type="number"
                       placeholder="0"
                       value={newSpent}
                       onChange={(e) => setNewSpent(e.target.value)}
-                      className="w-full p-2.5 rounded bg-[#081225] border border-blue-900/40 text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500"
+                      className="w-full p-2.5 rounded bg-[#081225] border border-[var(--app-border)] text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-gray-400 mb-1">Status Persetujuan</label>
+                  <label className="block text-[var(--app-muted)] mb-1">Status Persetujuan</label>
                   <select
                     value={newStatus}
                     onChange={(e) => setNewStatus(e.target.value)}
-                    className="w-full p-2.5 rounded bg-[#081225] border border-blue-900/40 text-white focus:outline-none focus:border-cyan-500"
+                    className="w-full p-2.5 rounded bg-[#081225] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
                   >
                     <option>Disetujui</option>
                     <option>Menunggu</option>
@@ -772,7 +718,7 @@ export default function AnggaranDashboard() {
 
                 <button
                   type="submit"
-                  className="w-full py-2.5 rounded bg-blue-600 hover:bg-blue-500 text-white font-semibold transition-colors mt-2"
+                  className="w-full py-2.5 rounded bg-blue-600 hover:bg-blue-500 text-[var(--app-text)] font-semibold transition-colors mt-2"
                 >
                   Simpan Anggaran
                 </button>

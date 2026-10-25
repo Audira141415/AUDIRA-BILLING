@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../components/Layout';
@@ -405,14 +406,21 @@ export default function Gaji() {
 
   return (
     <Layout>
-      <div className="p-8">
+      <div className="p-4 md:p-8 space-y-6">
+        <div className="flex items-center gap-2 text-xs text-[var(--app-muted)] font-mono mb-2">
+            <Link href="/" className="hover:text-[var(--app-text)]">AUDIRA</Link>
+            <span>/</span>
+            <Link href="/hrm-dashboard" className="hover:text-[var(--app-text)]">Human Resource Management</Link>
+            <span>/</span>
+            <span className="text-blue-500 font-semibold">Penggajian (Payroll)</span>
+          </div>
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+            <h1 className="text-3xl font-bold text-[var(--app-text)] flex items-center gap-3">
               <DollarSign className="text-green-600" size={36} />
               Gaji & Payroll
             </h1>
-            <p className="text-gray-600 mt-1">Kelola penggajian karyawan</p>
+            <p className="text-[var(--app-muted)] mt-1">Kelola penggajian karyawan</p>
           </div>
           <div className="flex gap-3">
             <button
@@ -453,10 +461,10 @@ export default function Gaji() {
           </div>
         )}
 
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+        <div className="bg-[var(--app-card)] rounded-xl shadow-lg p-6 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="relative">
-              <Search className="absolute left-3 top-3 text-gray-400" size={20} />
+              <Search className="absolute left-3 top-3 text-[var(--app-muted)]" size={20} />
               <input
                 type="text"
                 placeholder="Cari karyawan..."
@@ -483,18 +491,18 @@ export default function Gaji() {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+        <div className="bg-[var(--app-card)] rounded-xl shadow-lg overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 border-b">
+              <thead className="bg-[var(--app-bg)] border-b">
                 <tr>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Periode</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Karyawan</th>
-                  <th className="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase">Gaji Pokok</th>
-                  <th className="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase">Tunjangan</th>
-                  <th className="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase">Total</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Status</th>
-                  <th className="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase">Aksi</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--app-muted)] uppercase">Periode</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--app-muted)] uppercase">Karyawan</th>
+                  <th className="px-6 py-4 text-right text-xs font-semibold text-[var(--app-muted)] uppercase">Gaji Pokok</th>
+                  <th className="px-6 py-4 text-right text-xs font-semibold text-[var(--app-muted)] uppercase">Tunjangan</th>
+                  <th className="px-6 py-4 text-right text-xs font-semibold text-[var(--app-muted)] uppercase">Total</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--app-muted)] uppercase">Status</th>
+                  <th className="px-6 py-4 text-center text-xs font-semibold text-[var(--app-muted)] uppercase">Aksi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
@@ -504,7 +512,7 @@ export default function Gaji() {
                   <tr><td colSpan={7} className="px-6 py-12 text-center">Tidak ada data</td></tr>
                 ) : (
                   filteredSalaries.map((salary) => (
-                    <tr key={salary.id} className="hover:bg-gray-50">
+                    <tr key={salary.id} className="hover:bg-[var(--app-bg)]">
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">{formatPeriod(salary.period)}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">{salary.employee?.fullName}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-right">{formatCurrency(salary.baseSalary)}</td>
@@ -552,9 +560,9 @@ export default function Gaji() {
         {/* Form Modal */}
         {showModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full">
+            <div className="bg-[var(--app-card)] rounded-xl shadow-2xl max-w-2xl w-full">
               <div className="bg-green-600 px-6 py-4 flex justify-between items-center rounded-t-xl">
-                <h2 className="text-2xl font-bold text-white">{selectedSalary ? 'Edit Slip Gaji' : 'Tambah Slip Gaji'}</h2>
+                <h2 className="text-2xl font-bold text-[var(--app-text)]">{selectedSalary ? 'Edit Slip Gaji' : 'Tambah Slip Gaji'}</h2>
                 <button onClick={() => setShowModal(false)} className="text-white hover:bg-green-700 p-2 rounded-lg">
                   <X size={24} />
                 </button>
@@ -562,7 +570,7 @@ export default function Gaji() {
               <form onSubmit={handleSubmit} className="p-6">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Karyawan *</label>
+                    <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">Karyawan *</label>
                     <select
                       required
                       value={formData.employeeId}
@@ -579,7 +587,7 @@ export default function Gaji() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Periode *</label>
+                    <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">Periode *</label>
                     <input
                       type="month"
                       required
@@ -589,7 +597,7 @@ export default function Gaji() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Gaji Pokok</label>
+                    <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">Gaji Pokok</label>
                     <input
                       type="number"
                       value={formData.baseSalary}
@@ -598,7 +606,7 @@ export default function Gaji() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Tunjangan</label>
+                    <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">Tunjangan</label>
                     <input
                       type="number"
                       value={formData.allowances}
@@ -607,7 +615,7 @@ export default function Gaji() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Lembur</label>
+                    <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">Lembur</label>
                     <input
                       type="number"
                       value={formData.overtime}
@@ -616,7 +624,7 @@ export default function Gaji() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Bonus</label>
+                    <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">Bonus</label>
                     <input
                       type="number"
                       value={formData.bonus}
@@ -625,7 +633,7 @@ export default function Gaji() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Potongan</label>
+                    <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">Potongan</label>
                     <input
                       type="number"
                       value={formData.deductions}
@@ -633,7 +641,7 @@ export default function Gaji() {
                       className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500"
                     />
                   </div>
-                  <div className="col-span-2 bg-gray-50 p-4 rounded-lg">
+                  <div className="col-span-2 bg-[var(--app-bg)] p-4 rounded-lg">
                     <div className="flex justify-between items-center">
                       <span className="text-lg font-semibold">Total Gaji:</span>
                       <span className="text-2xl font-bold text-green-600">{formatCurrency(calculateTotal())}</span>
@@ -641,7 +649,7 @@ export default function Gaji() {
                   </div>
                 </div>
                 <div className="flex justify-end gap-3 mt-6">
-                  <button type="button" onClick={() => setShowModal(false)} className="px-6 py-2 border rounded-lg hover:bg-gray-50">
+                  <button type="button" onClick={() => setShowModal(false)} className="px-6 py-2 border rounded-lg hover:bg-[var(--app-bg)]">
                     Batal
                   </button>
                   <button type="submit" className="flex items-center gap-2 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
@@ -657,16 +665,16 @@ export default function Gaji() {
         {/* Bulk Create Modal */}
         {showBulkModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full">
+            <div className="bg-[var(--app-card)] rounded-xl shadow-2xl max-w-2xl w-full">
               <div className="bg-purple-600 px-6 py-4 flex justify-between items-center rounded-t-xl">
-                <h2 className="text-2xl font-bold text-white">Generate Payroll Massal</h2>
+                <h2 className="text-2xl font-bold text-[var(--app-text)]">Generate Payroll Massal</h2>
                 <button onClick={() => setShowBulkModal(false)} className="text-white hover:bg-purple-700 p-2 rounded-lg">
                   <X size={24} />
                 </button>
               </div>
               <div className="p-6">
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Periode *</label>
+                  <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">Periode *</label>
                   <input
                     type="month"
                     value={bulkData.period}
@@ -675,10 +683,10 @@ export default function Gaji() {
                   />
                 </div>
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Pilih Karyawan *</label>
+                  <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">Pilih Karyawan *</label>
                   <div className="max-h-64 overflow-y-auto border rounded-lg p-4">
                     {employees.map(emp => (
-                      <label key={emp.id} className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer">
+                      <label key={emp.id} className="flex items-center gap-3 p-2 hover:bg-[var(--app-bg)] rounded cursor-pointer">
                         <input
                           type="checkbox"
                           checked={bulkData.employeeIds.includes(emp.id)}
@@ -696,11 +704,11 @@ export default function Gaji() {
                     ))}
                   </div>
                 </div>
-                <p className="text-sm text-gray-600 mb-4">
+                <p className="text-sm text-[var(--app-muted)] mb-4">
                   {bulkData.employeeIds.length} karyawan dipilih
                 </p>
                 <div className="flex justify-end gap-3">
-                  <button onClick={() => setShowBulkModal(false)} className="px-6 py-2 border rounded-lg hover:bg-gray-50">
+                  <button onClick={() => setShowBulkModal(false)} className="px-6 py-2 border rounded-lg hover:bg-[var(--app-bg)]">
                     Batal
                   </button>
                   <button onClick={handleBulkCreate} className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">

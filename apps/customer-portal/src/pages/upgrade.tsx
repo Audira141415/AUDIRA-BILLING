@@ -26,13 +26,18 @@ export default function UpgradePackage() {
   useEffect(() => {
     const customerData = localStorage.getItem('customer');
     if (!customerData) {
-      router.push('/');
+      router.push('/login');
       return;
     }
 
     const parsed = JSON.parse(customerData);
     setCustomer(parsed);
     fetchPackages(parsed);
+
+    const inet = parsed.internetNumber || parsed.id || 'NET-100234';
+    if (!router.asPath.startsWith('/c/')) {
+      router.replace(`/c/${inet}/upgrade`);
+    }
   }, [router]);
 
   const fetchPackages = async (customerData: any) => {
@@ -123,31 +128,43 @@ export default function UpgradePackage() {
 
   return (
     <CustomerLayout>
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Upgrade Paket</h1>
-          <p className="text-gray-600">Tingkatkan kecepatan internet Anda</p>
-        </div>
+      <div className="space-y-6">
+        {/* Header Banner */}
+        <div className="bg-white dark:bg-[#0c1322] border-2 border-black dark:border-gray-800 rounded-2xl p-6 sm:p-7 shadow-[4px_4px_0px_#000] flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+          <div>
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                Fiber Speed Accelerator
+              </span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-slate-950 dark:text-white">
+              Upgrade Paket Bandwidth
+            </h1>
+            <p className="text-xs text-slate-600 dark:text-gray-400 mt-1 max-w-xl">
+              Tingkatkan kapasitas throughput internet Anda untuk performa ultra streaming 4K, video conference HD, dan low-latency cloud gaming.
+            </p>
+          </div>
 
-        {/* Current Package */}
-        {currentPackage && (
-          <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-6 mb-8 text-white">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-sm opacity-90 mb-1">Paket Saat Ini</div>
-                <div className="text-2xl font-bold">{currentPackage.name}</div>
-                <div className="text-lg mt-1">Rp {currentPackage.price.toLocaleString('id-ID')}/bulan</div>
-              </div>
-              <div className="text-right">
-                <div className="text-3xl font-bold">{currentPackage.speed}</div>
-                <div className="text-sm opacity-90">Kecepatan</div>
+          {currentPackage && (
+            <div className="flex flex-col sm:items-end p-3.5 bg-slate-50 dark:bg-[#070b14] border border-slate-200 dark:border-gray-800 rounded-xl shrink-0 font-mono text-xs">
+              <span className="text-slate-500 dark:text-gray-400 uppercase tracking-widest font-bold text-[10px]">
+                Paket Aktif Saat Ini
+              </span>
+              <div className="flex items-baseline gap-2 mt-1">
+                <span className="text-base font-black text-cyan-600 dark:text-cyan-400">
+                  {currentPackage.name}
+                </span>
+                <span className="text-xs font-bold text-slate-700 dark:text-gray-300">
+                  ({currentPackage.speed})
+                </span>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
-        {/* Available Packages */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {/* Available Packages Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
           {packages.map((pkg) => {
             const isCurrent = pkg.id === currentPackage?.id;
             const isDowngrade = currentPackage && parseInt(pkg.speed) < parseInt(currentPackage.speed);
@@ -155,96 +172,104 @@ export default function UpgradePackage() {
             return (
               <div
                 key={pkg.id}
-                className={`relative bg-white rounded-lg shadow-lg overflow-hidden transition-all hover:shadow-xl ${
-                  isCurrent ? 'ring-2 ring-blue-500' : ''
-                } ${isDowngrade ? 'opacity-50' : ''}`}
+                className={`relative bg-white dark:bg-[#0c1322] border-2 border-black dark:border-gray-800 rounded-xl p-5 shadow-[4px_4px_0px_#000] flex flex-col justify-between transition-all ${
+                  isCurrent
+                    ? 'ring-2 ring-cyan-500 bg-cyan-50/20 dark:bg-cyan-950/20'
+                    : 'hover:-translate-x-0.5 hover:-translate-y-0.5'
+                } ${isDowngrade ? 'opacity-60' : ''}`}
               >
                 {pkg.popular && (
-                  <div className="absolute top-0 right-0 bg-yellow-400 text-yellow-900 text-xs font-bold px-3 py-1 rounded-bl-lg">
+                  <div className="absolute -top-3 right-4 bg-amber-400 text-black border-2 border-black text-[10px] font-mono font-black px-2.5 py-0.5 rounded shadow-[2px_2px_0px_#000]">
                     POPULER
                   </div>
                 )}
                 {pkg.recommended && (
-                  <div className="absolute top-0 right-0 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">
+                  <div className="absolute -top-3 right-4 bg-emerald-400 text-black border-2 border-black text-[10px] font-mono font-black px-2.5 py-0.5 rounded shadow-[2px_2px_0px_#000]">
                     REKOMENDASI
                   </div>
                 )}
                 {isCurrent && (
-                  <div className="absolute top-0 left-0 bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-br-lg">
+                  <div className="absolute -top-3 left-4 bg-cyan-400 text-black border-2 border-black text-[10px] font-mono font-black px-2.5 py-0.5 rounded shadow-[2px_2px_0px_#000]">
                     PAKET AKTIF
                   </div>
                 )}
 
-                <div className="p-6">
-                  <div className="text-center mb-6">
-                    <Wifi className="h-12 w-12 mx-auto mb-4 text-blue-600" />
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">{pkg.name}</h3>
-                    <div className="text-3xl font-bold text-blue-600 mb-1">{pkg.speed}</div>
-                    <div className="text-gray-600">
+                <div>
+                  <div className="text-center pt-2 pb-5 border-b border-slate-200 dark:border-gray-800 mb-4">
+                    <div className="w-12 h-12 mx-auto mb-3 rounded-xl border-2 border-black dark:border-gray-700 bg-cyan-100 dark:bg-cyan-950 flex items-center justify-center">
+                      <Wifi className="h-6 w-6 text-cyan-600 dark:text-cyan-400 stroke-[2.5]" />
+                    </div>
+                    <h3 className="text-base font-black uppercase tracking-tight text-slate-950 dark:text-white">
+                      {pkg.name}
+                    </h3>
+                    <div className="text-3xl font-mono font-black text-cyan-600 dark:text-cyan-400 mt-1">
+                      {pkg.speed}
+                    </div>
+                    <div className="text-xs font-mono font-bold text-slate-500 dark:text-gray-400 mt-1">
                       Rp {pkg.price.toLocaleString('id-ID')}
-                      <span className="text-sm">/bulan</span>
+                      <span className="text-[10px] font-normal text-slate-400">/bulan</span>
                     </div>
                   </div>
 
-                  <ul className="space-y-3 mb-6">
+                  <ul className="space-y-2 mb-6">
                     {pkg.features.map((feature, index) => (
-                      <li key={index} className="flex items-start">
-                        <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                        <span className="text-sm text-gray-700">{feature}</span>
+                      <li key={index} className="flex items-start gap-2 text-xs font-medium text-slate-700 dark:text-gray-300">
+                        <Check className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5 stroke-[2.5]" />
+                        <span>{feature}</span>
                       </li>
                     ))}
                   </ul>
-
-                  <button
-                    onClick={() => handleSelectPackage(pkg)}
-                    disabled={isCurrent || !!isDowngrade}
-                    className={`w-full py-3 rounded-lg font-semibold transition-colors ${
-                      isCurrent
-                        ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                        : isDowngrade
-                        ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                        : 'bg-blue-600 text-white hover:bg-blue-700'
-                    }`}
-                  >
-                    {isCurrent ? 'Paket Aktif' : isDowngrade ? 'Tidak Tersedia' : 'Pilih Paket'}
-                  </button>
                 </div>
+
+                <button
+                  onClick={() => handleSelectPackage(pkg)}
+                  disabled={isCurrent || !!isDowngrade}
+                  className={`w-full min-h-[44px] py-2.5 rounded-lg border-2 border-black font-mono text-xs font-black shadow-[2px_2px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all ${
+                    isCurrent
+                      ? 'bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-gray-400 cursor-not-allowed border-slate-400 dark:border-gray-700'
+                      : isDowngrade
+                      ? 'bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed border-slate-300 dark:border-gray-700'
+                      : 'bg-cyan-400 hover:bg-cyan-300 text-black'
+                  }`}
+                >
+                  {isCurrent ? 'Sedang Digunakan' : isDowngrade ? 'Tidak Tersedia' : 'Pilih Upgrade Ini'}
+                </button>
               </div>
             );
           })}
         </div>
 
         {/* Benefits Section */}
-        <div className="bg-white rounded-lg shadow-lg p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-            Keuntungan Upgrade Paket
+        <div className="bg-white dark:bg-[#0c1322] border-2 border-black dark:border-gray-800 rounded-2xl p-6 sm:p-8 shadow-[4px_4px_0px_#000]">
+          <h2 className="text-lg sm:text-xl font-black uppercase text-slate-950 dark:text-white mb-6 text-center tracking-tight">
+            Keunggulan Layanan Fiber Optik AUDIRA
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <Zap className="h-8 w-8 text-blue-600" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div className="p-4 rounded-xl border border-slate-200 dark:border-gray-800 bg-slate-50 dark:bg-[#070b14] text-center">
+              <div className="w-12 h-12 mx-auto mb-3 rounded-xl border border-black dark:border-gray-700 bg-cyan-100 dark:bg-cyan-950 flex items-center justify-center">
+                <Zap className="h-6 w-6 text-cyan-600 dark:text-cyan-400 stroke-[2.5]" />
               </div>
-              <h3 className="font-semibold text-gray-900 mb-2">Kecepatan Lebih Tinggi</h3>
-              <p className="text-gray-600 text-sm">
-                Download lebih cepat, streaming tanpa buffering, dan gaming tanpa lag
+              <h3 className="font-bold text-sm text-slate-950 dark:text-white mb-1">Kecepatan Simetris 1:1</h3>
+              <p className="text-xs text-slate-600 dark:text-gray-400">
+                Kecepatan upload sama tinggi dengan download, ideal untuk streaming konten kreator dan gaming kompetitif.
               </p>
             </div>
-            <div className="text-center">
-              <div className="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <TrendingUp className="h-8 w-8 text-green-600" />
+            <div className="p-4 rounded-xl border border-slate-200 dark:border-gray-800 bg-slate-50 dark:bg-[#070b14] text-center">
+              <div className="w-12 h-12 mx-auto mb-3 rounded-xl border border-black dark:border-gray-700 bg-emerald-100 dark:bg-emerald-950 flex items-center justify-center">
+                <TrendingUp className="h-6 w-6 text-emerald-600 dark:text-emerald-400 stroke-[2.5]" />
               </div>
-              <h3 className="font-semibold text-gray-900 mb-2">Produktivitas Meningkat</h3>
-              <p className="text-gray-600 text-sm">
-                Upload file besar lebih cepat, video conference lebih lancar
+              <h3 className="font-bold text-sm text-slate-950 dark:text-white mb-1">Koneksi Tanpa FUP Kuota</h3>
+              <p className="text-xs text-slate-600 dark:text-gray-400">
+                Akses internet murni unlimited 24 jam sehari tanpa pengurangan kecepatan batas wajar pemakaian.
               </p>
             </div>
-            <div className="text-center">
-              <div className="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <Shield className="h-8 w-8 text-purple-600" />
+            <div className="p-4 rounded-xl border border-slate-200 dark:border-gray-800 bg-slate-50 dark:bg-[#070b14] text-center">
+              <div className="w-12 h-12 mx-auto mb-3 rounded-xl border border-black dark:border-gray-700 bg-amber-100 dark:bg-amber-950 flex items-center justify-center">
+                <Shield className="h-6 w-6 text-amber-600 dark:text-amber-400 stroke-[2.5]" />
               </div>
-              <h3 className="font-semibold text-gray-900 mb-2">Prioritas Support</h3>
-              <p className="text-gray-600 text-sm">
-                Dapatkan layanan customer support dengan prioritas lebih tinggi
+              <h3 className="font-bold text-sm text-slate-950 dark:text-white mb-1">Dukungan NOC 24/7 Priority</h3>
+              <p className="text-xs text-slate-600 dark:text-gray-400">
+                Monitoring proaktif oleh tim Network Operations Center AUDIRA dengan jaminan respon cepat.
               </p>
             </div>
           </div>
@@ -252,61 +277,52 @@ export default function UpgradePackage() {
 
         {/* Confirmation Modal */}
         {showConfirmation && selectedPackage && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg max-w-md w-full p-6">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Konfirmasi Upgrade</h3>
-              
-              <div className="bg-gray-50 rounded-lg p-4 mb-6">
-                <div className="flex justify-between mb-2">
-                  <span className="text-gray-600">Paket Lama:</span>
-                  <span className="font-semibold">{currentPackage?.name}</span>
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="bg-white dark:bg-[#0c1322] border-2 border-black dark:border-gray-700 rounded-2xl max-w-md w-full p-6 shadow-[6px_6px_0px_#000]">
+              <h3 className="text-lg font-black uppercase text-slate-950 dark:text-white mb-3">
+                Konfirmasi Upgrade Paket
+              </h3>
+
+              <div className="p-4 bg-slate-50 dark:bg-[#070b14] border border-slate-200 dark:border-gray-800 rounded-xl mb-4 font-mono text-xs space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-slate-500 dark:text-gray-400">Paket Saat Ini:</span>
+                  <span className="font-bold text-slate-900 dark:text-white">{currentPackage?.name}</span>
                 </div>
-                <div className="flex justify-between mb-2">
-                  <span className="text-gray-600">Paket Baru:</span>
-                  <span className="font-semibold text-blue-600">{selectedPackage.name}</span>
+                <div className="flex justify-between">
+                  <span className="text-slate-500 dark:text-gray-400">Paket Tujuan:</span>
+                  <span className="font-black text-cyan-600 dark:text-cyan-400">{selectedPackage.name}</span>
                 </div>
-                <div className="border-t pt-2 mt-2">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Biaya Bulanan:</span>
-                    <span className="font-semibold">
-                      Rp {selectedPackage.price.toLocaleString('id-ID')}
-                    </span>
-                  </div>
-                  {currentPackage && (
-                    <div className="flex justify-between text-sm text-gray-500 mt-1">
-                      <span>Selisih:</span>
-                      <span className="text-green-600">
-                        +Rp {(selectedPackage.price - currentPackage.price).toLocaleString('id-ID')}
-                      </span>
-                    </div>
-                  )}
+                <div className="border-t border-slate-200 dark:border-gray-800 pt-2 flex justify-between items-baseline">
+                  <span className="text-slate-700 dark:text-gray-300 font-bold uppercase text-[11px]">
+                    Tarif Bulanan Baru:
+                  </span>
+                  <span className="text-base font-black text-cyan-600 dark:text-cyan-400">
+                    Rp {selectedPackage.price.toLocaleString('id-ID')}
+                  </span>
                 </div>
               </div>
 
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                <p className="text-sm text-blue-900">
-                  <strong>Informasi:</strong> Upgrade akan berlaku pada periode billing berikutnya. 
-                  Anda akan menerima notifikasi konfirmasi melalui email dan WhatsApp.
-                </p>
+              <div className="p-3 bg-cyan-50 dark:bg-cyan-950/30 border border-cyan-300 dark:border-cyan-800/50 rounded-xl mb-5 text-xs text-slate-700 dark:text-cyan-200">
+                Permintaan upgrade akan disinkronkan langsung ke Mikrotik & RADIUS server pada tagihan periode selanjutnya.
               </div>
 
-              <div className="flex gap-3">
+              <div className="flex gap-2.5">
                 <button
                   onClick={() => {
                     setShowConfirmation(false);
                     setSelectedPackage(null);
                   }}
                   disabled={processing}
-                  className="flex-1 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-colors disabled:opacity-50"
+                  className="flex-1 min-h-[44px] py-2.5 rounded-lg border-2 border-black dark:border-gray-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-mono text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-800 shadow-[2px_2px_0px_#000] transition-all"
                 >
                   Batal
                 </button>
                 <button
                   onClick={handleConfirmUpgrade}
                   disabled={processing}
-                  className="flex-1 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50"
+                  className="flex-1 min-h-[44px] py-2.5 rounded-lg border-2 border-black bg-cyan-400 hover:bg-cyan-300 text-black font-mono text-xs font-black shadow-[2px_2px_0px_#000] transition-all"
                 >
-                  {processing ? 'Memproses...' : 'Konfirmasi Upgrade'}
+                  {processing ? 'Memproses...' : 'Ya, Upgrade Sekarang'}
                 </button>
               </div>
             </div>

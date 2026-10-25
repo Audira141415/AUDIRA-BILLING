@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
@@ -80,10 +81,10 @@ export default function FinanceSettings() {
 
   // Recent Settings Activity Log
   const [activityLogs, setActivityLogs] = useState<SettingsLog[]>([
-    { id: 1, user: 'Agus Dwi Rianto', action: 'Mengubah pengaturan pajak PPN', time: '01/07/2026 08:30' },
-    { id: 2, user: 'Sari Dewi', action: 'Menambahkan metode pembayaran baru', time: '01/07/2026 08:15' },
-    { id: 3, user: 'Budi Santoso', action: 'Mengubah format nomor invoice', time: '01/07/2026 07:45' },
-    { id: 4, user: 'Dimas Setiawan', action: 'Mengupdate akun bank perusahaan', time: '01/07/2026 07:20' }
+    { id: 1, user: 'Agus Dwi Rianto', action: 'Mengubah pengaturan pajak PPN', time: '22/10/2026 08:30' },
+    { id: 2, user: 'Sari Dewi', action: 'Menambahkan metode pembayaran baru', time: '22/10/2026 08:15' },
+    { id: 3, user: 'Budi Santoso', action: 'Mengubah format nomor invoice', time: '22/10/2026 07:45' },
+    { id: 4, user: 'Dimas Setiawan', action: 'Mengupdate akun bank perusahaan', time: '22/10/2026 07:20' }
   ]);
 
   // Handle Save All Settings Changes
@@ -131,7 +132,7 @@ export default function FinanceSettings() {
 
   return (
     <Layout>
-      <div className="bg-[#050B14] text-slate-100 min-h-screen p-6 font-sans antialiased selection:bg-cyan-500 selection:text-white relative">
+      <div className="bg-[var(--app-bg)] text-slate-100 min-h-screen p-6 font-sans antialiased selection:bg-cyan-500 selection:text-white relative">
         
         {/* Toast Notification */}
         {showSavedToast && (
@@ -144,13 +145,13 @@ export default function FinanceSettings() {
         {/* Header Title Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <div>
-            <div className="flex items-center gap-2 text-xs text-slate-400 mb-1">
+            <div className="flex items-center gap-2 text-xs text-[var(--app-muted)] mb-1">
               <span>Finance</span>
               <span>&gt;</span>
               <span className="text-cyan-400 font-medium">Pengaturan</span>
             </div>
             <h1 className="text-2xl font-bold text-white tracking-tight">Pengaturan Finance</h1>
-            <p className="text-xs text-slate-400 mt-0.5">Kelola konfigurasi sistem keuangan sesuai kebutuhan bisnis Anda.</p>
+            <p className="text-xs text-[var(--app-muted)] mt-0.5">Kelola konfigurasi sistem keuangan sesuai kebutuhan bisnis Anda.</p>
           </div>
           
           <div>
@@ -173,7 +174,7 @@ export default function FinanceSettings() {
               className={`text-xs px-4 py-3 border-b-2 font-medium transition-all whitespace-nowrap cursor-pointer ${
                 activeTab === tab
                   ? 'border-blue-500 text-blue-400 bg-blue-950/10'
-                  : 'border-transparent text-slate-400 hover:text-slate-200'
+                  : 'border-transparent text-[var(--app-muted)] hover:text-slate-200'
               }`}
             >
               {tab}
@@ -189,7 +190,7 @@ export default function FinanceSettings() {
             
             {/* 1. PENGATURAN UMUM */}
             <div className="space-y-3">
-              <h2 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Pengaturan Umum</h2>
+              <h2 className="text-xs font-bold text-[var(--app-muted)] uppercase tracking-wider">Pengaturan Umum</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3.5">
                 {[
                   { title: 'Informasi Perusahaan', desc: 'Kelola profil perusahaan, alamat, kontak, dan informasi legal.', icon: Building2 },
@@ -204,7 +205,7 @@ export default function FinanceSettings() {
                         <item.icon className="w-4.5 h-4.5" />
                       </div>
                       <h3 className="text-xs font-bold text-white mb-1.5">{item.title}</h3>
-                      <p className="text-[10px] text-slate-400 leading-normal mb-4">{item.desc}</p>
+                      <p className="text-[10px] text-[var(--app-muted)] leading-normal mb-4">{item.desc}</p>
                     </div>
                     <button 
                       onClick={() => {
@@ -215,7 +216,7 @@ export default function FinanceSettings() {
                           openManageModal(item.title);
                         }
                       }}
-                      className="w-full text-center bg-[#050B14] hover:bg-[#081120] border border-slate-800 rounded-lg text-[10px] font-semibold text-slate-300 py-2 transition-colors cursor-pointer"
+                      className="w-full text-center bg-[var(--app-bg)] hover:bg-[#081120] border border-slate-800 rounded-lg text-[10px] font-semibold text-slate-300 py-2 transition-colors cursor-pointer"
                     >
                       Kelola
                     </button>
@@ -226,7 +227,7 @@ export default function FinanceSettings() {
 
             {/* 2. PENGATURAN AKUN & KATEGORI */}
             <div className="space-y-3">
-              <h2 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Pengaturan Akun & Kategori</h2>
+              <h2 className="text-xs font-bold text-[var(--app-muted)] uppercase tracking-wider">Pengaturan Akun & Kategori</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3.5">
                 {[
                   { title: 'Akun Perkiraan', desc: 'Kelola daftar akun COA (Chart of Account).', icon: BookOpen },
@@ -241,11 +242,11 @@ export default function FinanceSettings() {
                         <item.icon className="w-4.5 h-4.5" />
                       </div>
                       <h3 className="text-xs font-bold text-white mb-1.5">{item.title}</h3>
-                      <p className="text-[10px] text-slate-400 leading-normal mb-4">{item.desc}</p>
+                      <p className="text-[10px] text-[var(--app-muted)] leading-normal mb-4">{item.desc}</p>
                     </div>
                     <button 
                       onClick={() => openManageModal(item.title)}
-                      className="w-full text-center bg-[#050B14] hover:bg-[#081120] border border-slate-800 rounded-lg text-[10px] font-semibold text-slate-300 py-2 transition-colors cursor-pointer"
+                      className="w-full text-center bg-[var(--app-bg)] hover:bg-[#081120] border border-slate-800 rounded-lg text-[10px] font-semibold text-slate-300 py-2 transition-colors cursor-pointer"
                     >
                       Kelola
                     </button>
@@ -256,7 +257,7 @@ export default function FinanceSettings() {
 
             {/* 3. PENGATURAN PAJAK */}
             <div className="space-y-3">
-              <h2 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Pengaturan Pajak</h2>
+              <h2 className="text-xs font-bold text-[var(--app-muted)] uppercase tracking-wider">Pengaturan Pajak</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3.5">
                 {[
                   { title: 'Jenis Pajak', desc: 'Kelola jenis pajak (PPN, PPh, Bea Materai, dll).', icon: Percent },
@@ -271,11 +272,11 @@ export default function FinanceSettings() {
                         <item.icon className="w-4.5 h-4.5" />
                       </div>
                       <h3 className="text-xs font-bold text-white mb-1.5">{item.title}</h3>
-                      <p className="text-[10px] text-slate-400 leading-normal mb-4">{item.desc}</p>
+                      <p className="text-[10px] text-[var(--app-muted)] leading-normal mb-4">{item.desc}</p>
                     </div>
                     <button 
                       onClick={() => openManageModal(item.title)}
-                      className="w-full text-center bg-[#050B14] hover:bg-[#081120] border border-slate-800 rounded-lg text-[10px] font-semibold text-slate-300 py-2 transition-colors cursor-pointer"
+                      className="w-full text-center bg-[var(--app-bg)] hover:bg-[#081120] border border-slate-800 rounded-lg text-[10px] font-semibold text-slate-300 py-2 transition-colors cursor-pointer"
                     >
                       Kelola
                     </button>
@@ -286,7 +287,7 @@ export default function FinanceSettings() {
 
             {/* 4. PENGATURAN PEMBAYARAN */}
             <div className="space-y-3">
-              <h2 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Pengaturan Pembayaran</h2>
+              <h2 className="text-xs font-bold text-[var(--app-muted)] uppercase tracking-wider">Pengaturan Pembayaran</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3.5">
                 {[
                   { title: 'Metode Pembayaran', desc: 'Kelola metode pembayaran yang tersedia.', icon: CreditCard },
@@ -301,11 +302,11 @@ export default function FinanceSettings() {
                         <item.icon className="w-4.5 h-4.5" />
                       </div>
                       <h3 className="text-xs font-bold text-white mb-1.5">{item.title}</h3>
-                      <p className="text-[10px] text-slate-400 leading-normal mb-4">{item.desc}</p>
+                      <p className="text-[10px] text-[var(--app-muted)] leading-normal mb-4">{item.desc}</p>
                     </div>
                     <button 
                       onClick={() => openManageModal(item.title)}
-                      className="w-full text-center bg-[#050B14] hover:bg-[#081120] border border-slate-800 rounded-lg text-[10px] font-semibold text-slate-300 py-2 transition-colors cursor-pointer"
+                      className="w-full text-center bg-[var(--app-bg)] hover:bg-[#081120] border border-slate-800 rounded-lg text-[10px] font-semibold text-slate-300 py-2 transition-colors cursor-pointer"
                     >
                       Kelola
                     </button>
@@ -316,7 +317,7 @@ export default function FinanceSettings() {
 
             {/* 5. PENGATURAN PENOMORAN */}
             <div className="space-y-3">
-              <h2 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Pengaturan Penomoran</h2>
+              <h2 className="text-xs font-bold text-[var(--app-muted)] uppercase tracking-wider">Pengaturan Penomoran</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3.5">
                 {[
                   { title: 'Nomor Invoice', desc: 'Atur format dan urutan nomor invoice.', icon: FileDigit },
@@ -331,11 +332,11 @@ export default function FinanceSettings() {
                         <item.icon className="w-4.5 h-4.5" />
                       </div>
                       <h3 className="text-xs font-bold text-white mb-1.5">{item.title}</h3>
-                      <p className="text-[10px] text-slate-400 leading-normal mb-4">{item.desc}</p>
+                      <p className="text-[10px] text-[var(--app-muted)] leading-normal mb-4">{item.desc}</p>
                     </div>
                     <button 
                       onClick={() => openManageModal(item.title)}
-                      className="w-full text-center bg-[#050B14] hover:bg-[#081120] border border-slate-800 rounded-lg text-[10px] font-semibold text-slate-300 py-2 transition-colors cursor-pointer"
+                      className="w-full text-center bg-[var(--app-bg)] hover:bg-[#081120] border border-slate-800 rounded-lg text-[10px] font-semibold text-slate-300 py-2 transition-colors cursor-pointer"
                     >
                       Kelola
                     </button>
@@ -346,7 +347,7 @@ export default function FinanceSettings() {
 
             {/* 6. LAINNYA */}
             <div className="space-y-3">
-              <h2 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Lainnya</h2>
+              <h2 className="text-xs font-bold text-[var(--app-muted)] uppercase tracking-wider">Lainnya</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3.5">
                 {[
                   { title: 'Integrasi', desc: 'Atur integrasi dengan modul lain dan pihak ketiga.', icon: Share2 },
@@ -361,11 +362,11 @@ export default function FinanceSettings() {
                         <item.icon className="w-4.5 h-4.5" />
                       </div>
                       <h3 className="text-xs font-bold text-white mb-1.5">{item.title}</h3>
-                      <p className="text-[10px] text-slate-400 leading-normal mb-4">{item.desc}</p>
+                      <p className="text-[10px] text-[var(--app-muted)] leading-normal mb-4">{item.desc}</p>
                     </div>
                     <button 
                       onClick={() => openManageModal(item.title)}
-                      className="w-full text-center bg-[#050B14] hover:bg-[#081120] border border-slate-800 rounded-lg text-[10px] font-semibold text-slate-300 py-2 transition-colors cursor-pointer"
+                      className="w-full text-center bg-[var(--app-bg)] hover:bg-[#081120] border border-slate-800 rounded-lg text-[10px] font-semibold text-slate-300 py-2 transition-colors cursor-pointer"
                     >
                       Kelola
                     </button>
@@ -401,44 +402,44 @@ export default function FinanceSettings() {
                 </div>
                 <div>
                   <h3 className="text-xs font-bold text-white leading-tight">{companyInfo.name}</h3>
-                  <p className="text-[9px] text-slate-400 mt-0.5">ISP Billing System</p>
+                  <p className="text-[9px] text-[var(--app-muted)] mt-0.5">ISP Billing System</p>
                 </div>
               </div>
 
               <div className="space-y-3 text-[11px]">
                 <div>
-                  <div className="text-slate-500 font-semibold uppercase tracking-wider text-[9px]">Nama Perusahaan</div>
+                  <div className="text-[var(--app-muted)] font-semibold uppercase tracking-wider text-[9px]">Nama Perusahaan</div>
                   <div className="text-slate-200 mt-0.5 font-medium">{companyInfo.name}</div>
                 </div>
                 <div>
-                  <div className="text-slate-500 font-semibold uppercase tracking-wider text-[9px]">NPWP</div>
+                  <div className="text-[var(--app-muted)] font-semibold uppercase tracking-wider text-[9px]">NPWP</div>
                   <div className="text-slate-200 mt-0.5 font-medium">{companyInfo.npwp}</div>
                 </div>
                 <div>
-                  <div className="text-slate-500 font-semibold uppercase tracking-wider text-[9px]">Alamat</div>
+                  <div className="text-[var(--app-muted)] font-semibold uppercase tracking-wider text-[9px]">Alamat</div>
                   <div className="text-slate-300 mt-0.5 leading-relaxed">{companyInfo.address}</div>
                 </div>
                 <div>
-                  <div className="text-slate-500 font-semibold uppercase tracking-wider text-[9px]">Telepon</div>
+                  <div className="text-[var(--app-muted)] font-semibold uppercase tracking-wider text-[9px]">Telepon</div>
                   <div className="text-slate-200 mt-0.5 font-medium">{companyInfo.phone}</div>
                 </div>
                 <div>
-                  <div className="text-slate-500 font-semibold uppercase tracking-wider text-[9px]">Email</div>
+                  <div className="text-[var(--app-muted)] font-semibold uppercase tracking-wider text-[9px]">Email</div>
                   <div className="text-slate-200 mt-0.5 font-medium">{companyInfo.email}</div>
                 </div>
                 <div>
-                  <div className="text-slate-500 font-semibold uppercase tracking-wider text-[9px]">Website</div>
+                  <div className="text-[var(--app-muted)] font-semibold uppercase tracking-wider text-[9px]">Website</div>
                   <a href={companyInfo.website} target="_blank" rel="noreferrer" className="text-blue-400 hover:underline mt-0.5 block font-medium">
                     {companyInfo.website}
                   </a>
                 </div>
                 <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-900">
                   <div>
-                    <div className="text-slate-500 font-semibold uppercase tracking-wider text-[9px]">Mata Uang</div>
+                    <div className="text-[var(--app-muted)] font-semibold uppercase tracking-wider text-[9px]">Mata Uang</div>
                     <div className="text-slate-200 mt-0.5">{companyInfo.currency.split(' - ')[0]}</div>
                   </div>
                   <div>
-                    <div className="text-slate-500 font-semibold uppercase tracking-wider text-[9px]">Tahun Fiskal</div>
+                    <div className="text-[var(--app-muted)] font-semibold uppercase tracking-wider text-[9px]">Tahun Fiskal</div>
                     <div className="text-slate-200 mt-0.5 text-[9px] truncate">{companyInfo.fiscalYear.split(' - ')[0]}</div>
                   </div>
                 </div>
@@ -454,7 +455,7 @@ export default function FinanceSettings() {
                   'Penomoran', 'Laporan', 'Rekonsiliasi', 'Integrasi'
                 ].map((sec, idx) => (
                   <div key={idx} className="flex items-center justify-between">
-                    <span className="text-slate-400">{sec}</span>
+                    <span className="text-[var(--app-muted)]">{sec}</span>
                     <span className="flex items-center gap-1 text-[10px] text-emerald-400 font-bold">
                       <CheckCircle2 className="w-3.5 h-3.5" />
                       <span>Aktif</span>
@@ -475,11 +476,11 @@ export default function FinanceSettings() {
                 {activityLogs.map((log) => (
                   <div key={log.id} className="space-y-0.5 border-b border-slate-900/50 pb-2.5 last:border-0 last:pb-0">
                     <div className="flex items-center justify-between text-xs">
-                      <span className="text-white font-semibold">{log.user}</span>
-                      <span className="text-[9px] text-slate-500">{log.time.split(' ')[0]}</span>
+                      <span className="text-[var(--app-text)] font-semibold">{log.user}</span>
+                      <span className="text-[9px] text-[var(--app-muted)]">{log.time.split(' ')[0]}</span>
                     </div>
-                    <div className="text-[10px] text-slate-400">{log.action}</div>
-                    <div className="text-[9px] text-slate-500">{log.time.split(' ')[1] || ''}</div>
+                    <div className="text-[10px] text-[var(--app-muted)]">{log.action}</div>
+                    <div className="text-[9px] text-[var(--app-muted)]">{log.time.split(' ')[1] || ''}</div>
                   </div>
                 ))}
               </div>
@@ -499,7 +500,7 @@ export default function FinanceSettings() {
               <h3 className="text-sm font-bold text-white uppercase tracking-wider">Edit Informasi Perusahaan</h3>
               <button 
                 onClick={() => setShowEditCompanyModal(false)}
-                className="text-slate-400 hover:text-white transition-colors cursor-pointer"
+                className="text-[var(--app-muted)] hover:text-white transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -507,80 +508,80 @@ export default function FinanceSettings() {
             
             <form onSubmit={handleCompanyUpdate} className="p-5 space-y-4 text-xs text-slate-300">
               <div className="space-y-1">
-                <label className="block text-slate-400 font-semibold">Nama Perusahaan</label>
+                <label className="block text-[var(--app-muted)] font-semibold">Nama Perusahaan</label>
                 <input 
                   type="text" 
                   value={tempCompanyInfo.name}
                   onChange={(e) => setTempCompanyInfo({ ...tempCompanyInfo, name: e.target.value })}
-                  className="bg-[#050B14] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500 font-medium"
+                  className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500 font-medium"
                   required
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="block text-slate-400 font-semibold">NPWP</label>
+                <label className="block text-[var(--app-muted)] font-semibold">NPWP</label>
                 <input 
                   type="text" 
                   value={tempCompanyInfo.npwp}
                   onChange={(e) => setTempCompanyInfo({ ...tempCompanyInfo, npwp: e.target.value })}
-                  className="bg-[#050B14] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500 font-medium"
+                  className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500 font-medium"
                   required
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="block text-slate-400 font-semibold">Alamat Lengkap</label>
+                <label className="block text-[var(--app-muted)] font-semibold">Alamat Lengkap</label>
                 <textarea 
                   value={tempCompanyInfo.address}
                   onChange={(e) => setTempCompanyInfo({ ...tempCompanyInfo, address: e.target.value })}
                   rows={2}
-                  className="bg-[#050B14] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500 leading-relaxed font-medium"
+                  className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500 leading-relaxed font-medium"
                   required
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="block text-slate-400 font-semibold">Telepon</label>
+                  <label className="block text-[var(--app-muted)] font-semibold">Telepon</label>
                   <input 
                     type="text" 
                     value={tempCompanyInfo.phone}
                     onChange={(e) => setTempCompanyInfo({ ...tempCompanyInfo, phone: e.target.value })}
-                    className="bg-[#050B14] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500 font-medium"
+                    className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500 font-medium"
                     required
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="block text-slate-400 font-semibold">Email Finance</label>
+                  <label className="block text-[var(--app-muted)] font-semibold">Email Finance</label>
                   <input 
                     type="email" 
                     value={tempCompanyInfo.email}
                     onChange={(e) => setTempCompanyInfo({ ...tempCompanyInfo, email: e.target.value })}
-                    className="bg-[#050B14] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500 font-medium"
+                    className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500 font-medium"
                     required
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="block text-slate-400 font-semibold">Website Utama</label>
+                <label className="block text-[var(--app-muted)] font-semibold">Website Utama</label>
                 <input 
                   type="text" 
                   value={tempCompanyInfo.website}
                   onChange={(e) => setTempCompanyInfo({ ...tempCompanyInfo, website: e.target.value })}
-                  className="bg-[#050B14] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500 font-medium"
+                  className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500 font-medium"
                   required
                 />
               </div>
 
               <div className="grid grid-cols-3 gap-2">
                 <div className="space-y-1">
-                  <label className="block text-slate-400 font-semibold text-[10px]">Mata Uang</label>
+                  <label className="block text-[var(--app-muted)] font-semibold text-[10px]">Mata Uang</label>
                   <select 
                     value={tempCompanyInfo.currency}
                     onChange={(e) => setTempCompanyInfo({ ...tempCompanyInfo, currency: e.target.value })}
-                    className="bg-[#050B14] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500"
+                    className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500"
                   >
                     <option>IDR - Rupiah</option>
                     <option>USD - Dollar US</option>
@@ -589,22 +590,22 @@ export default function FinanceSettings() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="block text-slate-400 font-semibold text-[10px]">Tahun Fiskal</label>
+                  <label className="block text-[var(--app-muted)] font-semibold text-[10px]">Tahun Fiskal</label>
                   <input 
                     type="text" 
                     value={tempCompanyInfo.fiscalYear}
                     onChange={(e) => setTempCompanyInfo({ ...tempCompanyInfo, fiscalYear: e.target.value })}
-                    className="bg-[#050B14] border border-slate-800 text-white rounded-lg p-2 w-full focus:outline-none focus:border-blue-500"
+                    className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2 w-full focus:outline-none focus:border-blue-500"
                     required
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="block text-slate-400 font-semibold text-[10px]">Periode Akuntansi</label>
+                  <label className="block text-[var(--app-muted)] font-semibold text-[10px]">Periode Akuntansi</label>
                   <select
                     value={tempCompanyInfo.accountingPeriod}
                     onChange={(e) => setTempCompanyInfo({ ...tempCompanyInfo, accountingPeriod: e.target.value })}
-                    className="bg-[#050B14] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500"
+                    className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500"
                   >
                     <option>Bulanan</option>
                     <option>Triwulanan</option>
@@ -623,7 +624,7 @@ export default function FinanceSettings() {
                 </button>
                 <button 
                   type="submit"
-                  className="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-5 py-2 rounded-lg cursor-pointer"
+                  className="bg-blue-600 hover:bg-blue-500 text-[var(--app-text)] font-semibold px-5 py-2 rounded-lg cursor-pointer"
                 >
                   Simpan Perubahan
                 </button>
@@ -641,33 +642,33 @@ export default function FinanceSettings() {
               <h3 className="text-sm font-bold text-white uppercase tracking-wider">Kelola Parameter: {activeManageSection}</h3>
               <button 
                 onClick={() => setShowManageModal(false)}
-                className="text-slate-400 hover:text-white transition-colors cursor-pointer"
+                className="text-[var(--app-muted)] hover:text-white transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
             
             <div className="p-5 space-y-4 text-xs text-slate-300">
-              <div className="bg-[#050B14] border border-slate-900 rounded-lg p-4 space-y-2">
-                <p className="text-[10px] text-slate-400">Parameter saat ini untuk {activeManageSection} terkonfigurasi dengan standar bawaan (default) sistem keuangan AudiraNET.</p>
+              <div className="bg-[var(--app-bg)] border border-slate-900 rounded-lg p-4 space-y-2">
+                <p className="text-[10px] text-[var(--app-muted)]">Parameter saat ini untuk {activeManageSection} terkonfigurasi dengan standar bawaan (default) sistem keuangan AudiraNET.</p>
                 <div className="pt-2">
                   <div className="flex justify-between items-center text-xs border-b border-slate-900/60 pb-1.5 mb-1.5">
-                    <span className="text-slate-400">Status Integrasi:</span>
+                    <span className="text-[var(--app-muted)]">Status Integrasi:</span>
                     <span className="text-emerald-400 font-bold">Terhubung</span>
                   </div>
                   <div className="flex justify-between items-center text-xs">
-                    <span className="text-slate-400">Otoritas Modul:</span>
+                    <span className="text-[var(--app-muted)]">Otoritas Modul:</span>
                     <span className="text-slate-200 font-semibold">Super Admin Only</span>
                   </div>
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <label className="block text-slate-400 font-semibold">Ubah Parameter Kunci</label>
+                <label className="block text-[var(--app-muted)] font-semibold">Ubah Parameter Kunci</label>
                 <input 
                   type="text" 
                   placeholder="Masukkan konfigurasi baru..."
-                  className="bg-[#050B14] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500"
+                  className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500"
                 />
               </div>
 
@@ -683,7 +684,7 @@ export default function FinanceSettings() {
                     setShowManageModal(false);
                     handleSaveAll();
                   }}
-                  className="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-5 py-2 rounded-lg cursor-pointer"
+                  className="bg-blue-600 hover:bg-blue-500 text-[var(--app-text)] font-semibold px-5 py-2 rounded-lg cursor-pointer"
                 >
                   Terapkan & Simpan
                 </button>

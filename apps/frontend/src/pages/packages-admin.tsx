@@ -324,80 +324,79 @@ export default function PackageManagementPage() {
   const totalCount = statistics?.total ?? packages.length;
   const activeCount = statistics?.active ?? packages.filter(p => p.status === 'active').length;
   const inactiveCount = statistics?.inactive ?? packages.filter(p => p.status === 'inactive').length;
-  const totalCustomers = packages.reduce((acc, p) => acc + (p.customerCount || 0), 0) || 3248;
-  const averageRevenue = statistics?.totalRevenue ?? 125430000;
+  const totalCustomers = packages.reduce((acc, p) => acc + (p.customerCount || 0), 0);
+  const averageRevenue = statistics?.totalRevenue ?? 0;
 
   // Pie chart calculation helper values
-  const countInternet = packages.filter(p => getPackageCategory(p) === 'Internet').length || 24;
-  const countCombo = packages.filter(p => getPackageCategory(p) === 'Combo').length || 2;
-  const countCorporate = packages.filter(p => getPackageCategory(p) === 'Corporate').length || 2;
-  const countNonActive = packages.filter(p => p.status === 'inactive').length || 4;
+  const countInternet = packages.filter(p => getPackageCategory(p) === 'Internet').length;
+  const countCombo = packages.filter(p => getPackageCategory(p) === 'Combo').length;
+  const countCorporate = packages.filter(p => getPackageCategory(p) === 'Corporate').length;
+  const countNonActive = packages.filter(p => p.status === 'inactive').length;
   const sumForDonut = countInternet + countCombo + countCorporate + countNonActive;
 
   return (
     <Layout>
-      <div className="min-h-screen bg-[#070c19] text-gray-200 p-4 md:p-6 space-y-6">
+      <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] p-4 md:p-6 space-y-6">
         
         {/* ─── Top Header bar ────────────────────────────────────────────── */}
-        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 border-b border-[#131d35] pb-5">
+        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 border-b border-slate-200 pb-5">
           <div className="space-y-1">
-            <div className="flex items-center gap-2 text-xs text-gray-400 font-medium">
+            <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
               <span>Home</span>
               <span>&gt;</span>
               <span>Package</span>
               <span>&gt;</span>
               <span className="text-blue-400">Semua Package</span>
             </div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">Package</h1>
+            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Package</h1>
           </div>
 
           <div className="flex flex-wrap items-center gap-4 w-full xl:w-auto">
             {/* Calendar */}
-            <div className="flex items-center gap-2 bg-[#0b1329] border border-[#131d35] px-3 py-2 rounded-xl text-xs text-gray-300">
-              <Calendar size={14} className="text-blue-400" />
-              <span>01 Juli 2026</span>
-              <span className="text-[10px] text-gray-500">08:35 WIB</span>
+            <div className="flex items-center gap-2 bg-[var(--app-card)] border border-[var(--app-border)] px-3 py-1.5 rounded-lg text-xs text-[var(--app-text)]">
+              <Calendar size={14} className="text-blue-500" />
+              <span>{new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
             </div>
             
             {/* Status Sistem */}
-            <div className="flex items-center gap-2 bg-[#0b1329] border border-[#131d35] px-3 py-2 rounded-xl text-xs">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-              <span className="text-gray-400">Status Sistem</span>
-              <span className="text-green-400 font-bold">Normal</span>
+            <div className="flex items-center gap-2 bg-[var(--app-card)] border border-[var(--app-border)] px-3 py-1.5 rounded-lg text-xs">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span className="text-[var(--app-text-muted)]">Status Sistem</span>
+              <span className="text-emerald-500 font-bold">Online</span>
             </div>
 
             {/* Global Search */}
             <div className="relative w-full sm:w-60">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 w-4 h-4" />
               <input 
                 type="text" 
                 placeholder="Cari customer, invoice, tagihan..."
-                className="w-full bg-[#0b1329] border border-[#131d35] rounded-xl text-xs pl-9 pr-4 py-2 text-white focus:outline-none focus:border-blue-500"
+                className="w-full bg-white border border-slate-200 rounded-xl text-xs pl-9 pr-4 py-2 text-slate-800 focus:outline-none focus:border-blue-500"
               />
             </div>
 
             {/* Notification and Profile icons */}
             <div className="flex items-center gap-3">
-              <button className="relative p-2 bg-[#0b1329] border border-[#131d35] rounded-xl hover:bg-[#121c38] transition-colors">
-                <Bell size={16} className="text-gray-400" />
-                <span className="absolute -top-1 -right-1 bg-red-500 text-[9px] font-bold text-white px-1.5 py-0.5 rounded-full scale-75">12</span>
+              <button className="relative p-2 bg-white border border-slate-200 rounded-xl hover:bg-slate-100 transition-colors">
+                <Bell size={16} className="text-slate-500" />
+                <span className="absolute -top-1 -right-1 bg-red-500 text-[9px] font-bold text-slate-800 px-1.5 py-0.5 rounded-full scale-75">12</span>
               </button>
-              <button className="relative p-2 bg-[#0b1329] border border-[#131d35] rounded-xl hover:bg-[#121c38] transition-colors">
-                <Mail size={16} className="text-gray-400" />
-                <span className="absolute -top-1 -right-1 bg-red-500 text-[9px] font-bold text-white px-1.5 py-0.5 rounded-full scale-75">8</span>
+              <button className="relative p-2 bg-white border border-slate-200 rounded-xl hover:bg-slate-100 transition-colors">
+                <Mail size={16} className="text-slate-500" />
+                <span className="absolute -top-1 -right-1 bg-red-500 text-[9px] font-bold text-slate-800 px-1.5 py-0.5 rounded-full scale-75">8</span>
               </button>
-              <button className="p-2 bg-[#0b1329] border border-[#131d35] rounded-xl hover:bg-[#121c38] transition-colors max-sm:hidden">
-                <Maximize2 size={16} className="text-gray-400" />
+              <button className="p-2 bg-white border border-slate-200 rounded-xl hover:bg-slate-100 transition-colors max-sm:hidden">
+                <Maximize2 size={16} className="text-slate-500" />
               </button>
               
               {/* Profile */}
-              <div className="flex items-center gap-2 pl-2 border-l border-[#131d35]">
+              <div className="flex items-center gap-2 pl-2 border-l border-slate-200">
                 <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xs overflow-hidden">
                   <span className="text-xs">AR</span>
                 </div>
                 <div className="hidden md:block text-left">
                   <div className="text-xs font-semibold text-white">Agus Dwi Rianto</div>
-                  <div className="text-[9px] text-gray-500 font-bold uppercase">Super Admin</div>
+                  <div className="text-[9px] text-slate-400 font-bold uppercase">Super Admin</div>
                 </div>
               </div>
             </div>
@@ -421,78 +420,78 @@ export default function PackageManagementPage() {
         {/* ─── Stat Cards ────────────────────────────────────────────────── */}
         <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
           {/* Card 1: Total Package */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex items-center gap-4">
+          <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs p-4 flex items-center gap-4">
             <div className="p-3.5 bg-orange-500/10 text-orange-400 border border-orange-500/20 rounded-xl">
               <PackageIcon size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Total Package</p>
-              <p className="text-2xl font-black text-white mt-0.5">{totalCount}</p>
-              <p className="text-[10px] text-gray-400 mt-0.5">Semua package</p>
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Total Package</p>
+              <p className="text-2xl font-black text-slate-900 mt-0.5">{totalCount}</p>
+              <p className="text-[10px] text-slate-500 mt-0.5">Semua package</p>
             </div>
           </div>
 
           {/* Card 2: Aktif */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex items-center gap-4">
+          <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs p-4 flex items-center gap-4">
             <div className="p-3.5 bg-green-500/10 text-green-400 border border-green-500/20 rounded-xl">
               <Check size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Aktif</p>
-              <p className="text-2xl font-black text-white mt-0.5">{activeCount}</p>
-              <p className="text-[10px] text-gray-400 mt-0.5">Package aktif</p>
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Aktif</p>
+              <p className="text-2xl font-black text-slate-900 mt-0.5">{activeCount}</p>
+              <p className="text-[10px] text-slate-500 mt-0.5">Package aktif</p>
             </div>
           </div>
 
           {/* Card 3: Non Aktif */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex items-center gap-4">
-            <div className="p-3.5 bg-gray-500/10 text-gray-400 border border-gray-500/20 rounded-xl">
+          <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs p-4 flex items-center gap-4">
+            <div className="p-3.5 bg-gray-500/10 text-slate-500 border border-gray-500/20 rounded-xl">
               <X size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Non Aktif</p>
-              <p className="text-2xl font-black text-white mt-0.5">{inactiveCount}</p>
-              <p className="text-[10px] text-gray-400 mt-0.5">Package non aktif</p>
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Non Aktif</p>
+              <p className="text-2xl font-black text-slate-900 mt-0.5">{inactiveCount}</p>
+              <p className="text-[10px] text-slate-500 mt-0.5">Package non aktif</p>
             </div>
           </div>
 
           {/* Card 4: Total Customer */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex items-center gap-4">
+          <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs p-4 flex items-center gap-4">
             <div className="p-3.5 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-xl">
               <Users size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Total Customer</p>
-              <p className="text-2xl font-black text-white mt-0.5">{totalCustomers.toLocaleString('id-ID')}</p>
-              <p className="text-[10px] text-gray-400 mt-0.5">Menggunakan package</p>
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Total Customer</p>
+              <p className="text-2xl font-black text-slate-900 mt-0.5">{totalCustomers.toLocaleString('id-ID')}</p>
+              <p className="text-[10px] text-slate-500 mt-0.5">Menggunakan package</p>
             </div>
           </div>
 
           {/* Card 5: Average Revenue */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex items-center gap-4 col-span-2 md:col-span-1">
+          <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs p-4 flex items-center gap-4 col-span-2 md:col-span-1">
             <div className="p-3.5 bg-purple-500/10 text-purple-400 border border-purple-500/20 rounded-xl">
               <DollarSign size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Rata-rata Revenue</p>
-              <p className="text-lg font-black text-white mt-0.5">{formatCurrency(averageRevenue)}</p>
-              <p className="text-[10px] text-gray-400 mt-0.5">Per bulan</p>
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Rata-rata Revenue</p>
+              <p className="text-lg font-black text-slate-900 mt-0.5">{formatCurrency(averageRevenue)}</p>
+              <p className="text-[10px] text-slate-500 mt-0.5">Per bulan</p>
             </div>
           </div>
         </div>
 
         {/* ─── Query / Filter Bar ─────────────────────────────────────────── */}
-        <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4">
+        <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs p-4">
           <div className="flex flex-wrap items-center gap-4">
             {/* Input Search */}
             <div className="relative flex-1 min-w-[240px]">
-              <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-gray-500 w-4 h-4" />
+              <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
               <input 
                 type="text" 
                 placeholder="Cari nama package, kecepatan, harga..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full bg-[#080d19] border border-[#131d35] text-xs pl-10 pr-4 py-2.5 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
+                className="w-full bg-slate-50 border border-slate-200 text-xs pl-10 pr-4 py-2.5 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition-colors"
               />
             </div>
 
@@ -500,7 +499,7 @@ export default function PackageManagementPage() {
             <select 
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="bg-[#080d19] border border-[#131d35] text-xs py-2.5 px-4 rounded-xl text-gray-300 focus:outline-none focus:border-blue-500 min-w-[150px]"
+              className="bg-slate-50 border border-slate-200 text-xs py-2.5 px-4 rounded-xl text-slate-600 focus:outline-none focus:border-blue-500 min-w-[150px]"
             >
               <option value="all">Semua Kategori</option>
               <option value="internet">Internet</option>
@@ -512,7 +511,7 @@ export default function PackageManagementPage() {
             <select 
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="bg-[#080d19] border border-[#131d35] text-xs py-2.5 px-4 rounded-xl text-gray-300 focus:outline-none focus:border-blue-500 min-w-[150px]"
+              className="bg-slate-50 border border-slate-200 text-xs py-2.5 px-4 rounded-xl text-slate-600 focus:outline-none focus:border-blue-500 min-w-[150px]"
             >
               <option value="all">Semua Status</option>
               <option value="active">Aktif</option>
@@ -523,7 +522,7 @@ export default function PackageManagementPage() {
             <select 
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
-              className="bg-[#080d19] border border-[#131d35] text-xs py-2.5 px-4 rounded-xl text-gray-300 focus:outline-none focus:border-blue-500 min-w-[150px]"
+              className="bg-slate-50 border border-slate-200 text-xs py-2.5 px-4 rounded-xl text-slate-600 focus:outline-none focus:border-blue-500 min-w-[150px]"
             >
               <option value="all">Semua Tipe</option>
               <option value="broadband">Broadband</option>
@@ -533,7 +532,7 @@ export default function PackageManagementPage() {
             {/* Reset Button */}
             <button 
               onClick={handleResetFilters}
-              className="text-xs font-semibold text-gray-400 hover:text-white px-4 py-2.5 rounded-xl border border-transparent hover:border-[#131d35] transition-all"
+              className="text-xs font-semibold text-slate-500 hover:text-slate-900 px-4 py-2.5 rounded-xl border border-transparent hover:border-slate-200 transition-all"
             >
               Reset
             </button>
@@ -556,7 +555,7 @@ export default function PackageManagementPage() {
           <div className="lg:col-span-9 space-y-4">
             
             {/* Table Header controls */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-[#0b1329]/60 p-3 rounded-2xl border border-[#131d35]">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-white/60 p-3 rounded-2xl border border-slate-200">
               {/* Tabs */}
               <div className="flex flex-wrap gap-1">
                 {[
@@ -574,7 +573,7 @@ export default function PackageManagementPage() {
                     className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
                       activeTab === tab.id 
                         ? 'bg-blue-600/10 text-blue-400 border border-blue-500/20' 
-                        : 'text-gray-400 hover:text-white hover:bg-[#131d35]/50'
+                        : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/50'
                     }`}
                   >
                     {tab.label}
@@ -584,32 +583,32 @@ export default function PackageManagementPage() {
 
               {/* Data limit and views */}
               <div className="flex items-center gap-3 ml-auto">
-                <span className="text-xs text-gray-500">Tampilkan</span>
+                <span className="text-xs text-slate-400">Tampilkan</span>
                 <select
                   value={limit}
                   onChange={(e) => {
                     setLimit(Number(e.target.value));
                     setPage(1);
                   }}
-                  className="bg-[#080d19] border border-[#131d35] text-xs py-1.5 px-3 rounded-lg text-gray-300 focus:outline-none"
+                  className="bg-slate-50 border border-slate-200 text-xs py-1.5 px-3 rounded-lg text-slate-600 focus:outline-none"
                 >
                   <option value={10}>10</option>
                   <option value={25}>25</option>
                   <option value={50}>50</option>
                 </select>
-                <span className="text-xs text-gray-500">data</span>
+                <span className="text-xs text-slate-400">data</span>
 
                 {/* View toggles */}
-                <div className="flex gap-1 border border-[#131d35] rounded-xl p-0.5 bg-[#080d19]">
+                <div className="flex gap-1 border border-slate-200 rounded-xl p-0.5 bg-slate-50">
                   <button 
                     onClick={() => setViewMode('list')}
-                    className={`p-1.5 rounded-lg transition-colors ${viewMode === 'list' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:text-white'}`}
+                    className={`p-1.5 rounded-lg transition-colors ${viewMode === 'list' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}
                   >
                     <SlidersHorizontal size={14} />
                   </button>
                   <button 
                     onClick={() => setViewMode('grid')}
-                    className={`p-1.5 rounded-lg transition-colors ${viewMode === 'grid' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:text-white'}`}
+                    className={`p-1.5 rounded-lg transition-colors ${viewMode === 'grid' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}
                   >
                     <SlidersHorizontal size={14} className="rotate-90" />
                   </button>
@@ -618,13 +617,13 @@ export default function PackageManagementPage() {
             </div>
 
             {/* The Main Data Table */}
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl overflow-hidden">
+            <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="border-b border-[#131d35] bg-[#101935]/40 text-gray-400 text-[10px] font-bold uppercase tracking-wider">
+                    <tr className="border-b border-slate-200 bg-slate-50/40 text-slate-500 text-[10px] font-bold uppercase tracking-wider">
                       <th className="p-4 w-10">
-                        <input type="checkbox" className="rounded bg-[#080d19] border-[#131d35] text-blue-600 focus:ring-0" />
+                        <input type="checkbox" className="rounded bg-slate-50 border-slate-200 text-blue-600 focus:ring-0" />
                       </th>
                       <th className="p-4">NO</th>
                       <th className="p-4">NAMA PACKAGE</th>
@@ -638,16 +637,16 @@ export default function PackageManagementPage() {
                       <th className="p-4 text-center">AKSI</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#131d35] text-xs text-gray-300">
+                  <tbody className="divide-y divide-slate-200 text-xs text-slate-600">
                     {loading ? (
                       <tr>
-                        <td colSpan={11} className="p-12 text-center text-gray-500 font-semibold">
+                        <td colSpan={11} className="p-12 text-center text-slate-400 font-semibold">
                           <span className="inline-block animate-spin mr-2">⚙</span> Loading package data...
                         </td>
                       </tr>
                     ) : filteredPackages.length === 0 ? (
                       <tr>
-                        <td colSpan={11} className="p-12 text-center text-gray-500 font-semibold">
+                        <td colSpan={11} className="p-12 text-center text-slate-400 font-semibold">
                           Tidak ada data package ditemukan
                         </td>
                       </tr>
@@ -656,22 +655,22 @@ export default function PackageManagementPage() {
                         const rowNo = (page - 1) * limit + idx + 1;
                         const isTrial = pkg.price === 0;
                         return (
-                          <tr key={pkg.id} className="hover:bg-[#121c38]/40 transition-colors">
+                          <tr key={pkg.id} className="hover:bg-slate-100/40 transition-colors">
                             <td className="p-4">
-                              <input type="checkbox" className="rounded bg-[#080d19] border-[#131d35] text-blue-600 focus:ring-0" />
+                              <input type="checkbox" className="rounded bg-slate-50 border-slate-200 text-blue-600 focus:ring-0" />
                             </td>
-                            <td className="p-4 text-gray-500 font-medium">{rowNo}</td>
-                            <td className="p-4 font-bold text-white">{pkg.name}</td>
+                            <td className="p-4 text-slate-400 font-medium">{rowNo}</td>
+                            <td className="p-4 font-bold text-slate-800">{pkg.name}</td>
                             <td className="p-4">{getPackageCategory(pkg)}</td>
-                            <td className="p-4 font-semibold text-gray-300">{pkg.speed} / {pkg.speed}</td>
-                            <td className="p-4 font-bold text-white">{formatCurrency(pkg.price)}</td>
-                            <td className="p-4 text-gray-400">{formatCurrency(getInstallationFee(pkg))}</td>
-                            <td className="p-4 text-gray-400">{getPeriod(pkg)}</td>
+                            <td className="p-4 font-semibold text-slate-600">{pkg.speed} / {pkg.speed}</td>
+                            <td className="p-4 font-bold text-slate-800">{formatCurrency(pkg.price)}</td>
+                            <td className="p-4 text-slate-500">{formatCurrency(getInstallationFee(pkg))}</td>
+                            <td className="p-4 text-slate-500">{getPeriod(pkg)}</td>
                             <td className="p-4">
                               <span className={`px-2.5 py-1 text-[10px] font-bold rounded-full ${
                                 pkg.status === 'active' 
                                   ? 'bg-[#10b981]/10 text-[#10b981] border border-[#10b981]/20' 
-                                  : 'bg-gray-500/10 text-gray-400 border border-gray-500/20'
+                                  : 'bg-gray-500/10 text-slate-500 border border-gray-500/20'
                               }`}>
                                 {pkg.status === 'active' ? 'Aktif' : 'Non Aktif'}
                               </span>
@@ -679,7 +678,7 @@ export default function PackageManagementPage() {
                             <td className="p-4 font-semibold text-white">{pkg.customerCount || 0}</td>
                             <td className="p-4">
                               <div className="flex items-center justify-center gap-2">
-                                <button className="p-1.5 hover:bg-[#1b2647] rounded-lg text-gray-400 hover:text-white transition-colors">
+                                <button className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-slate-900 transition-colors">
                                   <Eye size={14} />
                                 </button>
                                 <button 
@@ -694,7 +693,7 @@ export default function PackageManagementPage() {
                                     });
                                     setShowEditModal(true);
                                   }}
-                                  className="p-1.5 hover:bg-[#1b2647] rounded-lg text-blue-400 hover:text-blue-300 transition-colors"
+                                  className="p-1.5 hover:bg-slate-100 rounded-lg text-blue-400 hover:text-blue-300 transition-colors"
                                 >
                                   <Edit size={14} />
                                 </button>
@@ -718,8 +717,8 @@ export default function PackageManagementPage() {
               </div>
 
               {/* Table Footer Pagination */}
-              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-t border-[#131d35] bg-[#0b1329]/60">
-                <span className="text-xs text-gray-500">
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-t border-slate-200 bg-white/60">
+                <span className="text-xs text-slate-400">
                   Menampilkan <span className="font-semibold text-white">{(page - 1) * limit + 1}</span> - <span className="font-semibold text-white">{Math.min(page * limit, total)}</span> dari <span className="font-semibold text-white">{total}</span> data
                 </span>
                 
@@ -727,7 +726,7 @@ export default function PackageManagementPage() {
                   <button 
                     onClick={() => setPage(Math.max(1, page - 1))}
                     disabled={page === 1}
-                    className="p-2 border border-[#131d35] hover:bg-[#121c38] rounded-xl text-gray-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="p-2 border border-slate-200 hover:bg-slate-100 rounded-xl text-slate-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     <ChevronLeft size={14} />
                   </button>
@@ -740,7 +739,7 @@ export default function PackageManagementPage() {
                         className={`w-8 h-8 rounded-xl text-xs font-semibold border transition-all ${
                           page === pg 
                             ? 'bg-[#0052cc] text-white border-[#0052cc]' 
-                            : 'border-[#131d35] text-gray-400 hover:text-white hover:bg-[#121c38]'
+                            : 'border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-100'
                         }`}
                       >
                         {pg}
@@ -750,7 +749,7 @@ export default function PackageManagementPage() {
                   <button 
                     onClick={() => setPage(Math.min(totalPages, page + 1))}
                     disabled={page === totalPages}
-                    className="p-2 border border-[#131d35] hover:bg-[#121c38] rounded-xl text-gray-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="p-2 border border-slate-200 hover:bg-slate-100 rounded-xl text-slate-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     <ChevronRight size={14} />
                   </button>
@@ -763,8 +762,8 @@ export default function PackageManagementPage() {
           <div className="lg:col-span-3 space-y-6">
             
             {/* Card 1: Distribusi Package (Donut chart) */}
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-5 space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400">Distribusi Package</h3>
+            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">Distribusi Package</h3>
               
               <div className="relative flex justify-center py-2">
                 {/* SVG Donut Chart */}
@@ -797,13 +796,13 @@ export default function PackageManagementPage() {
                 </svg>
                 {/* Center text */}
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-                  <p className="text-xl font-black text-white">{totalCount}</p>
-                  <p className="text-[9px] text-gray-500 font-bold uppercase">Total</p>
+                  <p className="text-xl font-black text-slate-900">{totalCount}</p>
+                  <p className="text-[9px] text-slate-400 font-bold uppercase">Total</p>
                 </div>
               </div>
 
               {/* Legends */}
-              <div className="space-y-2 text-[11px] text-gray-400">
+              <div className="space-y-2 text-[11px] text-slate-500">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded bg-blue-600 inline-block"></span>
@@ -836,8 +835,8 @@ export default function PackageManagementPage() {
             </div>
 
             {/* Card 2: Top 5 Package (Customer) */}
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-5 space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400">Top 5 Package (Customer)</h3>
+            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">Top 5 Package (Customer)</h3>
               
               <div className="space-y-3.5">
                 {[
@@ -852,12 +851,12 @@ export default function PackageManagementPage() {
                     <div key={index} className="space-y-1">
                       <div className="flex items-center justify-between text-xs">
                         <div className="flex items-center gap-2">
-                          <span className="text-[10px] text-gray-500 font-bold w-4">{item.rank}</span>
-                          <span className="font-bold text-gray-300">{item.name}</span>
+                          <span className="text-[10px] text-slate-400 font-bold w-4">{item.rank}</span>
+                          <span className="font-bold text-slate-600">{item.name}</span>
                         </div>
-                        <span className="text-[10px] font-semibold text-gray-400">{item.customers.toLocaleString('id-ID')}</span>
+                        <span className="text-[10px] font-semibold text-slate-500">{item.customers.toLocaleString('id-ID')}</span>
                       </div>
-                      <div className="w-full bg-[#101935] h-1.5 rounded-full overflow-hidden">
+                      <div className="w-full bg-slate-50 h-1.5 rounded-full overflow-hidden">
                         <div 
                           className="bg-blue-600 h-full rounded-full transition-all duration-500" 
                           style={{ width: `${percentage}%` }}
@@ -870,15 +869,15 @@ export default function PackageManagementPage() {
             </div>
 
             {/* Card 3: Pendapatan per Bulan */}
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-5 space-y-3 relative overflow-hidden">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400">Pendapatan per Bulan</h3>
-              <p className="text-[10px] text-gray-500 font-semibold">(Berdasarkan Package Aktif)</p>
+            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-3 relative overflow-hidden">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">Pendapatan per Bulan</h3>
+              <p className="text-[10px] text-slate-400 font-semibold">(Berdasarkan Package Aktif)</p>
               
               <div className="flex items-center gap-2 mt-2">
-                <p className="text-xl font-black text-white">{formatCurrency(averageRevenue)}</p>
+                <p className="text-xl font-black text-slate-900">{formatCurrency(averageRevenue)}</p>
                 <span className="bg-green-500/10 text-green-400 border border-green-500/20 text-[9px] font-bold px-1.5 py-0.5 rounded-full">+12.5%</span>
               </div>
-              <p className="text-[9px] text-gray-500">Dibanding bulan lalu</p>
+              <p className="text-[9px] text-slate-400">Dibanding bulan lalu</p>
 
               {/* Sparkline chart SVG */}
               <div className="h-10 w-full mt-4">
@@ -911,83 +910,83 @@ export default function PackageManagementPage() {
         {/* ─── Create New Package Modal ───────────────────────────────────── */}
         {showCreateModal && (
           <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl max-w-md w-full overflow-hidden shadow-2xl">
-              <div className="p-6 border-b border-[#131d35] flex justify-between items-center">
-                <h2 className="text-lg font-bold text-white flex items-center gap-2">
+            <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs max-w-md w-full overflow-hidden shadow-2xl">
+              <div className="p-6 border-b border-slate-200 flex justify-between items-center">
+                <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
                   <Plus className="text-blue-500" size={18} />
                   <span>Buat Package Baru</span>
                 </h2>
-                <button onClick={() => setShowCreateModal(false)} className="p-1 hover:bg-[#121c38] rounded-lg text-gray-500 hover:text-white transition-colors">
+                <button onClick={() => setShowCreateModal(false)} className="p-1 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-white transition-colors">
                   <X size={16} />
                 </button>
               </div>
 
               <form onSubmit={handleCreatePackage} className="p-6 space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold text-gray-400 mb-1">Nama Package *</label>
+                  <label className="block text-xs font-semibold text-slate-500 mb-1">Nama Package *</label>
                   <input
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className={`w-full px-3 py-2 bg-[#080d19] border rounded-xl text-xs text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 ${formErrors.name ? 'border-red-500' : 'border-[#131d35]'}`}
+                    className={`w-full px-3 py-2 bg-slate-50 border rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-500 ${formErrors.name ? 'border-red-500' : 'border-slate-200'}`}
                     placeholder="Contoh: Home 10 Mbps"
                   />
                   {formErrors.name && <p className="text-red-500 text-[10px] mt-1">{formErrors.name}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-gray-400 mb-1">Kecepatan (Speed) *</label>
+                  <label className="block text-xs font-semibold text-slate-500 mb-1">Kecepatan (Speed) *</label>
                   <input
                     type="text"
                     value={formData.speed}
                     onChange={(e) => setFormData({ ...formData, speed: e.target.value })}
-                    className={`w-full px-3 py-2 bg-[#080d19] border rounded-xl text-xs text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 ${formErrors.speed ? 'border-red-500' : 'border-[#131d35]'}`}
+                    className={`w-full px-3 py-2 bg-slate-50 border rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-500 ${formErrors.speed ? 'border-red-500' : 'border-slate-200'}`}
                     placeholder="Contoh: 10 Mbps"
                   />
                   {formErrors.speed && <p className="text-red-500 text-[10px] mt-1">{formErrors.speed}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-gray-400 mb-1">Harga (Rp) *</label>
+                  <label className="block text-xs font-semibold text-slate-500 mb-1">Harga (Rp) *</label>
                   <input
                     type="number"
                     value={formData.price}
                     onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
-                    className={`w-full px-3 py-2 bg-[#080d19] border rounded-xl text-xs text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 ${formErrors.price ? 'border-red-500' : 'border-[#131d35]'}`}
+                    className={`w-full px-3 py-2 bg-slate-50 border rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-500 ${formErrors.price ? 'border-red-500' : 'border-slate-200'}`}
                     placeholder="Contoh: 200000"
                   />
                   {formErrors.price && <p className="text-red-500 text-[10px] mt-1">{formErrors.price}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-gray-400 mb-1">Deskripsi</label>
+                  <label className="block text-xs font-semibold text-slate-500 mb-1">Deskripsi</label>
                   <textarea
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     rows={3}
-                    className="w-full px-3 py-2 bg-[#080d19] border border-[#131d35] rounded-xl text-xs text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-500"
                     placeholder="Deskripsi detail paket..."
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-gray-400 mb-1">Status</label>
+                  <label className="block text-xs font-semibold text-slate-500 mb-1">Status</label>
                   <select
                     value={formData.status}
                     onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                    className="w-full px-3 py-2 bg-[#080d19] border border-[#131d35] rounded-xl text-xs text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-blue-500"
                   >
                     <option value="active">Aktif</option>
                     <option value="inactive">Non Aktif</option>
                   </select>
                 </div>
 
-                <div className="flex justify-end gap-2.5 pt-4 border-t border-[#131d35] mt-6">
+                <div className="flex justify-end gap-2.5 pt-4 border-t border-slate-200 mt-6">
                   <button
                     type="button"
                     onClick={() => setShowCreateModal(false)}
                     disabled={formLoading}
-                    className="px-4 py-2 border border-[#131d35] hover:bg-[#121c38] rounded-xl text-xs font-semibold text-gray-400 hover:text-white transition-all disabled:opacity-50"
+                    className="px-4 py-2 border border-slate-200 hover:bg-slate-100 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-900 transition-all disabled:opacity-50"
                   >
                     Batal
                   </button>
@@ -1007,79 +1006,79 @@ export default function PackageManagementPage() {
         {/* ─── Edit Package Modal ─────────────────────────────────────────── */}
         {showEditModal && selectedPackage && (
           <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl max-w-md w-full overflow-hidden shadow-2xl">
-              <div className="p-6 border-b border-[#131d35] flex justify-between items-center">
-                <h2 className="text-lg font-bold text-white flex items-center gap-2">
+            <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs max-w-md w-full overflow-hidden shadow-2xl">
+              <div className="p-6 border-b border-slate-200 flex justify-between items-center">
+                <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
                   <Edit className="text-blue-500" size={18} />
                   <span>Edit Package</span>
                 </h2>
-                <button onClick={() => setShowEditModal(false)} className="p-1 hover:bg-[#121c38] rounded-lg text-gray-500 hover:text-white transition-colors">
+                <button onClick={() => setShowEditModal(false)} className="p-1 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-white transition-colors">
                   <X size={16} />
                 </button>
               </div>
 
               <form onSubmit={handleUpdatePackage} className="p-6 space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold text-gray-400 mb-1">Nama Package *</label>
+                  <label className="block text-xs font-semibold text-slate-500 mb-1">Nama Package *</label>
                   <input
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className={`w-full px-3 py-2 bg-[#080d19] border rounded-xl text-xs text-white focus:outline-none focus:border-blue-500 ${formErrors.name ? 'border-red-500' : 'border-[#131d35]'}`}
+                    className={`w-full px-3 py-2 bg-slate-50 border rounded-xl text-xs text-slate-800 focus:outline-none focus:border-blue-500 ${formErrors.name ? 'border-red-500' : 'border-slate-200'}`}
                   />
                   {formErrors.name && <p className="text-red-500 text-[10px] mt-1">{formErrors.name}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-gray-400 mb-1">Kecepatan (Speed) *</label>
+                  <label className="block text-xs font-semibold text-slate-500 mb-1">Kecepatan (Speed) *</label>
                   <input
                     type="text"
                     value={formData.speed}
                     onChange={(e) => setFormData({ ...formData, speed: e.target.value })}
-                    className={`w-full px-3 py-2 bg-[#080d19] border rounded-xl text-xs text-white focus:outline-none focus:border-blue-500 ${formErrors.speed ? 'border-red-500' : 'border-[#131d35]'}`}
+                    className={`w-full px-3 py-2 bg-slate-50 border rounded-xl text-xs text-slate-800 focus:outline-none focus:border-blue-500 ${formErrors.speed ? 'border-red-500' : 'border-slate-200'}`}
                   />
                   {formErrors.speed && <p className="text-red-500 text-[10px] mt-1">{formErrors.speed}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-gray-400 mb-1">Harga (Rp) *</label>
+                  <label className="block text-xs font-semibold text-slate-500 mb-1">Harga (Rp) *</label>
                   <input
                     type="number"
                     value={formData.price}
                     onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
-                    className={`w-full px-3 py-2 bg-[#080d19] border rounded-xl text-xs text-white focus:outline-none focus:border-blue-500 ${formErrors.price ? 'border-red-500' : 'border-[#131d35]'}`}
+                    className={`w-full px-3 py-2 bg-slate-50 border rounded-xl text-xs text-slate-800 focus:outline-none focus:border-blue-500 ${formErrors.price ? 'border-red-500' : 'border-slate-200'}`}
                   />
                   {formErrors.price && <p className="text-red-500 text-[10px] mt-1">{formErrors.price}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-gray-400 mb-1">Deskripsi</label>
+                  <label className="block text-xs font-semibold text-slate-500 mb-1">Deskripsi</label>
                   <textarea
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     rows={3}
-                    className="w-full px-3 py-2 bg-[#080d19] border border-[#131d35] rounded-xl text-xs text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-gray-400 mb-1">Status</label>
+                  <label className="block text-xs font-semibold text-slate-500 mb-1">Status</label>
                   <select
                     value={formData.status}
                     onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                    className="w-full px-3 py-2 bg-[#080d19] border border-[#131d35] rounded-xl text-xs text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-blue-500"
                   >
                     <option value="active">Aktif</option>
                     <option value="inactive">Non Aktif</option>
                   </select>
                 </div>
 
-                <div className="flex justify-end gap-2.5 pt-4 border-t border-[#131d35] mt-6">
+                <div className="flex justify-end gap-2.5 pt-4 border-t border-slate-200 mt-6">
                   <button
                     type="button"
                     onClick={() => setShowEditModal(false)}
                     disabled={formLoading}
-                    className="px-4 py-2 border border-[#131d35] hover:bg-[#121c38] rounded-xl text-xs font-semibold text-gray-400 hover:text-white transition-all disabled:opacity-50"
+                    className="px-4 py-2 border border-slate-200 hover:bg-slate-100 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-900 transition-all disabled:opacity-50"
                   >
                     Batal
                   </button>
@@ -1099,23 +1098,23 @@ export default function PackageManagementPage() {
         {/* ─── Delete Package Modal ───────────────────────────────────────── */}
         {showDeleteModal && selectedPackage && (
           <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl max-w-sm w-full overflow-hidden shadow-2xl">
+            <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs max-w-sm w-full overflow-hidden shadow-2xl">
               <div className="p-6 text-center space-y-4">
                 <div className="w-12 h-12 bg-red-500/10 border border-red-500/20 text-red-500 rounded-full flex items-center justify-center mx-auto">
                   <Trash2 size={24} />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-white">Hapus Package</h3>
-                  <p className="text-xs text-gray-400 mt-2">
+                  <h3 className="text-base font-bold text-slate-800">Hapus Package</h3>
+                  <p className="text-xs text-slate-500 mt-2">
                     Apakah Anda yakin ingin menghapus package <strong className="text-white">{selectedPackage.name}</strong>?
                   </p>
                 </div>
               </div>
-              <div className="flex justify-end gap-2.5 p-4 bg-[#101935]/40 border-t border-[#131d35]">
+              <div className="flex justify-end gap-2.5 p-4 bg-slate-50/40 border-t border-slate-200">
                 <button
                   onClick={() => setShowDeleteModal(false)}
                   disabled={formLoading}
-                  className="px-4 py-2 border border-[#131d35] hover:bg-[#121c38] rounded-xl text-xs font-semibold text-gray-400 hover:text-white transition-all disabled:opacity-50"
+                  className="px-4 py-2 border border-slate-200 hover:bg-slate-100 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-900 transition-all disabled:opacity-50"
                 >
                   Batal
                 </button>

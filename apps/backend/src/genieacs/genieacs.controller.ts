@@ -29,6 +29,19 @@ export class GenieacsController {
     return this.genieacsService.rebootDevice(id);
   }
 
+  @Get('devices/:id/optical')
+  async getOpticalPower(@Param('id') id: string) {
+    return this.genieacsService.getOpticalPower(id);
+  }
+
+  @Post('devices/:id/wifi')
+  async updateWifi(
+    @Param('id') id: string,
+    @Body() data: { ssid24?: string; password24?: string; ssid5?: string; password5?: string }
+  ) {
+    return this.genieacsService.updateWifi(id, data);
+  }
+
   @Post('devices/:id/factory-reset')
   async factoryReset(@Param('id') id: string) {
     return this.genieacsService.factoryReset(id);

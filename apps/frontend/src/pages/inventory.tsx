@@ -43,7 +43,7 @@ export default function Inventory() {
       setEquipment(equipmentData.equipment || []);
 
       // Fetch statistics
-      const statsRes = await fetch('${API_BASE_URL}/inventory/stats', {
+      const statsRes = await fetch(`${API_BASE_URL}/inventory/stats`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const statsData = await statsRes.json();
@@ -89,7 +89,7 @@ export default function Inventory() {
   const handleAddEquipment = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('${API_BASE_URL}/inventory/equipment', {
+      const response = await fetch(`${API_BASE_URL}/inventory/equipment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -262,13 +262,13 @@ export default function Inventory() {
               <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Serial Number</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Brand/Model</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Purchase Date</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase">Type</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase">Serial Number</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase">Brand/Model</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase">Status</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase">Customer</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase">Purchase Date</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
@@ -276,7 +276,7 @@ export default function Inventory() {
                     <tr key={item.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
-                          <Package className="h-5 w-5 text-gray-400 mr-2" />
+                          <Package className="h-5 w-5 text-slate-500 mr-2" />
                           <span className="font-medium text-gray-900">{item.type}</span>
                         </div>
                       </td>

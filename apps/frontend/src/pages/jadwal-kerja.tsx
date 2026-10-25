@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../components/Layout';
@@ -145,8 +146,8 @@ export default function JadwalKerja() {
       case 'morning': return 'bg-blue-100 text-blue-800';
       case 'afternoon': return 'bg-orange-100 text-orange-800';
       case 'night': return 'bg-purple-100 text-purple-800';
-      case 'off': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'off': return 'bg-gray-100 text-[var(--app-text)]';
+      default: return 'bg-gray-100 text-[var(--app-text)]';
     }
   };
 
@@ -157,14 +158,21 @@ export default function JadwalKerja() {
 
   return (
     <Layout>
-      <div className="p-8">
+      <div className="p-4 md:p-8 space-y-6">
+        <div className="flex items-center gap-2 text-xs text-[var(--app-muted)] font-mono mb-2">
+            <Link href="/" className="hover:text-[var(--app-text)]">AUDIRA</Link>
+            <span>/</span>
+            <Link href="/hrm-dashboard" className="hover:text-[var(--app-text)]">Human Resource Management</Link>
+            <span>/</span>
+            <span className="text-blue-500 font-semibold">Jadwal & Shift Kerja</span>
+          </div>
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+            <h1 className="text-3xl font-bold text-[var(--app-text)] flex items-center gap-3">
               <CalendarIcon className="text-purple-600" size={36} />
               Jadwal Kerja
             </h1>
-            <p className="text-gray-600 mt-1">Kelola jadwal shift karyawan</p>
+            <p className="text-[var(--app-muted)] mt-1">Kelola jadwal shift karyawan</p>
           </div>
           <div className="flex gap-3">
             <button
@@ -184,10 +192,10 @@ export default function JadwalKerja() {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+        <div className="bg-[var(--app-card)] rounded-xl shadow-lg p-6 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="text-sm font-medium text-gray-700 mb-2 block">Filter Karyawan:</label>
+              <label className="text-sm font-medium text-[var(--app-text)]/90 mb-2 block">Filter Karyawan:</label>
               <select
                 value={selectedEmployee}
                 onChange={(e) => setSelectedEmployee(e.target.value)}
@@ -202,7 +210,7 @@ export default function JadwalKerja() {
               </select>
             </div>
             <div>
-              <label className="text-sm font-medium text-gray-700 mb-2 block">Pilih Tanggal:</label>
+              <label className="text-sm font-medium text-[var(--app-text)]/90 mb-2 block">Pilih Tanggal:</label>
               <input
                 type="date"
                 value={selectedDate}
@@ -211,7 +219,7 @@ export default function JadwalKerja() {
               />
             </div>
             <div className="flex items-end">
-              <div className="text-gray-700">
+              <div className="text-[var(--app-text)]/90">
                 <p className="text-sm font-medium mb-1">Total Jadwal:</p>
                 <p className="text-2xl font-bold text-purple-600">{schedules.length}</p>
               </div>
@@ -221,32 +229,32 @@ export default function JadwalKerja() {
 
         <div className="grid grid-cols-1 gap-4">
           {loading ? (
-            <div className="bg-white rounded-xl shadow-lg p-12 text-center">Loading...</div>
+            <div className="bg-[var(--app-card)] rounded-xl shadow-lg p-12 text-center">Loading...</div>
           ) : schedules.length === 0 ? (
-            <div className="bg-white rounded-xl shadow-lg p-12 text-center">
-              <CalendarIcon size={48} className="mx-auto text-gray-400 mb-4" />
-              <p className="text-gray-600">Belum ada jadwal untuk tanggal ini</p>
+            <div className="bg-[var(--app-card)] rounded-xl shadow-lg p-12 text-center">
+              <CalendarIcon size={48} className="mx-auto text-[var(--app-muted)] mb-4" />
+              <p className="text-[var(--app-muted)]">Belum ada jadwal untuk tanggal ini</p>
             </div>
           ) : (
             schedules.map((schedule) => (
-              <div key={schedule.id} className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow">
+              <div key={schedule.id} className="bg-[var(--app-card)] rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
-                    <div className="h-12 w-12 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-white font-bold text-xl">
+                    <div className="h-12 w-12 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-[var(--app-text)] font-bold text-xl">
                       {schedule.employee?.fullName?.charAt(0) || '?'}
                     </div>
                     <div>
-                      <h3 className="text-lg font-bold text-gray-900">{schedule.employee?.fullName}</h3>
-                      <p className="text-sm text-gray-600">{schedule.employee?.department} - {schedule.employee?.position}</p>
+                      <h3 className="text-lg font-bold text-[var(--app-text)]">{schedule.employee?.fullName}</h3>
+                      <p className="text-sm text-[var(--app-muted)]">{schedule.employee?.department} - {schedule.employee?.position}</p>
                       <div className="flex items-center gap-4 mt-2">
                         <span className={`px-3 py-1 text-xs font-semibold rounded-full ${getShiftColor(schedule.shiftType)}`}>
                           {getShiftLabel(schedule.shiftType)}
                         </span>
-                        <span className="flex items-center gap-1 text-sm text-gray-600">
+                        <span className="flex items-center gap-1 text-sm text-[var(--app-muted)]">
                           <Clock size={16} />
                           {schedule.startTime} - {schedule.endTime}
                         </span>
-                        <span className="flex items-center gap-1 text-sm text-gray-600">
+                        <span className="flex items-center gap-1 text-sm text-[var(--app-muted)]">
                           <MapPin size={16} />
                           {schedule.location}
                         </span>
@@ -267,7 +275,7 @@ export default function JadwalKerja() {
                               </span>
                             )}
                             {schedule.attendance.checkOutTime && (
-                              <span className="text-xs text-gray-500">
+                              <span className="text-xs text-[var(--app-muted)]">
                                 (Pulang: {new Date(schedule.attendance.checkOutTime).toLocaleTimeString('id-ID', {
                                   hour: '2-digit',
                                   minute: '2-digit',
@@ -275,16 +283,16 @@ export default function JadwalKerja() {
                               </span>
                             )}
                             {schedule.attendance.workDuration && (
-                              <span className="text-xs text-gray-500">
+                              <span className="text-xs text-[var(--app-muted)]">
                                 - {Math.floor(schedule.attendance.workDuration / 60)}j {schedule.attendance.workDuration % 60}m
                               </span>
                             )}
                           </div>
                         ) : (
-                          <span className="text-xs text-gray-400 italic">Belum absen</span>
+                          <span className="text-xs text-[var(--app-muted)] italic">Belum absen</span>
                         )}
                       </div>
-                      <div className="text-sm text-gray-600 flex items-center gap-1 mt-2">
+                      <div className="text-sm text-[var(--app-muted)] flex items-center gap-1 mt-2">
                         <MapPin size={14} />
                         <span>{schedule.location}</span>
                       </div>
@@ -298,8 +306,8 @@ export default function JadwalKerja() {
                   </button>
                 </div>
                 {schedule.notes && (
-                  <div className="mt-4 pt-4 border-t border-gray-200">
-                    <p className="text-sm text-gray-600">{schedule.notes}</p>
+                  <div className="mt-4 pt-4 border-t border-[var(--app-border)]">
+                    <p className="text-sm text-[var(--app-muted)]">{schedule.notes}</p>
                   </div>
                 )}
               </div>
@@ -309,9 +317,9 @@ export default function JadwalKerja() {
 
         {showModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full">
+            <div className="bg-[var(--app-card)] rounded-xl shadow-2xl max-w-2xl w-full">
               <div className="bg-purple-600 px-6 py-4 flex justify-between items-center rounded-t-xl">
-                <h2 className="text-2xl font-bold text-white">Tambah Jadwal Kerja</h2>
+                <h2 className="text-2xl font-bold text-[var(--app-text)]">Tambah Jadwal Kerja</h2>
                 <button onClick={() => setShowModal(false)} className="text-white hover:bg-purple-700 p-2 rounded-lg">
                   <X size={24} />
                 </button>
@@ -319,7 +327,7 @@ export default function JadwalKerja() {
               <form onSubmit={handleSubmit} className="p-6">
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Karyawan *</label>
+                    <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">Karyawan *</label>
                     <select
                       required
                       value={formData.employeeId}
@@ -333,7 +341,7 @@ export default function JadwalKerja() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Tanggal *</label>
+                    <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">Tanggal *</label>
                     <input
                       type="date"
                       required
@@ -343,7 +351,7 @@ export default function JadwalKerja() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Shift *</label>
+                    <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">Shift *</label>
                     <select
                       required
                       value={formData.shiftType}
@@ -364,7 +372,7 @@ export default function JadwalKerja() {
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Jam Mulai</label>
+                      <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">Jam Mulai</label>
                       <input
                         type="time"
                         value={formData.startTime}
@@ -373,7 +381,7 @@ export default function JadwalKerja() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Jam Selesai</label>
+                      <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">Jam Selesai</label>
                       <input
                         type="time"
                         value={formData.endTime}
@@ -383,7 +391,7 @@ export default function JadwalKerja() {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Lokasi</label>
+                    <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">Lokasi</label>
                     <select
                       value={formData.location}
                       onChange={(e) => setFormData({ ...formData, location: e.target.value })}
@@ -395,7 +403,7 @@ export default function JadwalKerja() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Catatan</label>
+                    <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">Catatan</label>
                     <textarea
                       value={formData.notes}
                       onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
@@ -405,7 +413,7 @@ export default function JadwalKerja() {
                   </div>
                 </div>
                 <div className="flex justify-end gap-3 mt-6">
-                  <button type="button" onClick={() => setShowModal(false)} className="px-6 py-2 border rounded-lg hover:bg-gray-50">
+                  <button type="button" onClick={() => setShowModal(false)} className="px-6 py-2 border rounded-lg hover:bg-[var(--app-bg)]">
                     Batal
                   </button>
                   <button type="submit" className="flex items-center gap-2 px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
@@ -420,9 +428,9 @@ export default function JadwalKerja() {
 
         {showBulkModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-[var(--app-card)] rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
               <div className="bg-green-600 px-6 py-4 flex justify-between items-center rounded-t-xl sticky top-0">
-                <h2 className="text-2xl font-bold text-white">Buat Jadwal Bulk</h2>
+                <h2 className="text-2xl font-bold text-[var(--app-text)]">Buat Jadwal Bulk</h2>
                 <button onClick={() => setShowBulkModal(false)} className="text-white hover:bg-green-700 p-2 rounded-lg">
                   <X size={24} />
                 </button>
@@ -437,7 +445,7 @@ export default function JadwalKerja() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Tanggal Mulai *</label>
+                      <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">Tanggal Mulai *</label>
                       <input
                         type="date"
                         required
@@ -447,7 +455,7 @@ export default function JadwalKerja() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Tanggal Selesai *</label>
+                      <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">Tanggal Selesai *</label>
                       <input
                         type="date"
                         required
@@ -459,7 +467,7 @@ export default function JadwalKerja() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Shift *</label>
+                    <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">Shift *</label>
                     <select
                       required
                       value={bulkData.shiftType}
@@ -480,7 +488,7 @@ export default function JadwalKerja() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Jam Mulai</label>
+                      <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">Jam Mulai</label>
                       <input
                         type="time"
                         value={bulkData.startTime}
@@ -489,7 +497,7 @@ export default function JadwalKerja() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Jam Selesai</label>
+                      <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">Jam Selesai</label>
                       <input
                         type="time"
                         value={bulkData.endTime}
@@ -500,7 +508,7 @@ export default function JadwalKerja() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Lokasi</label>
+                    <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">Lokasi</label>
                     <select
                       value={bulkData.location}
                       onChange={(e) => setBulkData({ ...bulkData, location: e.target.value })}
@@ -513,12 +521,12 @@ export default function JadwalKerja() {
                   </div>
 
                   <div className="border-t pt-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-3">
+                    <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-3">
                       Pilih Karyawan * ({bulkData.employeeIds.length} dipilih)
                     </label>
                     <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto border rounded-lg p-3">
                       {employees.map(emp => (
-                        <label key={emp.id} className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer">
+                        <label key={emp.id} className="flex items-center gap-2 p-2 hover:bg-[var(--app-bg)] rounded cursor-pointer">
                           <input
                             type="checkbox"
                             checked={bulkData.employeeIds.includes(emp.id)}
@@ -533,7 +541,7 @@ export default function JadwalKerja() {
                 </div>
 
                 <div className="flex justify-end gap-3 mt-6">
-                  <button type="button" onClick={() => setShowBulkModal(false)} className="px-6 py-2 border rounded-lg hover:bg-gray-50">
+                  <button type="button" onClick={() => setShowBulkModal(false)} className="px-6 py-2 border rounded-lg hover:bg-[var(--app-bg)]">
                     Batal
                   </button>
                   <button type="submit" className="flex items-center gap-2 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">

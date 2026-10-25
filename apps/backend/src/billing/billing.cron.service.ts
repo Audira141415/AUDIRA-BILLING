@@ -76,11 +76,11 @@ export class BillingCronService {
     this.logger.log('Starting payment reminder notifications...');
 
     try {
-      // Reminder for invoices due in 3 days
+      // 1. Reminder for invoices due in 3 days (H-3 dengan Link Bayar Instan)
       const dueIn3Days = await this.billingService.getInvoicesDueIn(3);
       for (const invoice of dueIn3Days) {
-        // Send WhatsApp
-        await this.whatsappService.sendPaymentReminder(invoice.customer, invoice, 3);
+        // Send WhatsApp H-3 via Fonnte Engine
+        await this.whatsappService.sendHMinus3Reminder(invoice.customer, invoice);
         
         // Send Email
         if (invoice.customer.email) {
@@ -94,9 +94,9 @@ export class BillingCronService {
           });
         }
       }
-      this.logger.log(`Sent ${dueIn3Days.length} reminders for invoices due in 3 days`);
+      this.logger.log(`Sent ${dueIn3Days.length} H-3 reminders for invoices due in 3 days`);
 
-      // Reminder for invoices due in 1 day
+      // 2. Reminder for invoices due in 1 day (H-1)
       const dueIn1Day = await this.billingService.getInvoicesDueIn(1);
       for (const invoice of dueIn1Day) {
         await this.whatsappService.sendPaymentReminder(invoice.customer, invoice, 1);
@@ -114,10 +114,11 @@ export class BillingCronService {
       }
       this.logger.log(`Sent ${dueIn1Day.length} reminders for invoices due in 1 day`);
 
-      // Reminder for invoices due today
+      // 3. Reminder for invoices due today (Hari H dengan QRIS Dinamis Langsung di Chat)
       const dueToday = await this.billingService.getInvoicesDueIn(0);
       for (const invoice of dueToday) {
-        await this.whatsappService.sendPaymentReminder(invoice.customer, invoice, 0);
+        // Send WhatsApp Hari-H with QRIS via Fonnte Engine
+        await this.whatsappService.sendHariHReminder(invoice.customer, invoice);
         
         if (invoice.customer.email) {
           await this.emailService.sendPaymentReminder({
@@ -130,7 +131,7 @@ export class BillingCronService {
           });
         }
       }
-      this.logger.log(`Sent ${dueToday.length} reminders for invoices due today`);
+      this.logger.log(`Sent ${dueToday.length} Hari-H QRIS reminders for invoices due today`);
     } catch (error) {
       this.logger.error('Failed to send payment reminders:', error.message);
     }
@@ -190,5 +191,101 @@ export class BillingCronService {
   async manualSendReminders() {
     this.logger.log('Manual reminder send triggered');
     await this.sendPaymentReminders();
+  }
+
+  async manualSendH3Reminders() {
+    this.logger.log('[Manual Trigger] Mengirim WhatsApp H-3 ke pelanggan due in 3 days...');
+    const dueIn3Days = await this.billingService.getInvoicesDueIn(3);
+    const results = [];
+    for (const invoice of dueIn3Days) {
+      const res = await this.whatsappService.sendHMinus3Reminder(invoice.customer, invoice);
+      results.push({ customer: invoice.customer.name, phone: invoice.customer.phone, status: res });
+    }
+    return { count: dueIn3Days.length, results };
+  }
+
+  async manualSendHariHReminders() {
+    this.logger.log('[Manual Trigger] Mengirim WhatsApp Hari-H QRIS ke pelanggan due today...');
+    const dueToday = await this.billingService.getInvoicesDueIn(0);
+    const results = [];
+    for (const invoice of dueToday) {
+      const res = await this.whatsappService.sendHariHReminder(invoice.customer, invoice);
+      results.push({ customer: invoice.customer.name, phone: invoice.customer.phone, status: res });
+    }
+    return { count: dueToday.length, results };
+  }
+
+  /**
+   * Cek Otomatis Janji Bayar yang Kedaluwarsa (Setiap 30 Menit)
+   * Mengembalikan pelanggan ke mode ISOLIR jika lewat batas waktu belum bayar!
+   */
+  @Cron('*/30 * * * *', {
+    name: 'check-expired-grace-periods',
+    timeZone: 'Asia/Jakarta',
+  })
+  async checkExpiredGracePeriods() {
+    try {
+      this.logger.log('[Janji Bayar Cron] Memeriksa masa dispensasi pelanggan...');
+      const now = new Date();
+
+      const expiredCustomers = await this.prisma.customer.findMany({
+        where: {
+          isGracePeriod: true,
+          promiseDate: {
+            lt: now,
+          },
+        },
+        include: {
+          invoices: {
+            where: {
+              status: { in: ['UNPAID', 'OVERDUE', 'pending'] },
+            },
+          },
+        },
+      });
+
+      for (const customer of expiredCustomers) {
+        if (customer.invoices.length > 0) {
+          this.logger.warn(`[Janji Bayar Expired] Pelanggan ${customer.name} belum membayar setelah batas waktu dispensasi. Mengisolir kembali...`);
+          
+          await this.prisma.customer.update({
+            where: { id: customer.id },
+            data: {
+              isGracePeriod: false,
+              status: 'suspended',
+            },
+          });
+
+          // Kick sesi agar masuk ke walled garden
+          const username = customer.internetNumber || customer.phone || customer.email || '';
+          if (username) {
+            try {
+              await this.billingService.suspendService(customer.id, 'Batas janji bayar telah terlewati');
+            } catch (e) {}
+          }
+
+          // Kirim notifikasi peringatan WhatsApp
+          try {
+            await this.whatsappService.sendMessage({
+              phone: customer.phone,
+              message:
+                `⚠️ *PEMBERITAHUAN: DISPENSASI JANJI BAYAR TELAH BERAKHIR*\n\n` +
+                `Halo *${customer.name}*,\n` +
+                `Batas waktu dispensasi janji bayar Anda telah berakhir dan sistem belum mendeteksi pembayaran tagihan Anda.\n\n` +
+                `Layanan internet Anda telah dialihkan kembali ke status *ISOLIR*. Mohon segera lakukan pembayaran agar internet langsung aktif kembali seketika (Auto-CoA).\n\n` +
+                `Terima kasih.\n*AUDIRA Digital Network*`,
+            });
+          } catch (err) {}
+        } else {
+          // Tagihan sudah lunas, hapus flag dispensasi
+          await this.prisma.customer.update({
+            where: { id: customer.id },
+            data: { isGracePeriod: false },
+          });
+        }
+      }
+    } catch (err: any) {
+      this.logger.error('Error saat memeriksa expired grace periods:', err.message);
+    }
   }
 }

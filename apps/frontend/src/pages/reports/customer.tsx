@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import {
@@ -79,7 +80,7 @@ function KpiCard({ icon: Icon, iconColor, iconBg, label, value, change, up }: {
   label: string; value: string; change: string; up: boolean;
 }) {
   return (
-    <div className="bg-[#0b1329] border border-[#131d35] rounded-xl p-3 flex flex-col gap-2 min-w-0">
+    <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-3 flex flex-col gap-2 min-w-0">
       <div className="flex items-center justify-between">
         <div className={`p-2 rounded-lg border ${iconBg}`} style={{ borderColor: iconColor + '25' }}>
           <Icon size={14} style={{ color: iconColor }} />
@@ -89,9 +90,9 @@ function KpiCard({ icon: Icon, iconColor, iconBg, label, value, change, up }: {
         </span>
       </div>
       <div>
-        <p className="text-[8px] text-gray-500 font-bold uppercase tracking-wider">{label}</p>
-        <p className="text-lg font-black text-white mt-0.5 leading-tight">{value}</p>
-        <p className="text-[8px] text-gray-500 mt-0.5">dari Mei 2026</p>
+        <p className="text-[8px] text-[var(--app-muted)] font-bold uppercase tracking-wider">{label}</p>
+        <p className="text-lg font-black text-[var(--app-text)] mt-0.5 leading-tight">{value}</p>
+        <p className="text-[8px] text-[var(--app-muted)] mt-0.5">dari Mei 2026</p>
       </div>
     </div>
   );
@@ -114,17 +115,17 @@ function DonutChart({ data, total, label, size = 135 }: {
           </PieChart>
         </ResponsiveContainer>
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <p className="text-sm font-black text-white leading-none">{total}</p>
-          <p className="text-[6px] text-gray-500 font-bold uppercase mt-0.5">{label}</p>
+          <p className="text-sm font-black text-[var(--app-text)] leading-none">{total}</p>
+          <p className="text-[6px] text-[var(--app-muted)] font-bold uppercase mt-0.5">{label}</p>
         </div>
       </div>
       <div className="space-y-2 flex-1 min-w-0">
         {data.map((d, i) => (
           <div key={i} className="flex items-center gap-1.5 text-[8px]">
             <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: d.color }} />
-            <span className="text-gray-400 truncate flex-1">{d.name}</span>
-            <span className="text-white font-bold shrink-0">{d.pct}</span>
-            <span className="text-gray-500 shrink-0 w-10 text-right">{fmt(d.value)}</span>
+            <span className="text-[var(--app-muted)] truncate flex-1">{d.name}</span>
+            <span className="text-[var(--app-text)] font-bold shrink-0">{d.pct}</span>
+            <span className="text-[var(--app-muted)] shrink-0 w-10 text-right">{fmt(d.value)}</span>
           </div>
         ))}
       </div>
@@ -172,21 +173,21 @@ function TabRingkasan() {
           {/* Row 1: Growth + Paket Donut + Area Bar */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Pertumbuhan Customer */}
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-xl p-4 space-y-2">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4 space-y-2">
               <div className="flex justify-between items-center">
-                <h4 className="text-xs font-bold text-white">Pertumbuhan Customer</h4>
-                <select className="bg-[#080d19] border border-[#131d35] text-[8px] py-0.5 px-1.5 rounded text-gray-300 focus:outline-none">
+                <h4 className="text-xs font-bold text-[var(--app-text)]">Pertumbuhan Customer</h4>
+                <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-[8px] py-0.5 px-1.5 rounded text-[var(--app-text)]/80 focus:outline-none">
                   <option>6 Bulan Terakhir</option>
                 </select>
               </div>
               <div className="flex gap-2 text-[7px] font-bold flex-wrap">
                 {[['Total Customer','#3b82f6'],['New Customer','#10b981'],['Churned','#ef4444']].map(([l,c]) => (
-                  <span key={l} className="flex items-center gap-1"><span className="w-2 h-0.5 inline-block" style={{ backgroundColor: c }} /><span className="text-gray-400">{l}</span></span>
+                  <span key={l} className="flex items-center gap-1"><span className="w-2 h-0.5 inline-block" style={{ backgroundColor: c }} /><span className="text-[var(--app-muted)]">{l}</span></span>
                 ))}
               </div>
               <ResponsiveContainer width="100%" height={180}>
                 <LineChart data={growthTrend}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#131d35" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                   <XAxis dataKey="month" tick={{ fontSize: 8, fill: '#6b7280' }} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fontSize: 8, fill: '#6b7280' }} axisLine={false} tickLine={false}
                     tickFormatter={v => v >= 1000 ? `${(v / 1000).toFixed(0)}K` : String(v)} />
@@ -199,20 +200,20 @@ function TabRingkasan() {
             </div>
 
             {/* Customer by Paket */}
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-xl p-4 space-y-3">
-              <h4 className="text-xs font-bold text-white">Customer by Paket</h4>
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4 space-y-3">
+              <h4 className="text-xs font-bold text-[var(--app-text)]">Customer by Paket</h4>
               <DonutChart data={paketData} total="12.845" label="Total Customer" size={130} />
-              <div className="space-y-1.5 border-t border-[#131d35] pt-2">
+              <div className="space-y-1.5 border-t border-[var(--app-border)] pt-2">
                 {paketData.map((d, i) => (
                   <div key={i} className="space-y-0.5">
                     <div className="flex justify-between text-[8px]">
                       <span className="flex items-center gap-1.5">
                         <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: d.color }} />
-                        <span className="text-gray-400">{d.name}</span>
+                        <span className="text-[var(--app-muted)]">{d.name}</span>
                       </span>
-                      <span className="text-white font-bold">{d.pct} — {fmt(d.value)}</span>
+                      <span className="text-[var(--app-text)] font-bold">{d.pct} — {fmt(d.value)}</span>
                     </div>
-                    <div className="h-1 bg-[#131d35] rounded-full overflow-hidden">
+                    <div className="h-1 bg-[var(--app-border)]/20 rounded-full overflow-hidden">
                       <div className="h-full rounded-full" style={{ width: d.pct, backgroundColor: d.color }} />
                     </div>
                   </div>
@@ -221,16 +222,16 @@ function TabRingkasan() {
             </div>
 
             {/* Customer by Area */}
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-xl p-4 space-y-3">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4 space-y-3">
               <div className="flex justify-between items-center">
-                <h4 className="text-xs font-bold text-white">Customer by Area</h4>
-                <select className="bg-[#080d19] border border-[#131d35] text-[8px] py-0.5 px-1.5 rounded text-gray-300 focus:outline-none">
+                <h4 className="text-xs font-bold text-[var(--app-text)]">Customer by Area</h4>
+                <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-[8px] py-0.5 px-1.5 rounded text-[var(--app-text)]/80 focus:outline-none">
                   <option>Top 10 Area</option>
                 </select>
               </div>
               <ResponsiveContainer width="100%" height={210}>
                 <BarChart data={areaBarData} barSize={14}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#131d35" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                   <XAxis dataKey="name" tick={{ fontSize: 7, fill: '#6b7280' }} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fontSize: 7, fill: '#6b7280' }} axisLine={false} tickLine={false}
                     tickFormatter={v => v >= 1000 ? `${(v / 1000).toFixed(0)}K` : String(v)} />
@@ -246,28 +247,28 @@ function TabRingkasan() {
           </div>
 
           {/* Detail Customer Table */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-xl p-4 space-y-4">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4 space-y-4">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-              <h4 className="text-xs font-bold text-white">Daftar Customer <span className="text-gray-500 font-normal">(Ringkasan)</span></h4>
+              <h4 className="text-xs font-bold text-[var(--app-text)]">Daftar Customer <span className="text-[var(--app-muted)] font-normal">(Ringkasan)</span></h4>
               <div className="flex items-center gap-2">
                 <div className="relative">
-                  <Search size={11} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <Search size={11} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--app-muted)]" />
                   <input type="text" placeholder="Cari paket, area..."
                     value={search} onChange={e => setSearch(e.target.value)}
-                    className="bg-[#080d19] border border-[#131d35] text-[9px] pl-7 pr-3 py-1.5 rounded-lg text-white focus:outline-none focus:border-blue-500 w-40" />
+                    className="bg-[var(--app-bg)] border border-[var(--app-border)] text-[9px] pl-7 pr-3 py-1.5 rounded-lg text-[var(--app-text)] focus:outline-none focus:border-blue-500 w-40" />
                 </div>
                 <button className="flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white text-[9px] font-bold px-2.5 py-1.5 rounded-lg transition-colors">
                   <Filter size={10} /> Filter
                 </button>
-                <button className="p-1.5 bg-[#080d19] border border-[#131d35] rounded-lg text-gray-400 hover:bg-[#121c38]"><BarChart2 size={12} /></button>
-                <button className="p-1.5 bg-[#080d19] border border-[#131d35] rounded-lg text-gray-400 hover:bg-[#121c38]"><FileText size={12} /></button>
+                <button className="p-1.5 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-[var(--app-muted)] hover:bg-[var(--app-border)]/30"><BarChart2 size={12} /></button>
+                <button className="p-1.5 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-[var(--app-muted)] hover:bg-[var(--app-border)]/30"><FileText size={12} /></button>
               </div>
             </div>
 
-            <div className="overflow-x-auto rounded-xl border border-[#131d35]">
-              <table className="w-full text-left border-collapse text-[9px] text-gray-300 min-w-[950px]">
+            <div className="overflow-x-auto rounded-xl border border-[var(--app-border)]">
+              <table className="w-full text-left border-collapse text-[9px] text-[var(--app-text)]/80 min-w-[950px]">
                 <thead>
-                  <tr className="border-b border-[#131d35] bg-[#101935]/60 text-gray-400 font-bold uppercase">
+                  <tr className="border-b border-[var(--app-border)] bg-[var(--app-border)]/20 text-[var(--app-muted)] font-bold uppercase">
                     <th className="px-3 py-2.5">No</th>
                     <th className="px-3 py-2.5">Paket</th>
                     <th className="px-3 py-2.5 text-right">Total Customer</th>
@@ -282,15 +283,15 @@ function TabRingkasan() {
                     <th className="px-3 py-2.5 text-center">Aksi</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#131d35]">
+                <tbody className="divide-y divide-[var(--app-border)]">
                   {filtered.map(row => (
-                    <tr key={row.no} className="hover:bg-[#121c38]/40 transition-colors">
-                      <td className="px-3 py-2.5 text-gray-500 font-bold">{row.no}</td>
-                      <td className="px-3 py-2.5 font-bold text-white">{row.paket}</td>
+                    <tr key={row.no} className="hover:bg-[var(--app-border)]/20 transition-colors">
+                      <td className="px-3 py-2.5 text-[var(--app-muted)] font-bold">{row.no}</td>
+                      <td className="px-3 py-2.5 font-bold text-[var(--app-text)]">{row.paket}</td>
                       <td className="px-3 py-2.5 text-right">
                         <div>
-                          <span className="font-bold text-white">{fmt(row.totalCustomer)}</span>
-                          <span className="text-gray-500 ml-1">({row.pctTotal})</span>
+                          <span className="font-bold text-[var(--app-text)]">{fmt(row.totalCustomer)}</span>
+                          <span className="text-[var(--app-muted)] ml-1">({row.pctTotal})</span>
                         </div>
                       </td>
                       <td className="px-3 py-2.5 text-right font-bold text-green-400">{fmt(row.aktif)}</td>
@@ -298,8 +299,8 @@ function TabRingkasan() {
                       <td className="px-3 py-2.5 text-right text-blue-400 font-bold">{row.newCustomer}</td>
                       <td className="px-3 py-2.5 text-right text-red-400 font-bold">{row.churned}</td>
                       <td className="px-3 py-2.5 text-right text-purple-400">{row.reaktivasi}</td>
-                      <td className="px-3 py-2.5 text-right font-bold text-white">{fmtRp(row.arpu)}</td>
-                      <td className="px-3 py-2.5 text-right text-gray-300">{row.avgUmur} Bulan</td>
+                      <td className="px-3 py-2.5 text-right font-bold text-[var(--app-text)]">{fmtRp(row.arpu)}</td>
+                      <td className="px-3 py-2.5 text-right text-[var(--app-text)]/80">{row.avgUmur} Bulan</td>
                       <td className="px-3 py-2.5 text-right">
                         <span className={`font-bold text-xs ${row.churnRate < 1.0 ? 'text-green-400' : row.churnRate < 1.5 ? 'text-yellow-400' : 'text-red-400'}`}>
                           {row.churnRate}%
@@ -307,24 +308,24 @@ function TabRingkasan() {
                       </td>
                       <td className="px-3 py-2.5">
                         <div className="flex items-center justify-center gap-1.5">
-                          <button className="p-1 hover:bg-[#1a2a4a] rounded text-gray-400 hover:text-blue-400 transition-colors"><Eye size={11} /></button>
-                          <button className="p-1 hover:bg-[#1a2a4a] rounded text-gray-400 hover:text-green-400 transition-colors"><Download size={11} /></button>
-                          <button className="p-1 hover:bg-[#1a2a4a] rounded text-gray-400 transition-colors"><MoreVertical size={11} /></button>
+                          <button className="p-1 hover:bg-[var(--app-border)]/30 rounded text-[var(--app-muted)] hover:text-blue-400 transition-colors"><Eye size={11} /></button>
+                          <button className="p-1 hover:bg-[var(--app-border)]/30 rounded text-[var(--app-muted)] hover:text-green-400 transition-colors"><Download size={11} /></button>
+                          <button className="p-1 hover:bg-[var(--app-border)]/30 rounded text-[var(--app-muted)] transition-colors"><MoreVertical size={11} /></button>
                         </div>
                       </td>
                     </tr>
                   ))}
                   {/* Total Row */}
-                  <tr className="bg-[#101935]/60 font-bold border-t-2 border-blue-500/30">
-                    <td className="px-3 py-2.5 text-gray-400 font-black" colSpan={2}>TOTAL</td>
-                    <td className="px-3 py-2.5 text-right text-white font-black">{fmt(totals.total)} (100%)</td>
+                  <tr className="bg-[var(--app-border)]/20 font-bold border-t-2 border-blue-500/30">
+                    <td className="px-3 py-2.5 text-[var(--app-muted)] font-black" colSpan={2}>TOTAL</td>
+                    <td className="px-3 py-2.5 text-right text-[var(--app-text)] font-black">{fmt(totals.total)} (100%)</td>
                     <td className="px-3 py-2.5 text-right text-green-400 font-black">{fmt(totals.aktif)}</td>
                     <td className="px-3 py-2.5 text-right text-yellow-400 font-black">{totals.nonAktif}</td>
                     <td className="px-3 py-2.5 text-right text-blue-400 font-black">{totals.new}</td>
                     <td className="px-3 py-2.5 text-right text-red-400 font-black">{totals.churned}</td>
                     <td className="px-3 py-2.5 text-right text-purple-400 font-black">{totals.reaktivasi}</td>
-                    <td className="px-3 py-2.5 text-right text-white font-black">Rp 126.840</td>
-                    <td className="px-3 py-2.5 text-right text-white font-black">18.7 Bulan</td>
+                    <td className="px-3 py-2.5 text-right text-[var(--app-text)] font-black">Rp 126.840</td>
+                    <td className="px-3 py-2.5 text-right text-[var(--app-text)] font-black">18.7 Bulan</td>
                     <td className="px-3 py-2.5 text-right text-yellow-400 font-black">1.32%</td>
                     <td></td>
                   </tr>
@@ -334,12 +335,12 @@ function TabRingkasan() {
 
             {/* Pagination */}
             <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
-              <p className="text-[9px] text-gray-500">Menampilkan 1 - {filtered.length} dari {filtered.length} data</p>
+              <p className="text-[9px] text-[var(--app-muted)]">Menampilkan 1 - {filtered.length} dari {filtered.length} data</p>
               <div className="flex items-center gap-1.5">
-                <button className="p-1.5 bg-[#080d19] border border-[#131d35] rounded-lg text-gray-400"><ChevronLeft size={11} /></button>
+                <button className="p-1.5 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-[var(--app-muted)]"><ChevronLeft size={11} /></button>
                 <button className="w-6 h-6 text-[9px] rounded-md font-bold bg-blue-600 text-white">1</button>
-                <button className="p-1.5 bg-[#080d19] border border-[#131d35] rounded-lg text-gray-400"><ChevronRight size={11} /></button>
-                <select className="bg-[#080d19] border border-[#131d35] text-[9px] py-1.5 px-2 rounded-lg text-gray-300 focus:outline-none">
+                <button className="p-1.5 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-[var(--app-muted)]"><ChevronRight size={11} /></button>
+                <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-[9px] py-1.5 px-2 rounded-lg text-[var(--app-text)]/80 focus:outline-none">
                   <option>10 / halaman</option>
                   <option>25 / halaman</option>
                 </select>
@@ -351,8 +352,8 @@ function TabRingkasan() {
         {/* Right 3 cols */}
         <div className="lg:col-span-3 space-y-4">
           {/* Ringkasan Customer */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-xl p-4 space-y-2">
-            <h4 className="text-[9px] font-bold uppercase tracking-wider text-gray-400">Ringkasan Customer</h4>
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4 space-y-2">
+            <h4 className="text-[9px] font-bold uppercase tracking-wider text-[var(--app-muted)]">Ringkasan Customer</h4>
             <div className="space-y-2">
               {[
                 { label: 'Total Customer', value: '12.845', color: 'text-white' },
@@ -364,8 +365,8 @@ function TabRingkasan() {
                 { label: 'Rasio Aktivasi', value: '92.73%', color: 'text-green-400' },
                 { label: 'Rasio Retensi', value: '98.68%', color: 'text-green-400' },
               ].map((r, i) => (
-                <div key={i} className="flex justify-between items-center text-[9px] border-b border-[#131d35] pb-1.5 last:border-0 last:pb-0">
-                  <span className="text-gray-400">{r.label}</span>
+                <div key={i} className="flex justify-between items-center text-[9px] border-b border-[var(--app-border)] pb-1.5 last:border-0 last:pb-0">
+                  <span className="text-[var(--app-muted)]">{r.label}</span>
                   <span className={`font-bold ${r.color}`}>{r.value}</span>
                 </div>
               ))}
@@ -373,12 +374,12 @@ function TabRingkasan() {
           </div>
 
           {/* Filter Cepat */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-xl p-4 space-y-3">
-            <h4 className="text-[9px] font-bold uppercase tracking-wider text-gray-400">Filter Cepat</h4>
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4 space-y-3">
+            <h4 className="text-[9px] font-bold uppercase tracking-wider text-[var(--app-muted)]">Filter Cepat</h4>
             <div className="grid grid-cols-2 gap-1">
               {FILTER_BTNS.map(f => (
                 <button key={f.label} onClick={() => setActiveFilter(f.label)}
-                  className={`text-[7px] font-bold py-1.5 px-1 rounded-lg border transition-all text-center truncate leading-tight ${activeFilter === f.label ? f.bg + ' ' + f.color : 'bg-[#080d19] border-[#131d35] text-gray-500 hover:bg-[#121c38]'}`}>
+                  className={`text-[7px] font-bold py-1.5 px-1 rounded-lg border transition-all text-center truncate leading-tight ${activeFilter === f.label ? f.bg + ' ' + f.color : 'bg-[var(--app-bg)] border-[var(--app-border)] text-[var(--app-muted)] hover:bg-[var(--app-border)]/30'}`}>
                   {f.label}
                 </button>
               ))}
@@ -391,8 +392,8 @@ function TabRingkasan() {
                 { label: 'Status', opt: 'Semua Status' },
               ].map(f => (
                 <div key={f.label} className="space-y-0.5">
-                  <span className="text-[7px] text-gray-500 font-bold uppercase">{f.label}</span>
-                  <select className="w-full bg-[#080d19] border border-[#131d35] text-[8px] py-1.5 px-2 rounded-lg text-white focus:outline-none">
+                  <span className="text-[10px] text-[var(--app-text-muted)] font-semibold uppercase">{f.label}</span>
+                  <select className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-1.5 px-2 rounded-lg text-[var(--app-text)] focus:outline-none focus:border-blue-500">
                     <option>{f.opt}</option>
                   </select>
                 </div>
@@ -404,15 +405,15 @@ function TabRingkasan() {
           </div>
 
           {/* Aksi Cepat */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-xl p-4 space-y-2">
-            <h4 className="text-[9px] font-bold uppercase tracking-wider text-gray-400">Aksi Cepat</h4>
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4 space-y-2">
+            <h4 className="text-[9px] font-bold uppercase tracking-wider text-[var(--app-muted)]">Aksi Cepat</h4>
             {[
               { label: 'Lihat Detail Customer', icon: Eye, color: 'text-blue-400' },
               { label: 'Kirim Campaign', icon: Send, color: 'text-cyan-400' },
               { label: 'Export Customer List', icon: FileSpreadsheet, color: 'text-green-400' },
               { label: 'Tambah Customer', icon: PlusCircle, color: 'text-purple-400' },
             ].map(a => (
-              <button key={a.label} className="w-full flex items-center justify-between gap-2 bg-[#080d19] border border-[#131d35] hover:bg-[#121c38] p-2 rounded-lg text-[8px] font-semibold text-gray-300 transition-all group">
+              <button key={a.label} className="w-full flex items-center justify-between gap-2 bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 p-2 rounded-lg text-[8px] font-semibold text-[var(--app-text)]/80 transition-all group">
                 <span className="flex items-center gap-2">
                   <a.icon size={11} className={a.color} />
                   <span className="text-left">{a.label}</span>
@@ -423,8 +424,8 @@ function TabRingkasan() {
           </div>
 
           {/* Insight */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-xl p-4 space-y-3">
-            <h4 className="text-[9px] font-bold uppercase tracking-wider text-gray-400">Insight & Rekomendasi</h4>
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4 space-y-3">
+            <h4 className="text-[9px] font-bold uppercase tracking-wider text-[var(--app-muted)]">Insight & Rekomendasi</h4>
             <div className="space-y-2">
               {[
                 { text: "Pertumbuhan customer naik 7.81% dibanding periode sebelumnya.", color: 'text-green-400', bg: 'bg-green-500/10 border-green-500/20' },
@@ -437,7 +438,7 @@ function TabRingkasan() {
                 </div>
               ))}
             </div>
-            <button className="w-full text-center text-[9px] font-bold text-blue-400 hover:text-blue-300 flex items-center justify-center gap-1 border-t border-[#131d35] pt-2">
+            <button className="w-full text-center text-[9px] font-bold text-blue-400 hover:text-blue-300 flex items-center justify-center gap-1 border-t border-[var(--app-border)] pt-2">
               Lihat Insight Lengkap <ArrowUpRight size={10} />
             </button>
           </div>
@@ -449,7 +450,7 @@ function TabRingkasan() {
 
 function TabPlaceholder({ name }: { name: string }) {
   return (
-    <div className="flex flex-col items-center justify-center py-20 text-gray-500 space-y-3">
+    <div className="flex flex-col items-center justify-center py-20 text-[var(--app-muted)] space-y-3">
       <BarChart2 size={40} className="text-gray-700" />
       <p className="text-sm font-bold">Tab <span className="text-blue-400">{name}</span> sedang dalam pengembangan</p>
     </div>
@@ -467,49 +468,33 @@ export default function CustomerReportPage() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-[#070c19] text-gray-200 p-4 md:p-5 space-y-4">
+      <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] p-4 md:p-6 space-y-6">
 
-        {/* Header */}
-        <div className="flex flex-col xl:flex-row justify-between items-start gap-3 border-b border-[#131d35] pb-4">
-          <div>
-            <div className="flex items-center gap-1.5 text-[9px] text-gray-400 font-semibold mb-1">
-              <span>Finance</span><span className="text-gray-600">›</span>
-              <span>Reports</span><span className="text-gray-600">›</span>
-              <span className="text-blue-400">Customer Report</span>
+        {/* ─── Swiss B2B Reports Header ────────────────────────────────────────────── */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-[var(--app-border)] pb-5 mb-5">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 text-xs text-[var(--app-muted)] font-mono mb-1">
+              <Link href="/" className="hover:text-[var(--app-text)]">AUDIRA</Link>
+              <span>/</span>
+              <Link href="/reports" className="hover:text-[var(--app-text)]">Laporan & Analitik</Link>
+              <span>/</span>
+              <span className="text-indigo-400 font-semibold">Laporan Pelanggan</span>
             </div>
-            <h1 className="text-xl font-black text-white tracking-tight">Customer Report</h1>
-            <p className="text-[10px] text-gray-400 mt-0.5">Laporan lengkap mengenai pelanggan, pertumbuhan, aktivasi, churn dan nilai pelanggan.</p>
+            <h1 className="text-xl md:text-2xl font-bold tracking-tight text-[var(--app-text)]">
+              Analitik & Pertumbuhan Pelanggan (Customer Report)
+            </h1>
+            <p className="text-xs text-[var(--app-muted)]">
+              Laporan lengkap retensi pelanggan, akuisisi baru, churn rate bulanan, dan nilai rata-rata per pengguna (ARPU).
+            </p>
           </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="flex items-center gap-2 bg-[#0b1329] border border-[#131d35] px-3 py-1.5 rounded-lg">
-              <Calendar size={11} className="text-blue-400" />
-              <span className="text-[9px] text-gray-300">01 Jul 2026 · 08:35 WIB</span>
-            </div>
-            <div className="flex items-center gap-1.5 bg-[#0b1329] border border-[#131d35] px-3 py-1.5 rounded-lg">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-              <span className="text-[9px] text-green-400 font-bold">Status Sistem</span>
-              <span className="text-[9px] text-gray-400">Normal</span>
-            </div>
-            <div className="relative hidden lg:block">
-              <Search size={11} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
-              <input type="text" placeholder="Cari invoice, customer, transaksi..."
-                className="bg-[#0b1329] border border-[#131d35] text-[9px] pl-8 pr-3 py-1.5 rounded-lg text-white focus:outline-none focus:border-blue-500 w-52" />
-            </div>
-            <button className="relative p-1.5 bg-[#0b1329] border border-[#131d35] rounded-lg text-gray-400">
-              <Bell size={13} />
-              <span className="absolute -top-1 -right-1 bg-red-500 text-[7px] text-white w-3.5 h-3.5 rounded-full flex items-center justify-center font-bold">13</span>
-            </button>
-            <button className="relative p-1.5 bg-[#0b1329] border border-[#131d35] rounded-lg text-gray-400">
-              <Mail size={13} />
-              <span className="absolute -top-1 -right-1 bg-red-500 text-[7px] text-white w-3.5 h-3.5 rounded-full flex items-center justify-center font-bold">5</span>
-            </button>
-            <div className="flex items-center gap-1.5 pl-1.5 border-l border-[#131d35]">
-              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-black text-[9px]">AR</div>
-              <div className="hidden md:block">
-                <div className="text-[9px] font-bold text-white leading-none">Agus Dwi Rianto</div>
-                <div className="text-[8px] text-gray-500 font-bold uppercase">Super Admin</div>
-              </div>
-            </div>
+
+          <div className="flex items-center gap-2.5">
+            <Link
+              href="/reports"
+              className="px-3 py-2 bg-[var(--app-card)] hover:bg-[var(--app-border)]/20 border border-[var(--app-border)] text-[var(--app-text)] text-xs font-semibold rounded-lg transition-all"
+            >
+              Semua Laporan
+            </Link>
           </div>
         </div>
 
@@ -522,27 +507,27 @@ export default function CustomerReportPage() {
                 <Download size={12} /> Export <ChevronDown size={9} className={`transition-transform ${showExport ? 'rotate-180' : ''}`} />
               </button>
               {showExport && (
-                <div className="absolute left-0 top-full mt-1 z-10 bg-[#0b1329] border border-[#131d35] rounded-xl shadow-xl overflow-hidden w-44">
+                <div className="absolute left-0 top-full mt-1 z-10 bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl shadow-xl overflow-hidden w-44">
                   {[
                     { label: 'Export PDF', icon: FileDown, color: 'text-red-400' },
                     { label: 'Export Excel', icon: FileSpreadsheet, color: 'text-green-400' },
                     { label: 'Export CSV', icon: FileText, color: 'text-blue-400' },
                   ].map(e => (
-                    <button key={e.label} className="w-full flex items-center gap-2 px-3 py-2 text-[10px] text-gray-300 hover:bg-[#121c38]">
+                    <button key={e.label} className="w-full flex items-center gap-2 px-3 py-2 text-[10px] text-[var(--app-text)]/80 hover:bg-[var(--app-border)]/30">
                       <e.icon size={12} className={e.color} />{e.label}
                     </button>
                   ))}
                 </div>
               )}
             </div>
-            <button className="flex items-center gap-1.5 bg-[#0b1329] border border-[#131d35] hover:bg-[#121c38] text-white text-[10px] font-bold px-3 py-1.5 rounded-lg transition-colors">
+            <button className="flex items-center gap-1.5 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg transition-colors">
               <Calendar size={11} className="text-blue-400" /> Jadwalkan Laporan
             </button>
-            <button className="p-1.5 bg-[#0b1329] border border-[#131d35] rounded-lg hover:bg-[#121c38] text-gray-400"><MoreVertical size={13} /></button>
+            <button className="p-1.5 bg-[var(--app-card)] border border-[var(--app-border)] rounded-lg hover:bg-[var(--app-border)]/30 text-[var(--app-muted)]"><MoreVertical size={13} /></button>
           </div>
-          <div className="flex items-center gap-2 text-[9px] text-gray-400">
-            <RefreshCw size={11} className="text-gray-500" />
-            <span>Data diperbarui: 01/07/2026 08:31 WIB</span>
+          <div className="flex items-center gap-2 text-[9px] text-[var(--app-muted)]">
+            <RefreshCw size={11} className="text-[var(--app-muted)]" />
+            <span>Data diperbarui: 22/10/2026 08:31 WIB</span>
             <span className="text-gray-600">|</span>
             <span>Auto-Update</span>
             {isMounted && (
@@ -555,17 +540,17 @@ export default function CustomerReportPage() {
         </div>
 
         {/* Sub-tabs */}
-        <div className="flex gap-0.5 border-b border-[#131d35] pb-px overflow-x-auto">
+        <div className="flex gap-1 border-b border-[var(--app-border)] pb-px overflow-x-auto">
           {SUB_TABS.map(tab => (
             <button key={tab} onClick={() => setActiveTab(tab)}
-              className={`px-3 py-2 text-[9px] font-bold whitespace-nowrap border-b-2 transition-all ${activeTab === tab ? 'border-blue-500 text-white' : 'border-transparent text-gray-500 hover:text-gray-300'}`}>
+              className={`px-3.5 py-2 text-xs font-semibold whitespace-nowrap border-b-2 transition-all ${activeTab === tab ? 'border-blue-600 text-blue-600 dark:text-blue-400 font-bold' : 'border-transparent text-[var(--app-text-muted)] hover:text-[var(--app-text)]'}`}>
               {tab}
             </button>
           ))}
         </div>
 
         {/* Primary Filters */}
-        <div className="flex flex-wrap items-end gap-2">
+        <div className="flex flex-wrap items-end gap-2.5">
           {[
             { label: 'Periode', opt: 'Juni 2026' },
             { label: 'Dibandingkan Dengan', opt: 'Mei 2026' },
@@ -574,18 +559,18 @@ export default function CustomerReportPage() {
             { label: 'Paket', opt: 'Semua Paket' },
             { label: 'Status', opt: 'Semua Status' },
           ].map(f => (
-            <div key={f.label} className="space-y-0.5">
-              <span className="text-[7px] text-gray-500 font-bold uppercase px-0.5">{f.label}</span>
-              <select className="bg-[#0b1329] border border-[#131d35] text-[9px] py-1.5 px-2.5 rounded-lg text-white focus:outline-none hover:border-blue-500/50 transition-colors">
+            <div key={f.label} className="space-y-1">
+              <span className="text-[10px] text-[var(--app-text-muted)] font-semibold uppercase px-0.5">{f.label}</span>
+              <select className="bg-[var(--app-card)] border border-[var(--app-border)] text-xs py-1.5 px-2.5 rounded-lg text-[var(--app-text)] focus:outline-none focus:border-blue-500 transition-colors">
                 <option>{f.opt}</option>
               </select>
             </div>
           ))}
           <div className="flex gap-1.5 self-end">
-            <button className="flex items-center gap-1.5 bg-[#0b1329] border border-[#131d35] hover:bg-[#121c38] text-gray-300 text-[9px] font-bold px-3 py-1.5 rounded-lg">
-              <Filter size={10} /> Filter Lainnya
+            <button className="flex items-center gap-1.5 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-card-subtle)] text-[var(--app-text)] text-xs font-medium px-3 py-1.5 rounded-lg transition-colors shadow-xs">
+              <Filter size={12} /> Filter Lainnya
             </button>
-            <button className="text-[9px] font-bold text-gray-400 hover:text-white px-2 py-1.5 border border-[#131d35] rounded-lg hover:bg-[#121c38] bg-[#0b1329]">
+            <button className="text-xs font-medium text-[var(--app-text-muted)] hover:text-[var(--app-text)] px-2.5 py-1.5 border border-[var(--app-border)] rounded-lg hover:bg-[var(--app-card-subtle)] bg-[var(--app-card)] transition-colors shadow-xs">
               Reset
             </button>
           </div>

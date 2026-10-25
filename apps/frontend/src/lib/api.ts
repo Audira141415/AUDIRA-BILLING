@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1993';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3218';
 
 const fetchWithAuth = async (url: string, init?: RequestInit) => {
   const token = typeof window !== 'undefined' ? (localStorage.getItem('token') || localStorage.getItem('adminToken')) : null;
@@ -761,6 +761,48 @@ export const api = {
     getStats: async () => {
       const res = await fetchWithAuth(`${API_BASE_URL}/dashboard/stats`);
       if (!res.ok) throw new Error('Failed to fetch dashboard stats');
+      return res.json();
+    },
+  },
+
+  // Analytics endpoints
+  analytics: {
+    getRevenue: async (startDate?: string, endDate?: string) => {
+      const params = new URLSearchParams();
+      if (startDate) params.append('startDate', startDate);
+      if (endDate) params.append('endDate', endDate);
+      const res = await fetchWithAuth(`${API_BASE_URL}/analytics/revenue?${params}`);
+      if (!res.ok) throw new Error('Failed to fetch revenue analytics');
+      return res.json();
+    },
+    getForecast: async (months?: number) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/analytics/forecast${months ? `?months=${months}` : ''}`);
+      if (!res.ok) throw new Error('Failed to fetch forecast');
+      return res.json();
+    },
+    getChurn: async () => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/analytics/churn`);
+      if (!res.ok) throw new Error('Failed to fetch churn');
+      return res.json();
+    },
+    getFunnel: async () => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/analytics/funnel`);
+      if (!res.ok) throw new Error('Failed to fetch funnel');
+      return res.json();
+    },
+    getProfit: async () => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/analytics/profit`);
+      if (!res.ok) throw new Error('Failed to fetch profit');
+      return res.json();
+    },
+    getClv: async () => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/analytics/clv`);
+      if (!res.ok) throw new Error('Failed to fetch clv');
+      return res.json();
+    },
+    getDashboard: async () => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/analytics/dashboard`);
+      if (!res.ok) throw new Error('Failed to fetch analytics dashboard');
       return res.json();
     },
   },

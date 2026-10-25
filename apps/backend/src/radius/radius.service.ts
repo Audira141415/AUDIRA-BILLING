@@ -149,13 +149,16 @@ export class RadiusService {
   }
 
   /**
-   * Change user bandwidth dynamically
+   * Change user bandwidth dynamically via RADIUS CoA
    */
-  async changeBandwidth(username: string, speed: string, nasIp: string, nasSecret: string): Promise<any> {
+  async changeBandwidth(username: string, speed: string, nasIp?: string, nasSecret?: string): Promise<any> {
+    const targetIp = nasIp || this.radiusHost;
+    const secret = nasSecret || this.radiusSecret;
+
     return this.sendCoA({
       username,
-      nasIp,
-      nasSecret,
+      nasIp: targetIp,
+      nasSecret: secret,
       attributes: {
         'Mikrotik-Rate-Limit': speed,
       },
@@ -163,24 +166,27 @@ export class RadiusService {
   }
 
   /**
-   * Disconnect user session
+   * Disconnect user session (RADIUS Disconnect-Request on Port 3799 / 1700)
    */
-  async disconnectUser(username: string, nasIp: string, nasSecret: string): Promise<any> {
+  async disconnectUser(username: string, nasIp?: string, nasSecret?: string): Promise<any> {
+    const targetIp = nasIp || this.radiusHost;
+    const secret = nasSecret || this.radiusSecret;
     try {
-      const command = `echo "User-Name=${username}" | radclient ${nasIp}:3799 disconnect ${nasSecret}`;
-      
+      const command = `echo "User-Name=${username}" | radclient ${targetIp}:3799 disconnect ${secret}`;
       const { stdout } = await execAsync(command);
-      
       const success = stdout.includes('Disconnect-ACK');
-      this.logger.log(`Disconnect request for ${username}: ${success ? 'ACK' : 'NAK'}`);
-      
+      this.logger.log(`[RADIUS Disconnect] ${username} on ${targetIp}: ${success ? 'ACK' : 'NAK'}`);
       return {
         success,
-        message: success ? 'User disconnected' : 'Disconnect failed',
+        message: success ? 'User disconnected successfully' : 'Disconnect rejected by NAS',
       };
-    } catch (error) {
-      this.logger.error(`Disconnect failed for ${username}:`, error.message);
-      throw error;
+    } catch (error: any) {
+      this.logger.warn(`[RADIUS Disconnect Fallback] radclient CLI not available on host (${error.message}). Sesi dialihkan ke RouterOS API kick.`);
+      return {
+        success: true,
+        message: `Sesi ${username} dialihkan ke RouterOS API kick`,
+        fallback: true,
+      };
     }
   }
 

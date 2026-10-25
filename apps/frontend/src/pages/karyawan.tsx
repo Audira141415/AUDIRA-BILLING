@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../components/Layout';
@@ -163,9 +164,9 @@ export default function Karyawan() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active': return 'bg-green-100 text-green-800';
-      case 'inactive': return 'bg-gray-100 text-gray-800';
+      case 'inactive': return 'bg-gray-100 text-[var(--app-text)]';
       case 'resigned': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      default: return 'bg-gray-100 text-[var(--app-text)]';
     }
   };
 
@@ -180,15 +181,22 @@ export default function Karyawan() {
 
   return (
     <Layout>
-      <div className="p-8">
+      <div className="p-4 md:p-8 space-y-6">
+        <div className="flex items-center gap-2 text-xs text-[var(--app-muted)] font-mono mb-2">
+            <Link href="/" className="hover:text-[var(--app-text)]">AUDIRA</Link>
+            <span>/</span>
+            <Link href="/hrm-dashboard" className="hover:text-[var(--app-text)]">Human Resource Management</Link>
+            <span>/</span>
+            <span className="text-blue-500 font-semibold">Direktori Karyawan</span>
+          </div>
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+            <h1 className="text-3xl font-bold text-[var(--app-text)] flex items-center gap-3">
               <Users className="text-blue-600" size={36} />
               Data Karyawan
             </h1>
-            <p className="text-gray-600 mt-1">Kelola data karyawan perusahaan</p>
+            <p className="text-[var(--app-muted)] mt-1">Kelola data karyawan perusahaan</p>
           </div>
           <button
             onClick={handleCreate}
@@ -242,10 +250,10 @@ export default function Karyawan() {
         )}
 
         {/* Filters */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+        <div className="bg-[var(--app-card)] rounded-xl shadow-lg p-6 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="relative">
-              <Search className="absolute left-3 top-3 text-gray-400" size={20} />
+              <Search className="absolute left-3 top-3 text-[var(--app-muted)]" size={20} />
               <input
                 type="text"
                 placeholder="Cari nama, NIK, atau departemen..."
@@ -255,7 +263,7 @@ export default function Karyawan() {
               />
             </div>
             <div className="flex items-center gap-2">
-              <Filter className="text-gray-400" size={20} />
+              <Filter className="text-[var(--app-muted)]" size={20} />
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
@@ -271,30 +279,30 @@ export default function Karyawan() {
         </div>
 
         {/* Employee Table */}
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+        <div className="bg-[var(--app-card)] rounded-xl shadow-lg overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead className="bg-[var(--app-bg)] border-b border-[var(--app-border)]">
                 <tr>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--app-muted)] uppercase tracking-wider">
                     NIK
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--app-muted)] uppercase tracking-wider">
                     Nama Lengkap
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--app-muted)] uppercase tracking-wider">
                     Departemen
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--app-muted)] uppercase tracking-wider">
                     Posisi
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--app-muted)] uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--app-muted)] uppercase tracking-wider">
                     Kontak
                   </th>
-                  <th className="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-center text-xs font-semibold text-[var(--app-muted)] uppercase tracking-wider">
                     Aksi
                   </th>
                 </tr>
@@ -302,39 +310,39 @@ export default function Karyawan() {
               <tbody className="divide-y divide-gray-200">
                 {loading ? (
                   <tr>
-                    <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
+                    <td colSpan={7} className="px-6 py-12 text-center text-[var(--app-muted)]">
                       Loading...
                     </td>
                   </tr>
                 ) : filteredEmployees.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
+                    <td colSpan={7} className="px-6 py-12 text-center text-[var(--app-muted)]">
                       Tidak ada data karyawan
                     </td>
                   </tr>
                 ) : (
                   filteredEmployees.map((employee) => (
-                    <tr key={employee.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <tr key={employee.id} className="hover:bg-[var(--app-bg)] transition-colors">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--app-text)]">
                         {employee.employeeNumber}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="h-10 w-10 flex-shrink-0">
-                            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-semibold">
+                            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-[var(--app-text)] font-semibold">
                               {employee.fullName?.charAt(0) || '?'}
                             </div>
                           </div>
                           <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900">{employee.fullName}</div>
-                            <div className="text-sm text-gray-500">{employee.email}</div>
+                            <div className="text-sm font-medium text-[var(--app-text)]">{employee.fullName}</div>
+                            <div className="text-sm text-[var(--app-muted)]">{employee.email}</div>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--app-text)]">
                         {employee.department || '-'}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--app-text)]">
                         {employee.position || '-'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -342,7 +350,7 @@ export default function Karyawan() {
                           {getStatusLabel(employee.status)}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--app-muted)]">
                         <div className="flex flex-col gap-1">
                           <div className="flex items-center gap-1">
                             <Phone size={14} />
@@ -386,14 +394,14 @@ export default function Karyawan() {
         {/* Create/Edit Modal */}
         {showModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-                <h2 className="text-2xl font-bold text-gray-900">
+            <div className="bg-[var(--app-card)] rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="sticky top-0 bg-[var(--app-card)] border-b border-[var(--app-border)] px-6 py-4 flex justify-between items-center">
+                <h2 className="text-2xl font-bold text-[var(--app-text)]">
                   {selectedEmployee ? 'Edit Karyawan' : 'Tambah Karyawan Baru'}
                 </h2>
                 <button
                   onClick={() => setShowModal(false)}
-                  className="text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="text-[var(--app-muted)] hover:text-[var(--app-muted)] p-2 hover:bg-gray-100 rounded-lg transition-colors"
                 >
                   <X size={24} />
                 </button>
@@ -403,11 +411,11 @@ export default function Karyawan() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Personal Info */}
                   <div className="col-span-2">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Informasi Pribadi</h3>
+                    <h3 className="text-lg font-semibold text-[var(--app-text)] mb-4">Informasi Pribadi</h3>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">
                       NIK Karyawan *
                     </label>
                     <input
@@ -420,7 +428,7 @@ export default function Karyawan() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">
                       Nama Lengkap *
                     </label>
                     <input
@@ -433,7 +441,7 @@ export default function Karyawan() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">
                       Nama Panggilan
                     </label>
                     <input
@@ -445,7 +453,7 @@ export default function Karyawan() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">
                       Jenis Kelamin
                     </label>
                     <select
@@ -459,7 +467,7 @@ export default function Karyawan() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">
                       Tanggal Lahir
                     </label>
                     <input
@@ -471,7 +479,7 @@ export default function Karyawan() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">
                       Tempat Lahir
                     </label>
                     <input
@@ -483,7 +491,7 @@ export default function Karyawan() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">
                       Status Pernikahan
                     </label>
                     <select
@@ -499,7 +507,7 @@ export default function Karyawan() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">
                       Telepon
                     </label>
                     <input
@@ -511,7 +519,7 @@ export default function Karyawan() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">
                       Email
                     </label>
                     <input
@@ -523,7 +531,7 @@ export default function Karyawan() {
                   </div>
 
                   <div className="col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">
                       Alamat
                     </label>
                     <textarea
@@ -536,11 +544,11 @@ export default function Karyawan() {
 
                   {/* Employment Info */}
                   <div className="col-span-2 mt-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Informasi Kepegawaian</h3>
+                    <h3 className="text-lg font-semibold text-[var(--app-text)] mb-4">Informasi Kepegawaian</h3>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">
                       Departemen *
                     </label>
                     <select
@@ -561,7 +569,7 @@ export default function Karyawan() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">
                       Posisi *
                     </label>
                     <input
@@ -574,7 +582,7 @@ export default function Karyawan() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">
                       Tipe Kepegawaian
                     </label>
                     <select
@@ -590,7 +598,7 @@ export default function Karyawan() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">
                       Tanggal Bergabung *
                     </label>
                     <input
@@ -603,7 +611,7 @@ export default function Karyawan() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">
                       Gaji Pokok
                     </label>
                     <input
@@ -615,7 +623,7 @@ export default function Karyawan() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">
                       Status
                     </label>
                     <select
@@ -630,11 +638,11 @@ export default function Karyawan() {
                   </div>
                 </div>
 
-                <div className="flex justify-end gap-3 mt-8 pt-6 border-t border-gray-200">
+                <div className="flex justify-end gap-3 mt-8 pt-6 border-t border-[var(--app-border)]">
                   <button
                     type="button"
                     onClick={() => setShowModal(false)}
-                    className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                    className="px-6 py-2 border border-gray-300 rounded-lg text-[var(--app-text)]/90 hover:bg-[var(--app-bg)] transition-colors"
                   >
                     Batal
                   </button>
@@ -654,9 +662,9 @@ export default function Karyawan() {
         {/* Detail Modal */}
         {showDetailModal && selectedEmployee && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-[var(--app-card)] rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
               <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4 flex justify-between items-center">
-                <h2 className="text-2xl font-bold text-white">
+                <h2 className="text-2xl font-bold text-[var(--app-text)]">
                   Profil Karyawan
                 </h2>
                 <button
@@ -669,18 +677,18 @@ export default function Karyawan() {
 
               <div className="p-6">
                 {/* Employee Header */}
-                <div className="flex items-center gap-6 mb-8 pb-6 border-b border-gray-200">
+                <div className="flex items-center gap-6 mb-8 pb-6 border-b border-[var(--app-border)]">
                   <div className="h-24 w-24 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-4xl font-bold">
                     {selectedEmployee.fullName?.charAt(0) || '?'}
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-2xl font-bold text-gray-900">{selectedEmployee.fullName}</h3>
-                    <p className="text-lg text-gray-600 mt-1">{selectedEmployee.position}</p>
+                    <h3 className="text-2xl font-bold text-[var(--app-text)]">{selectedEmployee.fullName}</h3>
+                    <p className="text-lg text-[var(--app-muted)] mt-1">{selectedEmployee.position}</p>
                     <div className="flex items-center gap-4 mt-2">
                       <span className={`px-3 py-1 text-sm font-semibold rounded-full ${getStatusColor(selectedEmployee.status)}`}>
                         {getStatusLabel(selectedEmployee.status)}
                       </span>
-                      <span className="text-sm text-gray-500">NIK: {selectedEmployee.employeeNumber}</span>
+                      <span className="text-sm text-[var(--app-muted)]">NIK: {selectedEmployee.employeeNumber}</span>
                     </div>
                   </div>
                 </div>
@@ -688,63 +696,63 @@ export default function Karyawan() {
                 {/* Personal Info */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-500 uppercase mb-4">Informasi Pribadi</h4>
+                    <h4 className="text-sm font-semibold text-[var(--app-muted)] uppercase mb-4">Informasi Pribadi</h4>
                     <div className="space-y-3">
                       <div className="flex items-center gap-3">
-                        <Calendar className="text-gray-400" size={18} />
+                        <Calendar className="text-[var(--app-muted)]" size={18} />
                         <div>
-                          <p className="text-xs text-gray-500">Tanggal Lahir</p>
-                          <p className="text-sm font-medium text-gray-900">
+                          <p className="text-xs text-[var(--app-muted)]">Tanggal Lahir</p>
+                          <p className="text-sm font-medium text-[var(--app-text)]">
                             {selectedEmployee.birthDate ? new Date(selectedEmployee.birthDate).toLocaleDateString('id-ID') : '-'}
                           </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
-                        <Phone className="text-gray-400" size={18} />
+                        <Phone className="text-[var(--app-muted)]" size={18} />
                         <div>
-                          <p className="text-xs text-gray-500">Telepon</p>
-                          <p className="text-sm font-medium text-gray-900">{selectedEmployee.phone || '-'}</p>
+                          <p className="text-xs text-[var(--app-muted)]">Telepon</p>
+                          <p className="text-sm font-medium text-[var(--app-text)]">{selectedEmployee.phone || '-'}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
-                        <Mail className="text-gray-400" size={18} />
+                        <Mail className="text-[var(--app-muted)]" size={18} />
                         <div>
-                          <p className="text-xs text-gray-500">Email</p>
-                          <p className="text-sm font-medium text-gray-900">{selectedEmployee.email || '-'}</p>
+                          <p className="text-xs text-[var(--app-muted)]">Email</p>
+                          <p className="text-sm font-medium text-[var(--app-text)]">{selectedEmployee.email || '-'}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
-                        <MapPin className="text-gray-400" size={18} />
+                        <MapPin className="text-[var(--app-muted)]" size={18} />
                         <div>
-                          <p className="text-xs text-gray-500">Alamat</p>
-                          <p className="text-sm font-medium text-gray-900">{selectedEmployee.address || '-'}</p>
+                          <p className="text-xs text-[var(--app-muted)]">Alamat</p>
+                          <p className="text-sm font-medium text-[var(--app-text)]">{selectedEmployee.address || '-'}</p>
                         </div>
                       </div>
                     </div>
                   </div>
 
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-500 uppercase mb-4">Informasi Kepegawaian</h4>
+                    <h4 className="text-sm font-semibold text-[var(--app-muted)] uppercase mb-4">Informasi Kepegawaian</h4>
                     <div className="space-y-3">
                       <div className="flex items-center gap-3">
-                        <Briefcase className="text-gray-400" size={18} />
+                        <Briefcase className="text-[var(--app-muted)]" size={18} />
                         <div>
-                          <p className="text-xs text-gray-500">Departemen</p>
-                          <p className="text-sm font-medium text-gray-900">{selectedEmployee.department || '-'}</p>
+                          <p className="text-xs text-[var(--app-muted)]">Departemen</p>
+                          <p className="text-sm font-medium text-[var(--app-text)]">{selectedEmployee.department || '-'}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
-                        <Briefcase className="text-gray-400" size={18} />
+                        <Briefcase className="text-[var(--app-muted)]" size={18} />
                         <div>
-                          <p className="text-xs text-gray-500">Tipe Kepegawaian</p>
-                          <p className="text-sm font-medium text-gray-900">{selectedEmployee.employmentType || '-'}</p>
+                          <p className="text-xs text-[var(--app-muted)]">Tipe Kepegawaian</p>
+                          <p className="text-sm font-medium text-[var(--app-text)]">{selectedEmployee.employmentType || '-'}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
-                        <Calendar className="text-gray-400" size={18} />
+                        <Calendar className="text-[var(--app-muted)]" size={18} />
                         <div>
-                          <p className="text-xs text-gray-500">Tanggal Bergabung</p>
-                          <p className="text-sm font-medium text-gray-900">
+                          <p className="text-xs text-[var(--app-muted)]">Tanggal Bergabung</p>
+                          <p className="text-sm font-medium text-[var(--app-text)]">
                             {selectedEmployee.joinDate ? new Date(selectedEmployee.joinDate).toLocaleDateString('id-ID') : '-'}
                           </p>
                         </div>

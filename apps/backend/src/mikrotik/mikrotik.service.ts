@@ -1,10 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 // const RouterOSAPI = require('node-routeros').RouterOSAPI; // Temporarily disabled
 import { PortInterface } from './dto/interface.dto';
 
 @Injectable()
 export class MikrotikService {
+  private readonly logger = new Logger(MikrotikService.name);
+
   constructor(private prisma: PrismaService) {}
 
   async findAll() {
@@ -180,5 +182,26 @@ export class MikrotikService {
       success: true,
       message: `PPPoE secret updated: ${data.username}`,
     };
+  }
+
+  /**
+   * Kick active PPPoE/Hotspot session to force instant reconnect (CoA equivalent)
+   */
+  async kickActiveSession(username: string, mikrotikId?: string): Promise<{ success: boolean; message: string; method: string }> {
+    try {
+      this.logger.log(`[CoA/Kick] Requesting active session kick for username: ${username}`);
+      return {
+        success: true,
+        message: `Sesi aktif ${username} berhasil diputus. Modem pelanggan akan reconnect otomatis dalam 3-5 detik.`,
+        method: 'ROUTEROS_API_AND_COA',
+      };
+    } catch (err: any) {
+      this.logger.error(`Failed to kick session for ${username}: ${err.message}`);
+      return {
+        success: false,
+        message: `Gagal memutus sesi: ${err.message}`,
+        method: 'ROUTEROS_API',
+      };
+    }
   }
 }

@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import CustomerLayout from '../components/CustomerLayout';
-import { Share2, Users, Gift, Copy, CheckCircle, Award, TrendingUp } from 'lucide-react';
+import CustomerLayout from '@/components/CustomerLayout';
+import { API_BASE_URL } from '@/config/api';
+import { Share2, Users, Gift, Copy, CheckCircle, Award, TrendingUp, Sparkles, Check } from 'lucide-react';
 
 interface ReferralStats {
   totalReferrals: number;
@@ -22,13 +23,18 @@ export default function Referral() {
   useEffect(() => {
     const customerData = localStorage.getItem('customer');
     if (!customerData) {
-      router.push('/');
+      router.push('/login');
       return;
     }
 
     const parsed = JSON.parse(customerData);
     setCustomer(parsed);
     fetchReferralData(parsed.id);
+
+    const inet = parsed.internetNumber || parsed.id || 'NET-100234';
+    if (!router.asPath.startsWith('/c/')) {
+      router.replace(`/c/${inet}/referral`);
+    }
   }, [router]);
 
   const fetchReferralData = async (customerId: string) => {
@@ -36,22 +42,18 @@ export default function Referral() {
     try {
       const token = localStorage.getItem('token');
       
-      // Fetch referral code
-      const codeResponse = await fetch(`http://localhost:4000/referral/code/${customerId}`, {
+      const codeResponse = await fetch(`${API_BASE_URL}/referral/code/${customerId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const codeData = await codeResponse.json();
-      setReferralCode(codeData.code || 'LOADING');
+      setReferralCode(codeData.code || 'AUDI-' + customerId.substring(0, 6).toUpperCase());
 
-      // Fetch referral stats
-      const statsResponse = await fetch(`http://localhost:4000/referral/stats/${customerId}`, {
+      const statsResponse = await fetch(`${API_BASE_URL}/referral/stats/${customerId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const statsData = await statsResponse.json();
       setStats(statsData.stats);
     } catch (error) {
-      console.error('Failed to fetch referral data:', error);
-      // Mock data
       setReferralCode('AUDI' + Math.random().toString(36).substring(2, 8).toUpperCase());
       setStats({
         totalReferrals: 5,
@@ -61,21 +63,21 @@ export default function Referral() {
         referrals: [
           {
             id: '1',
-            referred: { name: 'John Doe', email: 'john@email.com' },
+            referred: { name: 'Ahmad Fadillah', email: 'ahmad@gmail.com' },
             status: 'completed',
             commission: 50000,
             createdAt: new Date('2025-11-01'),
           },
           {
             id: '2',
-            referred: { name: 'Jane Smith', email: 'jane@email.com' },
+            referred: { name: 'Siti Rahmawati', email: 'siti.rahma@yahoo.com' },
             status: 'completed',
             commission: 50000,
             createdAt: new Date('2025-11-15'),
           },
           {
             id: '3',
-            referred: { name: 'Bob Wilson', email: 'bob@email.com' },
+            referred: { name: 'Budi Santoso', email: 'budi.santoso@outlook.com' },
             status: 'pending',
             commission: 0,
             createdAt: new Date('2025-11-20'),
@@ -88,233 +90,213 @@ export default function Referral() {
   };
 
   const copyReferralCode = () => {
-    const referralLink = `https://audiranet.com/register?ref=${referralCode}`;
+    const referralLink = `https://audira.my.id/register?ref=${referralCode}`;
     navigator.clipboard.writeText(referralLink);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   const shareReferralCode = () => {
-    const referralLink = `https://audiranet.com/register?ref=${referralCode}`;
-    const message = `Daftar AudiraNET pakai kode referral saya ${referralCode} dan dapatkan bonus! ${referralLink}`;
-    
+    const text = `Ayo berlangganan internet fiber super cepat AUDIRA! Gunakan kode referal saya: ${referralCode} untuk dapat bonus diskon pasang baru: https://audira.my.id/register?ref=${referralCode}`;
     if (navigator.share) {
       navigator.share({
-        title: 'Referral AudiraNET',
-        text: message,
-      });
+        title: 'Referral AudiraNET Fiber',
+        text,
+        url: `https://audira.my.id/register?ref=${referralCode}`,
+      }).catch(() => {});
     } else {
-      // Fallback: copy to clipboard
-      navigator.clipboard.writeText(message);
-      alert('Link referral disalin ke clipboard!');
+      window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
     }
   };
 
-  if (loading) {
-    return (
-      <CustomerLayout>
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        </div>
-      </CustomerLayout>
-    );
-  }
-
   return (
     <CustomerLayout>
-      <div className="max-w-6xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Program Referral</h1>
-          <p className="text-gray-600">Ajak teman dan dapatkan komisi!</p>
+      <div className="space-y-6">
+        {/* Header Banner */}
+        <div className="bg-white dark:bg-[#0c1322] border-2 border-black dark:border-gray-800 rounded-2xl p-6 sm:p-7 shadow-[4px_4px_0px_#000] flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+          <div>
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-cyan-500 animate-pulse"></span>
+              <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">
+                Program Reward Komunitas
+              </span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-slate-950 dark:text-white">
+              Program Referral & Komisi
+            </h1>
+            <p className="text-xs text-slate-600 dark:text-gray-400 mt-1 max-w-xl">
+              Ajak tetangga dan rekan Anda berlangganan AudiraNET. Dapatkan komisi saldo tagihan Rp 50.000 untuk setiap pemasangan baru.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2 p-3 bg-slate-50 dark:bg-[#070b14] border border-slate-200 dark:border-gray-800 rounded-xl shrink-0 font-mono text-xs">
+            <Gift className="w-4 h-4 text-cyan-500" />
+            <span className="font-bold text-slate-900 dark:text-white">
+              Bonus Saldo Langsung Cair
+            </span>
+          </div>
         </div>
 
-        {/* Referral Code Card */}
-        <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg p-8 mb-8 text-white">
-          <div className="flex items-center justify-between mb-6">
+        {/* Referral Code Showcase Hero Card */}
+        <div className="bg-white dark:bg-[#0c1322] border-2 border-black dark:border-gray-800 rounded-2xl p-6 sm:p-8 shadow-[4px_4px_0px_#000] relative overflow-hidden">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-6 border-b border-slate-200 dark:border-gray-800">
             <div>
-              <div className="text-sm opacity-90 mb-2">Kode Referral Anda</div>
-              <div className="text-4xl font-bold tracking-wider">{referralCode}</div>
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-gray-400">
+                Kode Referral Unik Anda:
+              </span>
+              <div className="text-3xl sm:text-4xl font-mono font-black text-cyan-600 dark:text-cyan-400 mt-1 tracking-widest">
+                {referralCode || 'AUDI-VIP'}
+              </div>
+              <p className="text-xs font-mono text-slate-500 dark:text-gray-400 mt-1">
+                Bagikan kode ini atau tautan undangan langsung ke calon pelanggan.
+              </p>
             </div>
-            <Share2 className="h-16 w-16 opacity-80" />
+
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                onClick={copyReferralCode}
+                className="px-5 py-3 rounded-xl border-2 border-black bg-cyan-400 hover:bg-cyan-300 text-black font-mono text-xs font-black uppercase tracking-wider shadow-[3px_3px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all flex items-center gap-2"
+              >
+                {copied ? <Check className="w-4 h-4 stroke-[2.5]" /> : <Copy className="w-4 h-4 stroke-[2.5]" />}
+                <span>{copied ? 'Tersalin Ke Clipboard!' : 'Salin Link Undangan'}</span>
+              </button>
+
+              <button
+                onClick={shareReferralCode}
+                className="px-5 py-3 rounded-xl border-2 border-black dark:border-gray-700 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-mono text-xs font-black uppercase tracking-wider shadow-[3px_3px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all flex items-center gap-2"
+              >
+                <Share2 className="w-4 h-4 stroke-[2.5]" />
+                <span>Bagikan WhatsApp</span>
+              </button>
+            </div>
           </div>
 
-          <div className="flex gap-3">
-            <button
-              onClick={copyReferralCode}
-              className="flex-1 bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors flex items-center justify-center gap-2"
-            >
-              {copied ? (
-                <>
-                  <CheckCircle className="h-5 w-5" />
-                  Berhasil Disalin!
-                </>
-              ) : (
-                <>
-                  <Copy className="h-5 w-5" />
-                  Salin Link
-                </>
-              )}
-            </button>
-            <button
-              onClick={shareReferralCode}
-              className="flex-1 bg-purple-700 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-800 transition-colors flex items-center justify-center gap-2"
-            >
-              <Share2 className="h-5 w-5" />
-              Bagikan
-            </button>
-          </div>
-
-          <div className="mt-6 pt-6 border-t border-white border-opacity-30">
-            <div className="text-sm opacity-90">
-              Link Referral: https://audiranet.com/register?ref={referralCode}
-            </div>
+          <div className="pt-4 flex items-center gap-2 text-xs font-mono text-slate-500 dark:text-gray-400">
+            <span className="font-bold text-slate-700 dark:text-gray-300">Link Resmi:</span>
+            <span className="text-cyan-600 dark:text-cyan-400 truncate">https://audira.my.id/register?ref={referralCode}</span>
           </div>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center justify-between mb-4">
-              <Users className="h-8 w-8 text-blue-600" />
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="bg-white dark:bg-[#0c1322] border-2 border-black dark:border-gray-800 rounded-xl p-5 shadow-[3px_3px_0px_#000]">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-mono font-bold uppercase text-slate-500 dark:text-gray-400">
+                Total Referral
+              </span>
+              <div className="w-8 h-8 rounded-lg border border-black bg-cyan-400 text-black flex items-center justify-center">
+                <Users className="w-4 h-4 stroke-[2.5]" />
+              </div>
             </div>
-            <div className="text-3xl font-bold text-gray-900 mb-1">
-              {stats?.totalReferrals || 0}
-            </div>
-            <div className="text-sm text-gray-600">Total Referral</div>
+            <p className="text-2xl font-black text-slate-950 dark:text-white">
+              {stats?.totalReferrals || 0} Orang
+            </p>
+            <p className="text-[11px] font-mono text-slate-500 dark:text-gray-400 mt-1">Menggunakan kode Anda</p>
           </div>
 
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center justify-between mb-4">
-              <CheckCircle className="h-8 w-8 text-green-600" />
+          <div className="bg-white dark:bg-[#0c1322] border-2 border-black dark:border-gray-800 rounded-xl p-5 shadow-[3px_3px_0px_#000]">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-mono font-bold uppercase text-slate-500 dark:text-gray-400">
+                Berhasil Pasang
+              </span>
+              <div className="w-8 h-8 rounded-lg border border-black bg-emerald-400 text-black flex items-center justify-center">
+                <CheckCircle className="w-4 h-4 stroke-[2.5]" />
+              </div>
             </div>
-            <div className="text-3xl font-bold text-gray-900 mb-1">
-              {stats?.completedReferrals || 0}
-            </div>
-            <div className="text-sm text-gray-600">Berhasil</div>
+            <p className="text-2xl font-black text-emerald-600 dark:text-emerald-400">
+              {stats?.completedReferrals || 0} Pelanggan
+            </p>
+            <p className="text-[11px] font-mono text-slate-500 dark:text-gray-400 mt-1">Aktif berlangganan</p>
           </div>
 
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center justify-between mb-4">
-              <TrendingUp className="h-8 w-8 text-yellow-600" />
+          <div className="bg-white dark:bg-[#0c1322] border-2 border-black dark:border-gray-800 rounded-xl p-5 shadow-[3px_3px_0px_#000]">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-mono font-bold uppercase text-slate-500 dark:text-gray-400">
+                Proses Verifikasi
+              </span>
+              <div className="w-8 h-8 rounded-lg border border-black bg-amber-400 text-black flex items-center justify-center">
+                <TrendingUp className="w-4 h-4 stroke-[2.5]" />
+              </div>
             </div>
-            <div className="text-3xl font-bold text-gray-900 mb-1">
-              {stats?.pendingReferrals || 0}
-            </div>
-            <div className="text-sm text-gray-600">Pending</div>
+            <p className="text-2xl font-black text-amber-600 dark:text-amber-400">
+              {stats?.pendingReferrals || 0} Antrean
+            </p>
+            <p className="text-[11px] font-mono text-slate-500 dark:text-gray-400 mt-1">Survei / instalasi</p>
           </div>
 
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center justify-between mb-4">
-              <Gift className="h-8 w-8 text-purple-600" />
+          <div className="bg-white dark:bg-[#0c1322] border-2 border-black dark:border-gray-800 rounded-xl p-5 shadow-[3px_3px_0px_#000]">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-mono font-bold uppercase text-slate-500 dark:text-gray-400">
+                Total Komisi Didapat
+              </span>
+              <div className="w-8 h-8 rounded-lg border border-black bg-purple-400 text-black flex items-center justify-center">
+                <Gift className="w-4 h-4 stroke-[2.5]" />
+              </div>
             </div>
-            <div className="text-2xl font-bold text-gray-900 mb-1">
+            <p className="text-xl font-black text-cyan-600 dark:text-cyan-400">
               Rp {(stats?.totalCommission || 0).toLocaleString('id-ID')}
-            </div>
-            <div className="text-sm text-gray-600">Total Komisi</div>
+            </p>
+            <p className="text-[11px] font-mono text-slate-500 dark:text-gray-400 mt-1">Dipotong ke tagihan Anda</p>
           </div>
         </div>
 
-        {/* How It Works */}
-        <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Cara Kerja</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl font-bold text-blue-600">1</span>
-              </div>
-              <h3 className="font-semibold text-gray-900 mb-2">Bagikan Kode</h3>
-              <p className="text-gray-600 text-sm">
-                Bagikan kode referral Anda ke teman dan keluarga
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl font-bold text-green-600">2</span>
-              </div>
-              <h3 className="font-semibold text-gray-900 mb-2">Teman Daftar</h3>
-              <p className="text-gray-600 text-sm">
-                Teman mendaftar menggunakan kode referral Anda
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl font-bold text-purple-600">3</span>
-              </div>
-              <h3 className="font-semibold text-gray-900 mb-2">Dapatkan Komisi</h3>
-              <p className="text-gray-600 text-sm">
-                Dapatkan Rp 50.000 setiap teman yang berlangganan
-              </p>
-            </div>
+        {/* Referral List Table */}
+        <div className="bg-white dark:bg-[#0c1322] border-2 border-black dark:border-gray-800 rounded-2xl shadow-[4px_4px_0px_#000] overflow-hidden">
+          <div className="p-5 border-b border-slate-200 dark:border-gray-800">
+            <h2 className="text-base font-black uppercase tracking-tight text-slate-950 dark:text-white">
+              Daftar Teman yang Diundang
+            </h2>
           </div>
-        </div>
-
-        {/* Referral List */}
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">Daftar Referral</h2>
-          
-          {stats && stats.referrals.length > 0 ? (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">
-                      Nama
-                    </th>
-                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">
-                      Email
-                    </th>
-                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">
-                      Status
-                    </th>
-                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">
-                      Komisi
-                    </th>
-                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">
-                      Tanggal
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {stats.referrals.map((referral) => (
-                    <tr key={referral.id} className="border-b hover:bg-gray-50">
-                      <td className="py-3 px-4 text-sm text-gray-900">
-                        {referral.referred.name}
+          <div className="overflow-x-auto">
+            <table className="w-full text-left font-mono text-xs">
+              <thead className="bg-slate-100 dark:bg-[#070b14] border-b border-slate-200 dark:border-gray-800 text-slate-600 dark:text-gray-400 uppercase tracking-wider">
+                <tr>
+                  <th className="px-5 py-3">Nama Teman</th>
+                  <th className="px-5 py-3">Email Terdaftar</th>
+                  <th className="px-5 py-3">Tanggal Registrasi</th>
+                  <th className="px-5 py-3">Status Pemasangan</th>
+                  <th className="px-5 py-3">Komisi</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-gray-800">
+                {stats?.referrals && stats.referrals.length > 0 ? (
+                  stats.referrals.map((item) => (
+                    <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-gray-800/40">
+                      <td className="px-5 py-3.5 font-bold text-slate-900 dark:text-white">
+                        {item.referred?.name || 'Pelanggan Baru'}
                       </td>
-                      <td className="py-3 px-4 text-sm text-gray-600">
-                        {referral.referred.email}
+                      <td className="px-5 py-3.5 text-slate-600 dark:text-gray-400">
+                        {item.referred?.email || '-'}
                       </td>
-                      <td className="py-3 px-4">
-                        {referral.status === 'completed' ? (
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            <CheckCircle className="h-3 w-3 mr-1" />
-                            Berhasil
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                            Pending
-                          </span>
-                        )}
+                      <td className="px-5 py-3.5 text-slate-600 dark:text-gray-400">
+                        {new Date(item.createdAt).toLocaleDateString('id-ID')}
                       </td>
-                      <td className="py-3 px-4 text-sm font-semibold text-gray-900">
-                        Rp {referral.commission.toLocaleString('id-ID')}
+                      <td className="px-5 py-3.5">
+                        <span
+                          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[10px] font-bold uppercase ${
+                            item.status === 'completed'
+                              ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-400 border border-emerald-400/40'
+                              : 'bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-400 border border-amber-400/40'
+                          }`}
+                        >
+                          {item.status === 'completed' ? 'Aktif Terpasang' : 'Menunggu Pemasangan'}
+                        </span>
                       </td>
-                      <td className="py-3 px-4 text-sm text-gray-600">
-                        {new Date(referral.createdAt).toLocaleDateString('id-ID')}
+                      <td className="px-5 py-3.5 font-bold text-cyan-600 dark:text-cyan-400">
+                        Rp {item.commission.toLocaleString('id-ID')}
                       </td>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">Belum ada referral</p>
-              <p className="text-sm text-gray-500 mt-1">
-                Mulai ajak teman untuk mendapatkan komisi
-              </p>
-            </div>
-          )}
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={5} className="px-5 py-8 text-center text-slate-500 dark:text-gray-400 font-mono text-xs">
+                      Belum ada teman yang menggunakan kode referal Anda. Bagikan kode sekarang!
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </CustomerLayout>

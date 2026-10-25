@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React, { useState } from 'react';
 import Layout from '@/components/Layout';
 import {
@@ -45,13 +46,13 @@ interface PaymentHistoryRow {
 }
 
 const mockHistoryData: PaymentHistoryRow[] = [
-  { id: '1', date: '01/07/2026 08:32', type: 'Payment', refNo: 'PAY-20260701-0001', invoiceNo: 'INV/2026/07/0012', customerName: 'Budi Santoso', method: 'Transfer Bank - BCA', channel: 'Mobile Banking', amount: 1200000, status: 'Berhasil', note: '-' },
-  { id: '2', date: '01/07/2026 08:16', type: 'Payment', refNo: 'PAY-20260701-0002', invoiceNo: 'INV/2026/07/0011', customerName: 'Siti Aminah', method: 'QRIS', channel: 'QR Code', amount: 450000, status: 'Berhasil', note: '-' },
-  { id: '3', date: '01/07/2026 07:58', type: 'Payment', refNo: 'PAY-20260701-0003', invoiceNo: 'INV/2026/07/0010', customerName: 'Andi Pratama', method: 'Transfer Bank - BRI', channel: 'Internet Banking', amount: 2200000, status: 'Berhasil', note: '-' },
-  { id: '4', date: '01/07/2026 07:40', type: 'Payment', refNo: 'PAY-20260701-0004', invoiceNo: 'INV/2026/07/0009', customerName: 'Dewi Lestari', method: 'OVO', channel: 'E-Wallet', amount: 350000, status: 'Menunggu', note: 'Menunggu verifikasi' },
-  { id: '5', date: '01/07/2026 07:22', type: 'Payment', refNo: 'PAY-20260701-0005', invoiceNo: 'INV/2026/07/0008', customerName: 'Fajar Nugroho', method: 'DANA', channel: 'E-Wallet', amount: 900000, status: 'Menunggu', note: 'Menunggu verifikasi' },
-  { id: '6', date: '01/07/2026 06:51', type: 'Payment', refNo: 'PAY-20260701-0006', invoiceNo: 'INV/2026/07/0007', customerName: 'Nina Wulandari', method: 'Transfer Bank - BCA', channel: 'Mobile Banking', amount: 250000, status: 'Berhasil', note: '-' },
-  { id: '7', date: '01/07/2026 06:45', type: 'Refund', refNo: 'RFND-20260701-0001', invoiceNo: 'INV/2026/07/0006', customerName: 'Yudi Hermawan', method: 'Virtual Account - BCA', channel: 'VA', amount: 1300000, status: 'Refund Selesai', note: 'Refund 100%' },
+  { id: '1', date: '22/10/2026 08:32', type: 'Payment', refNo: 'PAY-20260701-0001', invoiceNo: 'INV/2026/07/0012', customerName: 'Budi Santoso', method: 'Transfer Bank - BCA', channel: 'Mobile Banking', amount: 1200000, status: 'Berhasil', note: '-' },
+  { id: '2', date: '22/10/2026 08:16', type: 'Payment', refNo: 'PAY-20260701-0002', invoiceNo: 'INV/2026/07/0011', customerName: 'Siti Aminah', method: 'QRIS', channel: 'QR Code', amount: 450000, status: 'Berhasil', note: '-' },
+  { id: '3', date: '22/10/2026 07:58', type: 'Payment', refNo: 'PAY-20260701-0003', invoiceNo: 'INV/2026/07/0010', customerName: 'Andi Pratama', method: 'Transfer Bank - BRI', channel: 'Internet Banking', amount: 2200000, status: 'Berhasil', note: '-' },
+  { id: '4', date: '22/10/2026 07:40', type: 'Payment', refNo: 'PAY-20260701-0004', invoiceNo: 'INV/2026/07/0009', customerName: 'Dewi Lestari', method: 'OVO', channel: 'E-Wallet', amount: 350000, status: 'Menunggu', note: 'Menunggu verifikasi' },
+  { id: '5', date: '22/10/2026 07:22', type: 'Payment', refNo: 'PAY-20260701-0005', invoiceNo: 'INV/2026/07/0008', customerName: 'Fajar Nugroho', method: 'DANA', channel: 'E-Wallet', amount: 900000, status: 'Menunggu', note: 'Menunggu verifikasi' },
+  { id: '6', date: '22/10/2026 06:51', type: 'Payment', refNo: 'PAY-20260701-0006', invoiceNo: 'INV/2026/07/0007', customerName: 'Nina Wulandari', method: 'Transfer Bank - BCA', channel: 'Mobile Banking', amount: 250000, status: 'Berhasil', note: '-' },
+  { id: '7', date: '22/10/2026 06:45', type: 'Refund', refNo: 'RFND-20260701-0001', invoiceNo: 'INV/2026/07/0006', customerName: 'Yudi Hermawan', method: 'Virtual Account - BCA', channel: 'VA', amount: 1300000, status: 'Refund Selesai', note: 'Refund 100%' },
   { id: '8', date: '30/06/2026 16:12', type: 'Payment', refNo: 'PAY-20260630-0001', invoiceNo: 'INV/2026/06/0099', customerName: 'PT. Maju Bersama', method: 'Transfer Bank - Mandiri', channel: 'Internet Banking', amount: 3500000, status: 'Berhasil', note: '-' },
   { id: '9', date: '30/06/2026 15:31', type: 'Void', refNo: 'VOID-20260630-0001', invoiceNo: 'INV/2026/06/0098', customerName: 'CV. Sinar Abadi', method: 'QRIS', channel: 'QR Code', amount: 1100000, status: 'Void Selesai', note: 'Salah Input' },
   { id: '10', date: '30/06/2026 14:46', type: 'Payment', refNo: 'PAY-20260630-0002', invoiceNo: 'INV/2026/06/0097', customerName: 'Rina Marlina', method: 'ShopeePay', channel: 'E-Wallet', amount: 750000, status: 'Berhasil', note: '-' },
@@ -73,180 +74,137 @@ export default function PaymentHistoryPage() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-[#070c19] text-gray-200 p-4 md:p-6 space-y-6">
+      <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] p-4 md:p-6 space-y-6">
         
         {/* ─── Top Header bar ────────────────────────────────────────────── */}
-        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 border-b border-[#131d35] pb-5">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-[var(--app-border)] pb-5">
           <div className="space-y-1">
-            <div className="flex items-center gap-2 text-xs text-gray-400 font-medium">
-              <span>Home</span>
-              <span>&gt;</span>
-              <span>Payment</span>
-              <span>&gt;</span>
-              <span className="text-blue-400">Riwayat Payment</span>
+            <div className="flex items-center gap-2 text-xs text-[var(--app-muted)] font-mono mb-1">
+              <Link href="/" className="hover:text-[var(--app-text)]">AUDIRA</Link>
+              <span>/</span>
+              <Link href="/payment" className="hover:text-[var(--app-text)]">Kasir & Pembayaran</Link>
+              <span>/</span>
+              <span className="text-blue-500 font-semibold">Riwayat Transaksi</span>
             </div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">Riwayat Payment</h1>
+            <h1 className="text-xl md:text-2xl font-bold tracking-tight text-[var(--app-text)]">
+              Buku Riwayat Pembayaran & Kas Masuk
+            </h1>
+            <p className="text-xs text-[var(--app-muted)]">
+              Catatan seluruh transaksi masuk melalui Payment Gateway (Midtrans, QRIS), Bank Transfer, dan Petugas Kolektor.
+            </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-4 w-full xl:w-auto">
-            {/* Calendar */}
-            <div className="flex items-center gap-2 bg-[#0b1329] border border-[#131d35] px-3 py-2 rounded-xl text-xs text-gray-300">
-              <Calendar size={14} className="text-blue-400" />
-              <span>01 Juli 2026</span>
-              <span className="text-[10px] text-gray-500">08:35 WIB</span>
-            </div>
-            
-            {/* Status Sistem */}
-            <div className="flex items-center gap-2 bg-[#0b1329] border border-[#131d35] px-3 py-2 rounded-xl text-xs">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-              <span className="text-gray-400">Status Sistem</span>
-              <span className="text-green-400 font-bold">Normal</span>
-            </div>
-
-            {/* Global Search */}
-            <div className="relative w-full sm:w-60">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <input 
-                type="text" 
-                placeholder="Cari customer, invoice, tagihan..."
-                className="w-full bg-[#0b1329] border border-[#131d35] rounded-xl text-xs pl-9 pr-4 py-2 text-white focus:outline-none focus:border-blue-500"
-              />
-            </div>
-
-            {/* Notification and Profile icons */}
-            <div className="flex items-center gap-3">
-              <button className="relative p-2 bg-[#0b1329] border border-[#131d35] rounded-xl hover:bg-[#121c38] transition-colors">
-                <Bell size={16} className="text-gray-400" />
-                <span className="absolute -top-1 -right-1 bg-red-500 text-[9px] font-bold text-white px-1.5 py-0.5 rounded-full scale-75">12</span>
-              </button>
-              <button className="relative p-2 bg-[#0b1329] border border-[#131d35] rounded-xl hover:bg-[#121c38] transition-colors">
-                <Mail size={16} className="text-gray-400" />
-                <span className="absolute -top-1 -right-1 bg-red-500 text-[9px] font-bold text-white px-1.5 py-0.5 rounded-full scale-75">6</span>
-              </button>
-              <button className="p-2 bg-[#0b1329] border border-[#131d35] rounded-xl hover:bg-[#121c38] transition-colors max-sm:hidden">
-                <Maximize2 size={16} className="text-gray-400" />
-              </button>
-              
-              {/* Profile */}
-              <div className="flex items-center gap-2 pl-2 border-l border-[#131d35]">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xs overflow-hidden">
-                  <span className="text-xs">AR</span>
-                </div>
-                <div className="hidden md:block text-left">
-                  <div className="text-xs font-semibold text-white">Agus Dwi Rianto</div>
-                  <div className="text-[9px] text-gray-500 font-bold uppercase">Super Admin</div>
-                </div>
-              </div>
-            </div>
+          <div className="flex items-center gap-2.5">
+            <Link href="/finance/transaksi" className="px-3 py-2 bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)] text-xs font-semibold rounded-lg">Jurnal Umum</Link>
           </div>
         </div>
 
         {/* ─── KPI Cards Row ─────────────────────────────────────────────── */}
         <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
           {/* Card 1: Total Transaksi */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex items-center gap-4">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4 flex items-center gap-4">
             <div className="p-3.5 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-xl">
               <FileText size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Total Transaksi</p>
-              <p className="text-2xl font-black text-white mt-0.5">2.847</p>
-              <p className="text-[10px] text-gray-400 mt-0.5 font-medium">+12.8% dari periode lalu</p>
+              <p className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider">Total Transaksi</p>
+              <p className="text-2xl font-black text-[var(--app-text)] mt-0.5">2.847</p>
+              <p className="text-[10px] text-[var(--app-muted)] mt-0.5 font-medium">+12.8% dari periode lalu</p>
             </div>
           </div>
 
           {/* Card 2: Total Pembayaran */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex items-center gap-4">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4 flex items-center gap-4">
             <div className="p-3.5 bg-green-500/10 text-green-400 border border-green-500/20 rounded-xl">
               <Wallet size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Total Pembayaran</p>
-              <p className="text-xl font-black text-white mt-0.5">Rp 2.847.560.000</p>
-              <p className="text-[10px] text-gray-400 mt-0.5 font-medium">+15.2% dari periode lalu</p>
+              <p className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider">Total Pembayaran</p>
+              <p className="text-xl font-black text-[var(--app-text)] mt-0.5">Rp 2.847.560.000</p>
+              <p className="text-[10px] text-[var(--app-muted)] mt-0.5 font-medium">+15.2% dari periode lalu</p>
             </div>
           </div>
 
           {/* Card 3: Berhasil */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex items-center gap-4">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4 flex items-center gap-4">
             <div className="p-3.5 bg-green-500/10 text-green-400 border border-green-500/20 rounded-xl">
               <CheckCircle size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Berhasil</p>
-              <p className="text-2xl font-black text-white mt-0.5">2.612</p>
-              <p className="text-[10px] text-gray-400 mt-0.5 font-medium">(91.75%) +13.1%</p>
+              <p className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider">Berhasil</p>
+              <p className="text-2xl font-black text-[var(--app-text)] mt-0.5">2.612</p>
+              <p className="text-[10px] text-[var(--app-muted)] mt-0.5 font-medium">(91.75%) +13.1%</p>
             </div>
           </div>
 
           {/* Card 4: Menunggu */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex items-center gap-4">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4 flex items-center gap-4">
             <div className="p-3.5 bg-orange-500/10 text-orange-400 border border-orange-500/20 rounded-xl">
               <Clock size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Menunggu</p>
-              <p className="text-2xl font-black text-white mt-0.5">156</p>
-              <p className="text-[10px] text-gray-400 mt-0.5 font-medium">(5.48%) -2.1%</p>
+              <p className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider">Menunggu</p>
+              <p className="text-2xl font-black text-[var(--app-text)] mt-0.5">156</p>
+              <p className="text-[10px] text-[var(--app-muted)] mt-0.5 font-medium">(5.48%) -2.1%</p>
             </div>
           </div>
 
           {/* Card 5: Gagal */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex items-center gap-4">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4 flex items-center gap-4">
             <div className="p-3.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded-xl">
               <XCircle size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Gagal</p>
-              <p className="text-2xl font-black text-white mt-0.5">78</p>
-              <p className="text-[10px] text-gray-400 mt-0.5 font-medium">(2.74%) +1.2%</p>
+              <p className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider">Gagal</p>
+              <p className="text-2xl font-black text-[var(--app-text)] mt-0.5">78</p>
+              <p className="text-[10px] text-[var(--app-muted)] mt-0.5 font-medium">(2.74%) +1.2%</p>
             </div>
           </div>
 
           {/* Card 6: Refund & Void */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex items-center gap-4">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4 flex items-center gap-4">
             <div className="p-3.5 bg-purple-500/10 text-purple-400 border border-purple-500/20 rounded-xl">
               <Wallet size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Refund & Void</p>
-              <p className="text-2xl font-black text-white mt-0.5">234</p>
-              <p className="text-[10px] text-gray-400 mt-0.5 font-medium">(8.23%) +3.6%</p>
+              <p className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider">Refund & Void</p>
+              <p className="text-2xl font-black text-[var(--app-text)] mt-0.5">234</p>
+              <p className="text-[10px] text-[var(--app-muted)] mt-0.5 font-medium">(8.23%) +3.6%</p>
             </div>
           </div>
         </div>
 
         {/* ─── Filter Bar ────────────────────────────────────────────────── */}
-        <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4">
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4">
           <div className="flex flex-wrap items-center gap-4">
             {/* Date range */}
-            <div className="flex items-center gap-2 bg-[#080d19] border border-[#131d35] px-3 py-2.5 rounded-xl text-xs text-gray-300 cursor-pointer">
-              <Calendar size={14} className="text-gray-500" />
-              <span>01/06/2026 - 01/07/2026</span>
+            <div className="flex items-center gap-2 bg-[var(--app-bg)] border border-[var(--app-border)] px-3 py-2.5 rounded-xl text-xs text-[var(--app-text)]/80 cursor-pointer">
+              <Calendar size={14} className="text-[var(--app-muted)]" />
+              <span>01/06/2026 - 22/10/2026</span>
             </div>
 
-            <select className="bg-[#080d19] border border-[#131d35] text-xs py-2.5 px-4 rounded-xl text-gray-300 focus:outline-none min-w-[140px]">
+            <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]">
               <option>Semua Tipe</option>
             </select>
 
-            <select className="bg-[#080d19] border border-[#131d35] text-xs py-2.5 px-4 rounded-xl text-gray-300 focus:outline-none min-w-[140px]">
+            <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]">
               <option>Semua Metode</option>
             </select>
 
-            <select className="bg-[#080d19] border border-[#131d35] text-xs py-2.5 px-4 rounded-xl text-gray-300 focus:outline-none min-w-[140px]">
+            <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]">
               <option>Semua Channel</option>
             </select>
 
-            <select className="bg-[#080d19] border border-[#131d35] text-xs py-2.5 px-4 rounded-xl text-gray-300 focus:outline-none min-w-[140px]">
+            <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]">
               <option>Semua Status</option>
             </select>
             
             <div className="relative flex-1 min-w-[200px]">
-              <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-gray-500 w-4 h-4" />
+              <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-[var(--app-muted)] w-4 h-4" />
               <input 
                 type="text" 
                 placeholder="Cari invoice, customer, referensi..."
-                className="w-full bg-[#080d19] border border-[#131d35] text-xs pl-10 pr-4 py-2.5 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
+                className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] text-xs pl-10 pr-4 py-2.5 rounded-xl text-[var(--app-text)] placeholder-slate-400 focus:outline-none focus:border-blue-500 transition-colors"
               />
             </div>
 
@@ -264,19 +222,19 @@ export default function PaymentHistoryPage() {
           <div className="lg:col-span-9 space-y-6">
             
             {/* Table Card */}
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl overflow-hidden">
-              <div className="flex justify-between items-center p-4 border-b border-[#131d35] bg-[#0b1329]/40">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400">Daftar Riwayat Payment</h3>
-                <button className="flex items-center gap-2 bg-[#0b1329] border border-[#131d35] hover:bg-[#121c38] text-white text-[10px] font-bold px-3.5 py-1.5 rounded-xl transition-all border-gray-800">
-                  <Download size={12} className="text-gray-400" />
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs overflow-hidden">
+              <div className="flex justify-between items-center p-4 border-b border-[var(--app-border)] bg-white/40">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Daftar Riwayat Payment</h3>
+                <button className="flex items-center gap-2 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-white text-[10px] font-bold px-3.5 py-1.5 rounded-xl transition-all border-gray-800">
+                  <Download size={12} className="text-[var(--app-muted)]" />
                   <span>Export</span>
                 </button>
               </div>
 
               <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse text-xs text-gray-300">
+                <table className="w-full text-left border-collapse text-xs text-[var(--app-text)]/80">
                   <thead>
-                    <tr className="border-b border-[#131d35] bg-[#101935]/40 text-gray-400 text-[10px] font-bold uppercase tracking-wider">
+                    <tr className="border-b border-[var(--app-border)] bg-[var(--app-border)]/10 text-[var(--app-muted)] text-[10px] font-bold uppercase tracking-wider">
                       <th className="p-4 w-12">NO</th>
                       <th className="p-4">TANGGAL</th>
                       <th className="p-4 w-24">TIPE</th>
@@ -291,11 +249,11 @@ export default function PaymentHistoryPage() {
                       <th className="p-4 text-center">AKSI</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#131d35]">
+                  <tbody className="divide-y divide-[var(--app-border)]">
                     {mockHistoryData.map((d, idx) => (
-                      <tr key={d.id} className="hover:bg-[#121c38]/40 transition-colors">
-                        <td className="p-4 text-gray-500 font-medium">{idx + 1}</td>
-                        <td className="p-4 text-gray-400 font-medium">{d.date}</td>
+                      <tr key={d.id} className="hover:bg-[var(--app-border)]/20 transition-colors">
+                        <td className="p-4 text-[var(--app-muted)] font-medium">{idx + 1}</td>
+                        <td className="p-4 text-[var(--app-muted)] font-medium">{d.date}</td>
                         <td className="p-4">
                           <span className={`px-2 py-0.5 text-[9px] font-bold rounded-full ${
                             d.type === 'Payment' 
@@ -307,12 +265,12 @@ export default function PaymentHistoryPage() {
                             {d.type}
                           </span>
                         </td>
-                        <td className="p-4 font-mono font-semibold text-gray-400">{d.refNo}</td>
+                        <td className="p-4 font-mono font-semibold text-[var(--app-muted)]">{d.refNo}</td>
                         <td className="p-4 font-mono font-semibold text-blue-400">{d.invoiceNo}</td>
-                        <td className="p-4 font-bold text-white">{d.customerName}</td>
-                        <td className="p-4 text-gray-400 font-medium">{d.method}</td>
-                        <td className="p-4 text-gray-400 font-medium">{d.channel}</td>
-                        <td className="p-4 font-bold text-white">{formatCurrency(d.amount)}</td>
+                        <td className="p-4 font-bold text-[var(--app-text)]">{d.customerName}</td>
+                        <td className="p-4 text-[var(--app-muted)] font-medium">{d.method}</td>
+                        <td className="p-4 text-[var(--app-muted)] font-medium">{d.channel}</td>
+                        <td className="p-4 font-bold text-[var(--app-text)]">{formatCurrency(d.amount)}</td>
                         <td className="p-4">
                           <span className={`px-2 py-1 text-[10px] font-bold rounded-full ${
                             d.status === 'Berhasil' 
@@ -328,13 +286,13 @@ export default function PaymentHistoryPage() {
                             {d.status}
                           </span>
                         </td>
-                        <td className="p-4 text-gray-500 font-medium">{d.note}</td>
+                        <td className="p-4 text-[var(--app-muted)] font-medium">{d.note}</td>
                         <td className="p-4">
                           <div className="flex items-center justify-center gap-1.5">
-                            <button className="p-1.5 hover:bg-[#1b2647] rounded-lg text-gray-400 hover:text-white transition-colors">
+                            <button className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors">
                               <Eye size={13} />
                             </button>
-                            <button className="p-1.5 hover:bg-[#1b2647] rounded-lg text-gray-400 hover:text-white transition-colors">
+                            <button className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors">
                               <MoreVertical size={13} />
                             </button>
                           </div>
@@ -346,8 +304,8 @@ export default function PaymentHistoryPage() {
               </div>
 
               {/* Table pagination */}
-              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-t border-[#131d35] bg-[#0b1329]/60">
-                <span className="text-xs text-gray-500">
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-t border-[var(--app-border)] bg-white/60">
+                <span className="text-xs text-[var(--app-muted)]">
                   Menampilkan <span className="font-semibold text-white">1 - 15</span> dari <span className="font-semibold text-white">2.847</span> data
                 </span>
                 
@@ -355,22 +313,22 @@ export default function PaymentHistoryPage() {
                   <div className="flex items-center gap-2">
                     <button 
                       disabled
-                      className="p-2 border border-[#131d35] hover:bg-[#121c38] rounded-xl text-gray-500 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                      className="p-2 border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 rounded-xl text-[var(--app-muted)] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                     >
                       <ChevronLeft size={14} />
                     </button>
                     <button className="w-8 h-8 rounded-xl text-xs font-semibold border bg-[#0052cc] text-white border-[#0052cc]">1</button>
-                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border border-[#131d35] text-gray-400 hover:text-white hover:bg-[#121c38]">2</button>
-                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border border-[#131d35] text-gray-400 hover:text-white hover:bg-[#121c38]">3</button>
+                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/30">2</button>
+                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/30">3</button>
                     <span className="text-gray-600 text-xs px-1">...</span>
-                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border border-[#131d35] text-gray-400 hover:text-white hover:bg-[#121c38]">190</button>
-                    <button className="p-2 border border-[#131d35] hover:bg-[#121c38] rounded-xl text-gray-400 transition-colors">
+                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/30">190</button>
+                    <button className="p-2 border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 rounded-xl text-[var(--app-muted)] transition-colors">
                       <ChevronRight size={14} />
                     </button>
                   </div>
 
                   <select
-                    className="bg-[#080d19] border border-[#131d35] text-xs py-1.5 px-3 rounded-lg text-gray-300 focus:outline-none"
+                    className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-1.5 px-3 rounded-lg text-[var(--app-text)]/80 focus:outline-none"
                   >
                     <option value={15}>15 / halaman</option>
                   </select>
@@ -382,14 +340,14 @@ export default function PaymentHistoryPage() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
               
               {/* Statistik Harian */}
-              <div className="lg:col-span-8 bg-[#0b1329] border border-[#131d35] rounded-2xl p-5 space-y-4">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 font-sans">Statistik Harian (30 Hari Terakhir)</h4>
+              <div className="lg:col-span-8 bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-4">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)] font-sans">Statistik Harian (30 Hari Terakhir)</h4>
                 
                 <div className="h-44 w-full mt-2">
                   <svg viewBox="0 0 300 100" className="w-full h-full overflow-visible">
-                    <line x1="0" y1="20" x2="300" y2="20" stroke="#131d35" strokeDasharray="3 3" />
-                    <line x1="0" y1="50" x2="300" y2="50" stroke="#131d35" strokeDasharray="3 3" />
-                    <line x1="0" y1="80" x2="300" y2="80" stroke="#131d35" strokeDasharray="3 3" />
+                    <line x1="0" y1="20" x2="300" y2="20" stroke="#e2e8f0" strokeDasharray="3 3" />
+                    <line x1="0" y1="50" x2="300" y2="50" stroke="#e2e8f0" strokeDasharray="3 3" />
+                    <line x1="0" y1="80" x2="300" y2="80" stroke="#e2e8f0" strokeDasharray="3 3" />
                     
                     <text x="5" y="16" fill="#4a5568" fontSize="7" fontWeight="bold">300</text>
                     <text x="5" y="46" fill="#4a5568" fontSize="7" fontWeight="bold">200</text>
@@ -432,7 +390,7 @@ export default function PaymentHistoryPage() {
                   </svg>
                 </div>
 
-                <div className="flex justify-center gap-3 text-[8px] text-gray-500 font-bold uppercase pt-1">
+                <div className="flex justify-center gap-3 text-[8px] text-[var(--app-muted)] font-bold uppercase pt-1">
                   <span className="flex items-center gap-1"><span className="w-2.5 h-0.5 bg-green-500 inline-block"></span>Berhasil</span>
                   <span className="flex items-center gap-1"><span className="w-2.5 h-0.5 bg-orange-500 inline-block"></span>Menunggu</span>
                   <span className="flex items-center gap-1"><span className="w-2.5 h-0.5 bg-purple-500 inline-block"></span>Refund</span>
@@ -441,10 +399,10 @@ export default function PaymentHistoryPage() {
               </div>
 
               {/* Aksi Cepat */}
-              <div className="lg:col-span-4 bg-[#0b1329] border border-[#131d35] rounded-2xl p-5 space-y-4">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400">Aksi Cepat</h4>
+              <div className="lg:col-span-4 bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-4">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Aksi Cepat</h4>
                 
-                <div className="grid grid-cols-2 gap-3 text-[10px] font-bold text-gray-400">
+                <div className="grid grid-cols-2 gap-3 text-[10px] font-bold text-[var(--app-muted)]">
                   {[
                     { name: 'Verifikasi Pembayaran', desc: 'Proses pembayaran manual', icon: CheckCircle, color: 'bg-green-500/10 text-green-400 border border-green-500/20' },
                     { name: 'Proses Refund', desc: 'Buat refund baru', icon: Wallet, color: 'bg-red-500/10 text-red-400 border border-red-500/20' },
@@ -459,7 +417,7 @@ export default function PaymentHistoryPage() {
                       >
                         <Icon size={16} className="mb-2" />
                         <p className="text-[10px] font-bold leading-tight">{item.name}</p>
-                        <p className="text-[8px] text-gray-505 text-gray-500 font-normal mt-0.5 leading-tight">{item.desc}</p>
+                        <p className="text-[8px] text-gray-505 text-[var(--app-muted)] font-normal mt-0.5 leading-tight">{item.desc}</p>
                       </button>
                     );
                   })}
@@ -474,8 +432,8 @@ export default function PaymentHistoryPage() {
           <div className="lg:col-span-3 space-y-6">
             
             {/* Card 1: Ringkasan Metode Pembayaran Donut */}
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-5 space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400">Ringkasan Metode Pembayaran</h3>
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Ringkasan Metode Pembayaran</h3>
               
               <div className="relative flex justify-center py-2">
                 <svg width="140" height="140" viewBox="0 0 42 42" className="transform -rotate-90">
@@ -512,39 +470,39 @@ export default function PaymentHistoryPage() {
                   />
                 </svg>
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-                  <p className="text-base font-black text-white leading-none">2.847</p>
-                  <p className="text-[7px] text-gray-500 font-bold uppercase mt-0.5">Total Transaksi</p>
+                  <p className="text-base font-black text-[var(--app-text)] leading-none">2.847</p>
+                  <p className="text-[7px] text-[var(--app-muted)] font-bold uppercase mt-0.5">Total Transaksi</p>
                 </div>
               </div>
 
               {/* Legends */}
-              <div className="space-y-2 text-[10px] text-gray-400">
+              <div className="space-y-2 text-[10px] text-[var(--app-muted)]">
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded bg-blue-500" />Transfer Bank</span>
-                  <span className="text-white font-bold">65.7% (Rp 1.872.450.000)</span>
+                  <span className="text-[var(--app-text)] font-bold">65.7% (Rp 1.872.450.000)</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded bg-orange-500" />QRIS</span>
-                  <span className="text-white font-bold">18.6% (Rp 529.470.000)</span>
+                  <span className="text-[var(--app-text)] font-bold">18.6% (Rp 529.470.000)</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded bg-yellow-500" />E-Wallet</span>
-                  <span className="text-white font-bold">12.1% (Rp 344.300.000)</span>
+                  <span className="text-[var(--app-text)] font-bold">12.1% (Rp 344.300.000)</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded bg-green-500" />Virtual Account</span>
-                  <span className="text-white font-bold">3.0% (Rp 85.340.000)</span>
+                  <span className="text-[var(--app-text)] font-bold">3.0% (Rp 85.340.000)</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded bg-gray-500" />Lainnya</span>
-                  <span className="text-white font-bold">0.6% (Rp 16.000.000)</span>
+                  <span className="text-[var(--app-text)] font-bold">0.6% (Rp 16.000.000)</span>
                 </div>
               </div>
             </div>
 
             {/* Card 2: Ringkasan Status Payment Donut */}
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-5 space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400">Ringkasan Status Payment</h3>
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Ringkasan Status Payment</h3>
               
               <div className="relative flex justify-center py-2">
                 <svg width="120" height="120" viewBox="0 0 42 42" className="transform -rotate-90">
@@ -569,41 +527,41 @@ export default function PaymentHistoryPage() {
                   />
                 </svg>
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-                  <p className="text-base font-black text-white leading-none">2.847</p>
-                  <p className="text-[7px] text-gray-500 font-bold uppercase mt-0.5">Total Transaksi</p>
+                  <p className="text-base font-black text-[var(--app-text)] leading-none">2.847</p>
+                  <p className="text-[7px] text-[var(--app-muted)] font-bold uppercase mt-0.5">Total Transaksi</p>
                 </div>
               </div>
 
               {/* Legends */}
-              <div className="space-y-2 text-[10px] text-gray-400">
+              <div className="space-y-2 text-[10px] text-[var(--app-muted)]">
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded bg-green-500" />Berhasil</span>
-                  <span className="text-white font-bold">2.612 (91.75%)</span>
+                  <span className="text-[var(--app-text)] font-bold">2.612 (91.75%)</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded bg-orange-500" />Menunggu</span>
-                  <span className="text-white font-bold">156 (5.48%)</span>
+                  <span className="text-[var(--app-text)] font-bold">156 (5.48%)</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded bg-purple-500" />Refund</span>
-                  <span className="text-white font-bold">142 (5.00%)</span>
+                  <span className="text-[var(--app-text)] font-bold">142 (5.00%)</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded bg-red-500" />Void</span>
-                  <span className="text-white font-bold">78 (2.74%)</span>
+                  <span className="text-[var(--app-text)] font-bold">78 (2.74%)</span>
                 </div>
               </div>
             </div>
 
             {/* Card 3: Grafik Transaksi */}
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-5 space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400">Grafik Transaksi</h3>
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Grafik Transaksi</h3>
               
               <div className="h-32 w-full mt-2">
                 <svg viewBox="0 0 300 100" className="w-full h-full overflow-visible">
-                  <line x1="0" y1="20" x2="300" y2="20" stroke="#131d35" strokeDasharray="3 3" />
-                  <line x1="0" y1="50" x2="300" y2="50" stroke="#131d35" strokeDasharray="3 3" />
-                  <line x1="0" y1="80" x2="300" y2="80" stroke="#131d35" strokeDasharray="3 3" />
+                  <line x1="0" y1="20" x2="300" y2="20" stroke="#e2e8f0" strokeDasharray="3 3" />
+                  <line x1="0" y1="50" x2="300" y2="50" stroke="#e2e8f0" strokeDasharray="3 3" />
+                  <line x1="0" y1="80" x2="300" y2="80" stroke="#e2e8f0" strokeDasharray="3 3" />
                   
                   {/* Lines for Berhasil, Menunggu, Refund, Void */}
                   <path d="M20,68 L70,50 L120,55 L170,40 L220,48 L270,30" fill="none" stroke="#10b981" strokeWidth="2" />
@@ -621,7 +579,7 @@ export default function PaymentHistoryPage() {
               </div>
 
               {/* Legends */}
-              <div className="flex justify-center gap-2 text-[8px] text-gray-500 font-bold uppercase pt-1">
+              <div className="flex justify-center gap-2 text-[8px] text-[var(--app-muted)] font-bold uppercase pt-1">
                 <span className="flex items-center gap-1"><span className="w-2.5 h-0.5 bg-green-500 inline-block"></span>Berhasil</span>
                 <span className="flex items-center gap-1"><span className="w-2.5 h-0.5 bg-orange-500 inline-block"></span>Menunggu</span>
                 <span className="flex items-center gap-1"><span className="w-2.5 h-0.5 bg-purple-500 inline-block"></span>Refund</span>
@@ -630,26 +588,26 @@ export default function PaymentHistoryPage() {
             </div>
 
             {/* Card 4: Aktivitas Terbaru */}
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-5 space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400">Aktivitas Terbaru</h3>
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Aktivitas Terbaru</h3>
               
-              <div className="relative border-l border-[#131d35] ml-2 pl-4 space-y-4 text-[9px] text-gray-500 font-bold">
+              <div className="relative border-l border-[var(--app-border)] ml-2 pl-4 space-y-4 text-[9px] text-[var(--app-muted)] font-bold">
                 {[
-                  { title: 'Refund RFND-20260701-0001 diselesaikan', time: '01/07/2026 08:32 WIB' },
-                  { title: 'Payment PAY-20260701-0002 terverifikasi', time: '01/07/2026 08:16 WIB' },
+                  { title: 'Refund RFND-20260701-0001 diselesaikan', time: '22/10/2026 08:32 WIB' },
+                  { title: 'Payment PAY-20260701-0002 terverifikasi', time: '22/10/2026 08:16 WIB' },
                   { title: 'Void VOID-20260630-0001 diselesaikan', time: '30/06/2026 15:31 WIB' },
-                  { title: 'Payment PAY-20260701-0003 diterima', time: '01/07/2026 07:58 WIB' },
+                  { title: 'Payment PAY-20260701-0003 diterima', time: '22/10/2026 07:58 WIB' },
                   { title: 'Refund RFND-20260629-0001 dalam proses', time: '29/06/2026 18:20 WIB' }
                 ].map((item, idx) => (
                   <div key={idx} className="relative">
-                    <span className="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full border border-[#070c19] bg-blue-500"></span>
+                    <span className="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full border border-[var(--app-border)] bg-blue-500"></span>
                     <span className="text-white block leading-none">{item.title}</span>
-                    <span className="text-gray-500 text-[8px] font-semibold mt-1 block">{item.time}</span>
+                    <span className="text-[var(--app-muted)] text-[8px] font-semibold mt-1 block">{item.time}</span>
                   </div>
                 ))}
               </div>
 
-              <button className="w-full text-center text-xs font-bold text-blue-500 hover:underline pt-2 border-t border-[#131d35] block">
+              <button className="w-full text-center text-xs font-bold text-blue-500 hover:underline pt-2 border-t border-[var(--app-border)] block">
                 Lihat Semua Aktivitas &rarr;
               </button>
             </div>

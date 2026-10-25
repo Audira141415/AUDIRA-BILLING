@@ -6,7 +6,7 @@
 
 const http = require('http');
 
-const API_BASE = 'http://localhost:1993';
+const API_BASE = process.env.API_URL || 'http://localhost:3218';
 const COLORS = {
   reset: '\x1b[0m',
   green: '\x1b[32m',
@@ -159,7 +159,7 @@ async function testAuthorizationFlow() {
 
   await test('Customer token CANNOT access /pelanggan (admin-only endpoint)', async () => {
     const res = await request('GET', '/pelanggan', null, customerToken);
-    assertStatus(res, 401);
+    assert(res.status === 401 || res.status === 403, 'Should reject with 401 or 403');
   }, 'Authorization');
 
   await test('No token CANNOT access /pelanggan', async () => {

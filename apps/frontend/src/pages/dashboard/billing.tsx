@@ -82,7 +82,7 @@ export default function BillingDashboard() {
               <Users className="text-green-500" size={24} />
             </div>
             <p className="text-3xl font-bold text-gray-900 mb-2">{stats.customers.active}</p>
-            <p className="text-sm text-gray-500">dari {stats.customers.total} total pelanggan</p>
+            <p className="text-sm text-slate-400">dari {stats.customers.total} total pelanggan</p>
           </div>
 
           {/* Pending Invoices */}
@@ -92,7 +92,7 @@ export default function BillingDashboard() {
               <Clock className="text-orange-500" size={24} />
             </div>
             <p className="text-3xl font-bold text-gray-900 mb-2">{stats.invoices.pending}</p>
-            <p className="text-sm text-gray-500">Menunggu pembayaran</p>
+            <p className="text-sm text-slate-400">Menunggu pembayaran</p>
           </div>
 
           {/* This Month Revenue */}
@@ -104,7 +104,7 @@ export default function BillingDashboard() {
             <p className="text-3xl font-bold text-gray-900 mb-2">
               Rp {stats.revenue.thisMonth.toLocaleString('id-ID')}
             </p>
-            <p className="text-sm text-gray-500">Desember 2025</p>
+            <p className="text-sm text-slate-400">Desember 2025</p>
           </div>
         </div>
 

@@ -135,7 +135,7 @@ export default function CustomerDashboard() {
                   {data.package ? data.package.name : 'Tidak ada'}
                 </p>
                 {data.package && (
-                  <p className="text-sm text-gray-500">{data.package.speed}</p>
+                  <p className="text-sm text-slate-400">{data.package.speed}</p>
                 )}
               </div>
               <div className="p-3 bg-blue-100 rounded-full">
@@ -152,7 +152,7 @@ export default function CustomerDashboard() {
               <div>
                 <p className="text-sm text-gray-600">Tagihan Belum Bayar</p>
                 <p className="text-2xl font-bold text-red-600">{data.invoices.unpaid}</p>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-slate-400">
                   {formatRupiah(data.invoices.totalUnpaidAmount)}
                 </p>
               </div>
@@ -170,7 +170,7 @@ export default function CustomerDashboard() {
               <div>
                 <p className="text-sm text-gray-600">Total Tagihan</p>
                 <p className="text-2xl font-bold text-green-600">{data.invoices.total}</p>
-                <p className="text-sm text-gray-500">Semua periode</p>
+                <p className="text-sm text-slate-400">Semua periode</p>
               </div>
               <div className="p-3 bg-green-100 rounded-full">
                 <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -186,7 +186,7 @@ export default function CustomerDashboard() {
               <div>
                 <p className="text-sm text-gray-600">Tiket Aktif</p>
                 <p className="text-2xl font-bold text-orange-600">{data.tickets.open}</p>
-                <p className="text-sm text-gray-500">dari {data.tickets.total} total</p>
+                <p className="text-sm text-slate-400">dari {data.tickets.total} total</p>
               </div>
               <div className="p-3 bg-orange-100 rounded-full">
                 <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -211,7 +211,7 @@ export default function CustomerDashboard() {
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-900">Lihat Tagihan</h3>
-                <p className="text-sm text-gray-500">Riwayat & pembayaran</p>
+                <p className="text-sm text-slate-400">Riwayat & pembayaran</p>
               </div>
             </div>
           </button>
@@ -228,7 +228,7 @@ export default function CustomerDashboard() {
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-900">Buat Tiket</h3>
-                <p className="text-sm text-gray-500">Laporan keluhan</p>
+                <p className="text-sm text-slate-400">Laporan keluhan</p>
               </div>
             </div>
           </button>
@@ -245,7 +245,7 @@ export default function CustomerDashboard() {
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-900">Profil Saya</h3>
-                <p className="text-sm text-gray-500">Kelola akun</p>
+                <p className="text-sm text-slate-400">Kelola akun</p>
               </div>
             </div>
           </button>
@@ -268,16 +268,16 @@ export default function CustomerDashboard() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
                     Tanggal
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
                     Jatuh Tempo
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
                     Jumlah
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
                     Status
                   </th>
                 </tr>
@@ -311,7 +311,7 @@ export default function CustomerDashboard() {
                 ))}
                 {data.invoices.recent.length === 0 && (
                   <tr>
-                    <td colSpan={4} className="px-6 py-4 text-center text-gray-500">
+                    <td colSpan={4} className="px-6 py-4 text-center text-slate-400">
                       Tidak ada tagihan
                     </td>
                   </tr>
@@ -338,16 +338,16 @@ export default function CustomerDashboard() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
                     Judul
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
                     Tanggal
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
                     Prioritas
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
                     Status
                   </th>
                 </tr>
@@ -358,7 +358,7 @@ export default function CustomerDashboard() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       {ticket.title}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
                       {formatDate(ticket.createdAt)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -391,7 +391,7 @@ export default function CustomerDashboard() {
                 ))}
                 {data.tickets.recent.length === 0 && (
                   <tr>
-                    <td colSpan={4} className="px-6 py-4 text-center text-gray-500">
+                    <td colSpan={4} className="px-6 py-4 text-center text-slate-400">
                       Tidak ada tiket
                     </td>
                   </tr>

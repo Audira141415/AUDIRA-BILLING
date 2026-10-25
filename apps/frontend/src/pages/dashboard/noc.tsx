@@ -95,7 +95,7 @@ export default function NOCDashboard() {
                   style={{ width: `${(stats.mikrotik.online / stats.mikrotik.total) * 100}%` }}
                 ></div>
               </div>
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-slate-400">
                 {Math.round((stats.mikrotik.online / stats.mikrotik.total) * 100)}%
               </span>
             </div>
@@ -115,7 +115,7 @@ export default function NOCDashboard() {
                   style={{ width: `${(stats.ont.online / stats.ont.total) * 100}%` }}
                 ></div>
               </div>
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-slate-400">
                 {Math.round((stats.ont.online / stats.ont.total) * 100)}%
               </span>
             </div>
@@ -128,7 +128,7 @@ export default function NOCDashboard() {
               <AlertTriangle className="text-orange-500" size={24} />
             </div>
             <p className="text-3xl font-bold text-gray-900 mb-2">{stats.tickets.open}</p>
-            <p className="text-sm text-gray-500">Perlu segera ditangani</p>
+            <p className="text-sm text-slate-400">Perlu segera ditangani</p>
           </div>
 
           {/* Bandwidth Usage */}
@@ -138,7 +138,7 @@ export default function NOCDashboard() {
               <Activity className="text-purple-500" size={24} />
             </div>
             <p className="text-3xl font-bold text-gray-900 mb-2">{stats.bandwidth.percentage}%</p>
-            <p className="text-sm text-gray-500">{stats.bandwidth.used} / {stats.bandwidth.total}</p>
+            <p className="text-sm text-slate-400">{stats.bandwidth.used} / {stats.bandwidth.total}</p>
           </div>
         </div>
 

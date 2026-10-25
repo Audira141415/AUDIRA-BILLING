@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useState, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
@@ -234,18 +235,18 @@ export default function PajakDashboard() {
 
   return (
     <Layout>
-      <div className="bg-[#050B14] text-slate-100 min-h-screen p-6 font-sans antialiased selection:bg-cyan-500 selection:text-white">
+      <div className="bg-[var(--app-bg)] text-slate-100 min-h-screen p-6 font-sans antialiased selection:bg-cyan-500 selection:text-white">
         
         {/* Header Title Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <div>
-            <div className="flex items-center gap-2 text-xs text-slate-400 mb-1">
+            <div className="flex items-center gap-2 text-xs text-[var(--app-muted)] mb-1">
               <span>Finance</span>
               <span>&gt;</span>
               <span className="text-cyan-400 font-medium">Pajak</span>
             </div>
             <h1 className="text-2xl font-bold text-white tracking-tight">Pajak</h1>
-            <p className="text-xs text-slate-400 mt-0.5">Kelola dan pantau seluruh kewajiban pajak perusahaan.</p>
+            <p className="text-xs text-[var(--app-muted)] mt-0.5">Kelola dan pantau seluruh kewajiban pajak perusahaan.</p>
           </div>
           
           <div className="flex flex-wrap items-center gap-2.5">
@@ -273,7 +274,7 @@ export default function PajakDashboard() {
         {/* METRICS CARDS GRID */}
         <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 gap-4 mb-6">
           {/* Card 1 */}
-          <div className="bg-[#0B1528]/80 border border-blue-950 rounded-xl p-4.5 shadow-sm hover:border-blue-900/60 transition-colors">
+          <div className="bg-[#0B1528]/80 border border-[var(--app-border)] rounded-xl p-4.5 shadow-sm hover:border-[var(--app-border)] transition-colors">
             <div className="flex justify-between items-start mb-2.5">
               <div className="bg-blue-600/10 p-2 rounded-lg text-blue-500">
                 <FileText className="w-4 h-4" />
@@ -282,13 +283,13 @@ export default function PajakDashboard() {
                 +12.5%
               </span>
             </div>
-            <div className="text-slate-400 text-[10px] font-semibold uppercase tracking-wider">Total Pajak Terutang</div>
+            <div className="text-[var(--app-muted)] text-[10px] font-semibold uppercase tracking-wider">Total Pajak Terutang</div>
             <div className="text-lg font-bold text-white mt-1">{formatRupiah(metrics.totalTerutang)}</div>
-            <div className="text-[10px] text-slate-400 mt-0.5">dari periode lalu</div>
+            <div className="text-[10px] text-[var(--app-muted)] mt-0.5">dari periode lalu</div>
           </div>
 
           {/* Card 2 */}
-          <div className="bg-[#0B1528]/80 border border-blue-950 rounded-xl p-4.5 shadow-sm hover:border-blue-900/60 transition-colors">
+          <div className="bg-[#0B1528]/80 border border-[var(--app-border)] rounded-xl p-4.5 shadow-sm hover:border-[var(--app-border)] transition-colors">
             <div className="flex justify-between items-start mb-2.5">
               <div className="bg-emerald-600/10 p-2 rounded-lg text-emerald-500">
                 <CheckCircle2 className="w-4 h-4" />
@@ -297,13 +298,13 @@ export default function PajakDashboard() {
                 +9.8%
               </span>
             </div>
-            <div className="text-slate-400 text-[10px] font-semibold uppercase tracking-wider">Pajak Dibayar</div>
+            <div className="text-[var(--app-muted)] text-[10px] font-semibold uppercase tracking-wider">Pajak Dibayar</div>
             <div className="text-lg font-bold text-white mt-1">{formatRupiah(metrics.totalDibayar)}</div>
-            <div className="text-[10px] text-slate-400 mt-0.5">dari periode lalu</div>
+            <div className="text-[10px] text-[var(--app-muted)] mt-0.5">dari periode lalu</div>
           </div>
 
           {/* Card 3 */}
-          <div className="bg-[#0B1528]/80 border border-blue-950 rounded-xl p-4.5 shadow-sm hover:border-blue-900/60 transition-colors">
+          <div className="bg-[#0B1528]/80 border border-[var(--app-border)] rounded-xl p-4.5 shadow-sm hover:border-[var(--app-border)] transition-colors">
             <div className="flex justify-between items-start mb-2.5">
               <div className="bg-amber-600/10 p-2 rounded-lg text-amber-500">
                 <AlertCircle className="w-4 h-4" />
@@ -312,13 +313,13 @@ export default function PajakDashboard() {
                 +2.7%
               </span>
             </div>
-            <div className="text-slate-400 text-[10px] font-semibold uppercase tracking-wider">Pajak Kurang / (Lebih) Bayar</div>
+            <div className="text-[var(--app-muted)] text-[10px] font-semibold uppercase tracking-wider">Pajak Kurang / (Lebih) Bayar</div>
             <div className="text-lg font-bold text-white mt-1">{formatRupiah(metrics.totalSelisih)}</div>
-            <div className="text-[10px] text-slate-400 mt-0.5">dari periode lalu</div>
+            <div className="text-[10px] text-[var(--app-muted)] mt-0.5">dari periode lalu</div>
           </div>
 
           {/* Card 4 */}
-          <div className="bg-[#0B1528]/80 border border-blue-950 rounded-xl p-4.5 shadow-sm hover:border-blue-900/60 transition-colors">
+          <div className="bg-[#0B1528]/80 border border-[var(--app-border)] rounded-xl p-4.5 shadow-sm hover:border-[var(--app-border)] transition-colors">
             <div className="flex justify-between items-start mb-2.5">
               <div className="bg-purple-600/10 p-2 rounded-lg text-purple-500">
                 <Calendar className="w-4 h-4" />
@@ -327,25 +328,25 @@ export default function PajakDashboard() {
                 3 Kewajiban
               </span>
             </div>
-            <div className="text-slate-400 text-[10px] font-semibold uppercase tracking-wider">Pajak Jatuh Tempo (30 Hari)</div>
+            <div className="text-[var(--app-muted)] text-[10px] font-semibold uppercase tracking-wider">Pajak Jatuh Tempo (30 Hari)</div>
             <div className="text-lg font-bold text-white mt-1">{formatRupiah(metrics.totalJatuhTempo)}</div>
             <div className="text-[10px] text-rose-400 mt-0.5">Memerlukan pembayaran segera</div>
           </div>
 
           {/* Card 5 */}
-          <div className="bg-[#0B1528]/80 border border-blue-950 rounded-xl p-4.5 shadow-sm hover:border-blue-900/60 transition-colors">
+          <div className="bg-[#0B1528]/80 border border-[var(--app-border)] rounded-xl p-4.5 shadow-sm hover:border-[var(--app-border)] transition-colors">
             <div className="flex justify-between items-start mb-2.5">
               <div className="bg-cyan-600/10 p-2 rounded-lg text-cyan-500">
                 <FileText className="w-4 h-4" />
               </div>
             </div>
-            <div className="text-slate-400 text-[10px] font-semibold uppercase tracking-wider">Kewajiban Pajak</div>
+            <div className="text-[var(--app-muted)] text-[10px] font-semibold uppercase tracking-wider">Kewajiban Pajak</div>
             <div className="text-lg font-bold text-white mt-1">{metrics.kewajibanAktif}</div>
-            <div className="text-[10px] text-slate-400 mt-0.5">Jenis pajak aktif terdaftar</div>
+            <div className="text-[10px] text-[var(--app-muted)] mt-0.5">Jenis pajak aktif terdaftar</div>
           </div>
 
           {/* Card 6 */}
-          <div className="bg-[#0B1528]/80 border border-blue-950 rounded-xl p-4.5 shadow-sm hover:border-blue-900/60 transition-colors">
+          <div className="bg-[#0B1528]/80 border border-[var(--app-border)] rounded-xl p-4.5 shadow-sm hover:border-[var(--app-border)] transition-colors">
             <div className="flex justify-between items-start mb-2.5">
               <div className="bg-rose-600/10 p-2 rounded-lg text-rose-500">
                 <CheckCircle2 className="w-4 h-4" />
@@ -354,9 +355,9 @@ export default function PajakDashboard() {
                 Sangat Baik
               </span>
             </div>
-            <div className="text-slate-400 text-[10px] font-semibold uppercase tracking-wider">Tingkat Kepatuhan</div>
+            <div className="text-[var(--app-muted)] text-[10px] font-semibold uppercase tracking-wider">Tingkat Kepatuhan</div>
             <div className="text-lg font-bold text-white mt-1">{metrics.complianceRate}%</div>
-            <div className="text-[10px] text-slate-400 mt-0.5">Tingkat kepatuhan pelaporan</div>
+            <div className="text-[10px] text-[var(--app-muted)] mt-0.5">Tingkat kepatuhan pelaporan</div>
           </div>
         </div>
 
@@ -369,7 +370,7 @@ export default function PajakDashboard() {
               className={`text-xs px-4 py-3 border-b-2 font-medium transition-all whitespace-nowrap cursor-pointer ${
                 activeTab === tab
                   ? 'border-blue-500 text-blue-400 bg-blue-950/10'
-                  : 'border-transparent text-slate-400 hover:text-slate-200'
+                  : 'border-transparent text-[var(--app-muted)] hover:text-slate-200'
               }`}
             >
               {tab}
@@ -393,7 +394,7 @@ export default function PajakDashboard() {
                   <select 
                     value={selectedTahun}
                     onChange={(e) => setSelectedTahun(e.target.value)}
-                    className="bg-[#050B14] border border-slate-800 text-[10px] px-2 py-1 rounded text-slate-400 font-medium"
+                    className="bg-[var(--app-bg)] border border-slate-800 text-[10px] px-2 py-1 rounded text-[var(--app-muted)] font-medium"
                   >
                     <option>Tahun 2026</option>
                     <option>Tahun 2025</option>
@@ -445,7 +446,7 @@ export default function PajakDashboard() {
                       </PieChart>
                     </ResponsiveContainer>
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                      <div className="text-[10px] text-slate-400 font-medium leading-none">Total Terutang</div>
+                      <div className="text-[10px] text-[var(--app-muted)] font-medium leading-none">Total Terutang</div>
                       <div className="text-xs font-bold text-white mt-1 leading-none">Rp 2.45B</div>
                     </div>
                   </div>
@@ -455,11 +456,11 @@ export default function PajakDashboard() {
                       <div key={item.name} className="flex items-center justify-between text-xs">
                         <div className="flex items-center gap-2">
                           <div className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: COLORS_TAX[idx % COLORS_TAX.length] }} />
-                          <span className="text-slate-400">{item.name}</span>
+                          <span className="text-[var(--app-muted)]">{item.name}</span>
                         </div>
                         <div className="text-right">
                           <span className="text-white font-medium">{formatRupiah(item.value)}</span>
-                          <span className="text-[10px] text-slate-500 font-semibold ml-1">({item.percent})</span>
+                          <span className="text-[10px] text-[var(--app-muted)] font-semibold ml-1">({item.percent})</span>
                         </div>
                       </div>
                     ))}
@@ -478,13 +479,13 @@ export default function PajakDashboard() {
                   
                   {/* Search Input */}
                   <div className="md:col-span-2 relative">
-                    <Search className="absolute left-3 top-2.5 w-3.5 h-3.5 text-slate-500" />
+                    <Search className="absolute left-3 top-2.5 w-3.5 h-3.5 text-[var(--app-muted)]" />
                     <input 
                       type="text"
                       placeholder="Cari pajak..."
                       value={searchTerm}
                       onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                      className="bg-[#050B14] border border-slate-800 text-xs px-3 py-2 pl-9 rounded-lg text-slate-200 w-full focus:outline-none focus:border-blue-500"
+                      className="bg-[var(--app-bg)] border border-slate-800 text-xs px-3 py-2 pl-9 rounded-lg text-slate-200 w-full focus:outline-none focus:border-blue-500"
                     />
                   </div>
 
@@ -493,7 +494,7 @@ export default function PajakDashboard() {
                     <select
                       value={selectedJenis}
                       onChange={(e) => { setSelectedJenis(e.target.value); setCurrentPage(1); }}
-                      className="bg-[#050B14] border border-slate-800 text-xs px-3 py-2 rounded-lg text-slate-200 w-full focus:outline-none focus:border-blue-500 font-medium"
+                      className="bg-[var(--app-bg)] border border-slate-800 text-xs px-3 py-2 rounded-lg text-slate-200 w-full focus:outline-none focus:border-blue-500 font-medium"
                     >
                       <option>Semua Jenis Pajak</option>
                       <option>PPN</option>
@@ -509,7 +510,7 @@ export default function PajakDashboard() {
                     <select
                       value={selectedStatus}
                       onChange={(e) => { setSelectedStatus(e.target.value); setCurrentPage(1); }}
-                      className="bg-[#050B14] border border-slate-800 text-xs px-3 py-2 rounded-lg text-slate-200 w-full focus:outline-none focus:border-blue-500 font-medium"
+                      className="bg-[var(--app-bg)] border border-slate-800 text-xs px-3 py-2 rounded-lg text-slate-200 w-full focus:outline-none focus:border-blue-500 font-medium"
                     >
                       <option>Semua Status</option>
                       <option>Belum Lunas</option>
@@ -523,7 +524,7 @@ export default function PajakDashboard() {
                     <select
                       value={selectedMasa}
                       onChange={(e) => { setSelectedMasa(e.target.value); setCurrentPage(1); }}
-                      className="bg-[#050B14] border border-slate-800 text-xs px-3 py-2 rounded-lg text-slate-200 w-full focus:outline-none focus:border-blue-500 font-medium"
+                      className="bg-[var(--app-bg)] border border-slate-800 text-xs px-3 py-2 rounded-lg text-slate-200 w-full focus:outline-none focus:border-blue-500 font-medium"
                     >
                       <option>Semua Masa Pajak</option>
                       <option>Juni 2026</option>
@@ -548,7 +549,7 @@ export default function PajakDashboard() {
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse text-xs">
                   <thead>
-                    <tr className="border-b border-slate-800 text-slate-400 font-semibold uppercase tracking-wider">
+                    <tr className="border-b border-slate-800 text-[var(--app-muted)] font-semibold uppercase tracking-wider">
                       <th className="py-3 px-4 w-12 text-center">NO</th>
                       <th className="py-3 px-4">JENIS PAJAK</th>
                       <th className="py-3 px-4">MASA PAJAK</th>
@@ -567,14 +568,14 @@ export default function PajakDashboard() {
                         const calculatedNo = (currentPage - 1) * rowsPerPage + idx + 1;
                         return (
                           <tr key={item.id} className="border-b border-slate-900 hover:bg-slate-950/40 transition-colors">
-                            <td className="py-3.5 px-4 text-center text-slate-500">{calculatedNo}</td>
+                            <td className="py-3.5 px-4 text-center text-[var(--app-muted)]">{calculatedNo}</td>
                             <td className="py-3.5 px-4 font-bold text-white">{item.jenisPajak}</td>
                             <td className="py-3.5 px-4 text-slate-300">{item.masaPajak}</td>
-                            <td className="py-3.5 px-4 text-slate-400">{item.tglJatuhTempo}</td>
+                            <td className="py-3.5 px-4 text-[var(--app-muted)]">{item.tglJatuhTempo}</td>
                             <td className="py-3.5 px-4 text-right font-medium text-slate-300">
                               {item.dpp > 0 ? formatRupiah(item.dpp) : '-'}
                             </td>
-                            <td className="py-3.5 px-4 text-center text-slate-400">{item.tarif}</td>
+                            <td className="py-3.5 px-4 text-center text-[var(--app-muted)]">{item.tarif}</td>
                             <td className="py-3.5 px-4 text-right font-bold text-blue-400">{formatRupiah(item.pajakTerutang)}</td>
                             <td className="py-3.5 px-4 text-right font-bold text-emerald-400">{formatRupiah(item.pajakDibayar)}</td>
                             <td className="py-3.5 px-4 text-center">
@@ -592,20 +593,20 @@ export default function PajakDashboard() {
                               <div className="flex items-center justify-center gap-1.5">
                                 <button 
                                   onClick={() => { setSelectedTaxDetails(item); setShowDetailModal(true); }}
-                                  className="p-1 text-slate-400 hover:text-white transition-colors cursor-pointer"
+                                  className="p-1 text-[var(--app-muted)] hover:text-white transition-colors cursor-pointer"
                                   title="Detail"
                                 >
                                   <Eye className="w-3.5 h-3.5" />
                                 </button>
                                 <button 
-                                  className="p-1 text-slate-400 hover:text-white transition-colors cursor-pointer"
+                                  className="p-1 text-[var(--app-muted)] hover:text-white transition-colors cursor-pointer"
                                   title="Edit"
                                 >
                                   <Edit2 className="w-3.5 h-3.5" />
                                 </button>
                                 <button 
                                   onClick={() => handleDeleteTax(item.id)}
-                                  className="p-1 text-slate-400 hover:text-rose-500 transition-colors cursor-pointer"
+                                  className="p-1 text-[var(--app-muted)] hover:text-rose-500 transition-colors cursor-pointer"
                                   title="Hapus"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
@@ -617,7 +618,7 @@ export default function PajakDashboard() {
                       })
                     ) : (
                       <tr>
-                        <td colSpan={10} className="py-8 text-center text-slate-500">
+                        <td colSpan={10} className="py-8 text-center text-[var(--app-muted)]">
                           Tidak ada data kewajiban pajak yang ditemukan.
                         </td>
                       </tr>
@@ -627,7 +628,7 @@ export default function PajakDashboard() {
               </div>
 
               {/* Table Pagination Controller */}
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-4 text-slate-400 text-xs">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-4 text-[var(--app-muted)] text-xs">
                 <div>
                   Menampilkan <span className="font-semibold text-white">{Math.min(filteredData.length, (currentPage - 1) * rowsPerPage + 1)}</span> sampai{' '}
                   <span className="font-semibold text-white">{Math.min(filteredData.length, currentPage * rowsPerPage)}</span> dari{' '}
@@ -640,7 +641,7 @@ export default function PajakDashboard() {
                     <select
                       value={rowsPerPage}
                       onChange={(e) => { setRowsPerPage(parseInt(e.target.value)); setCurrentPage(1); }}
-                      className="bg-[#050B14] border border-slate-800 rounded px-1.5 py-0.5 text-white"
+                      className="bg-[var(--app-bg)] border border-slate-800 rounded px-1.5 py-0.5 text-white"
                     >
                       <option value={5}>5</option>
                       <option value={7}>7</option>
@@ -653,7 +654,7 @@ export default function PajakDashboard() {
                     <button
                       disabled={currentPage === 1}
                       onClick={() => setCurrentPage(currentPage - 1)}
-                      className="p-1.5 rounded-md hover:bg-slate-800 text-slate-400 hover:text-white disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                      className="p-1.5 rounded-md hover:bg-slate-800 text-[var(--app-muted)] hover:text-white disabled:opacity-30 disabled:pointer-events-none transition-colors"
                     >
                       <ChevronLeft className="w-4 h-4" />
                     </button>
@@ -664,7 +665,7 @@ export default function PajakDashboard() {
                         className={`w-6.5 h-6.5 rounded-md text-xs font-semibold ${
                           currentPage === i + 1
                             ? 'bg-blue-600 text-white'
-                            : 'hover:bg-slate-800 text-slate-400 hover:text-white'
+                            : 'hover:bg-slate-800 text-[var(--app-muted)] hover:text-white'
                         }`}
                       >
                         {i + 1}
@@ -673,7 +674,7 @@ export default function PajakDashboard() {
                     <button
                       disabled={currentPage === totalPages}
                       onClick={() => setCurrentPage(currentPage + 1)}
-                      className="p-1.5 rounded-md hover:bg-slate-800 text-slate-400 hover:text-white disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                      className="p-1.5 rounded-md hover:bg-slate-800 text-[var(--app-muted)] hover:text-white disabled:opacity-30 disabled:pointer-events-none transition-colors"
                     >
                       <ChevronRight className="w-4 h-4" />
                     </button>
@@ -706,7 +707,7 @@ export default function PajakDashboard() {
                   <div key={index} className="flex items-center justify-between border-b border-slate-900/60 pb-2.5 last:border-b-0 last:pb-0">
                     <div className="space-y-0.5">
                       <div className="text-xs font-semibold text-white">{item.name}</div>
-                      <div className="text-[10px] text-slate-400">
+                      <div className="text-[10px] text-[var(--app-muted)]">
                         {formatRupiah(item.total)} • <span className="font-semibold text-slate-300">{item.date}</span>
                       </div>
                     </div>
@@ -718,7 +719,7 @@ export default function PajakDashboard() {
                         ? 'bg-amber-500/15 text-amber-400 border border-amber-500/20'
                         : item.type === 'success'
                         ? 'bg-emerald-500/15 text-emerald-400'
-                        : 'bg-slate-500/10 text-slate-300'
+                        : 'bg-[var(--app-bg)]0/10 text-slate-300'
                     }`}>
                       {item.badge}
                     </span>
@@ -731,7 +732,7 @@ export default function PajakDashboard() {
             <div className="bg-[#0B1528]/50 border border-slate-900 rounded-xl p-5 shadow-sm">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xs font-bold text-white uppercase tracking-wider">Ringkasan SPT</h2>
-                <select className="bg-[#050B14] border border-slate-800 text-[10px] px-1.5 py-0.5 rounded text-slate-400 font-semibold">
+                <select className="bg-[var(--app-bg)] border border-slate-800 text-[10px] px-1.5 py-0.5 rounded text-[var(--app-muted)] font-semibold">
                   <option>Tahun 2026</option>
                   <option>Tahun 2025</option>
                 </select>
@@ -746,10 +747,10 @@ export default function PajakDashboard() {
                 ].map((item, index) => (
                   <div key={index} className="space-y-1">
                     <div className="flex items-center justify-between text-xs">
-                      <span className="text-slate-400">{item.name}</span>
-                      <span className="text-white font-semibold">{item.count}</span>
+                      <span className="text-[var(--app-muted)]">{item.name}</span>
+                      <span className="text-[var(--app-text)] font-semibold">{item.count}</span>
                     </div>
-                    <div className="w-full bg-[#050B14] h-1.5 rounded-full overflow-hidden">
+                    <div className="w-full bg-[var(--app-bg)] h-1.5 rounded-full overflow-hidden">
                       <div 
                         className="bg-emerald-500 h-full rounded-full transition-all" 
                         style={{ width: `${item.progress}%` }} 
@@ -780,9 +781,9 @@ export default function PajakDashboard() {
                     onClick={() => {
                       if (btn.label === 'Buat Kewajiban Pajak') setShowAddModal(true);
                     }}
-                    className="flex flex-col items-center justify-center p-3 bg-[#050B14]/80 hover:bg-[#050B14] border border-slate-800/80 rounded-lg text-center gap-1.5 transition-colors cursor-pointer group"
+                    className="flex flex-col items-center justify-center p-3 bg-[var(--app-bg)]/80 hover:bg-[var(--app-bg)] border border-slate-800/80 rounded-lg text-center gap-1.5 transition-colors cursor-pointer group"
                   >
-                    <btn.icon className="w-4 h-4 text-slate-400 group-hover:text-blue-400 transition-colors" />
+                    <btn.icon className="w-4 h-4 text-[var(--app-muted)] group-hover:text-blue-400 transition-colors" />
                     <span className="text-[9px] text-slate-300 font-medium leading-tight">{btn.label}</span>
                   </button>
                 ))}
@@ -823,7 +824,7 @@ export default function PajakDashboard() {
               <h3 className="text-sm font-bold text-white uppercase tracking-wider">Buat Kewajiban Pajak Baru</h3>
               <button 
                 onClick={() => setShowAddModal(false)}
-                className="text-slate-400 hover:text-white transition-colors cursor-pointer"
+                className="text-[var(--app-muted)] hover:text-white transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -832,11 +833,11 @@ export default function PajakDashboard() {
             <form onSubmit={handleAddTax} className="p-5 space-y-4 text-xs text-slate-300">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="block text-slate-400 font-semibold">Jenis Pajak</label>
+                  <label className="block text-[var(--app-muted)] font-semibold">Jenis Pajak</label>
                   <select 
                     value={newJenis}
                     onChange={(e) => setNewJenis(e.target.value)}
-                    className="bg-[#050B14] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500"
+                    className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500"
                   >
                     <option>PPN</option>
                     <option>PPh 21</option>
@@ -847,13 +848,13 @@ export default function PajakDashboard() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="block text-slate-400 font-semibold">Masa Pajak</label>
+                  <label className="block text-[var(--app-muted)] font-semibold">Masa Pajak</label>
                   <input 
                     type="text" 
                     value={newMasa}
                     onChange={(e) => setNewMasa(e.target.value)}
                     placeholder="Contoh: Juni 2026"
-                    className="bg-[#050B14] border border-slate-800 text-white rounded-lg p-2 w-full focus:outline-none focus:border-blue-500"
+                    className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2 w-full focus:outline-none focus:border-blue-500"
                     required
                   />
                 </div>
@@ -861,73 +862,73 @@ export default function PajakDashboard() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="block text-slate-400 font-semibold">Tanggal Jatuh Tempo</label>
+                  <label className="block text-[var(--app-muted)] font-semibold">Tanggal Jatuh Tempo</label>
                   <input 
                     type="text" 
                     value={newJatuhTempo}
                     onChange={(e) => setNewJatuhTempo(e.target.value)}
                     placeholder="Contoh: 15 Jul 2026"
-                    className="bg-[#050B14] border border-slate-800 text-white rounded-lg p-2 w-full focus:outline-none focus:border-blue-500"
+                    className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2 w-full focus:outline-none focus:border-blue-500"
                     required
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="block text-slate-400 font-semibold">Tarif Pajak (%)</label>
+                  <label className="block text-[var(--app-muted)] font-semibold">Tarif Pajak (%)</label>
                   <input 
                     type="text" 
                     value={newTarif}
                     onChange={(e) => setNewTarif(e.target.value)}
                     placeholder="Contoh: 10% atau Tarif Progresif"
-                    className="bg-[#050B14] border border-slate-800 text-white rounded-lg p-2 w-full focus:outline-none focus:border-blue-500"
+                    className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2 w-full focus:outline-none focus:border-blue-500"
                     required
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="block text-slate-400 font-semibold">DPP - Dasar Pengenaan Pajak (Rp)</label>
+                <label className="block text-[var(--app-muted)] font-semibold">DPP - Dasar Pengenaan Pajak (Rp)</label>
                 <input 
                   type="number" 
                   value={newDpp}
                   onChange={(e) => setNewDpp(e.target.value)}
                   placeholder="Contoh: 15000000"
-                  className="bg-[#050B14] border border-slate-800 text-white rounded-lg p-2 w-full focus:outline-none focus:border-blue-500"
+                  className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2 w-full focus:outline-none focus:border-blue-500"
                   required
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="block text-slate-400 font-semibold">Pajak Terutang (Rp)</label>
+                  <label className="block text-[var(--app-muted)] font-semibold">Pajak Terutang (Rp)</label>
                   <input 
                     type="number" 
                     value={newTerutang}
                     onChange={(e) => setNewTerutang(e.target.value)}
                     placeholder="Contoh: 1500000"
-                    className="bg-[#050B14] border border-slate-800 text-white rounded-lg p-2 w-full focus:outline-none focus:border-blue-500"
+                    className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2 w-full focus:outline-none focus:border-blue-500"
                     required
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="block text-slate-400 font-semibold">Pajak Dibayar (Rp)</label>
+                  <label className="block text-[var(--app-muted)] font-semibold">Pajak Dibayar (Rp)</label>
                   <input 
                     type="number" 
                     value={newDibayar}
                     onChange={(e) => setNewDibayar(e.target.value)}
                     placeholder="Contoh: 0"
-                    className="bg-[#050B14] border border-slate-800 text-white rounded-lg p-2 w-full focus:outline-none focus:border-blue-500"
+                    className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2 w-full focus:outline-none focus:border-blue-500"
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="block text-slate-400 font-semibold">Status Pembayaran</label>
+                <label className="block text-[var(--app-muted)] font-semibold">Status Pembayaran</label>
                 <select 
                   value={newStatus}
                   onChange={(e) => setNewStatus(e.target.value as any)}
-                  className="bg-[#050B14] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500"
+                  className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500"
                 >
                   <option value="Belum Lunas">Belum Lunas</option>
                   <option value="Sebagian">Sebagian</option>
@@ -945,7 +946,7 @@ export default function PajakDashboard() {
                 </button>
                 <button 
                   type="submit"
-                  className="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-5 py-2 rounded-lg cursor-pointer"
+                  className="bg-blue-600 hover:bg-blue-500 text-[var(--app-text)] font-semibold px-5 py-2 rounded-lg cursor-pointer"
                 >
                   Simpan Kewajiban Pajak
                 </button>
@@ -963,7 +964,7 @@ export default function PajakDashboard() {
               <h3 className="text-sm font-bold text-white uppercase tracking-wider">Detail Kewajiban Pajak</h3>
               <button 
                 onClick={() => setShowDetailModal(false)}
-                className="text-slate-400 hover:text-white transition-colors cursor-pointer"
+                className="text-[var(--app-muted)] hover:text-white transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -972,44 +973,44 @@ export default function PajakDashboard() {
             <div className="p-5 space-y-4 text-xs">
               <div className="grid grid-cols-2 gap-y-3.5 border-b border-slate-900 pb-4">
                 <div>
-                  <div className="text-slate-500 font-semibold uppercase tracking-wider text-[10px]">Jenis Pajak</div>
+                  <div className="text-[var(--app-muted)] font-semibold uppercase tracking-wider text-[10px]">Jenis Pajak</div>
                   <div className="text-sm font-bold text-white mt-0.5">{selectedTaxDetails.jenisPajak}</div>
                 </div>
                 <div>
-                  <div className="text-slate-500 font-semibold uppercase tracking-wider text-[10px]">Masa Pajak</div>
+                  <div className="text-[var(--app-muted)] font-semibold uppercase tracking-wider text-[10px]">Masa Pajak</div>
                   <div className="text-sm font-semibold text-slate-200 mt-0.5">{selectedTaxDetails.masaPajak}</div>
                 </div>
                 <div>
-                  <div className="text-slate-500 font-semibold uppercase tracking-wider text-[10px]">Jatuh Tempo</div>
+                  <div className="text-[var(--app-muted)] font-semibold uppercase tracking-wider text-[10px]">Jatuh Tempo</div>
                   <div className="text-sm font-semibold text-slate-200 mt-0.5">{selectedTaxDetails.tglJatuhTempo}</div>
                 </div>
                 <div>
-                  <div className="text-slate-500 font-semibold uppercase tracking-wider text-[10px]">Tarif</div>
+                  <div className="text-[var(--app-muted)] font-semibold uppercase tracking-wider text-[10px]">Tarif</div>
                   <div className="text-sm font-semibold text-slate-200 mt-0.5">{selectedTaxDetails.tarif}</div>
                 </div>
               </div>
 
               <div className="space-y-3.5 pt-1">
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-400">Dasar Pengenaan Pajak (DPP):</span>
+                  <span className="text-[var(--app-muted)]">Dasar Pengenaan Pajak (DPP):</span>
                   <span className="font-semibold text-white">{formatRupiah(selectedTaxDetails.dpp)}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-400">Pajak Terutang:</span>
+                  <span className="text-[var(--app-muted)]">Pajak Terutang:</span>
                   <span className="font-semibold text-blue-400">{formatRupiah(selectedTaxDetails.pajakTerutang)}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-400">Pajak Dibayar:</span>
+                  <span className="text-[var(--app-muted)]">Pajak Dibayar:</span>
                   <span className="font-semibold text-emerald-400">{formatRupiah(selectedTaxDetails.pajakDibayar)}</span>
                 </div>
                 <div className="flex justify-between items-center border-t border-slate-900 pt-3">
-                  <span className="text-slate-400 font-semibold">Sisa Kurang Bayar:</span>
+                  <span className="text-[var(--app-muted)] font-semibold">Sisa Kurang Bayar:</span>
                   <span className="font-bold text-rose-400">
                     {formatRupiah(Math.max(0, selectedTaxDetails.pajakTerutang - selectedTaxDetails.pajakDibayar))}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-400">Status Pembayaran:</span>
+                  <span className="text-[var(--app-muted)]">Status Pembayaran:</span>
                   <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold ${
                     selectedTaxDetails.status === 'Lunas' 
                       ? 'bg-emerald-500/10 text-emerald-400' 

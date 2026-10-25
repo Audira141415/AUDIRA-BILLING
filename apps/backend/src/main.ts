@@ -15,8 +15,12 @@ import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 import * as express from 'express';
+import { enforceAudiraAuthenticity } from './common/audira-signature';
 
 async function bootstrap() {
+  // Verifikasi Tanda Tangan Kriptografis Resmi Agus Dwi Rianto (AUDIRA)
+  enforceAudiraAuthenticity();
+
   const app = await NestFactory.create(AppModule);
 
   // Enable cookie parser for httpOnly cookies
@@ -29,10 +33,14 @@ async function bootstrap() {
   const allowedOrigins = new Set(
     [
       process.env.FRONTEND_URL || 'http://localhost:3000',
-      process.env.CUSTOMER_PORTAL_URL || 'http://localhost:3001',
+      process.env.CUSTOMER_PORTAL_URL || 'http://localhost:3219',
       process.env.AUDIRANET_WEB_URL || 'http://localhost:3010',
-      'http://localhost:1992', // Admin panel new port
-      'http://localhost:1993', // Backend new port
+      'http://localhost:3217', // Admin panel port
+      'http://localhost:3218', // Backend port
+      'http://localhost:3219', // Customer portal port
+      'http://localhost:3001', // Legacy customer portal port
+      'http://localhost:1992', // Legacy admin port
+      'http://localhost:1993', // Legacy backend port
     ].filter(Boolean),
   );
 

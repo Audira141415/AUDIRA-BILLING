@@ -10,9 +10,15 @@ export default function SpeedTest() {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const customer = localStorage.getItem('customer');
-    if (!customer) {
-      router.push('/');
+    const raw = localStorage.getItem('customer');
+    if (!raw) {
+      router.push('/login');
+      return;
+    }
+    const customer = JSON.parse(raw);
+    const inet = customer.internetNumber || customer.id || 'NET-100234';
+    if (!router.asPath.startsWith('/c/')) {
+      router.replace(`/c/${inet}/speedtest`);
     }
   }, [router]);
 
@@ -57,127 +63,176 @@ export default function SpeedTest() {
 
   return (
     <CustomerLayout>
-      <div className="max-w-4xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Speed Test</h1>
-          <p className="text-gray-600">Test kecepatan internet Anda</p>
+      <div className="space-y-6">
+        {/* Header Banner */}
+        <div className="bg-white dark:bg-[#0c1322] border-2 border-black dark:border-gray-800 rounded-2xl p-6 sm:p-7 shadow-[4px_4px_0px_#000] flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+          <div>
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-cyan-500 animate-pulse"></span>
+              <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">
+                Fiber Latency & Bandwidth Telemetry
+              </span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-slate-950 dark:text-white">
+              Speed Test Diagnostik
+            </h1>
+            <p className="text-xs text-slate-600 dark:text-gray-400 mt-1 max-w-xl">
+              Ukur throughput bandwidth download/upload real-time, latensi ping ke gateway NOC, dan kestabilan jitter koneksi Anda.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2 p-3 bg-slate-50 dark:bg-[#070b14] border border-slate-200 dark:border-gray-800 rounded-xl shrink-0 font-mono text-xs">
+            <span className="text-slate-500 dark:text-gray-400 uppercase tracking-widest font-bold">
+              Server:
+            </span>
+            <span className="font-bold text-slate-900 dark:text-white">
+              NOC JKT-IX (Direct Fiber)
+            </span>
+          </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-lg p-8 mb-6">
+        {/* Speed Test Panel */}
+        <div className="bg-white dark:bg-[#0c1322] border-2 border-black dark:border-gray-800 rounded-2xl p-6 sm:p-8 shadow-[4px_4px_0px_#000]">
           {!results && !testing && (
-            <div className="text-center py-12">
-              <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-blue-100 mb-6">
-                <Activity className="h-12 w-12 text-blue-600" />
+            <div className="text-center py-10">
+              <div className="w-20 h-20 rounded-2xl border-2 border-black dark:border-gray-700 bg-cyan-100 dark:bg-cyan-950 flex items-center justify-center mx-auto mb-5 shadow-[3px_3px_0px_#000]">
+                <Activity className="h-10 w-10 text-cyan-600 dark:text-cyan-400 stroke-[2.5]" />
               </div>
-              <h2 className="text-2xl font-semibold mb-4">Mulai Speed Test</h2>
-              <p className="text-gray-600 mb-8">
-                Klik tombol di bawah untuk mengukur kecepatan download dan upload
+              <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-slate-950 dark:text-white mb-2">
+                Mulai Pengujian Kecepatan
+              </h2>
+              <p className="text-xs text-slate-600 dark:text-gray-400 max-w-md mx-auto mb-6">
+                Sistem akan memancarkan paket uji multithread untuk mengukur kecepatan fiber optik murni ke router Mikrotik dan upstream gateway.
               </p>
               <button
                 onClick={runSpeedTest}
-                className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+                className="min-h-[48px] px-8 py-3 bg-cyan-400 hover:bg-cyan-300 text-black border-2 border-black rounded-xl font-mono text-xs font-black uppercase tracking-wider shadow-[3px_3px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all"
               >
-                Mulai Test
+                Jalankan Test Sekarang
               </button>
             </div>
           )}
 
           {testing && (
-            <div className="text-center py-12">
-              <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-blue-100 mb-6 animate-pulse">
-                <Wifi className="h-12 w-12 text-blue-600" />
+            <div className="text-center py-10">
+              <div className="w-20 h-20 rounded-2xl border-2 border-black dark:border-gray-700 bg-cyan-100 dark:bg-cyan-950 flex items-center justify-center mx-auto mb-5 shadow-[3px_3px_0px_#000] animate-pulse">
+                <Wifi className="h-10 w-10 text-cyan-600 dark:text-cyan-400 stroke-[2.5]" />
               </div>
-              <h2 className="text-2xl font-semibold mb-4">Testing...</h2>
-              <div className="max-w-md mx-auto mb-4">
-                <div className="w-full bg-gray-200 rounded-full h-4">
+              <h2 className="text-xl font-black uppercase tracking-tight text-slate-950 dark:text-white mb-2">
+                Mengukur Throughput Fiber...
+              </h2>
+              <div className="max-w-md mx-auto mb-3">
+                <div className="w-full bg-slate-200 dark:bg-slate-800 rounded-lg h-4 p-0.5 border border-black dark:border-gray-700">
                   <div
-                    className="bg-blue-600 h-4 rounded-full transition-all duration-300"
+                    className="bg-cyan-400 h-full rounded transition-all duration-300"
                     style={{ width: `${progress}%` }}
                   />
                 </div>
               </div>
-              <p className="text-gray-600">{progress}% Complete</p>
+              <p className="text-xs font-mono font-bold text-cyan-600 dark:text-cyan-400">
+                {progress}% Proses Diagnostik
+              </p>
             </div>
           )}
 
           {results && !testing && (
             <div>
-              <div className="text-center mb-8">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 mb-4">
-                  <Activity className="h-8 w-8 text-green-600" />
-                </div>
-                <h2 className="text-2xl font-semibold">Test Selesai!</h2>
+              <div className="text-center mb-6">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-mono font-bold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-900 dark:text-emerald-300 border border-emerald-500/40 mb-2">
+                  <Activity className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400 stroke-[2.5]" />
+                  DIAGNOSTIK SELESAI
+                </span>
+                <h2 className="text-xl sm:text-2xl font-black uppercase text-slate-950 dark:text-white">
+                  Hasil Pengujian Sambungan
+                </h2>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg p-6 text-white">
-                  <div className="flex items-center mb-4">
-                    <Download className="h-6 w-6 mr-2" />
-                    <span className="text-sm font-medium">Download Speed</span>
+              {/* Speeds Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+                <div className="p-5 rounded-xl border-2 border-black dark:border-gray-700 bg-cyan-50 dark:bg-cyan-950/20 shadow-[3px_3px_0px_#000]">
+                  <div className="flex items-center gap-2 mb-2 text-cyan-700 dark:text-cyan-400 font-mono text-xs font-bold uppercase tracking-wider">
+                    <Download className="h-4 w-4 stroke-[2.5]" />
+                    <span>Download Speed</span>
                   </div>
-                  <div className="text-4xl font-bold mb-1">{results.download}</div>
-                  <div className="text-sm opacity-90">Mbps</div>
-                </div>
-
-                <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-lg p-6 text-white">
-                  <div className="flex items-center mb-4">
-                    <Upload className="h-6 w-6 mr-2" />
-                    <span className="text-sm font-medium">Upload Speed</span>
+                  <div className="text-4xl sm:text-5xl font-mono font-black text-slate-950 dark:text-white">
+                    {results.download}
                   </div>
-                  <div className="text-4xl font-bold mb-1">{results.upload}</div>
-                  <div className="text-sm opacity-90">Mbps</div>
+                  <span className="text-xs font-mono font-bold text-slate-500 dark:text-gray-400">
+                    Mbps (Simetris Fiber)
+                  </span>
+                </div>
+
+                <div className="p-5 rounded-xl border-2 border-black dark:border-gray-700 bg-emerald-50 dark:bg-emerald-950/20 shadow-[3px_3px_0px_#000]">
+                  <div className="flex items-center gap-2 mb-2 text-emerald-700 dark:text-emerald-400 font-mono text-xs font-bold uppercase tracking-wider">
+                    <Upload className="h-4 w-4 stroke-[2.5]" />
+                    <span>Upload Speed</span>
+                  </div>
+                  <div className="text-4xl sm:text-5xl font-mono font-black text-slate-950 dark:text-white">
+                    {results.upload}
+                  </div>
+                  <span className="text-xs font-mono font-bold text-slate-500 dark:text-gray-400">
+                    Mbps (Simetris Fiber)
+                  </span>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 mb-8">
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <div className="text-sm text-gray-600 mb-1">Ping</div>
-                  <div className="text-2xl font-semibold">{results.ping} ms</div>
+              {/* Ping & Jitter Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-5 font-mono text-xs">
+                <div className="p-3.5 bg-slate-50 dark:bg-[#070b14] border border-slate-200 dark:border-gray-800 rounded-xl">
+                  <div className="text-slate-500 dark:text-gray-400 text-[10px] uppercase font-bold mb-0.5">
+                    Latensi Ping
+                  </div>
+                  <div className="text-xl font-black text-slate-950 dark:text-white">
+                    {results.ping} ms
+                  </div>
                 </div>
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <div className="text-sm text-gray-600 mb-1">Jitter</div>
-                  <div className="text-2xl font-semibold">{results.jitter} ms</div>
+                <div className="p-3.5 bg-slate-50 dark:bg-[#070b14] border border-slate-200 dark:border-gray-800 rounded-xl">
+                  <div className="text-slate-500 dark:text-gray-400 text-[10px] uppercase font-bold mb-0.5">
+                    Stabilitas Jitter
+                  </div>
+                  <div className="text-xl font-black text-slate-950 dark:text-white">
+                    {results.jitter} ms
+                  </div>
+                </div>
+                <div className="col-span-2 sm:col-span-1 p-3.5 bg-slate-50 dark:bg-[#070b14] border border-slate-200 dark:border-gray-800 rounded-xl">
+                  <div className="text-slate-500 dark:text-gray-400 text-[10px] uppercase font-bold mb-0.5">
+                    Waktu Pengujian
+                  </div>
+                  <div className="text-xs font-bold text-slate-900 dark:text-white truncate">
+                    {new Date(results.timestamp).toLocaleTimeString('id-ID')} WIB
+                  </div>
                 </div>
               </div>
 
-              <div className="bg-gray-50 rounded-lg p-4 mb-6">
-                <div className="text-sm text-gray-600 mb-1">Server</div>
-                <div className="font-medium">{results.server}</div>
-                <div className="text-xs text-gray-500 mt-2">
-                  {new Date(results.timestamp).toLocaleString('id-ID')}
-                </div>
-              </div>
-
-              <div className="text-center">
+              <div className="text-center pt-2">
                 <button
                   onClick={runSpeedTest}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  className="min-h-[44px] px-6 py-2.5 rounded-lg border-2 border-black bg-cyan-400 hover:bg-cyan-300 text-black font-mono text-xs font-black uppercase tracking-wider shadow-[2px_2px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all"
                 >
-                  Test Ulang
+                  Uji Ulang Sambungan
                 </button>
               </div>
             </div>
           )}
         </div>
 
-        <div className="bg-blue-50 rounded-lg p-6">
-          <h3 className="font-semibold mb-3">Tips untuk Speed Test Akurat:</h3>
-          <ul className="space-y-2 text-sm text-gray-700">
-            <li className="flex items-start">
-              <span className="mr-2">•</span>
-              <span>Tutup aplikasi lain yang menggunakan internet</span>
+        {/* Technical Tips */}
+        <div className="bg-white dark:bg-[#0c1322] border-2 border-black dark:border-gray-800 rounded-2xl p-6 shadow-[4px_4px_0px_#000]">
+          <h3 className="font-mono text-xs font-bold uppercase tracking-wider text-slate-950 dark:text-white mb-3">
+            Tips Akurasi Pengujian Kecepatan:
+          </h3>
+          <ul className="space-y-2 text-xs text-slate-600 dark:text-gray-400 font-mono">
+            <li className="flex items-start gap-2">
+              <span className="text-cyan-500 font-bold">•</span>
+              <span>Gunakan kabel LAN UTP Cat6 langsung ke router untuk menghindari interferensi sinyal radio Wi-Fi.</span>
             </li>
-            <li className="flex items-start">
-              <span className="mr-2">•</span>
-              <span>Gunakan koneksi kabel (bukan WiFi) untuk hasil terbaik</span>
+            <li className="flex items-start gap-2">
+              <span className="text-cyan-500 font-bold">•</span>
+              <span>Hentikan sementara aplikasi unduhan background (Torrent, update OS, cloud drive sync) selama tes berlangsung.</span>
             </li>
-            <li className="flex items-start">
-              <span className="mr-2">•</span>
-              <span>Pastikan tidak ada download/upload yang sedang berjalan</span>
-            </li>
-            <li className="flex items-start">
-              <span className="mr-2">•</span>
-              <span>Lakukan test beberapa kali untuk hasil rata-rata</span>
+            <li className="flex items-start gap-2">
+              <span className="text-cyan-500 font-bold">•</span>
+              <span>Jika hasil latensi lebih tinggi dari 20ms, Anda dapat membuat tiket diagnostik NOC langsung melalui portal.</span>
             </li>
           </ul>
         </div>

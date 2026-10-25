@@ -1,5 +1,7 @@
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
+import api from '@/lib/api';
 import {
   LineChart,
   Line,
@@ -64,24 +66,24 @@ export default function AnalyticsPage() {
           break;
       }
 
-      // Load all analytics
-      const [revenue, forecast, churn, funnel, profit, clv, dashboard] = await Promise.all([
-        fetch(`/api/analytics/revenue${dateRange !== 'all' ? `?startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}` : ''}`).then(r => r.json()),
-        fetch('/api/analytics/forecast').then(r => r.json()),
-        fetch('/api/analytics/churn').then(r => r.json()),
-        fetch('/api/analytics/funnel').then(r => r.json()),
-        fetch('/api/analytics/profit').then(r => r.json()),
-        fetch('/api/analytics/clv').then(r => r.json()),
-        fetch('/api/analytics/dashboard').then(r => r.json()),
+      // Load all analytics safely via API client
+      const [revenue, forecast, churn, funnel, profit, clv, dashboard] = await Promise.allSettled([
+        api.analytics.getRevenue(dateRange !== 'all' ? startDate.toISOString() : undefined, dateRange !== 'all' ? endDate.toISOString() : undefined),
+        api.analytics.getForecast(3),
+        api.analytics.getChurn(),
+        api.analytics.getFunnel(),
+        api.analytics.getProfit(),
+        api.analytics.getClv(),
+        api.analytics.getDashboard(),
       ]);
 
-      setRevenueData(revenue);
-      setForecastData(forecast);
-      setChurnData(churn);
-      setFunnelData(funnel);
-      setProfitData(profit);
-      setClvData(clv);
-      setDashboardSummary(dashboard);
+      if (revenue.status === 'fulfilled') setRevenueData(revenue.value);
+      if (forecast.status === 'fulfilled') setForecastData(forecast.value);
+      if (churn.status === 'fulfilled') setChurnData(churn.value);
+      if (funnel.status === 'fulfilled') setFunnelData(funnel.value);
+      if (profit.status === 'fulfilled') setProfitData(profit.value);
+      if (clv.status === 'fulfilled') setClvData(clv.value);
+      if (dashboard.status === 'fulfilled') setDashboardSummary(dashboard.value);
     } catch (error) {
       console.error('Error loading analytics:', error);
     }
@@ -98,8 +100,8 @@ export default function AnalyticsPage() {
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Advanced Analytics</h1>
-            <p className="text-gray-600 mt-1">Dashboard analytics dan insights</p>
+            <h1 className="text-2xl font-bold text-[var(--app-text)]">Advanced Analytics</h1>
+            <p className="text-[var(--app-muted)] mt-1">Dashboard analytics dan insights</p>
           </div>
           <div className="flex gap-3">
             {/* Date Range Filter */}
@@ -127,14 +129,14 @@ export default function AnalyticsPage() {
         {/* Summary Cards */}
         {dashboardSummary && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-[var(--app-card)] rounded-lg shadow p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Total Revenue</p>
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p className="text-sm text-[var(--app-muted)]">Total Revenue</p>
+                  <p className="text-2xl font-bold text-[var(--app-text)]">
                     Rp {dashboardSummary.revenue.total.toLocaleString('id-ID')}
                   </p>
-                  <p className="text-sm text-gray-500 mt-1">
+                  <p className="text-sm text-[var(--app-muted)] mt-1">
                     {dashboardSummary.revenue.invoiceCount} invoices
                   </p>
                 </div>
@@ -142,11 +144,11 @@ export default function AnalyticsPage() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-[var(--app-card)] rounded-lg shadow p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Next Month Forecast</p>
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p className="text-sm text-[var(--app-muted)]">Next Month Forecast</p>
+                  <p className="text-2xl font-bold text-[var(--app-text)]">
                     Rp {dashboardSummary.forecast.nextMonth.toLocaleString('id-ID')}
                   </p>
                   <div className="flex items-center gap-1 mt-1">
@@ -155,7 +157,7 @@ export default function AnalyticsPage() {
                     ) : (
                       <TrendingDown className="w-4 h-4 text-red-500" />
                     )}
-                    <span className="text-sm text-gray-500">
+                    <span className="text-sm text-[var(--app-muted)]">
                       {dashboardSummary.forecast.confidence}% confidence
                     </span>
                   </div>
@@ -164,14 +166,14 @@ export default function AnalyticsPage() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-[var(--app-card)] rounded-lg shadow p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Churn Risk</p>
+                  <p className="text-sm text-[var(--app-muted)]">Churn Risk</p>
                   <p className="text-2xl font-bold text-red-600">
                     {dashboardSummary.churn.highRisk}
                   </p>
-                  <p className="text-sm text-gray-500 mt-1">
+                  <p className="text-sm text-[var(--app-muted)] mt-1">
                     {dashboardSummary.churn.mediumRisk} medium risk
                   </p>
                 </div>
@@ -179,14 +181,14 @@ export default function AnalyticsPage() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-[var(--app-card)] rounded-lg shadow p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Profit Margin</p>
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p className="text-sm text-[var(--app-muted)]">Profit Margin</p>
+                  <p className="text-2xl font-bold text-[var(--app-text)]">
                     {dashboardSummary.profit.margin}%
                   </p>
-                  <p className="text-sm text-gray-500 mt-1">
+                  <p className="text-sm text-[var(--app-muted)] mt-1">
                     Rp {Math.round(dashboardSummary.profit.totalProfit).toLocaleString('id-ID')} profit
                   </p>
                 </div>
@@ -198,8 +200,8 @@ export default function AnalyticsPage() {
 
         {/* Revenue Chart */}
         {revenueData && (
-          <div className="bg-white rounded-lg shadow p-6 mb-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Revenue Trend</h2>
+          <div className="bg-[var(--app-card)] rounded-lg shadow p-6 mb-6">
+            <h2 className="text-lg font-semibold text-[var(--app-text)] mb-4">Revenue Trend</h2>
             <ResponsiveContainer width="100%" height={300}>
               <AreaChart
                 data={Object.entries(revenueData.revenueByMonth || {}).map(([month, revenue]) => ({
@@ -228,8 +230,8 @@ export default function AnalyticsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           {/* Revenue Forecast */}
           {forecastData && forecastData.forecast && (
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            <div className="bg-[var(--app-card)] rounded-lg shadow p-6">
+              <h2 className="text-lg font-semibold text-[var(--app-text)] mb-4">
                 Revenue Forecast (Next 3 Months)
               </h2>
               <ResponsiveContainer width="100%" height={250}>
@@ -249,16 +251,16 @@ export default function AnalyticsPage() {
                 </LineChart>
               </ResponsiveContainer>
               <div className="mt-4 flex items-center justify-between text-sm">
-                <span className="text-gray-600">Trend: {forecastData.trend}</span>
-                <span className="text-gray-600">Confidence: {forecastData.confidence}%</span>
+                <span className="text-[var(--app-muted)]">Trend: {forecastData.trend}</span>
+                <span className="text-[var(--app-muted)]">Confidence: {forecastData.confidence}%</span>
               </div>
             </div>
           )}
 
           {/* Revenue by Package */}
           {revenueData && (
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Revenue by Package</h2>
+            <div className="bg-[var(--app-card)] rounded-lg shadow p-6">
+              <h2 className="text-lg font-semibold text-[var(--app-text)] mb-4">Revenue by Package</h2>
               <ResponsiveContainer width="100%" height={250}>
                 <PieChart>
                   <Pie
@@ -291,8 +293,8 @@ export default function AnalyticsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           {/* Sales Funnel */}
           {funnelData && (
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Sales Funnel</h2>
+            <div className="bg-[var(--app-card)] rounded-lg shadow p-6">
+              <h2 className="text-lg font-semibold text-[var(--app-text)] mb-4">Sales Funnel</h2>
               <ResponsiveContainer width="100%" height={250}>
                 <BarChart data={funnelData.funnel} layout="vertical">
                   <CartesianGrid strokeDasharray="3 3" />
@@ -304,15 +306,15 @@ export default function AnalyticsPage() {
                 </BarChart>
               </ResponsiveContainer>
               <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
-                <div className="bg-gray-50 p-3 rounded">
-                  <p className="text-gray-600">Lead to Customer</p>
-                  <p className="text-lg font-semibold text-gray-900">
+                <div className="bg-[var(--app-bg)] p-3 rounded">
+                  <p className="text-[var(--app-muted)]">Lead to Customer</p>
+                  <p className="text-lg font-semibold text-[var(--app-text)]">
                     {funnelData.conversionRates.leadToCustomer}%
                   </p>
                 </div>
-                <div className="bg-gray-50 p-3 rounded">
-                  <p className="text-gray-600">Customer to Paying</p>
-                  <p className="text-lg font-semibold text-gray-900">
+                <div className="bg-[var(--app-bg)] p-3 rounded">
+                  <p className="text-[var(--app-muted)]">Customer to Paying</p>
+                  <p className="text-lg font-semibold text-[var(--app-text)]">
                     {funnelData.conversionRates.customerToPaying}%
                   </p>
                 </div>
@@ -322,20 +324,20 @@ export default function AnalyticsPage() {
 
           {/* Profit Margin by Package */}
           {profitData && (
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            <div className="bg-[var(--app-card)] rounded-lg shadow p-6">
+              <h2 className="text-lg font-semibold text-[var(--app-text)] mb-4">
                 Profit Margin by Package
               </h2>
               <div className="space-y-3 mb-4">
                 {Object.entries(profitData.byPackage || {}).map(([pkg, data]: [string, any]) => (
                   <div key={pkg} className="border-b pb-2">
                     <div className="flex justify-between items-center mb-1">
-                      <span className="font-medium text-gray-900">{pkg}</span>
+                      <span className="font-medium text-[var(--app-text)]">{pkg}</span>
                       <span className="text-sm font-semibold text-green-600">
                         {data.margin.toFixed(1)}%
                       </span>
                     </div>
-                    <div className="flex justify-between text-sm text-gray-600">
+                    <div className="flex justify-between text-sm text-[var(--app-muted)]">
                       <span>Revenue: Rp {data.revenue.toLocaleString('id-ID')}</span>
                       <span>Profit: Rp {data.profit.toLocaleString('id-ID')}</span>
                     </div>
@@ -344,7 +346,7 @@ export default function AnalyticsPage() {
               </div>
               <div className="bg-blue-50 p-3 rounded">
                 <div className="flex justify-between items-center">
-                  <span className="font-semibold text-gray-900">Overall Margin</span>
+                  <span className="font-semibold text-[var(--app-text)]">Overall Margin</span>
                   <span className="text-xl font-bold text-blue-600">
                     {profitData.overall.margin}%
                   </span>
@@ -356,36 +358,36 @@ export default function AnalyticsPage() {
 
         {/* Churn Risk Customers */}
         {churnData && (
-          <div className="bg-white rounded-lg shadow p-6 mb-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          <div className="bg-[var(--app-card)] rounded-lg shadow p-6 mb-6">
+            <h2 className="text-lg font-semibold text-[var(--app-text)] mb-4">
               High Risk Churn Customers
             </h2>
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+                <thead className="bg-[var(--app-bg)]">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--app-muted)] uppercase">
                       Customer
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--app-muted)] uppercase">
                       Risk Score
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--app-muted)] uppercase">
                       Level
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--app-muted)] uppercase">
                       Reasons
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-[var(--app-card)] divide-y divide-gray-200">
                   {churnData.highRisk?.slice(0, 10).map((customer: any) => (
                     <tr key={customer.customerId}>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">
+                        <div className="text-sm font-medium text-[var(--app-text)]">
                           {customer.customerName}
                         </div>
-                        <div className="text-sm text-gray-500">{customer.phone}</div>
+                        <div className="text-sm text-[var(--app-muted)]">{customer.phone}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-bold text-red-600">
@@ -406,7 +408,7 @@ export default function AnalyticsPage() {
                         </span>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-sm text-gray-600">
+                        <div className="text-sm text-[var(--app-muted)]">
                           {customer.reasons.join(', ')}
                         </div>
                       </td>
@@ -420,17 +422,17 @@ export default function AnalyticsPage() {
 
         {/* Top Customers by CLV */}
         {clvData && (
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          <div className="bg-[var(--app-card)] rounded-lg shadow p-6">
+            <h2 className="text-lg font-semibold text-[var(--app-text)] mb-4">
               Top Customers by Lifetime Value
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
               {clvData.topCustomers?.slice(0, 6).map((customer: any) => (
                 <div key={customer.customerId} className="border rounded-lg p-4">
-                  <h3 className="font-semibold text-gray-900 mb-2">
+                  <h3 className="font-semibold text-[var(--app-text)] mb-2">
                     {customer.customerName}
                   </h3>
-                  <div className="space-y-1 text-sm text-gray-600">
+                  <div className="space-y-1 text-sm text-[var(--app-muted)]">
                     <div className="flex justify-between">
                       <span>CLV:</span>
                       <span className="font-semibold text-blue-600">
@@ -453,10 +455,10 @@ export default function AnalyticsPage() {
                 </div>
               ))}
             </div>
-            <div className="bg-gray-50 p-4 rounded">
+            <div className="bg-[var(--app-bg)] p-4 rounded">
               <div className="flex justify-between items-center">
-                <span className="text-gray-700">Average CLV (All Customers)</span>
-                <span className="text-xl font-bold text-gray-900">
+                <span className="text-[var(--app-text)]/90">Average CLV (All Customers)</span>
+                <span className="text-xl font-bold text-[var(--app-text)]">
                   Rp {clvData.averageCLV?.toLocaleString('id-ID')}
                 </span>
               </div>

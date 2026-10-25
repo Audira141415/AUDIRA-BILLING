@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Put,
+  Patch,
   Post,
   Body,
   Param,
@@ -41,10 +42,11 @@ export class CustomerController {
   }
 
   /**
-   * PUT /customer/profile
+   * PUT /customer/profile or PATCH /customer/profile
    * Update customer profile
    */
   @Put('profile')
+  @Patch('profile')
   @HttpCode(HttpStatus.OK)
   async updateProfile(
     @Req() req: Request,
@@ -56,6 +58,20 @@ export class CustomerController {
   ) {
     const customerId = req.user['sub'];
     return this.customerService.updateProfile(customerId, updateData);
+  }
+
+  /**
+   * POST /customer/change-password
+   * Change customer password
+   */
+  @Post('change-password')
+  @HttpCode(HttpStatus.OK)
+  async changePassword(
+    @Req() req: Request,
+    @Body() data: { currentPassword?: string; newPassword?: string },
+  ) {
+    const customerId = req.user['sub'];
+    return this.customerService.changePassword(customerId, data);
   }
 
   /**

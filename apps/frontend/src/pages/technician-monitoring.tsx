@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { API_BASE_URL, API_ENDPOINTS } from '../config/api';
 import { useRouter } from 'next/router';
@@ -65,7 +66,7 @@ export default function TechnicianMonitoring() {
       const token = localStorage.getItem('token');
       
       // Load all work orders to get unique technicians
-      const workOrdersResponse = await fetch('${API_BASE_URL}/field-service/jobs', {
+      const workOrdersResponse = await fetch(`${API_BASE_URL}/field-service/jobs`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       
@@ -166,10 +167,10 @@ export default function TechnicianMonitoring() {
   const getStatusColor = (status: string) => {
     const colors: any = {
       'in-progress': 'bg-green-100 text-green-800',
-      'completed': 'bg-gray-100 text-gray-800',
+      'completed': 'bg-gray-100 text-[var(--app-text)]',
       'pending': 'bg-yellow-100 text-yellow-800',
     };
-    return colors[status] || 'bg-gray-100 text-gray-800';
+    return colors[status] || 'bg-gray-100 text-[var(--app-text)]';
   };
 
   if (loading) {
@@ -187,17 +188,17 @@ export default function TechnicianMonitoring() {
       <div className="p-6">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Monitoring Teknisi</h1>
-          <p className="text-gray-600">Real-time tracking teknisi lapangan</p>
+          <h1 className="text-3xl font-bold text-[var(--app-text)] mb-2">Monitoring Teknisi</h1>
+          <p className="text-[var(--app-muted)]">Real-time tracking teknisi lapangan</p>
         </div>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-[var(--app-card)] rounded-lg shadow p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Total Teknisi</p>
-                <p className="text-3xl font-bold text-gray-900">{technicians.length}</p>
+                <p className="text-sm text-[var(--app-muted)] mb-1">Total Teknisi</p>
+                <p className="text-3xl font-bold text-[var(--app-text)]">{technicians.length}</p>
               </div>
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                 <User className="text-blue-600" size={24} />
@@ -205,10 +206,10 @@ export default function TechnicianMonitoring() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-[var(--app-card)] rounded-lg shadow p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Sedang Bekerja</p>
+                <p className="text-sm text-[var(--app-muted)] mb-1">Sedang Bekerja</p>
                 <p className="text-3xl font-bold text-green-600">
                   {technicians.filter(t => t.activeJob).length}
                 </p>
@@ -219,10 +220,10 @@ export default function TechnicianMonitoring() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-[var(--app-card)] rounded-lg shadow p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Pekerjaan Selesai</p>
+                <p className="text-sm text-[var(--app-muted)] mb-1">Pekerjaan Selesai</p>
                 <p className="text-3xl font-bold text-blue-600">
                   {technicians.reduce((sum, t) => sum + t.todayStats.completed, 0)}
                 </p>
@@ -233,23 +234,23 @@ export default function TechnicianMonitoring() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-[var(--app-card)] rounded-lg shadow p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Total Hari Ini</p>
-                <p className="text-3xl font-bold text-gray-900">
+                <p className="text-sm text-[var(--app-muted)] mb-1">Total Hari Ini</p>
+                <p className="text-3xl font-bold text-[var(--app-text)]">
                   {technicians.reduce((sum, t) => sum + t.todayStats.total, 0)}
                 </p>
               </div>
               <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
-                <Calendar className="text-gray-600" size={24} />
+                <Calendar className="text-[var(--app-muted)]" size={24} />
               </div>
             </div>
           </div>
         </div>
 
         {/* Tabs */}
-        <div className="bg-white rounded-lg shadow mb-6">
+        <div className="bg-[var(--app-card)] rounded-lg shadow mb-6">
           <div className="border-b">
             <div className="flex">
               <button
@@ -257,7 +258,7 @@ export default function TechnicianMonitoring() {
                 className={`px-6 py-4 font-medium ${
                   activeTab === 'live'
                     ? 'border-b-2 border-blue-600 text-blue-600'
-                    : 'text-gray-600 hover:text-gray-900'
+                    : 'text-[var(--app-muted)] hover:text-[var(--app-text)]'
                 }`}
               >
                 Live Status
@@ -267,7 +268,7 @@ export default function TechnicianMonitoring() {
                 className={`px-6 py-4 font-medium ${
                   activeTab === 'history'
                     ? 'border-b-2 border-blue-600 text-blue-600'
-                    : 'text-gray-600 hover:text-gray-900'
+                    : 'text-[var(--app-muted)] hover:text-[var(--app-text)]'
                 }`}
               >
                 History Check-In
@@ -288,8 +289,8 @@ export default function TechnicianMonitoring() {
                           {tech.name.charAt(0)}
                         </div>
                         <div>
-                          <h3 className="font-bold text-gray-900">{tech.name}</h3>
-                          <p className="text-sm text-gray-600">{tech.email}</p>
+                          <h3 className="font-bold text-[var(--app-text)]">{tech.name}</h3>
+                          <p className="text-sm text-[var(--app-muted)]">{tech.email}</p>
                         </div>
                       </div>
                       {tech.activeJob ? (
@@ -298,22 +299,22 @@ export default function TechnicianMonitoring() {
                           Active
                         </span>
                       ) : (
-                        <span className="text-gray-400 text-sm">Idle</span>
+                        <span className="text-[var(--app-muted)] text-sm">Idle</span>
                       )}
                     </div>
 
                     {/* Stats */}
                     <div className="grid grid-cols-3 gap-2 mb-4">
-                      <div className="text-center p-2 bg-gray-50 rounded">
-                        <p className="text-xs text-gray-600">Total</p>
-                        <p className="text-lg font-bold text-gray-900">{tech.todayStats.total}</p>
+                      <div className="text-center p-2 bg-[var(--app-bg)] rounded">
+                        <p className="text-xs text-[var(--app-muted)]">Total</p>
+                        <p className="text-lg font-bold text-[var(--app-text)]">{tech.todayStats.total}</p>
                       </div>
                       <div className="text-center p-2 bg-green-50 rounded">
-                        <p className="text-xs text-gray-600">Selesai</p>
+                        <p className="text-xs text-[var(--app-muted)]">Selesai</p>
                         <p className="text-lg font-bold text-green-600">{tech.todayStats.completed}</p>
                       </div>
                       <div className="text-center p-2 bg-blue-50 rounded">
-                        <p className="text-xs text-gray-600">Progress</p>
+                        <p className="text-xs text-[var(--app-muted)]">Progress</p>
                         <p className="text-lg font-bold text-blue-600">{tech.todayStats.inProgress}</p>
                       </div>
                     </div>
@@ -355,7 +356,7 @@ export default function TechnicianMonitoring() {
                         </button>
                       </div>
                     ) : (
-                      <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center text-gray-500 text-sm">
+                      <div className="bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg p-4 text-center text-[var(--app-muted)] text-sm">
                         Tidak ada pekerjaan aktif
                       </div>
                     )}
@@ -384,33 +385,33 @@ export default function TechnicianMonitoring() {
               {/* History Table */}
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-50 border-b">
+                  <thead className="bg-[var(--app-bg)] border-b">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--app-muted)] uppercase">
                         Teknisi
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--app-muted)] uppercase">
                         Pekerjaan
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--app-muted)] uppercase">
                         Customer
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--app-muted)] uppercase">
                         Check-In
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--app-muted)] uppercase">
                         Foto
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--app-muted)] uppercase">
                         Check-Out
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--app-muted)] uppercase">
                         Durasi
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--app-muted)] uppercase">
                         Status
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[var(--app-muted)] uppercase">
                         Aksi
                       </th>
                     </tr>
@@ -418,23 +419,23 @@ export default function TechnicianMonitoring() {
                   <tbody className="divide-y">
                     {checkInHistory.length === 0 ? (
                       <tr>
-                        <td colSpan={9} className="px-6 py-12 text-center text-gray-500">
+                        <td colSpan={9} className="px-6 py-12 text-center text-[var(--app-muted)]">
                           Tidak ada data check-in untuk tanggal ini
                         </td>
                       </tr>
                     ) : (
                       checkInHistory.map((item: any) => (
-                        <tr key={item.id} className="hover:bg-gray-50">
-                          <td className="px-6 py-4 text-sm text-gray-900">
+                        <tr key={item.id} className="hover:bg-[var(--app-bg)]">
+                          <td className="px-6 py-4 text-sm text-[var(--app-text)]">
                             {item.technicianName}
                           </td>
-                          <td className="px-6 py-4 text-sm text-gray-900">
+                          <td className="px-6 py-4 text-sm text-[var(--app-text)]">
                             {item.workOrderTitle}
                           </td>
-                          <td className="px-6 py-4 text-sm text-gray-900">
+                          <td className="px-6 py-4 text-sm text-[var(--app-text)]">
                             {item.customerName}
                           </td>
-                          <td className="px-6 py-4 text-sm text-gray-600">
+                          <td className="px-6 py-4 text-sm text-[var(--app-muted)]">
                             {formatTime(item.startedAt)}
                           </td>
                           <td className="px-6 py-4">
@@ -447,13 +448,13 @@ export default function TechnicianMonitoring() {
                                 title="Klik untuk memperbesar"
                               />
                             ) : (
-                              <span className="text-xs text-gray-400">-</span>
+                              <span className="text-xs text-[var(--app-muted)]">-</span>
                             )}
                           </td>
-                          <td className="px-6 py-4 text-sm text-gray-600">
+                          <td className="px-6 py-4 text-sm text-[var(--app-muted)]">
                             {item.completedAt ? formatTime(item.completedAt) : '-'}
                           </td>
-                          <td className="px-6 py-4 text-sm text-gray-600">
+                          <td className="px-6 py-4 text-sm text-[var(--app-muted)]">
                             {formatDuration(item.startedAt, item.completedAt)}
                           </td>
                           <td className="px-6 py-4">

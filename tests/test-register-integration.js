@@ -3,7 +3,7 @@
  * Tests the complete registration flow
  */
 
-const API_URL = 'http://localhost:1993';
+const API_URL = process.env.API_URL || 'http://localhost:3218';
 
 // Helper to make API requests
 async function apiRequest(endpoint, options = {}) {

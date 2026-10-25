@@ -216,7 +216,7 @@ export default function WorkOrderDetail() {
       <Layout>
         <div className="p-6">
           <div className="text-center py-12">
-            <AlertCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            <AlertCircle className="w-16 h-16 text-slate-500 mx-auto mb-4" />
             <h2 className="text-xl font-semibold text-gray-700">Work Order tidak ditemukan</h2>
             <button
               onClick={() => router.push('/field-service')}
@@ -350,9 +350,9 @@ export default function WorkOrderDetail() {
 
               {workOrder.photos.length === 0 ? (
                 <div className="text-center py-12 border-2 border-dashed border-gray-300 rounded-lg">
-                  <ImageIcon className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                  <p className="text-gray-500">Belum ada foto</p>
-                  <p className="text-sm text-gray-400 mt-1">Upload foto bukti pekerjaan</p>
+                  <ImageIcon className="w-12 h-12 text-slate-500 mx-auto mb-2" />
+                  <p className="text-slate-400">Belum ada foto</p>
+                  <p className="text-sm text-slate-500 mt-1">Upload foto bukti pekerjaan</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -475,7 +475,7 @@ export default function WorkOrderDetail() {
           >
             <button
               onClick={() => setSelectedImage(null)}
-              className="absolute top-4 right-4 text-white hover:text-gray-300"
+              className="absolute top-4 right-4 text-white hover:text-slate-600"
             >
               <X className="w-8 h-8" />
             </button>

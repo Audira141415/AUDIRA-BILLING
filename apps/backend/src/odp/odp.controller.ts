@@ -49,8 +49,33 @@ export class OdpController {
     return this.odpService.getOdpPorts(id);
   }
 
-  @Post(':id/ports')
-  async assignPort(@Param('id') id: string, @Body() data: any) {
-    return this.odpService.assignPort(id, data);
+  @Post(':id/ports/:portNumber/assign')
+  async assignPort(
+    @Param('id') id: string,
+    @Param('portNumber') portNumber: string,
+    @Body() data: any,
+  ) {
+    return this.odpService.assignPort(id, parseInt(portNumber, 10), data);
+  }
+
+  @Post(':id/ports/:portNumber/release')
+  async releasePort(
+    @Param('id') id: string,
+    @Param('portNumber') portNumber: string,
+  ) {
+    return this.odpService.releasePort(id, parseInt(portNumber, 10));
+  }
+
+  @Get('geo/nearest')
+  async findNearest(
+    @Query('lat') lat: string,
+    @Query('lng') lng: string,
+    @Query('radius') radius?: string,
+  ) {
+    return this.odpService.findNearest(
+      parseFloat(lat),
+      parseFloat(lng),
+      radius ? parseInt(radius, 10) : 500,
+    );
   }
 }

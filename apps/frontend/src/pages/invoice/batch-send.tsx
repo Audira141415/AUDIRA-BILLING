@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React, { useState } from 'react';
 import Layout from '@/components/Layout';
 import {
@@ -60,7 +61,7 @@ const mockBatchSends: BatchSendRow[] = [
     status: 'Selesai',
     methods: ['wa', 'email', 'sms'],
     createdBy: 'Agus Dwi Rianto',
-    createdAt: '01/07/2026 08:00'
+    createdAt: '22/10/2026 08:00'
   },
   {
     id: '2',
@@ -74,7 +75,7 @@ const mockBatchSends: BatchSendRow[] = [
     status: 'Selesai',
     methods: ['wa', 'email'],
     createdBy: 'Siti Aminah',
-    createdAt: '01/07/2026 07:45'
+    createdAt: '22/10/2026 07:45'
   },
   {
     id: '3',
@@ -88,7 +89,7 @@ const mockBatchSends: BatchSendRow[] = [
     status: 'Selesai',
     methods: ['wa', 'email'],
     createdBy: 'Andi Pratama',
-    createdAt: '01/07/2026 07:30'
+    createdAt: '22/10/2026 07:30'
   },
   {
     id: '4',
@@ -195,184 +196,141 @@ export default function BatchSendPage() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-[#070c19] text-gray-200 p-4 md:p-6 space-y-6">
+      <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] p-4 md:p-6 space-y-6">
         
         {/* ─── Top Header bar ────────────────────────────────────────────── */}
-        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 border-b border-[#131d35] pb-5">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-[var(--app-border)] pb-5">
           <div className="space-y-1">
-            <div className="flex items-center gap-2 text-xs text-gray-400 font-medium">
-              <span>Home</span>
-              <span>&gt;</span>
-              <span>Invoice</span>
-              <span>&gt;</span>
-              <span className="text-blue-400">Batch Send</span>
+            <div className="flex items-center gap-2 text-xs text-[var(--app-muted)] font-mono mb-1">
+              <Link href="/" className="hover:text-[var(--app-text)]">AUDIRA</Link>
+              <span>/</span>
+              <Link href="/invoice" className="hover:text-[var(--app-text)]">Billing & Tagihan</Link>
+              <span>/</span>
+              <span className="text-blue-500 font-semibold">Batch Send Reminder</span>
             </div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">Batch Send Invoice</h1>
+            <h1 className="text-xl md:text-2xl font-bold tracking-tight text-[var(--app-text)]">
+              Pengiriman Invoice Massal (Batch Send)
+            </h1>
+            <p className="text-xs text-[var(--app-muted)]">
+              Distribusi notifikasi tagihan serentak melalui WhatsApp Business Gateway, Email, dan SMS dengan delivery telemetry real-time.
+            </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-4 w-full xl:w-auto">
-            {/* Calendar */}
-            <div className="flex items-center gap-2 bg-[#0b1329] border border-[#131d35] px-3 py-2 rounded-xl text-xs text-gray-300">
-              <Calendar size={14} className="text-blue-400" />
-              <span>01 Juli 2026</span>
-              <span className="text-[10px] text-gray-500">08:35 WIB</span>
-            </div>
-            
-            {/* Status Sistem */}
-            <div className="flex items-center gap-2 bg-[#0b1329] border border-[#131d35] px-3 py-2 rounded-xl text-xs">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-              <span className="text-gray-400">Status Sistem</span>
-              <span className="text-green-400 font-bold">Normal</span>
-            </div>
-
-            {/* Global Search */}
-            <div className="relative w-full sm:w-60">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <input 
-                type="text" 
-                placeholder="Cari customer, invoice, tagihan..."
-                className="w-full bg-[#0b1329] border border-[#131d35] rounded-xl text-xs pl-9 pr-4 py-2 text-white focus:outline-none focus:border-blue-500"
-              />
-            </div>
-
-            {/* Notification and Profile icons */}
-            <div className="flex items-center gap-3">
-              <button className="relative p-2 bg-[#0b1329] border border-[#131d35] rounded-xl hover:bg-[#121c38] transition-colors">
-                <Bell size={16} className="text-gray-400" />
-                <span className="absolute -top-1 -right-1 bg-red-500 text-[9px] font-bold text-white px-1.5 py-0.5 rounded-full scale-75">12</span>
-              </button>
-              <button className="relative p-2 bg-[#0b1329] border border-[#131d35] rounded-xl hover:bg-[#121c38] transition-colors">
-                <Mail size={16} className="text-gray-400" />
-                <span className="absolute -top-1 -right-1 bg-red-500 text-[9px] font-bold text-white px-1.5 py-0.5 rounded-full scale-75">6</span>
-              </button>
-              <button className="p-2 bg-[#0b1329] border border-[#131d35] rounded-xl hover:bg-[#121c38] transition-colors max-sm:hidden">
-                <Maximize2 size={16} className="text-gray-400" />
-              </button>
-              
-              {/* Profile */}
-              <div className="flex items-center gap-2 pl-2 border-l border-[#131d35]">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xs overflow-hidden">
-                  <span className="text-xs">AR</span>
-                </div>
-                <div className="hidden md:block text-left">
-                  <div className="text-xs font-semibold text-white">Agus Dwi Rianto</div>
-                  <div className="text-[9px] text-gray-500 font-bold uppercase">Super Admin</div>
-                </div>
-              </div>
-            </div>
+          <div className="flex items-center gap-2.5">
+            <Link href="/whatsapp/campaigns" className="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-lg transition-all">WhatsApp Gateway</Link>
           </div>
         </div>
 
         {/* ─── KPI Cards Row ─────────────────────────────────────────────── */}
         <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
           {/* Card 1: Total Batch */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex items-center gap-4">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4 flex items-center gap-4">
             <div className="p-3.5 bg-purple-500/10 text-purple-400 border border-purple-500/20 rounded-xl">
               <FileText size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Total Batch</p>
-              <p className="text-2xl font-black text-white mt-0.5">24</p>
-              <p className="text-[10px] text-gray-400 mt-0.5 font-medium">Semua Batch</p>
+              <p className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider">Total Batch</p>
+              <p className="text-2xl font-black text-[var(--app-text)] mt-0.5">24</p>
+              <p className="text-[10px] text-[var(--app-muted)] mt-0.5 font-medium">Semua Batch</p>
             </div>
           </div>
 
           {/* Card 2: Total Invoice Terkirim */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex items-center gap-4">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4 flex items-center gap-4">
             <div className="p-3.5 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-xl">
               <Send size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Total Invoice Terkirim</p>
-              <p className="text-2xl font-black text-white mt-0.5">3.248</p>
-              <p className="text-[10px] text-gray-400 mt-0.5 font-medium">85.4% dari total</p>
+              <p className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider">Total Invoice Terkirim</p>
+              <p className="text-2xl font-black text-[var(--app-text)] mt-0.5">3.248</p>
+              <p className="text-[10px] text-[var(--app-muted)] mt-0.5 font-medium">85.4% dari total</p>
             </div>
           </div>
 
           {/* Card 3: Berhasil Terkirim */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex items-center gap-4">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4 flex items-center gap-4">
             <div className="p-3.5 bg-green-500/10 text-green-400 border border-green-500/20 rounded-xl">
               <CheckCircle size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Berhasil Terkirim</p>
-              <p className="text-2xl font-black text-white mt-0.5">2.770</p>
-              <p className="text-[10px] text-gray-400 mt-0.5 font-medium">73.1% dari total</p>
+              <p className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider">Berhasil Terkirim</p>
+              <p className="text-2xl font-black text-[var(--app-text)] mt-0.5">2.770</p>
+              <p className="text-[10px] text-[var(--app-muted)] mt-0.5 font-medium">73.1% dari total</p>
             </div>
           </div>
 
           {/* Card 4: Dalam Proses */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex items-center gap-4">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4 flex items-center gap-4">
             <div className="p-3.5 bg-orange-500/10 text-orange-400 border border-orange-500/20 rounded-xl">
               <Clock size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Dalam Proses</p>
-              <p className="text-2xl font-black text-white mt-0.5">128</p>
-              <p className="text-[10px] text-gray-400 mt-0.5 font-medium">3.4% dari total</p>
+              <p className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider">Dalam Proses</p>
+              <p className="text-2xl font-black text-[var(--app-text)] mt-0.5">128</p>
+              <p className="text-[10px] text-[var(--app-muted)] mt-0.5 font-medium">3.4% dari total</p>
             </div>
           </div>
 
           {/* Card 5: Gagal Terkirim */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex items-center gap-4">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4 flex items-center gap-4">
             <div className="p-3.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded-xl">
               <XCircle size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Gagal Terkirim</p>
-              <p className="text-2xl font-black text-white mt-0.5">350</p>
-              <p className="text-[10px] text-gray-400 mt-0.5 font-medium">9.2% dari total</p>
+              <p className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider">Gagal Terkirim</p>
+              <p className="text-2xl font-black text-[var(--app-text)] mt-0.5">350</p>
+              <p className="text-[10px] text-[var(--app-muted)] mt-0.5 font-medium">9.2% dari total</p>
             </div>
           </div>
 
           {/* Card 6: Menunggu */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex items-center gap-4">
-            <div className="p-3.5 bg-gray-550 bg-gray-500/10 text-gray-400 border border-gray-500/20 rounded-xl">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4 flex items-center gap-4">
+            <div className="p-3.5 bg-gray-550 bg-gray-500/10 text-[var(--app-muted)] border border-gray-500/20 rounded-xl">
               <Clock size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Menunggu</p>
-              <p className="text-2xl font-black text-white mt-0.5">0</p>
-              <p className="text-[10px] text-gray-400 mt-0.5 font-medium">0% dari total</p>
+              <p className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider">Menunggu</p>
+              <p className="text-2xl font-black text-[var(--app-text)] mt-0.5">0</p>
+              <p className="text-[10px] text-[var(--app-muted)] mt-0.5 font-medium">0% dari total</p>
             </div>
           </div>
         </div>
 
         {/* ─── Filter Bar ────────────────────────────────────────────────── */}
-        <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4">
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4">
           <div className="flex flex-wrap items-center gap-4">
             <div className="relative flex-1 min-w-[240px]">
-              <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-gray-500 w-4 h-4" />
+              <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-[var(--app-muted)] w-4 h-4" />
               <input 
                 type="text" 
                 placeholder="Cari batch, periode, user..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-[#080d19] border border-[#131d35] text-xs pl-10 pr-4 py-2.5 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
+                className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] text-xs pl-10 pr-4 py-2.5 rounded-xl text-[var(--app-text)] placeholder-slate-400 focus:outline-none focus:border-blue-500 transition-colors"
               />
             </div>
 
-            <select className="bg-[#080d19] border border-[#131d35] text-xs py-2.5 px-4 rounded-xl text-gray-300 focus:outline-none min-w-[140px]">
+            <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]">
               <option>Semua Status</option>
             </select>
 
-            <select className="bg-[#080d19] border border-[#131d35] text-xs py-2.5 px-4 rounded-xl text-gray-300 focus:outline-none min-w-[140px]">
+            <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]">
               <option>Semua Metode</option>
             </select>
 
-            <select className="bg-[#080d19] border border-[#131d35] text-xs py-2.5 px-4 rounded-xl text-gray-300 focus:outline-none min-w-[140px]">
+            <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]">
               <option>Semua Tipe Invoice</option>
             </select>
             
             {/* Date range picker mock */}
-            <div className="flex items-center gap-2 bg-[#080d19] border border-[#131d35] px-3 py-2.5 rounded-xl text-xs text-gray-300 cursor-pointer">
-              <Calendar size={14} className="text-gray-500" />
-              <span>01/06/2026 - 01/07/2026</span>
+            <div className="flex items-center gap-2 bg-[var(--app-bg)] border border-[var(--app-border)] px-3 py-2.5 rounded-xl text-xs text-[var(--app-text)]/80 cursor-pointer">
+              <Calendar size={14} className="text-[var(--app-muted)]" />
+              <span>01/06/2026 - 22/10/2026</span>
             </div>
 
             <button 
               onClick={() => { setSearchTerm(''); }}
-              className="text-xs font-semibold text-gray-400 hover:text-white px-4 py-2.5 rounded-xl border border-transparent hover:border-[#131d35] transition-all ml-auto"
+              className="text-xs font-semibold text-[var(--app-muted)] hover:text-[var(--app-text)] px-4 py-2.5 rounded-xl border border-transparent hover:border-[var(--app-border)] transition-all ml-auto"
             >
               Reset
             </button>
@@ -387,8 +345,8 @@ export default function BatchSendPage() {
               <span>Buat Batch Baru</span>
             </button>
 
-            <button className="flex items-center gap-2 bg-[#0b1329] border border-[#131d35] hover:bg-[#121c38] text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-sm border-gray-800">
-              <Download size={14} className="text-gray-400" />
+            <button className="flex items-center gap-2 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-sm border-gray-800">
+              <Download size={14} className="text-[var(--app-muted)]" />
               <span>Export</span>
             </button>
           </div>
@@ -401,15 +359,15 @@ export default function BatchSendPage() {
           <div className="lg:col-span-9 space-y-6">
             
             {/* Table Card */}
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl overflow-hidden">
-              <div className="flex justify-between items-center p-4 border-b border-[#131d35] bg-[#0b1329]/40">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400">Daftar Batch Pengiriman Invoice</h3>
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs overflow-hidden">
+              <div className="flex justify-between items-center p-4 border-b border-[var(--app-border)] bg-white/40">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Daftar Batch Pengiriman Invoice</h3>
               </div>
 
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="border-b border-[#131d35] bg-[#101935]/40 text-gray-400 text-[10px] font-bold uppercase tracking-wider">
+                    <tr className="border-b border-[var(--app-border)] bg-[var(--app-border)]/10 text-[var(--app-muted)] text-[10px] font-bold uppercase tracking-wider">
                       <th className="p-4 w-12">NO</th>
                       <th className="p-4 w-44">NAMA BATCH</th>
                       <th className="p-4 w-32">PERIODE</th>
@@ -425,19 +383,19 @@ export default function BatchSendPage() {
                       <th className="p-4 w-20 text-center">AKSI</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#131d35] text-xs text-gray-300">
+                  <tbody className="divide-y divide-[var(--app-border)] text-xs text-[var(--app-text)]/80">
                     {mockBatchSends.map((d, idx) => {
                       return (
                         <tr 
                           key={d.id}
-                          className="hover:bg-[#121c38]/40 transition-colors cursor-pointer"
+                          className="hover:bg-[var(--app-border)]/20 transition-colors cursor-pointer"
                         >
-                          <td className="p-4 text-gray-500 font-medium">{idx + 1}</td>
+                          <td className="p-4 text-[var(--app-muted)] font-medium">{idx + 1}</td>
                           <td className="p-4 font-mono font-semibold text-blue-400 block py-6">{d.name}</td>
-                          <td className="p-4 text-gray-300 font-semibold">{d.period}</td>
-                          <td className="p-4 text-gray-400 font-medium">{d.invoiceType}</td>
-                          <td className="p-4 font-bold text-white">{d.totalInvoice}</td>
-                          <td className="p-4 font-bold text-white">{d.sentCount}</td>
+                          <td className="p-4 text-slate-700 font-semibold">{d.period}</td>
+                          <td className="p-4 text-[var(--app-muted)] font-medium">{d.invoiceType}</td>
+                          <td className="p-4 font-bold text-[var(--app-text)]">{d.totalInvoice}</td>
+                          <td className="p-4 font-bold text-[var(--app-text)]">{d.sentCount}</td>
                           <td className="p-4 font-bold text-green-400">{d.successCount}</td>
                           <td className="p-4 font-bold text-red-400">{d.failedCount}</td>
                           <td className="p-4">
@@ -452,17 +410,17 @@ export default function BatchSendPage() {
                               {d.methods.includes('sms') && <Smartphone size={14} className="text-yellow-500" />}
                             </div>
                           </td>
-                          <td className="p-4 text-gray-400 font-medium">{d.createdBy}</td>
-                          <td className="p-4 text-gray-500 font-medium">{d.createdAt}</td>
+                          <td className="p-4 text-[var(--app-muted)] font-medium">{d.createdBy}</td>
+                          <td className="p-4 text-[var(--app-muted)] font-medium">{d.createdAt}</td>
                           <td className="p-4" onClick={(e) => e.stopPropagation()}>
                             <div className="flex items-center justify-center gap-1.5">
-                              <button className="p-1.5 hover:bg-[#1b2647] rounded-lg text-gray-400 hover:text-white transition-colors">
+                              <button className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors">
                                 <Eye size={13} />
                               </button>
-                              <button className="p-1.5 hover:bg-[#1b2647] rounded-lg text-gray-400 hover:text-white transition-colors">
+                              <button className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors">
                                 <Download size={13} />
                               </button>
-                              <button className="p-1.5 hover:bg-[#1b2647] rounded-lg text-gray-400 hover:text-white transition-colors">
+                              <button className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors">
                                 <MoreVertical size={13} />
                               </button>
                             </div>
@@ -475,8 +433,8 @@ export default function BatchSendPage() {
               </div>
 
               {/* Table pagination */}
-              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-t border-[#131d35] bg-[#0b1329]/60">
-                <span className="text-xs text-gray-500">
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-t border-[var(--app-border)] bg-white/60">
+                <span className="text-xs text-[var(--app-muted)]">
                   Menampilkan <span className="font-semibold text-white">1 - 10</span> dari <span className="font-semibold text-white">24</span> data
                 </span>
                 
@@ -484,20 +442,20 @@ export default function BatchSendPage() {
                   <div className="flex items-center gap-2">
                     <button 
                       disabled
-                      className="p-2 border border-[#131d35] hover:bg-[#121c38] rounded-xl text-gray-500 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                      className="p-2 border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 rounded-xl text-[var(--app-muted)] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                     >
                       <ChevronLeft size={14} />
                     </button>
                     <button className="w-8 h-8 rounded-xl text-xs font-semibold border bg-[#0052cc] text-white border-[#0052cc]">1</button>
-                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border border-[#131d35] text-gray-400 hover:text-white hover:bg-[#121c38]">2</button>
-                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border border-[#131d35] text-gray-400 hover:text-white hover:bg-[#121c38]">3</button>
-                    <button className="p-2 border border-[#131d35] hover:bg-[#121c38] rounded-xl text-gray-400 transition-colors">
+                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/30">2</button>
+                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/30">3</button>
+                    <button className="p-2 border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 rounded-xl text-[var(--app-muted)] transition-colors">
                       <ChevronRight size={14} />
                     </button>
                   </div>
 
                   <select
-                    className="bg-[#080d19] border border-[#131d35] text-xs py-1.5 px-3 rounded-lg text-gray-300 focus:outline-none"
+                    className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-1.5 px-3 rounded-lg text-[var(--app-text)]/80 focus:outline-none"
                   >
                     <option value={10}>10 / halaman</option>
                   </select>
@@ -509,20 +467,20 @@ export default function BatchSendPage() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
               
               {/* Detail Batch Terpilih */}
-              <div className="lg:col-span-4 bg-[#0b1329] border border-[#131d35] rounded-2xl p-5 space-y-4">
+              <div className="lg:col-span-4 bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-4">
                 <div className="flex justify-between items-center">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400">Detail Batch Terpilih</h4>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Detail Batch Terpilih</h4>
                   <span className="bg-green-500/10 text-green-400 border border-green-500/20 px-2 py-0.5 rounded text-[10px] font-bold">
                     Selesai
                   </span>
                 </div>
 
                 <div className="space-y-1">
-                  <p className="text-sm font-bold text-white leading-none">BATCH-2026-07-001</p>
-                  <p className="text-[10px] text-gray-500 font-semibold">Invoice Bulanan - Juli 2026</p>
+                  <p className="text-sm font-bold text-[var(--app-text)] leading-none">BATCH-2026-07-001</p>
+                  <p className="text-[10px] text-[var(--app-muted)] font-semibold">Invoice Bulanan - Juli 2026</p>
                 </div>
 
-                <div className="space-y-2.5 text-xs text-gray-400 font-semibold border-t border-[#131d35] pt-3">
+                <div className="space-y-2.5 text-xs text-[var(--app-muted)] font-semibold border-t border-[var(--app-border)] pt-3">
                   <div className="flex justify-between">
                     <span>Periode Invoice</span>
                     <span className="text-white">Juli 2026</span>
@@ -533,7 +491,7 @@ export default function BatchSendPage() {
                   </div>
                   <div className="flex justify-between">
                     <span>Jumlah Invoice</span>
-                    <span className="text-white font-bold">512</span>
+                    <span className="text-[var(--app-text)] font-bold">512</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Metode Kirim</span>
@@ -545,13 +503,13 @@ export default function BatchSendPage() {
                   </div>
                   <div className="flex justify-between">
                     <span>Dibuat Pada</span>
-                    <span className="text-white">01/07/2026 08:00</span>
+                    <span className="text-white">22/10/2026 08:00</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Waktu Selesai</span>
-                    <span className="text-white">01/07/2026 08:15</span>
+                    <span className="text-white">22/10/2026 08:15</span>
                   </div>
-                  <div className="flex justify-between border-t border-[#131d35] pt-2">
+                  <div className="flex justify-between border-t border-[var(--app-border)] pt-2">
                     <span>Durasi Proses</span>
                     <span className="text-blue-400 font-bold">15 menit</span>
                   </div>
@@ -559,15 +517,15 @@ export default function BatchSendPage() {
               </div>
 
               {/* Statistik Batch Chart */}
-              <div className="lg:col-span-5 bg-[#0b1329] border border-[#131d35] rounded-2xl p-5 space-y-4">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400">Statistik Batch</h4>
+              <div className="lg:col-span-5 bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-4">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Statistik Batch</h4>
                 
                 {/* SVG Combo Chart (Lines) */}
                 <div className="h-32 w-full mt-2">
                   <svg viewBox="0 0 300 100" className="w-full h-full overflow-visible">
-                    <line x1="0" y1="20" x2="300" y2="20" stroke="#131d35" strokeDasharray="3 3" />
-                    <line x1="0" y1="50" x2="300" y2="50" stroke="#131d35" strokeDasharray="3 3" />
-                    <line x1="0" y1="80" x2="300" y2="80" stroke="#131d35" strokeDasharray="3 3" />
+                    <line x1="0" y1="20" x2="300" y2="20" stroke="#e2e8f0" strokeDasharray="3 3" />
+                    <line x1="0" y1="50" x2="300" y2="50" stroke="#e2e8f0" strokeDasharray="3 3" />
+                    <line x1="0" y1="80" x2="300" y2="80" stroke="#e2e8f0" strokeDasharray="3 3" />
                     
                     <text x="5" y="16" fill="#4a5568" fontSize="7" fontWeight="bold">1.000</text>
                     <text x="5" y="46" fill="#4a5568" fontSize="7" fontWeight="bold">600</text>
@@ -607,7 +565,7 @@ export default function BatchSendPage() {
                 </div>
 
                 {/* Legends */}
-                <div className="flex justify-center gap-4 text-[9px] text-gray-500 font-bold uppercase pt-1">
+                <div className="flex justify-center gap-4 text-[9px] text-[var(--app-muted)] font-bold uppercase pt-1">
                   <span className="flex items-center gap-1"><span className="w-2.5 h-0.5 bg-blue-500 inline-block"></span>Terkirim</span>
                   <span className="flex items-center gap-1"><span className="w-2.5 h-0.5 bg-green-550 bg-green-500 inline-block"></span>Berhasil</span>
                   <span className="flex items-center gap-1"><span className="w-2.5 h-0.5 bg-red-500 inline-block"></span>Gagal</span>
@@ -615,33 +573,33 @@ export default function BatchSendPage() {
               </div>
 
               {/* Aktivitas Batch */}
-              <div className="lg:col-span-3 bg-[#0b1329] border border-[#131d35] rounded-2xl p-5 space-y-4">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400">Aktivitas Batch</h4>
+              <div className="lg:col-span-3 bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-4">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Aktivitas Batch</h4>
                 
-                <div className="relative border-l border-[#131d35] ml-2 pl-4 space-y-4 text-[9px] text-gray-500 font-bold">
+                <div className="relative border-l border-[var(--app-border)] ml-2 pl-4 space-y-4 text-[9px] text-[var(--app-muted)] font-bold">
                   {[
-                    { title: 'Batch dibuat', desc: '01/07/2026 08:00', by: 'Agus Dwi Rianto', active: true },
-                    { title: 'Proses generate invoice', desc: '01/07/2026 08:01', by: 'System', active: true },
-                    { title: 'Mulai pengiriman email', desc: '01/07/2026 08:02', by: 'System', active: true },
-                    { title: 'Mulai pengiriman WhatsApp', desc: '01/07/2026 08:03', by: 'System', active: true },
-                    { title: 'Mulai pengiriman SMS', desc: '01/07/2026 08:04', by: 'System', active: true },
-                    { title: 'Batch selesai', desc: '01/07/2026 08:15', by: 'System', active: true, success: true }
+                    { title: 'Batch dibuat', desc: '22/10/2026 08:00', by: 'Agus Dwi Rianto', active: true },
+                    { title: 'Proses generate invoice', desc: '22/10/2026 08:01', by: 'System', active: true },
+                    { title: 'Mulai pengiriman email', desc: '22/10/2026 08:02', by: 'System', active: true },
+                    { title: 'Mulai pengiriman WhatsApp', desc: '22/10/2026 08:03', by: 'System', active: true },
+                    { title: 'Mulai pengiriman SMS', desc: '22/10/2026 08:04', by: 'System', active: true },
+                    { title: 'Batch selesai', desc: '22/10/2026 08:15', by: 'System', active: true, success: true }
                   ].map((item, idx) => (
                     <div key={idx} className="relative">
                       {/* Circle indicator */}
-                      <span className={`absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full border border-[#070c19] ${
+                      <span className={`absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full border border-[var(--app-border)] ${
                         item.success ? 'bg-green-500' : 'bg-blue-500'
                       }`}></span>
                       <div className="flex justify-between">
                         <span className="text-white block">{item.title}</span>
                         <span className="text-gray-550 block font-normal">{item.by}</span>
                       </div>
-                      <p className="text-gray-500 text-[8px] font-semibold mt-0.5">{item.desc}</p>
+                      <p className="text-[var(--app-muted)] text-[8px] font-semibold mt-0.5">{item.desc}</p>
                     </div>
                   ))}
                 </div>
 
-                <button className="w-full text-center text-xs font-bold text-blue-500 hover:underline pt-2 border-t border-[#131d35] block">
+                <button className="w-full text-center text-xs font-bold text-blue-500 hover:underline pt-2 border-t border-[var(--app-border)] block">
                   Lihat Detail Log &rarr;
                 </button>
               </div>
@@ -654,8 +612,8 @@ export default function BatchSendPage() {
           <div className="lg:col-span-3 space-y-6">
             
             {/* Card 1: Ringkasan Pengiriman Donut */}
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-5 space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400">Ringkasan Pengiriman</h3>
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Ringkasan Pengiriman</h3>
               
               <div className="relative flex justify-center py-2">
                 <svg width="140" height="140" viewBox="0 0 42 42" className="transform -rotate-90">
@@ -681,13 +639,13 @@ export default function BatchSendPage() {
                 </svg>
                 {/* Center text */}
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-                  <p className="text-lg font-black text-white">3.248</p>
-                  <p className="text-[8px] text-gray-500 font-bold uppercase">Total Invoice</p>
+                  <p className="text-lg font-black text-[var(--app-text)]">3.248</p>
+                  <p className="text-[8px] text-[var(--app-muted)] font-bold uppercase">Total Invoice</p>
                 </div>
               </div>
 
               {/* Legends */}
-              <div className="space-y-2 text-[10px] text-gray-400 border-b border-[#131d35] pb-3">
+              <div className="space-y-2 text-[10px] text-[var(--app-muted)] border-b border-[var(--app-border)] pb-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded bg-green-500 inline-block"></span>
@@ -712,26 +670,26 @@ export default function BatchSendPage() {
               </div>
 
               {/* Rates */}
-              <div className="grid grid-cols-2 gap-4 text-xs font-semibold text-gray-400">
+              <div className="grid grid-cols-2 gap-4 text-xs font-semibold text-[var(--app-muted)]">
                 <div className="space-y-1">
-                  <span className="text-[10px] text-gray-500 uppercase block font-bold">Tingkat Keberhasilan</span>
-                  <p className="text-base font-black text-white leading-none">85.4%</p>
+                  <span className="text-[10px] text-[var(--app-muted)] uppercase block font-bold">Tingkat Keberhasilan</span>
+                  <p className="text-base font-black text-[var(--app-text)] leading-none">85.4%</p>
                   <p className="text-[9px] text-green-500 font-medium flex items-center gap-0.5">
                     <ArrowUpRight size={10} />
                     <span>6.2% vs bulan lalu</span>
                   </p>
                 </div>
                 <div className="space-y-1">
-                  <span className="text-[10px] text-gray-500 uppercase block font-bold">Rata-rata Waktu Kirim</span>
-                  <p className="text-base font-black text-white leading-none">2m 34s</p>
-                  <p className="text-[9px] text-gray-500 font-medium">Per 100 Invoice</p>
+                  <span className="text-[10px] text-[var(--app-muted)] uppercase block font-bold">Rata-rata Waktu Kirim</span>
+                  <p className="text-base font-black text-[var(--app-text)] leading-none">2m 34s</p>
+                  <p className="text-[9px] text-[var(--app-muted)] font-medium">Per 100 Invoice</p>
                 </div>
               </div>
             </div>
 
             {/* Card 2: Metode Pengiriman */}
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-5 space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400">Metode Pengiriman</h3>
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Metode Pengiriman</h3>
               
               <div className="space-y-3.5">
                 {[
@@ -743,13 +701,13 @@ export default function BatchSendPage() {
                   return (
                     <div key={index} className="space-y-1">
                       <div className="flex items-center justify-between text-xs font-semibold">
-                        <span className="text-gray-300 flex items-center gap-1.5">
+                        <span className="text-[var(--app-text)]/80 flex items-center gap-1.5">
                           <Icon size={12} className={item.color.replace('bg-', 'text-')} />
                           <span>{item.name}</span>
                         </span>
-                        <span className="text-gray-400">{item.amount.toLocaleString('id-ID')} ({item.percentage}%)</span>
+                        <span className="text-[var(--app-muted)]">{item.amount.toLocaleString('id-ID')} ({item.percentage}%)</span>
                       </div>
-                      <div className="w-full bg-[#101935] h-1.5 rounded-full overflow-hidden">
+                      <div className="w-full bg-[var(--app-bg)] h-1.5 rounded-full overflow-hidden">
                         <div 
                           className={`${item.color} h-full rounded-full transition-all duration-500`} 
                           style={{ width: `${item.percentage}%` }}
@@ -762,21 +720,21 @@ export default function BatchSendPage() {
             </div>
 
             {/* Card 3: Status Terakhir */}
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-5 space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400">Status Terakhir</h3>
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Status Terakhir</h3>
               
-              <div className="space-y-3.5 text-xs font-semibold text-gray-400">
+              <div className="space-y-3.5 text-xs font-semibold text-[var(--app-muted)]">
                 {[
-                  { name: 'BATCH-2026-07-001', desc: 'Invoice Bulanan - Juli 2026', time: '01/07/2026 08:15', status: 'Selesai' },
-                  { name: 'BATCH-2026-07-002', desc: 'Invoice Deposit - Juli 2026', time: '01/07/2026 08:02', status: 'Selesai' },
-                  { name: 'BATCH-2026-07-003', desc: 'Invoice Custom - Juli 2026', time: '01/07/2026 07:50', status: 'Selesai' }
+                  { name: 'BATCH-2026-07-001', desc: 'Invoice Bulanan - Juli 2026', time: '22/10/2026 08:15', status: 'Selesai' },
+                  { name: 'BATCH-2026-07-002', desc: 'Invoice Deposit - Juli 2026', time: '22/10/2026 08:02', status: 'Selesai' },
+                  { name: 'BATCH-2026-07-003', desc: 'Invoice Custom - Juli 2026', time: '22/10/2026 07:50', status: 'Selesai' }
                 ].map((item, idx) => (
-                  <div key={idx} className="flex items-start gap-2.5 py-0.5 border-b border-[#131d35]/40 last:border-0 pb-2">
+                  <div key={idx} className="flex items-start gap-2.5 py-0.5 border-b border-[var(--app-border)]/40 last:border-0 pb-2">
                     <div className="w-2.5 h-2.5 rounded-full bg-green-500 mt-1 flex-shrink-0" />
                     <div className="flex-1 space-y-0.5">
-                      <p className="text-white font-bold">{item.name}</p>
-                      <p className="text-[10px] text-gray-500">{item.desc}</p>
-                      <p className="text-[9px] text-gray-500 font-semibold">{item.time}</p>
+                      <p className="text-[var(--app-text)] font-bold">{item.name}</p>
+                      <p className="text-[10px] text-[var(--app-muted)]">{item.desc}</p>
+                      <p className="text-[9px] text-[var(--app-muted)] font-semibold">{item.time}</p>
                     </div>
                     <span className="bg-green-500/10 text-green-400 border border-green-500/20 px-1.5 py-0.5 rounded text-[8px] font-bold">
                       {item.status}
@@ -785,19 +743,19 @@ export default function BatchSendPage() {
                 ))}
               </div>
 
-              <button className="w-full text-center text-xs font-bold text-blue-500 hover:underline pt-2 border-t border-[#131d35] block">
+              <button className="w-full text-center text-xs font-bold text-blue-500 hover:underline pt-2 border-t border-[var(--app-border)] block">
                 Lihat Semua Aktivitas
               </button>
             </div>
 
             {/* Tips Card */}
-            <div className="bg-[#0b1329]/40 border border-[#131d35] p-4.5 rounded-2xl flex items-start gap-3">
+            <div className="bg-white/40 border border-[var(--app-border)] p-4.5 rounded-2xl flex items-start gap-3">
               <div className="p-2 bg-yellow-500/10 text-yellow-500 rounded-lg">
                 <Lightbulb size={16} />
               </div>
               <div className="space-y-1">
-                <h5 className="text-[11px] font-bold text-white">Tips</h5>
-                <p className="text-[10px] text-gray-500 font-medium leading-relaxed">
+                <h5 className="text-[11px] font-bold text-[var(--app-text)]">Tips</h5>
+                <p className="text-[10px] text-[var(--app-muted)] font-medium leading-relaxed">
                   Gunakan fitur batch send untuk mengirim invoice secara massal dan hemat waktu. Pastikan data customer sudah lengkap.
                 </p>
               </div>

@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useState, useMemo } from 'react';
 import Layout from '@/components/Layout';
 import {
@@ -111,7 +112,7 @@ export default function LaporanKeuangan() {
     jenis: 'Laporan Standar',
     entitas: 'Audira ISP Jakarta',
     periode: 'Juni 2026',
-    tanggal: '01/07/2026 08:30',
+    tanggal: '22/10/2026 08:30',
     pembuat: 'Agus Dwi Rianto',
     status: 'Tersimpan',
     ukuran: '1.25 MB',
@@ -130,7 +131,7 @@ export default function LaporanKeuangan() {
   const [showWatermark, setShowWatermark] = useState(false);
 
   const [reports, setReports] = useState<any[]>([
-    { id: 1, namaLaporan: 'Laba Rugi Bulanan - Juni 2026', jenis: 'Keuangan', kategori: 'Laba Rugi', periode: '01/06/2026 - 30/06/2026', tanggalDibuat: '01/07/2026 08:30', dibuatOleh: 'Agus Dwi Rianto', format: 'PDF', status: 'Selesai' }
+    { id: 1, namaLaporan: 'Laba Rugi Bulanan - Juni 2026', jenis: 'Keuangan', kategori: 'Laba Rugi', periode: '01/06/2026 - 30/06/2026', tanggalDibuat: '22/10/2026 08:30', dibuatOleh: 'Agus Dwi Rianto', format: 'PDF', status: 'Selesai' }
   ]);
 
   const [schedules, setSchedules] = useState([
@@ -138,9 +139,9 @@ export default function LaporanKeuangan() {
   ]);
 
   const [archives] = useState<ArchiveItem[]>([
-    { id: 1, nama: 'Laporan Laba Rugi', subNama: 'Laporan laba rugi bulanan Juni 2026', deskripsi: 'Laporan laba rugi untuk periode Juni 2026 yang mencakup pendapatan, beban, dan laba bersih.', jenis: 'Laporan Standar', entitas: 'Audira ISP Jakarta', periode: 'Juni 2026', tanggal: '01/07/2026 08:30', pembuat: 'Agus Dwi Rianto', status: 'Tersimpan', ukuran: '1.25 MB', kategori: 'Profitabilitas', tags: ['Laba Rugi', 'Bulanan', 'Juni 2026'] },
-    { id: 2, nama: 'Laporan Neraca', subNama: 'Neraca posisi keuangan Juni 2026', deskripsi: 'Neraca posisi keuangan perusahaan per Juni 2026.', jenis: 'Laporan Standar', entitas: 'Audira ISP Jakarta', periode: 'Juni 2026', tanggal: '01/07/2026 08:25', pembuat: 'Agus Dwi Rianto', status: 'Tersimpan', ukuran: '980 KB', kategori: 'Neraca', tags: ['Neraca', 'Bulanan'] },
-    { id: 3, nama: 'Laporan Arus Kas', subNama: 'Arus kas bulan Juni 2026', deskripsi: 'Arus kas bulanan Juni 2026.', jenis: 'Laporan Manajerial', entitas: 'Semua Grup', periode: 'Juni 2026', tanggal: '01/07/2026 07:50', pembuat: 'Budi Santoso', status: 'Tersimpan', ukuran: '1.10 MB', kategori: 'Arus Kas', tags: ['Arus Kas', 'Bulanan'] },
+    { id: 1, nama: 'Laporan Laba Rugi', subNama: 'Laporan laba rugi bulanan Juni 2026', deskripsi: 'Laporan laba rugi untuk periode Juni 2026 yang mencakup pendapatan, beban, dan laba bersih.', jenis: 'Laporan Standar', entitas: 'Audira ISP Jakarta', periode: 'Juni 2026', tanggal: '22/10/2026 08:30', pembuat: 'Agus Dwi Rianto', status: 'Tersimpan', ukuran: '1.25 MB', kategori: 'Profitabilitas', tags: ['Laba Rugi', 'Bulanan', 'Juni 2026'] },
+    { id: 2, nama: 'Laporan Neraca', subNama: 'Neraca posisi keuangan Juni 2026', deskripsi: 'Neraca posisi keuangan perusahaan per Juni 2026.', jenis: 'Laporan Standar', entitas: 'Audira ISP Jakarta', periode: 'Juni 2026', tanggal: '22/10/2026 08:25', pembuat: 'Agus Dwi Rianto', status: 'Tersimpan', ukuran: '980 KB', kategori: 'Neraca', tags: ['Neraca', 'Bulanan'] },
+    { id: 3, nama: 'Laporan Arus Kas', subNama: 'Arus kas bulan Juni 2026', deskripsi: 'Arus kas bulanan Juni 2026.', jenis: 'Laporan Manajerial', entitas: 'Semua Grup', periode: 'Juni 2026', tanggal: '22/10/2026 07:50', pembuat: 'Budi Santoso', status: 'Tersimpan', ukuran: '1.10 MB', kategori: 'Arus Kas', tags: ['Arus Kas', 'Bulanan'] },
     { id: 4, nama: 'Laporan PPN Keluaran', subNama: 'PPN Keluaran Juni 2026', deskripsi: 'PPN Keluaran Juni 2026.', jenis: 'Laporan Pajak', entitas: 'Semua Entitas', periode: 'Juni 2026', tanggal: '30/06/2026 16:45', pembuat: 'Siti Nurhaliza', status: 'Dalam Retensi', ukuran: '560 KB', kategori: 'PPN', tags: ['Pajak', 'PPN'] },
     { id: 5, nama: 'Laporan Konsolidasi', subNama: 'Konsolidasi seluruh entitas Juni 2026', deskripsi: 'Konsolidasi seluruh entitas Juni 2026.', jenis: 'Laporan Konsolidasi', entitas: 'Semua Grup', periode: 'Juni 2026', tanggal: '30/06/2026 15:30', pembuat: 'Agus Dwi Rianto', status: 'Tersimpan', ukuran: '2.75 MB', kategori: 'Konsolidasi', tags: ['Konsolidasi'] },
     { id: 6, nama: 'Laporan Biaya Operasional', subNama: 'Analisis biaya operasional', deskripsi: 'Analisis biaya operasional.', jenis: 'Laporan Kostum', entitas: 'Audira ISP Bandung', periode: 'Juni 2026', tanggal: '30/06/2026 14:20', pembuat: 'Dewi Lestari', status: 'Tersimpan', ukuran: '1.85 MB', kategori: 'Operational', tags: ['Biaya', 'Operasional'] },
@@ -179,12 +180,12 @@ export default function LaporanKeuangan() {
 
   return (
     <Layout>
-      <div className="bg-[#050B14] text-slate-100 min-h-screen p-6 font-sans antialiased selection:bg-cyan-500 selection:text-white">
+      <div className="bg-[var(--app-bg)] text-slate-100 min-h-screen p-6 font-sans antialiased selection:bg-cyan-500 selection:text-white">
         
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <div>
-            <div className="flex items-center gap-2 text-xs text-slate-400 mb-1">
+            <div className="flex items-center gap-2 text-xs text-[var(--app-muted)] mb-1">
               <span>Finance</span>
               <span>&gt;</span>
               <span>Laporan Keuangan</span>
@@ -196,7 +197,7 @@ export default function LaporanKeuangan() {
               )}
             </div>
             <h1 className="text-2xl font-bold text-white tracking-tight">{activeTab === 'Ringkasan' ? 'Laporan Keuangan' : activeTab}</h1>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-[var(--app-muted)] mt-0.5">
               {activeTab === 'Arsip Laporan' ? 'Kelola, cari, unduh dan kelola arsip semua laporan keuangan perusahaan dengan aman.' : 'Kelola dan analisis laporan keuangan perusahaan secara komprehensif.'}
             </p>
           </div>
@@ -237,7 +238,7 @@ export default function LaporanKeuangan() {
                 key={t}
                 onClick={() => setActiveTab(t)}
                 className={`text-xs px-4 py-3 border-b-2 font-medium whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
-                  activeTab === t ? 'border-blue-500 text-blue-400 bg-blue-950/10' : 'border-transparent text-slate-400 hover:text-slate-200'
+                  activeTab === t ? 'border-blue-500 text-blue-400 bg-blue-950/10' : 'border-transparent text-[var(--app-muted)] hover:text-slate-200'
                 }`}
               >
                 <span>{t}</span>
@@ -259,21 +260,21 @@ export default function LaporanKeuangan() {
             <div className="bg-[#0B1528]/50 border border-slate-900 rounded-xl p-4.5 shadow-sm text-xs space-y-3.5">
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-3">
                 <div className="space-y-1">
-                  <label className="block text-slate-400 font-semibold">Cari Laporan</label>
+                  <label className="block text-[var(--app-muted)] font-semibold">Cari Laporan</label>
                   <div className="relative">
-                    <Search className="absolute left-3 top-2.5 w-3.5 h-3.5 text-slate-500" />
+                    <Search className="absolute left-3 top-2.5 w-3.5 h-3.5 text-[var(--app-muted)]" />
                     <input 
                       type="text" 
                       placeholder="Cari nama laporan, deskripsi..." 
                       value={archiveSearch}
                       onChange={e => setArchiveSearch(e.target.value)}
-                      className="bg-[#050B14] border border-slate-800 text-white rounded-lg p-2 pl-9 w-full focus:outline-none"
+                      className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2 pl-9 w-full focus:outline-none"
                     />
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <label className="block text-slate-400 font-semibold">Jenis Laporan</label>
-                  <select value={archiveJenis} onChange={e => setArchiveJenis(e.target.value)} className="bg-[#050B14] border border-slate-800 text-white rounded-lg p-2 w-full">
+                  <label className="block text-[var(--app-muted)] font-semibold">Jenis Laporan</label>
+                  <select value={archiveJenis} onChange={e => setArchiveJenis(e.target.value)} className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2 w-full">
                     <option>Semua Jenis</option>
                     <option>Laporan Standar</option>
                     <option>Laporan Manajerial</option>
@@ -283,49 +284,49 @@ export default function LaporanKeuangan() {
                   </select>
                 </div>
                 <div className="space-y-1">
-                  <label className="block text-slate-400 font-semibold">Kategori</label>
-                  <select value={archiveKategori} onChange={e => setArchiveKategori(e.target.value)} className="bg-[#050B14] border border-slate-800 text-white rounded-lg p-2 w-full">
+                  <label className="block text-[var(--app-muted)] font-semibold">Kategori</label>
+                  <select value={archiveKategori} onChange={e => setArchiveKategori(e.target.value)} className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2 w-full">
                     <option>Semua Kategori</option>
                   </select>
                 </div>
                 <div className="space-y-1">
-                  <label className="block text-slate-400 font-semibold">Periode</label>
-                  <select value={archivePeriod} onChange={e => setArchivePeriod(e.target.value)} className="bg-[#050B14] border border-slate-800 text-white rounded-lg p-2 w-full">
+                  <label className="block text-[var(--app-muted)] font-semibold">Periode</label>
+                  <select value={archivePeriod} onChange={e => setArchivePeriod(e.target.value)} className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2 w-full">
                     <option>Juni 2026</option>
                   </select>
                 </div>
                 <div className="space-y-1">
-                  <label className="block text-slate-400 font-semibold">Dari Tanggal</label>
-                  <input type="date" value={dariTanggal} onChange={e => setDariTanggal(e.target.value)} className="bg-[#050B14] border border-slate-800 text-white rounded-lg p-2 w-full" />
+                  <label className="block text-[var(--app-muted)] font-semibold">Dari Tanggal</label>
+                  <input type="date" value={dariTanggal} onChange={e => setDariTanggal(e.target.value)} className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2 w-full" />
                 </div>
                 <div className="space-y-1">
-                  <label className="block text-slate-400 font-semibold">Sampai Tanggal</label>
-                  <input type="date" value={sampaiTanggal} onChange={e => setSampaiTanggal(e.target.value)} className="bg-[#050B14] border border-slate-800 text-white rounded-lg p-2 w-full" />
+                  <label className="block text-[var(--app-muted)] font-semibold">Sampai Tanggal</label>
+                  <input type="date" value={sampaiTanggal} onChange={e => setSampaiTanggal(e.target.value)} className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2 w-full" />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-7 gap-3 pt-1 border-t border-slate-900/60">
                 <div className="space-y-1">
-                  <label className="block text-slate-400 font-semibold">Grup / Entitas</label>
-                  <select value={archiveGrup} onChange={e => setArchiveGrup(e.target.value)} className="bg-[#050B14] border border-slate-800 text-white rounded-lg p-2 w-full">
+                  <label className="block text-[var(--app-muted)] font-semibold">Grup / Entitas</label>
+                  <select value={archiveGrup} onChange={e => setArchiveGrup(e.target.value)} className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2 w-full">
                     <option>Semua Grup</option>
                   </select>
                 </div>
                 <div className="space-y-1">
-                  <label className="block text-slate-400 font-semibold">Entitas</label>
-                  <select value={archiveEntitas} onChange={e => setArchiveEntitas(e.target.value)} className="bg-[#050B14] border border-slate-800 text-white rounded-lg p-2 w-full">
+                  <label className="block text-[var(--app-muted)] font-semibold">Entitas</label>
+                  <select value={archiveEntitas} onChange={e => setArchiveEntitas(e.target.value)} className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2 w-full">
                     <option>Semua Entitas</option>
                   </select>
                 </div>
                 <div className="space-y-1">
-                  <label className="block text-slate-400 font-semibold">Dibuat Oleh</label>
-                  <select value={archiveUser} onChange={e => setArchiveUser(e.target.value)} className="bg-[#050B14] border border-slate-800 text-white rounded-lg p-2 w-full">
+                  <label className="block text-[var(--app-muted)] font-semibold">Dibuat Oleh</label>
+                  <select value={archiveUser} onChange={e => setArchiveUser(e.target.value)} className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2 w-full">
                     <option>Semua User</option>
                   </select>
                 </div>
                 <div className="space-y-1">
-                  <label className="block text-slate-400 font-semibold">Status</label>
-                  <select value={archiveStatus} onChange={e => setArchiveStatus(e.target.value)} className="bg-[#050B14] border border-slate-800 text-white rounded-lg p-2 w-full">
+                  <label className="block text-[var(--app-muted)] font-semibold">Status</label>
+                  <select value={archiveStatus} onChange={e => setArchiveStatus(e.target.value)} className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2 w-full">
                     <option>Semua Status</option>
                     <option>Tersimpan</option>
                     <option>Dalam Retensi</option>
@@ -333,19 +334,19 @@ export default function LaporanKeuangan() {
                   </select>
                 </div>
                 <div className="space-y-1">
-                  <label className="block text-slate-400 font-semibold">Tag / Label</label>
-                  <select value={archiveTag} onChange={e => setArchiveTag(e.target.value)} className="bg-[#050B14] border border-slate-800 text-white rounded-lg p-2 w-full">
+                  <label className="block text-[var(--app-muted)] font-semibold">Tag / Label</label>
+                  <select value={archiveTag} onChange={e => setArchiveTag(e.target.value)} className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2 w-full">
                     <option>Semua Tag</option>
                   </select>
                 </div>
                 <div className="space-y-1">
-                  <label className="block text-slate-400 font-semibold">Urutkan</label>
-                  <select value={archiveOrder} onChange={e => setArchiveOrder(e.target.value)} className="bg-[#050B14] border border-slate-800 text-white rounded-lg p-2 w-full">
+                  <label className="block text-[var(--app-muted)] font-semibold">Urutkan</label>
+                  <select value={archiveOrder} onChange={e => setArchiveOrder(e.target.value)} className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2 w-full">
                     <option>Terbaru</option>
                   </select>
                 </div>
                 <div className="flex gap-2 items-end">
-                  <button className="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded-lg w-full">Filter</button>
+                  <button className="bg-blue-600 hover:bg-blue-500 text-[var(--app-text)] font-bold py-2 rounded-lg w-full">Filter</button>
                   <button onClick={() => { setArchiveSearch(''); setArchiveStatus('Semua Status'); }} className="bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-2 rounded-lg w-full">Reset</button>
                 </div>
               </div>
@@ -359,21 +360,21 @@ export default function LaporanKeuangan() {
                 { label: 'Dalam Retensi', val: '48', change: '-2 dari bulan lalu' },
                 { label: 'Akan Dihapus', val: '10', change: 'dalam 30 hari' }
               ].map((it, idx) => (
-                <div key={idx} className="bg-[#0B1528]/80 border border-blue-950 rounded-xl p-4.5">
-                  <div className="text-slate-400 text-[10px] font-semibold uppercase tracking-wider">{it.label}</div>
+                <div key={idx} className="bg-[#0B1528]/80 border border-[var(--app-border)] rounded-xl p-4.5">
+                  <div className="text-[var(--app-muted)] text-[10px] font-semibold uppercase tracking-wider">{it.label}</div>
                   <div className="text-2xl font-bold text-white mt-1.5">{it.val}</div>
-                  <div className="text-[9px] text-slate-500 mt-1">{it.change}</div>
+                  <div className="text-[9px] text-[var(--app-muted)] mt-1">{it.change}</div>
                 </div>
               ))}
-              <div className="bg-[#0B1528]/80 border border-blue-950 rounded-xl p-4.5 flex flex-col justify-between">
+              <div className="bg-[#0B1528]/80 border border-[var(--app-border)] rounded-xl p-4.5 flex flex-col justify-between">
                 <div>
-                  <div className="text-slate-400 text-[10px] font-semibold uppercase tracking-wider">Total Ukuran</div>
-                  <div className="text-lg font-bold text-white mt-1">12.45 GB <span className="text-[10px] text-slate-500 font-normal">/ 25 GB</span></div>
+                  <div className="text-[var(--app-muted)] text-[10px] font-semibold uppercase tracking-wider">Total Ukuran</div>
+                  <div className="text-lg font-bold text-white mt-1">12.45 GB <span className="text-[10px] text-[var(--app-muted)] font-normal">/ 25 GB</span></div>
                 </div>
-                <div className="w-full bg-[#050B14] h-1.5 rounded-full overflow-hidden mt-1">
+                <div className="w-full bg-[var(--app-bg)] h-1.5 rounded-full overflow-hidden mt-1">
                   <div className="bg-blue-600 h-full rounded-full" style={{ width: '49.8%' }} />
                 </div>
-                <div className="text-[8px] text-slate-400 mt-1">Penggunaan Penyimpanan 12.45 GB / 25 GB (49.8%)</div>
+                <div className="text-[8px] text-[var(--app-muted)] mt-1">Penggunaan Penyimpanan 12.45 GB / 25 GB (49.8%)</div>
               </div>
             </div>
 
@@ -392,7 +393,7 @@ export default function LaporanKeuangan() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse text-xs">
                     <thead>
-                      <tr className="border-b border-slate-800 text-slate-400 font-semibold uppercase tracking-wider">
+                      <tr className="border-b border-slate-800 text-[var(--app-muted)] font-semibold uppercase tracking-wider">
                         <th className="py-2.5 px-3 w-8 text-center"><input type="checkbox" /></th>
                         <th className="py-2.5 px-3 w-10 text-center">NO</th>
                         <th className="py-2.5 px-3">NAMA LAPORAN</th>
@@ -414,17 +415,17 @@ export default function LaporanKeuangan() {
                           className={`border-b border-slate-900 hover:bg-slate-950/40 transition-colors cursor-pointer ${selectedArchiveItem.id === item.id ? 'bg-[#0E1B35]/30' : ''}`}
                         >
                           <td className="py-3.5 px-3 text-center"><input type="checkbox" onClick={e => e.stopPropagation()} /></td>
-                          <td className="py-3.5 px-3 text-center text-slate-500">{idx + 1}</td>
+                          <td className="py-3.5 px-3 text-center text-[var(--app-muted)]">{idx + 1}</td>
                           <td className="py-3.5 px-3 font-semibold text-white">
                             <div>{item.nama}</div>
-                            <div className="text-[10px] text-slate-500 font-normal mt-0.5">{item.subNama}</div>
+                            <div className="text-[10px] text-[var(--app-muted)] font-normal mt-0.5">{item.subNama}</div>
                           </td>
                           <td className="py-3.5 px-3">
                             <span className="inline-block px-2 py-0.5 rounded text-[9px] font-bold bg-blue-500/10 text-blue-400">{item.jenis}</span>
                           </td>
                           <td className="py-3.5 px-3 text-slate-300">{item.entitas}</td>
-                          <td className="py-3.5 px-3 text-slate-400">{item.periode}</td>
-                          <td className="py-3.5 px-3 text-slate-400">{item.tanggal}</td>
+                          <td className="py-3.5 px-3 text-[var(--app-muted)]">{item.periode}</td>
+                          <td className="py-3.5 px-3 text-[var(--app-muted)]">{item.tanggal}</td>
                           <td className="py-3.5 px-3 text-slate-300">{item.pembuat}</td>
                           <td className="py-3.5 px-3 text-center">
                             <span className={`inline-block px-2 py-0.5 rounded text-[9px] font-bold ${
@@ -438,8 +439,8 @@ export default function LaporanKeuangan() {
                           <td className="py-3.5 px-3 text-right font-medium text-slate-300">{item.ukuran}</td>
                           <td className="py-3.5 px-3 text-center">
                             <div className="flex items-center justify-center gap-1">
-                              <button className="p-1 text-slate-500 hover:text-white"><Eye className="w-3.5 h-3.5" /></button>
-                              <button className="p-1 text-slate-500 hover:text-white"><Download className="w-3.5 h-3.5" /></button>
+                              <button className="p-1 text-[var(--app-muted)] hover:text-white"><Eye className="w-3.5 h-3.5" /></button>
+                              <button className="p-1 text-[var(--app-muted)] hover:text-white"><Download className="w-3.5 h-3.5" /></button>
                             </div>
                           </td>
                         </tr>
@@ -460,47 +461,47 @@ export default function LaporanKeuangan() {
 
                   <div className="space-y-3.5 text-slate-300">
                     <div>
-                      <span className="text-[10px] text-slate-500 block uppercase font-bold">Nama Laporan</span>
+                      <span className="text-[10px] text-[var(--app-muted)] block uppercase font-bold">Nama Laporan</span>
                       <span className="font-semibold text-white mt-1 block">{selectedArchiveItem.nama}</span>
                     </div>
                     <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <span className="text-[10px] text-slate-500 block uppercase font-bold">Jenis Laporan</span>
+                        <span className="text-[10px] text-[var(--app-muted)] block uppercase font-bold">Jenis Laporan</span>
                         <span className="font-semibold text-slate-200 mt-1 block">{selectedArchiveItem.jenis}</span>
                       </div>
                       <div>
-                        <span className="text-[10px] text-slate-500 block uppercase font-bold">Kategori</span>
+                        <span className="text-[10px] text-[var(--app-muted)] block uppercase font-bold">Kategori</span>
                         <span className="font-semibold text-slate-200 mt-1 block">{selectedArchiveItem.kategori}</span>
                       </div>
                     </div>
                     <div>
-                      <span className="text-[10px] text-slate-500 block uppercase font-bold">Entitas</span>
+                      <span className="text-[10px] text-[var(--app-muted)] block uppercase font-bold">Entitas</span>
                       <span className="font-semibold text-slate-200 mt-1 block">{selectedArchiveItem.entitas}</span>
                     </div>
                     <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <span className="text-[10px] text-slate-500 block uppercase font-bold">Periode</span>
+                        <span className="text-[10px] text-[var(--app-muted)] block uppercase font-bold">Periode</span>
                         <span className="font-semibold text-slate-200 mt-1 block">{selectedArchiveItem.periode}</span>
                       </div>
                       <div>
-                        <span className="text-[10px] text-slate-500 block uppercase font-bold">Ukuran File</span>
+                        <span className="text-[10px] text-[var(--app-muted)] block uppercase font-bold">Ukuran File</span>
                         <span className="font-semibold text-slate-200 mt-1 block">{selectedArchiveItem.ukuran}</span>
                       </div>
                     </div>
                     <div>
-                      <span className="text-[10px] text-slate-500 block uppercase font-bold">Tanggal Dibuat</span>
+                      <span className="text-[10px] text-[var(--app-muted)] block uppercase font-bold">Tanggal Dibuat</span>
                       <span className="font-semibold text-slate-200 mt-1 block">{selectedArchiveItem.tanggal}</span>
                     </div>
                     <div>
-                      <span className="text-[10px] text-slate-500 block uppercase font-bold">Dibuat Oleh</span>
+                      <span className="text-[10px] text-[var(--app-muted)] block uppercase font-bold">Dibuat Oleh</span>
                       <span className="font-semibold text-slate-200 mt-1 block">{selectedArchiveItem.pembuat}</span>
                     </div>
                     <div>
-                      <span className="text-[10px] text-slate-500 block uppercase font-bold">Deskripsi</span>
-                      <span className="text-slate-400 mt-1 block leading-normal">{selectedArchiveItem.deskripsi}</span>
+                      <span className="text-[10px] text-[var(--app-muted)] block uppercase font-bold">Deskripsi</span>
+                      <span className="text-[var(--app-muted)] mt-1 block leading-normal">{selectedArchiveItem.deskripsi}</span>
                     </div>
                     <div>
-                      <span className="text-[10px] text-slate-500 block uppercase font-bold mb-1">Tags</span>
+                      <span className="text-[10px] text-[var(--app-muted)] block uppercase font-bold mb-1">Tags</span>
                       <div className="flex flex-wrap gap-1">
                         {selectedArchiveItem.tags.map(t => (
                           <span key={t} className="bg-slate-800 text-slate-300 text-[8px] font-bold px-1.5 py-0.5 rounded">{t}</span>
@@ -512,26 +513,26 @@ export default function LaporanKeuangan() {
 
                 <div className="bg-[#0B1528]/50 border border-slate-900 rounded-xl p-5 space-y-2.5 text-xs">
                   <h3 className="text-xs font-bold text-white uppercase tracking-wider border-b border-slate-900 pb-2 mb-1">Aksi Cepat</h3>
-                  <button className="w-full flex items-center justify-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-lg cursor-pointer">
+                  <button className="w-full flex items-center justify-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-[var(--app-text)] font-bold py-2.5 rounded-lg cursor-pointer">
                     <Eye className="w-4 h-4" />
                     <span>Lihat Laporan</span>
                   </button>
                   <div className="grid grid-cols-2 gap-2">
-                    <button className="flex items-center justify-center gap-1 bg-[#050B14] hover:bg-[#07101F] border border-slate-850 py-2.5 rounded-lg text-slate-300 font-semibold cursor-pointer">
+                    <button className="flex items-center justify-center gap-1 bg-[var(--app-bg)] hover:bg-[#07101F] border border-slate-850 py-2.5 rounded-lg text-slate-300 font-semibold cursor-pointer">
                       <Download className="w-3.5 h-3.5" />
                       <span>Unduh</span>
                     </button>
-                    <button className="flex items-center justify-center gap-1 bg-[#050B14] hover:bg-[#07101F] border border-slate-850 py-2.5 rounded-lg text-slate-300 font-semibold cursor-pointer">
+                    <button className="flex items-center justify-center gap-1 bg-[var(--app-bg)] hover:bg-[#07101F] border border-slate-850 py-2.5 rounded-lg text-slate-300 font-semibold cursor-pointer">
                       <Share2 className="w-3.5 h-3.5" />
                       <span>Bagikan</span>
                     </button>
                   </div>
                   <div className="grid grid-cols-2 gap-2">
-                    <button className="flex items-center justify-center gap-1 bg-[#050B14] hover:bg-[#07101F] border border-slate-850 py-2.5 rounded-lg text-slate-300 font-semibold cursor-pointer">
+                    <button className="flex items-center justify-center gap-1 bg-[var(--app-bg)] hover:bg-[#07101F] border border-slate-850 py-2.5 rounded-lg text-slate-300 font-semibold cursor-pointer">
                       <Copy className="w-3.5 h-3.5" />
                       <span>Duplikat</span>
                     </button>
-                    <button className="flex items-center justify-center gap-1 bg-[#050B14] hover:bg-[#07101F] border border-slate-850 py-2.5 rounded-lg text-slate-300 font-semibold cursor-pointer">
+                    <button className="flex items-center justify-center gap-1 bg-[var(--app-bg)] hover:bg-[#07101F] border border-slate-850 py-2.5 rounded-lg text-slate-300 font-semibold cursor-pointer">
                       <FolderOpen className="w-3.5 h-3.5" />
                       <span>Pindahkan</span>
                     </button>
@@ -546,16 +547,16 @@ export default function LaporanKeuangan() {
                   <h3 className="text-xs font-bold text-white uppercase tracking-wider border-b border-slate-900 pb-2">Riwayat Aktivitas</h3>
                   <div className="space-y-3.5">
                     {[
-                      { type: 'dibuat', user: 'Agus Dwi Rianto', time: '01/07/2026 08:30' },
-                      { type: 'dilihat', user: 'Budi Santoso', time: '01/07/2026 09:15' },
-                      { type: 'diunduh', user: 'Siti Nurhaliza', time: '01/07/2026 09:20' }
+                      { type: 'dibuat', user: 'Agus Dwi Rianto', time: '22/10/2026 08:30' },
+                      { type: 'dilihat', user: 'Budi Santoso', time: '22/10/2026 09:15' },
+                      { type: 'diunduh', user: 'Siti Nurhaliza', time: '22/10/2026 09:20' }
                     ].map((h, i) => (
                       <div key={i} className="flex gap-2 items-start text-[10px] text-slate-300">
                         <History className="w-3.5 h-3.5 text-blue-500 mt-0.5 flex-shrink-0" />
                         <div>
                           <p className="font-semibold text-white">Laporan {h.type}</p>
-                          <span className="text-slate-400">{h.user}</span>
-                          <span className="text-slate-500 block mt-0.5">{h.time}</span>
+                          <span className="text-[var(--app-muted)]">{h.user}</span>
+                          <span className="text-[var(--app-muted)] block mt-0.5">{h.time}</span>
                         </div>
                       </div>
                     ))}
@@ -576,7 +577,7 @@ export default function LaporanKeuangan() {
               <div className="bg-[#0B1528]/50 border border-slate-900 rounded-xl p-5 space-y-4 text-xs">
                 <h3 className="font-bold text-white uppercase tracking-wider text-[10px] border-b border-slate-900 pb-2 flex items-center gap-1.5"><Sliders className="w-3.5 h-3.5 text-blue-500" /><span>Pengaturan Umum</span></h3>
                 <div className="space-y-3 text-slate-300">
-                  <div className="flex justify-between items-center py-1"><span>Aktifkan Multi Entitas</span><button onClick={() => setMultiEntity(!multiEntity)}>{multiEntity ? <ToggleRight className="w-8 h-8 text-blue-500" /> : <ToggleLeft className="w-8 h-8 text-slate-600" />}</button></div>
+                  <div className="flex justify-between items-center py-1"><span>Aktifkan Multi Entitas</span><button onClick={() => setMultiEntity(!multiEntity)}>{multiEntity ? <ToggleRight className="w-8 h-8 text-blue-500" /> : <ToggleLeft className="w-8 h-8 text-[var(--app-text)]/80" />}</button></div>
                 </div>
               </div>
             </div>

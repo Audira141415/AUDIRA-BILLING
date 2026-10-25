@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../components/Layout';
@@ -62,10 +63,17 @@ export default function HRMDashboard() {
   if (loading) {
     return (
       <Layout>
-        <div className="p-8">
-          <div className="bg-white rounded-xl shadow-lg p-12 text-center">
+        <div className="p-4 md:p-8 space-y-6">
+        <div className="flex items-center gap-2 text-xs text-[var(--app-muted)] font-mono mb-2">
+            <Link href="/" className="hover:text-[var(--app-text)]">AUDIRA</Link>
+            <span>/</span>
+            <Link href="/hrm-dashboard" className="hover:text-[var(--app-text)]">Human Resource Management</Link>
+            <span>/</span>
+            <span className="text-blue-500 font-semibold">Dashboard HRM</span>
+          </div>
+          <div className="bg-[var(--app-card)] rounded-xl shadow-lg p-12 text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading dashboard...</p>
+            <p className="mt-4 text-[var(--app-muted)]">Loading dashboard...</p>
           </div>
         </div>
       </Layout>
@@ -76,16 +84,16 @@ export default function HRMDashboard() {
     <Layout>
       <div className="p-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-[var(--app-text)] flex items-center gap-3">
             <BarChart3 className="text-blue-600" size={36} />
             HRM Dashboard
           </h1>
-          <p className="text-gray-600 mt-1">Overview Human Resource Management</p>
+          <p className="text-[var(--app-muted)] mt-1">Overview Human Resource Management</p>
         </div>
 
         {/* Employee Stats */}
         <div className="mb-8">
-          <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-[var(--app-text)] mb-4 flex items-center gap-2">
             <Users size={24} className="text-blue-600" />
             Statistik Karyawan
           </h2>
@@ -123,7 +131,7 @@ export default function HRMDashboard() {
 
         {/* Attendance Stats */}
         <div className="mb-8">
-          <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-[var(--app-text)] mb-4 flex items-center gap-2">
             <Clock size={24} className="text-blue-600" />
             Kehadiran Hari Ini
           </h2>
@@ -178,7 +186,7 @@ export default function HRMDashboard() {
 
         {/* Salary Stats */}
         <div className="mb-8">"
-          <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-[var(--app-text)] mb-4 flex items-center gap-2">
             <DollarSign size={24} className="text-green-600" />
             Statistik Gaji
           </h2>
@@ -204,7 +212,7 @@ export default function HRMDashboard() {
 
         {/* Leave Stats */}
         <div className="mb-8">
-          <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-[var(--app-text)] mb-4 flex items-center gap-2">
             <Calendar size={24} className="text-orange-600" />
             Statistik Cuti
           </h2>
@@ -242,7 +250,7 @@ export default function HRMDashboard() {
 
         {/* Performance Stats */}
         <div className="mb-8">
-          <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-[var(--app-text)] mb-4 flex items-center gap-2">
             <TrendingUp size={24} className="text-purple-600" />
             Statistik Kinerja
           </h2>
@@ -272,43 +280,43 @@ export default function HRMDashboard() {
         </div>
 
         {/* Quick Links */}
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <h2 className="text-xl font-bold text-gray-800 mb-4">Quick Access</h2>
+        <div className="bg-[var(--app-card)] rounded-xl shadow-lg p-6">
+          <h2 className="text-xl font-bold text-[var(--app-text)] mb-4">Quick Access</h2>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             <button
               onClick={() => router.push('/karyawan')}
               className="flex flex-col items-center gap-2 p-4 border-2 border-blue-200 rounded-lg hover:bg-blue-50 hover:border-blue-400 transition-all"
             >
               <Users size={32} className="text-blue-600" />
-              <span className="text-sm font-medium text-gray-700">Data Karyawan</span>
+              <span className="text-sm font-medium text-[var(--app-text)]/90">Data Karyawan</span>
             </button>
             <button
               onClick={() => router.push('/gaji')}
               className="flex flex-col items-center gap-2 p-4 border-2 border-green-200 rounded-lg hover:bg-green-50 hover:border-green-400 transition-all"
             >
               <DollarSign size={32} className="text-green-600" />
-              <span className="text-sm font-medium text-gray-700">Gaji & Payroll</span>
+              <span className="text-sm font-medium text-[var(--app-text)]/90">Gaji & Payroll</span>
             </button>
             <button
               onClick={() => router.push('/cuti')}
               className="flex flex-col items-center gap-2 p-4 border-2 border-orange-200 rounded-lg hover:bg-orange-50 hover:border-orange-400 transition-all"
             >
               <Calendar size={32} className="text-orange-600" />
-              <span className="text-sm font-medium text-gray-700">Pengajuan Cuti</span>
+              <span className="text-sm font-medium text-[var(--app-text)]/90">Pengajuan Cuti</span>
             </button>
             <button
               onClick={() => router.push('/jadwal-kerja')}
               className="flex flex-col items-center gap-2 p-4 border-2 border-purple-200 rounded-lg hover:bg-purple-50 hover:border-purple-400 transition-all"
             >
               <Clock size={32} className="text-purple-600" />
-              <span className="text-sm font-medium text-gray-700">Jadwal Kerja</span>
+              <span className="text-sm font-medium text-[var(--app-text)]/90">Jadwal Kerja</span>
             </button>
             <button
               onClick={() => router.push('/kinerja')}
               className="flex flex-col items-center gap-2 p-4 border-2 border-pink-200 rounded-lg hover:bg-pink-50 hover:border-pink-400 transition-all"
             >
               <TrendingUp size={32} className="text-pink-600" />
-              <span className="text-sm font-medium text-gray-700">Kinerja</span>
+              <span className="text-sm font-medium text-[var(--app-text)]/90">Kinerja</span>
             </button>
           </div>
         </div>

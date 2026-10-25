@@ -146,7 +146,7 @@ export default function GenieAcs() {
         {/* Search Bar */}
         <div className="bg-white rounded-xl shadow-sm p-4 mb-6">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500" size={20} />
             <input
               type="text"
               placeholder="Cari berdasarkan Device ID, Serial Number, IP, atau Customer..."
@@ -192,20 +192,20 @@ export default function GenieAcs() {
                     <td className="px-6 py-4">
                       <div>
                         <p className="font-semibold text-gray-900">{device.deviceId}</p>
-                        <p className="text-sm text-gray-500 font-mono">{device.serialNumber}</p>
+                        <p className="text-sm text-slate-400 font-mono">{device.serialNumber}</p>
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div>
                         <p className="font-medium text-gray-900">{device.manufacturer}</p>
-                        <p className="text-sm text-gray-500">{device.model}</p>
-                        <p className="text-xs text-gray-400">{device.softwareVersion}</p>
+                        <p className="text-sm text-slate-400">{device.model}</p>
+                        <p className="text-xs text-slate-500">{device.softwareVersion}</p>
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div>
                         <p className="font-mono text-sm text-gray-900">{device.ipAddress}</p>
-                        <p className="font-mono text-xs text-gray-500">{device.macAddress}</p>
+                        <p className="font-mono text-xs text-slate-400">{device.macAddress}</p>
                       </div>
                     </td>
                     <td className="px-6 py-4">
@@ -249,7 +249,7 @@ export default function GenieAcs() {
 
           {filteredDevices.length === 0 && (
             <div className="text-center py-12">
-              <RefreshCcw size={64} className="mx-auto text-gray-400 mb-4" />
+              <RefreshCcw size={64} className="mx-auto text-slate-500 mb-4" />
               <h3 className="text-xl font-semibold text-gray-900 mb-2">Tidak ada perangkat ditemukan</h3>
               <p className="text-gray-600">Coba ubah kata kunci pencarian Anda</p>
             </div>

@@ -46,9 +46,16 @@ import { PackageModule } from './package/package.module';
 import { ServiceModule } from './service/service.module';
 import { InvoiceModule } from './invoice/invoice.module';
 import { TicketModule } from './ticket/ticket.module';
+import { SalesModule } from './sales/sales.module';
+import { HotspotModule } from './hotspot/hotspot.module';
+import { BoosterModule } from './booster/booster.module';
+import { CollectorModule } from './collector/collector.module';
+import { OltModule } from './olt/olt.module';
+import { RealtimeModule } from './realtime/realtime.module';
 
 @Module({
   imports: [
+    RealtimeModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -63,6 +70,11 @@ import { TicketModule } from './ticket/ticket.module';
     ServiceModule,
     InvoiceModule,
     TicketModule,
+    SalesModule,
+    HotspotModule,
+    BoosterModule,
+    CollectorModule,
+    OltModule,
     MikrotikModule,
     PelangganModule,
     KeuanganModule,

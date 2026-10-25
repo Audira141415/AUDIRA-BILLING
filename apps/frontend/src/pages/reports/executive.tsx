@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import {
@@ -86,7 +87,7 @@ function KpiCard({ icon: Icon, iconColor, iconBg, label, value, change, up }: {
   label: string; value: string; change: string; up: boolean;
 }) {
   return (
-    <div className="bg-[#0b1329] border border-[#131d35] rounded-xl p-3 flex flex-col gap-2 min-w-0">
+    <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-3 flex flex-col gap-2 min-w-0">
       <div className="flex items-center justify-between">
         <div className={`p-2 rounded-lg border ${iconBg}`} style={{ borderColor: iconColor + '25' }}>
           <Icon size={14} style={{ color: iconColor }} />
@@ -96,9 +97,9 @@ function KpiCard({ icon: Icon, iconColor, iconBg, label, value, change, up }: {
         </span>
       </div>
       <div>
-        <p className="text-[8px] text-gray-500 font-bold uppercase tracking-wider">{label}</p>
-        <p className="text-base font-black text-white mt-0.5 leading-tight">{value}</p>
-        <p className="text-[8px] text-gray-500 mt-0.5">dari Mei 2026</p>
+        <p className="text-[8px] text-[var(--app-muted)] font-bold uppercase tracking-wider">{label}</p>
+        <p className="text-base font-black text-[var(--app-text)] mt-0.5 leading-tight">{value}</p>
+        <p className="text-[8px] text-[var(--app-muted)] mt-0.5">dari Mei 2026</p>
       </div>
     </div>
   );
@@ -121,17 +122,17 @@ function DonutChart({ data, total, label, size = 140 }: {
           </PieChart>
         </ResponsiveContainer>
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <p className="text-[9px] font-black text-white leading-none">{total}</p>
-          <p className="text-[6px] text-gray-500 font-bold uppercase mt-0.5">{label}</p>
+          <p className="text-[9px] font-black text-[var(--app-text)] leading-none">{total}</p>
+          <p className="text-[6px] text-[var(--app-muted)] font-bold uppercase mt-0.5">{label}</p>
         </div>
       </div>
       <div className="space-y-1.5 flex-1 min-w-0">
         {data.map((d, i) => (
           <div key={i} className="flex items-center gap-1.5 text-[8px]">
             <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: d.color }} />
-            <span className="text-gray-400 truncate flex-1">{d.name}</span>
-            <span className="text-white font-bold shrink-0">{d.pct}</span>
-            <span className="text-gray-500 text-[7px] shrink-0 ml-1">{fmtRpCompact(d.value)}</span>
+            <span className="text-[var(--app-muted)] truncate flex-1">{d.name}</span>
+            <span className="text-[var(--app-text)] font-bold shrink-0">{d.pct}</span>
+            <span className="text-[var(--app-muted)] text-[7px] shrink-0 ml-1">{fmtRpCompact(d.value)}</span>
           </div>
         ))}
       </div>
@@ -170,21 +171,21 @@ function TabRingkasan() {
       {/* Row 1: Trend + Distribusi + Perbandingan + Insight AI */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {/* Tren Kinerja Keuangan */}
-        <div className="bg-[#0b1329] border border-[#131d35] rounded-xl p-4 space-y-2">
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4 space-y-2">
           <div className="flex justify-between items-center">
-            <h4 className="text-xs font-bold text-white">Tren Kinerja Keuangan</h4>
-            <select className="bg-[#080d19] border border-[#131d35] text-[8px] py-0.5 px-1.5 rounded text-gray-300 focus:outline-none">
+            <h4 className="text-xs font-bold text-[var(--app-text)]">Tren Kinerja Keuangan</h4>
+            <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-[8px] py-0.5 px-1.5 rounded text-[var(--app-text)]/80 focus:outline-none">
               <option>6 Bulan Terakhir</option>
             </select>
           </div>
           <div className="flex gap-2 text-[7px] flex-wrap">
             {[['Pendapatan','#3b82f6'],['Laba Kotor','#10b981'],['Laba Bersih','#8b5cf6']].map(([l,c]) => (
-              <span key={l} className="flex items-center gap-1 font-bold"><span className="w-2 h-0.5 inline-block" style={{ backgroundColor: c }} /><span className="text-gray-400">{l}</span></span>
+              <span key={l} className="flex items-center gap-1 font-bold"><span className="w-2 h-0.5 inline-block" style={{ backgroundColor: c }} /><span className="text-[var(--app-muted)]">{l}</span></span>
             ))}
           </div>
           <ResponsiveContainer width="100%" height={175}>
             <LineChart data={trendKeuangan}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#131d35" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
               <XAxis dataKey="month" tick={{ fontSize: 8, fill: '#6b7280' }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 8, fill: '#6b7280' }} axisLine={false} tickLine={false} tickFormatter={v => `${(v / 1000000000).toFixed(1)}M`} />
               <Tooltip contentStyle={{ background: '#0b1329', border: '1px solid #131d35', borderRadius: 8, fontSize: 9 }}
@@ -197,38 +198,38 @@ function TabRingkasan() {
         </div>
 
         {/* Distribusi Pendapatan */}
-        <div className="bg-[#0b1329] border border-[#131d35] rounded-xl p-4 space-y-3">
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4 space-y-3">
           <div className="flex justify-between items-center">
-            <h4 className="text-xs font-bold text-white">Distribusi Pendapatan</h4>
-            <select className="bg-[#080d19] border border-[#131d35] text-[8px] py-0.5 px-1.5 rounded text-gray-300 focus:outline-none">
+            <h4 className="text-xs font-bold text-[var(--app-text)]">Distribusi Pendapatan</h4>
+            <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-[8px] py-0.5 px-1.5 rounded text-[var(--app-text)]/80 focus:outline-none">
               <option>Periode Ini</option>
             </select>
           </div>
-          <p className="text-[8px] text-gray-500">(Berdasarkan Kategori)</p>
+          <p className="text-[8px] text-[var(--app-muted)]">(Berdasarkan Kategori)</p>
           <DonutChart data={distribusiData} total="Rp 2,545 M" label="Total Pendapatan" size={125} />
-          <div className="space-y-1.5 border-t border-[#131d35] pt-2">
+          <div className="space-y-1.5 border-t border-[var(--app-border)] pt-2">
             {distribusiData.map((d, i) => (
               <div key={i} className="flex justify-between text-[8px]">
                 <span className="flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: d.color }} />
-                  <span className="text-gray-400">{d.name}</span>
+                  <span className="text-[var(--app-muted)]">{d.name}</span>
                 </span>
-                <span className="text-white font-bold">{d.pct} — {fmtRpCompact(d.value)}</span>
+                <span className="text-[var(--app-text)] font-bold">{d.pct} — {fmtRpCompact(d.value)}</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* Perbandingan Pendapatan */}
-        <div className="bg-[#0b1329] border border-[#131d35] rounded-xl p-4 space-y-3">
-          <h4 className="text-xs font-bold text-white">Perbandingan Pendapatan</h4>
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4 space-y-3">
+          <h4 className="text-xs font-bold text-[var(--app-text)]">Perbandingan Pendapatan</h4>
           <div className="flex gap-2 text-[7px] font-bold">
-            <span className="flex items-center gap-1"><span className="w-2 h-1.5 bg-gray-500/50 inline-block rounded-sm" /><span className="text-gray-400">Mei 2026</span></span>
-            <span className="flex items-center gap-1"><span className="w-2 h-1.5 bg-blue-500/70 inline-block rounded-sm" /><span className="text-gray-400">Juni 2026</span></span>
+            <span className="flex items-center gap-1"><span className="w-2 h-1.5 bg-gray-500/50 inline-block rounded-sm" /><span className="text-[var(--app-muted)]">Mei 2026</span></span>
+            <span className="flex items-center gap-1"><span className="w-2 h-1.5 bg-blue-500/70 inline-block rounded-sm" /><span className="text-[var(--app-muted)]">Juni 2026</span></span>
           </div>
           <ResponsiveContainer width="100%" height={175}>
             <BarChart data={perbandinganData} barSize={12}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#131d35" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
               <XAxis dataKey="name" tick={{ fontSize: 7, fill: '#6b7280' }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 7, fill: '#6b7280' }} axisLine={false} tickLine={false} tickFormatter={v => `${(v / 1000000000).toFixed(1)}M`} />
               <Tooltip contentStyle={{ background: '#0b1329', border: '1px solid #131d35', borderRadius: 8, fontSize: 9 }}
@@ -240,9 +241,9 @@ function TabRingkasan() {
         </div>
 
         {/* Insight Eksekutif AI */}
-        <div className="bg-[#0b1329] border border-[#131d35] rounded-xl p-4 space-y-3">
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4 space-y-3">
           <div className="flex items-center justify-between">
-            <h4 className="text-xs font-bold text-white">Insight Eksekutif</h4>
+            <h4 className="text-xs font-bold text-[var(--app-text)]">Insight Eksekutif</h4>
             <span className="text-[7px] font-black px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400 border border-blue-500/30">AI</span>
           </div>
           <div className="space-y-2">
@@ -254,11 +255,11 @@ function TabRingkasan() {
             ].map((t, i) => (
               <div key={i} className="flex gap-2 text-[8px] p-2 bg-blue-500/5 border border-blue-500/10 rounded-lg">
                 <span className="text-blue-400 mt-0.5 shrink-0">•</span>
-                <p className="text-gray-300 leading-relaxed">{t}</p>
+                <p className="text-[var(--app-text)]/80 leading-relaxed">{t}</p>
               </div>
             ))}
           </div>
-          <button className="w-full flex items-center justify-center gap-1 text-[8px] font-bold text-blue-400 hover:text-blue-300 border-t border-[#131d35] pt-2">
+          <button className="w-full flex items-center justify-center gap-1 text-[8px] font-bold text-blue-400 hover:text-blue-300 border-t border-[var(--app-border)] pt-2">
             Lihat Analisis Lengkap <ArrowUpRight size={10} />
           </button>
         </div>
@@ -267,12 +268,12 @@ function TabRingkasan() {
       {/* Row 2: KPI Table + Top 5 + Arus Kas + Peringatan */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {/* Ringkasan Kinerja Utama */}
-        <div className="bg-[#0b1329] border border-[#131d35] rounded-xl p-4 space-y-2 md:col-span-1">
-          <h4 className="text-xs font-bold text-white">Ringkasan Kinerja Utama</h4>
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4 space-y-2 md:col-span-1">
+          <h4 className="text-xs font-bold text-[var(--app-text)]">Ringkasan Kinerja Utama</h4>
           <div className="overflow-x-auto">
             <table className="w-full text-[8px] min-w-[380px]">
               <thead>
-                <tr className="text-gray-500 font-bold uppercase border-b border-[#131d35]">
+                <tr className="text-[var(--app-muted)] font-bold uppercase border-b border-[var(--app-border)]">
                   <th className="py-1.5 text-left">Indikator</th>
                   <th className="py-1.5 text-right">Periode Ini</th>
                   <th className="py-1.5 text-right">Periode Sblm</th>
@@ -280,15 +281,15 @@ function TabRingkasan() {
                   <th className="py-1.5 text-center">Trend</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#131d35]">
+              <tbody className="divide-y divide-[var(--app-border)]">
                 {kpiTable.map((row, i) => {
                   const valPeriode = row.strPeriode ?? (row.periode < 1000 ? (row.periode > 100 ? String(fmt(row.periode)) : String(row.periode)) : fmtRpCompact(row.periode));
                   const valSblm = row.strSblm ?? (row.sebelumnya < 1000 ? String(row.sebelumnya) : fmtRpCompact(row.sebelumnya));
                   return (
-                    <tr key={i} className="hover:bg-[#121c38]/30 transition-colors">
-                      <td className="py-1.5 text-gray-400 pr-2">{row.indikator}</td>
-                      <td className="py-1.5 text-right text-white font-bold">{valPeriode}</td>
-                      <td className="py-1.5 text-right text-gray-400">{valSblm}</td>
+                    <tr key={i} className="hover:bg-[var(--app-border)]/30/30 transition-colors">
+                      <td className="py-1.5 text-[var(--app-muted)] pr-2">{row.indikator}</td>
+                      <td className="py-1.5 text-right text-[var(--app-text)] font-bold">{valPeriode}</td>
+                      <td className="py-1.5 text-right text-[var(--app-muted)]">{valSblm}</td>
                       <td className="py-1.5 text-right">
                         <span className={`font-bold ${row.up ? 'text-green-400' : 'text-red-400'}`}>
                           {row.up ? '▲' : '▼'} {row.perubahan}%
@@ -306,34 +307,34 @@ function TabRingkasan() {
         </div>
 
         {/* Top 5 Produk / Layanan */}
-        <div className="bg-[#0b1329] border border-[#131d35] rounded-xl p-4 space-y-3">
-          <h4 className="text-xs font-bold text-white">Top 5 Produk / Layanan</h4>
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4 space-y-3">
+          <h4 className="text-xs font-bold text-[var(--app-text)]">Top 5 Produk / Layanan</h4>
           <div className="overflow-x-auto">
             <table className="w-full text-[8px] min-w-[240px]">
               <thead>
-                <tr className="text-gray-500 font-bold uppercase border-b border-[#131d35]">
+                <tr className="text-[var(--app-muted)] font-bold uppercase border-b border-[var(--app-border)]">
                   <th className="py-1.5 text-left">#</th>
                   <th className="py-1.5 text-left">Produk / Layanan</th>
                   <th className="py-1.5 text-right">Pendapatan</th>
                   <th className="py-1.5 text-right">Kontribusi</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#131d35]">
+              <tbody className="divide-y divide-[var(--app-border)]">
                 {top5Produk.map((row, i) => (
-                  <tr key={i} className="hover:bg-[#121c38]/30 transition-colors">
+                  <tr key={i} className="hover:bg-[var(--app-border)]/30/30 transition-colors">
                     <td className="py-1.5 pr-2">
-                      <span className={`w-5 h-5 rounded-full text-[7px] font-black flex items-center justify-center ${i === 0 ? 'bg-yellow-500 text-black' : i === 1 ? 'bg-gray-400 text-black' : i === 2 ? 'bg-orange-600 text-white' : 'bg-[#131d35] text-gray-400'}`}>
+                      <span className={`w-5 h-5 rounded-full text-[7px] font-black flex items-center justify-center ${i === 0 ? 'bg-yellow-500 text-black' : i === 1 ? 'bg-gray-400 text-black' : i === 2 ? 'bg-orange-600 text-white' : 'bg-[var(--app-border)]/20 text-[var(--app-muted)]'}`}>
                         {row.rank}
                       </span>
                     </td>
-                    <td className="py-1.5 text-gray-300">{row.produk}</td>
-                    <td className="py-1.5 text-right text-white font-bold">{fmtRpCompact(row.pendapatan)}</td>
+                    <td className="py-1.5 text-[var(--app-text)]/80">{row.produk}</td>
+                    <td className="py-1.5 text-right text-[var(--app-text)] font-bold">{fmtRpCompact(row.pendapatan)}</td>
                     <td className="py-1.5 text-right text-blue-400 font-bold">{row.kontribusi}</td>
                   </tr>
                 ))}
                 <tr className="border-t-2 border-blue-500/30 font-bold">
-                  <td className="py-1.5 text-gray-500 font-black" colSpan={2}>Total</td>
-                  <td className="py-1.5 text-right text-white font-black">Rp 2,545 M</td>
+                  <td className="py-1.5 text-[var(--app-muted)] font-black" colSpan={2}>Total</td>
+                  <td className="py-1.5 text-right text-[var(--app-text)] font-black">Rp 2,545 M</td>
                   <td className="py-1.5 text-right text-blue-400 font-black">100%</td>
                 </tr>
               </tbody>
@@ -342,8 +343,8 @@ function TabRingkasan() {
         </div>
 
         {/* Ringkasan Arus Kas */}
-        <div className="bg-[#0b1329] border border-[#131d35] rounded-xl p-4 space-y-3">
-          <h4 className="text-xs font-bold text-white">Ringkasan Arus Kas</h4>
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4 space-y-3">
+          <h4 className="text-xs font-bold text-[var(--app-text)]">Ringkasan Arus Kas</h4>
           <div className="space-y-2.5">
             {[
               { label: 'Saldo Awal', value: 'Rp 1.250.000.000', color: 'text-white', big: false },
@@ -352,8 +353,8 @@ function TabRingkasan() {
               { label: 'Saldo Akhir', value: 'Rp 1.650.200.000', color: 'text-white', big: false },
               { label: 'Perubahan', value: '▲ Rp 400.200.000 (32.02%)', color: 'text-green-400', big: false },
             ].map((r, i) => (
-              <div key={i} className={`flex justify-between items-center text-[9px] ${i < 4 ? 'border-b border-[#131d35] pb-2' : ''}`}>
-                <span className="text-gray-400">{r.label}</span>
+              <div key={i} className={`flex justify-between items-center text-[9px] ${i < 4 ? 'border-b border-[var(--app-border)] pb-2' : ''}`}>
+                <span className="text-[var(--app-muted)]">{r.label}</span>
                 <span className={`font-bold ${r.big ? 'text-base' : ''} ${r.color}`}>{r.value}</span>
               </div>
             ))}
@@ -363,8 +364,8 @@ function TabRingkasan() {
         {/* Peringatan + Laporan + Catatan */}
         <div className="space-y-3">
           {/* Peringatan & Notifikasi */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-xl p-4 space-y-2">
-            <h4 className="text-[9px] font-bold uppercase tracking-wider text-gray-400">Peringatan & Notifikasi</h4>
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4 space-y-2">
+            <h4 className="text-[9px] font-bold uppercase tracking-wider text-[var(--app-muted)]">Peringatan & Notifikasi</h4>
             {[
               { text: 'Invoice overdue lebih dari 30 hari', color: 'text-red-400', bg: 'bg-red-500/10 border-red-500/20', icon: AlertTriangle },
               { text: 'Customer dengan tagihan belum dibayar > 60 hari', color: 'text-orange-400', bg: 'bg-orange-500/10 border-orange-500/20', icon: AlertTriangle },
@@ -382,8 +383,8 @@ function TabRingkasan() {
           </div>
 
           {/* Laporan Terkait */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-xl p-4 space-y-1.5">
-            <h4 className="text-[9px] font-bold uppercase tracking-wider text-gray-400">Laporan Terkait</h4>
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4 space-y-1.5">
+            <h4 className="text-[9px] font-bold uppercase tracking-wider text-[var(--app-muted)]">Laporan Terkait</h4>
             {[
               'Laporan Laba Rugi Bulanan',
               'Laporan Arus Kas Bulanan',
@@ -391,8 +392,8 @@ function TabRingkasan() {
               'Laporan PPN Keluaran',
               'Laporan KPI Keuangan',
             ].map((l, i) => (
-              <div key={i} className="flex justify-between items-center text-[8px] hover:bg-[#121c38]/30 px-1 py-1 rounded transition-colors cursor-pointer">
-                <span className="text-gray-400">{l}</span>
+              <div key={i} className="flex justify-between items-center text-[8px] hover:bg-[var(--app-border)]/30/30 px-1 py-1 rounded transition-colors cursor-pointer">
+                <span className="text-[var(--app-muted)]">{l}</span>
                 <span className="text-blue-400 font-bold">Lihat →</span>
               </div>
             ))}
@@ -406,10 +407,10 @@ function TabRingkasan() {
       {/* Row 3: YoY + Forecast + Catatan Eksekutif */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Analisis YoY */}
-        <div className="bg-[#0b1329] border border-[#131d35] rounded-xl p-4 space-y-3">
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4 space-y-3">
           <div className="flex justify-between items-center">
-            <h4 className="text-xs font-bold text-white">Analisis Perbandingan YoY</h4>
-            <span className="text-[8px] font-bold text-gray-400 bg-[#131d35] px-2 py-0.5 rounded">2026 vs 2025</span>
+            <h4 className="text-xs font-bold text-[var(--app-text)]">Analisis Perbandingan YoY</h4>
+            <span className="text-[8px] font-bold text-[var(--app-muted)] bg-[var(--app-border)]/20 px-2 py-0.5 rounded">2026 vs 2025</span>
           </div>
           <div className="grid grid-cols-2 gap-3">
             {[
@@ -418,9 +419,9 @@ function TabRingkasan() {
               { label: 'Customer Aktif', value: '12.845', change: '▲ 15.21%', color: 'text-green-400' },
               { label: 'ARPU', value: 'Rp 198.100', change: '▲ 2.81%', color: 'text-green-400' },
             ].map((d, i) => (
-              <div key={i} className="bg-[#080d19] border border-[#131d35] rounded-xl p-3 space-y-1">
-                <p className="text-[7px] text-gray-500 font-bold uppercase">{d.label}</p>
-                <p className="text-[11px] font-black text-white leading-tight">{d.value}</p>
+              <div key={i} className="bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl p-3 space-y-1">
+                <p className="text-[7px] text-[var(--app-muted)] font-bold uppercase">{d.label}</p>
+                <p className="text-[11px] font-black text-[var(--app-text)] leading-tight">{d.value}</p>
                 <p className={`text-[8px] font-bold ${d.color}`}>{d.change}</p>
               </div>
             ))}
@@ -428,10 +429,10 @@ function TabRingkasan() {
         </div>
 
         {/* Forecast 3 Bulan */}
-        <div className="bg-[#0b1329] border border-[#131d35] rounded-xl p-4 space-y-3">
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4 space-y-3">
           <div className="flex justify-between items-center">
-            <h4 className="text-xs font-bold text-white">Forecast 3 Bulan Ke Depan</h4>
-            <select className="bg-[#080d19] border border-[#131d35] text-[8px] py-0.5 px-1.5 rounded text-gray-300 focus:outline-none">
+            <h4 className="text-xs font-bold text-[var(--app-text)]">Forecast 3 Bulan Ke Depan</h4>
+            <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-[8px] py-0.5 px-1.5 rounded text-[var(--app-text)]/80 focus:outline-none">
               <option>Pendapatan</option>
             </select>
           </div>
@@ -440,9 +441,9 @@ function TabRingkasan() {
               const label = ['Juli 2026', 'Agustus 2026', 'September 2026'][i];
               const pct = ['4.09%', '4.08%', '8.66%'][i];
               return (
-                <div key={i} className="bg-[#080d19] border border-[#131d35] rounded-xl p-2.5 space-y-1">
-                  <p className="text-[7px] text-gray-500 font-bold uppercase leading-tight">{label} (Forecast)</p>
-                  <p className="text-[11px] font-black text-white leading-tight">{fmtRpCompact(f.pendapatan)}</p>
+                <div key={i} className="bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl p-2.5 space-y-1">
+                  <p className="text-[7px] text-[var(--app-muted)] font-bold uppercase leading-tight">{label} (Forecast)</p>
+                  <p className="text-[11px] font-black text-[var(--app-text)] leading-tight">{fmtRpCompact(f.pendapatan)}</p>
                   <p className="text-[8px] font-bold text-green-400">▲ {pct}</p>
                 </div>
               );
@@ -450,7 +451,7 @@ function TabRingkasan() {
           </div>
           <ResponsiveContainer width="100%" height={100}>
             <LineChart data={forecastData.map((d, i) => ({ name: ['Jul','Agu','Sep'][i], v: d.pendapatan }))}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#131d35" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
               <XAxis dataKey="name" tick={{ fontSize: 8, fill: '#6b7280' }} axisLine={false} tickLine={false} />
               <YAxis hide />
               <Tooltip contentStyle={{ background: '#0b1329', border: '1px solid #131d35', borderRadius: 8, fontSize: 9 }}
@@ -461,30 +462,30 @@ function TabRingkasan() {
         </div>
 
         {/* Catatan Eksekutif */}
-        <div className="bg-[#0b1329] border border-[#131d35] rounded-xl p-4 space-y-3">
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4 space-y-3">
           <div className="flex items-center justify-between">
-            <h4 className="text-xs font-bold text-white">Catatan Eksekutif</h4>
-            <button className="p-1 text-gray-400 hover:text-blue-400 transition-colors"><Edit3 size={11} /></button>
+            <h4 className="text-xs font-bold text-[var(--app-text)]">Catatan Eksekutif</h4>
+            <button className="p-1 text-[var(--app-muted)] hover:text-blue-400 transition-colors"><Edit3 size={11} /></button>
           </div>
-          <div className="bg-[#080d19] border border-[#131d35] rounded-xl p-3 space-y-2 min-h-[120px]">
-            <p className="text-[8px] text-gray-300 leading-relaxed">
+          <div className="bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl p-3 space-y-2 min-h-[120px]">
+            <p className="text-[8px] text-[var(--app-text)]/80 leading-relaxed">
               Kinerja bulan Juni 2026 menunjukkan pertumbuhan yang positif di hampir semua indikator utama.
             </p>
-            <p className="text-[8px] text-gray-300 leading-relaxed">
+            <p className="text-[8px] text-[var(--app-text)]/80 leading-relaxed">
               Fokus untuk bulan berikutnya: meningkatkan collection, menekan biaya operasional, dan menjaga kualitas layanan.
             </p>
-            <p className="text-[8px] text-gray-400 mt-3 italic border-t border-[#131d35] pt-2">Terakhir diperbarui: 01/07/2026 oleh Agus Dwi Rianto</p>
+            <p className="text-[8px] text-[var(--app-muted)] mt-3 italic border-t border-[var(--app-border)] pt-2">Terakhir diperbarui: 22/10/2026 oleh Agus Dwi Rianto</p>
           </div>
           <div className="space-y-1.5">
-            <p className="text-[7px] text-gray-500 font-bold uppercase">Prioritas Bulan Depan</p>
+            <p className="text-[7px] text-[var(--app-muted)] font-bold uppercase">Prioritas Bulan Depan</p>
             {[
               { label: 'Tingkatkan collection rate ke 92%', done: false, color: 'text-yellow-400' },
               { label: 'Tambah 600 customer baru', done: false, color: 'text-blue-400' },
               { label: 'Kurangi churn rate di bawah 1.2%', done: false, color: 'text-red-400' },
             ].map((p, i) => (
               <div key={i} className="flex items-center gap-2 text-[8px]">
-                <span className={`w-1.5 h-1.5 rounded-full ${p.done ? 'bg-green-400' : 'bg-[#131d35] border border-gray-600'}`} />
-                <span className={p.done ? 'line-through text-gray-500' : 'text-gray-300'}>{p.label}</span>
+                <span className={`w-1.5 h-1.5 rounded-full ${p.done ? 'bg-green-400' : 'bg-[var(--app-border)]/20 border border-gray-600'}`} />
+                <span className={p.done ? 'line-through text-[var(--app-muted)]' : 'text-[var(--app-text)]/80'}>{p.label}</span>
               </div>
             ))}
           </div>
@@ -496,7 +497,7 @@ function TabRingkasan() {
 
 function TabPlaceholder({ name }: { name: string }) {
   return (
-    <div className="flex flex-col items-center justify-center py-20 text-gray-500 space-y-3">
+    <div className="flex flex-col items-center justify-center py-20 text-[var(--app-muted)] space-y-3">
       <BarChart2 size={40} className="text-gray-700" />
       <p className="text-sm font-bold">Tab <span className="text-blue-400">{name}</span> sedang dalam pengembangan</p>
     </div>
@@ -514,49 +515,33 @@ export default function ExecutiveSummaryPage() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-[#070c19] text-gray-200 p-4 md:p-5 space-y-4">
+      <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] p-4 md:p-6 space-y-6">
 
-        {/* Header */}
-        <div className="flex flex-col xl:flex-row justify-between items-start gap-3 border-b border-[#131d35] pb-4">
-          <div>
-            <div className="flex items-center gap-1.5 text-[9px] text-gray-400 font-semibold mb-1">
-              <span>Finance</span><span className="text-gray-600">›</span>
-              <span>Reports</span><span className="text-gray-600">›</span>
-              <span className="text-blue-400">Executive Summary</span>
+        {/* ─── Swiss B2B Reports Header ────────────────────────────────────────────── */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-[var(--app-border)] pb-5 mb-5">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 text-xs text-[var(--app-muted)] font-mono mb-1">
+              <Link href="/" className="hover:text-[var(--app-text)]">AUDIRA</Link>
+              <span>/</span>
+              <Link href="/reports" className="hover:text-[var(--app-text)]">Laporan & Analitik</Link>
+              <span>/</span>
+              <span className="text-indigo-400 font-semibold">Executive Summary</span>
             </div>
-            <h1 className="text-xl font-black text-white tracking-tight">Executive Summary</h1>
-            <p className="text-[10px] text-gray-400 mt-0.5">Ringkasan eksekutif kinerja bisnis dan keuangan perusahaan secara keseluruhan.</p>
+            <h1 className="text-xl md:text-2xl font-bold tracking-tight text-[var(--app-text)]">
+              Ringkasan Eksekutif & Kinerja Bisnis (Executive Report)
+            </h1>
+            <p className="text-xs text-[var(--app-muted)]">
+              Ikhtisar tingkat tinggi metrik pendapatan, margin EBITDA, rasio operasional jaringan, dan proyeksi pertumbuhan ISP.
+            </p>
           </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="flex items-center gap-2 bg-[#0b1329] border border-[#131d35] px-3 py-1.5 rounded-lg">
-              <Calendar size={11} className="text-blue-400" />
-              <span className="text-[9px] text-gray-300">01 Jul 2026 · 08:35 WIB</span>
-            </div>
-            <div className="flex items-center gap-1.5 bg-[#0b1329] border border-[#131d35] px-3 py-1.5 rounded-lg">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-              <span className="text-[9px] text-green-400 font-bold">Status Sistem</span>
-              <span className="text-[9px] text-gray-400">Normal</span>
-            </div>
-            <div className="relative hidden lg:block">
-              <Search size={11} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
-              <input type="text" placeholder="Cari invoice, customer, transaksi..."
-                className="bg-[#0b1329] border border-[#131d35] text-[9px] pl-8 pr-3 py-1.5 rounded-lg text-white focus:outline-none focus:border-blue-500 w-52" />
-            </div>
-            <button className="relative p-1.5 bg-[#0b1329] border border-[#131d35] rounded-lg text-gray-400">
-              <Bell size={13} />
-              <span className="absolute -top-1 -right-1 bg-red-500 text-[7px] text-white w-3.5 h-3.5 rounded-full flex items-center justify-center font-bold">13</span>
-            </button>
-            <button className="relative p-1.5 bg-[#0b1329] border border-[#131d35] rounded-lg text-gray-400">
-              <Mail size={13} />
-              <span className="absolute -top-1 -right-1 bg-red-500 text-[7px] text-white w-3.5 h-3.5 rounded-full flex items-center justify-center font-bold">5</span>
-            </button>
-            <div className="flex items-center gap-1.5 pl-1.5 border-l border-[#131d35]">
-              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-black text-[9px]">AR</div>
-              <div className="hidden md:block">
-                <div className="text-[9px] font-bold text-white leading-none">Agus Dwi Rianto</div>
-                <div className="text-[8px] text-gray-500 font-bold uppercase">Super Admin</div>
-              </div>
-            </div>
+
+          <div className="flex items-center gap-2.5">
+            <Link
+              href="/reports"
+              className="px-3 py-2 bg-[var(--app-card)] hover:bg-[var(--app-border)]/20 border border-[var(--app-border)] text-[var(--app-text)] text-xs font-semibold rounded-lg transition-all"
+            >
+              Semua Laporan
+            </Link>
           </div>
         </div>
 
@@ -569,27 +554,27 @@ export default function ExecutiveSummaryPage() {
                 <Download size={12} /> Export <ChevronDown size={9} className={`transition-transform ${showExport ? 'rotate-180' : ''}`} />
               </button>
               {showExport && (
-                <div className="absolute left-0 top-full mt-1 z-10 bg-[#0b1329] border border-[#131d35] rounded-xl shadow-xl overflow-hidden w-44">
+                <div className="absolute left-0 top-full mt-1 z-10 bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl shadow-xl overflow-hidden w-44">
                   {[
                     { label: 'Export PDF', icon: FileDown, color: 'text-red-400' },
                     { label: 'Export Excel', icon: FileSpreadsheet, color: 'text-green-400' },
                     { label: 'Export CSV', icon: FileText, color: 'text-blue-400' },
                   ].map(e => (
-                    <button key={e.label} className="w-full flex items-center gap-2 px-3 py-2 text-[10px] text-gray-300 hover:bg-[#121c38]">
+                    <button key={e.label} className="w-full flex items-center gap-2 px-3 py-2 text-[10px] text-[var(--app-text)]/80 hover:bg-[var(--app-border)]/30">
                       <e.icon size={12} className={e.color} />{e.label}
                     </button>
                   ))}
                 </div>
               )}
             </div>
-            <button className="flex items-center gap-1.5 bg-[#0b1329] border border-[#131d35] hover:bg-[#121c38] text-white text-[10px] font-bold px-3 py-1.5 rounded-lg transition-colors">
+            <button className="flex items-center gap-1.5 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg transition-colors">
               <Calendar size={11} className="text-blue-400" /> Jadwalkan Laporan
             </button>
-            <button className="p-1.5 bg-[#0b1329] border border-[#131d35] rounded-lg hover:bg-[#121c38] text-gray-400"><MoreVertical size={13} /></button>
+            <button className="p-1.5 bg-[var(--app-card)] border border-[var(--app-border)] rounded-lg hover:bg-[var(--app-border)]/30 text-[var(--app-muted)]"><MoreVertical size={13} /></button>
           </div>
-          <div className="flex items-center gap-2 text-[9px] text-gray-400">
-            <RefreshCw size={11} className="text-gray-500" />
-            <span>Data diperbarui: 01/07/2026 08:30 WIB</span>
+          <div className="flex items-center gap-2 text-[9px] text-[var(--app-muted)]">
+            <RefreshCw size={11} className="text-[var(--app-muted)]" />
+            <span>Data diperbarui: 22/10/2026 08:30 WIB</span>
             <span className="text-gray-600">|</span>
             <span>Auto-Update</span>
             {isMounted && (
@@ -602,35 +587,35 @@ export default function ExecutiveSummaryPage() {
         </div>
 
         {/* Sub-tabs */}
-        <div className="flex gap-0.5 border-b border-[#131d35] pb-px overflow-x-auto">
+        <div className="flex gap-1 border-b border-[var(--app-border)] pb-px overflow-x-auto">
           {SUB_TABS.map(tab => (
             <button key={tab} onClick={() => setActiveTab(tab)}
-              className={`px-3 py-2 text-[9px] font-bold whitespace-nowrap border-b-2 transition-all ${activeTab === tab ? 'border-blue-500 text-white' : 'border-transparent text-gray-500 hover:text-gray-300'}`}>
+              className={`px-3.5 py-2 text-xs font-semibold whitespace-nowrap border-b-2 transition-all ${activeTab === tab ? 'border-blue-600 text-blue-600 dark:text-blue-400 font-bold' : 'border-transparent text-[var(--app-text-muted)] hover:text-[var(--app-text)]'}`}>
               {tab}
             </button>
           ))}
         </div>
 
         {/* Primary Filters */}
-        <div className="flex flex-wrap items-end gap-2">
+        <div className="flex flex-wrap items-end gap-2.5">
           {[
             { label: 'Periode', opt: 'Juni 2026' },
             { label: 'Dibandingkan Dengan', opt: 'Mei 2026' },
             { label: 'Group By', opt: 'Bulan' },
             { label: 'Entitas / Grup', opt: 'Semua Entitas' },
           ].map(f => (
-            <div key={f.label} className="space-y-0.5">
-              <span className="text-[7px] text-gray-500 font-bold uppercase px-0.5">{f.label}</span>
-              <select className="bg-[#0b1329] border border-[#131d35] text-[9px] py-1.5 px-2.5 rounded-lg text-white focus:outline-none hover:border-blue-500/50 transition-colors">
+            <div key={f.label} className="space-y-1">
+              <span className="text-[10px] text-[var(--app-text-muted)] font-semibold uppercase px-0.5">{f.label}</span>
+              <select className="bg-[var(--app-card)] border border-[var(--app-border)] text-xs py-1.5 px-2.5 rounded-lg text-[var(--app-text)] focus:outline-none focus:border-blue-500 transition-colors">
                 <option>{f.opt}</option>
               </select>
             </div>
           ))}
           <div className="flex gap-1.5 self-end">
-            <button className="flex items-center gap-1.5 bg-[#0b1329] border border-[#131d35] hover:bg-[#121c38] text-gray-300 text-[9px] font-bold px-3 py-1.5 rounded-lg">
-              <Filter size={10} /> Filter Lainnya
+            <button className="flex items-center gap-1.5 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-card-subtle)] text-[var(--app-text)] text-xs font-medium px-3 py-1.5 rounded-lg transition-colors shadow-xs">
+              <Filter size={12} /> Filter Lainnya
             </button>
-            <button className="text-[9px] font-bold text-gray-400 hover:text-white px-2 py-1.5 border border-[#131d35] rounded-lg hover:bg-[#121c38] bg-[#0b1329]">
+            <button className="text-xs font-medium text-[var(--app-text-muted)] hover:text-[var(--app-text)] px-2.5 py-1.5 border border-[var(--app-border)] rounded-lg hover:bg-[var(--app-card-subtle)] bg-[var(--app-card)] transition-colors shadow-xs">
               Reset
             </button>
           </div>

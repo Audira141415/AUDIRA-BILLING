@@ -284,7 +284,7 @@ export default function CustomerProfile() {
                   </div>
                 </div>
               ) : (
-                <p className="text-gray-500">No active package</p>
+                <p className="text-slate-400">No active package</p>
               )}
             </div>
 

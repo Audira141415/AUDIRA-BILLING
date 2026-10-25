@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { EmailService } from '../email/email.service';
 import { AuditService, AuditAction } from '../audit/audit.service';
+import { RealtimeService } from '../realtime/realtime.service';
 import * as midtransClient from 'midtrans-client';
 
 @Injectable()
@@ -14,6 +15,7 @@ export class PaymentService {
     private prisma: PrismaService,
     private emailService: EmailService,
     private auditService: AuditService,
+    private realtimeService: RealtimeService,
   ) {
     // Initialize Midtrans Snap
     this.snap = new midtransClient.Snap({
@@ -396,6 +398,20 @@ export class PaymentService {
       });
 
       this.logger.log(`Invoice ${invoice.invoiceNumber} marked as PAID`);
+
+      // Broadcast real-time payment success to Web Admin & Mobile App
+      try {
+        this.realtimeService.broadcastPaymentReceived({
+          invoiceId: invoice.id,
+          invoiceNumber: invoice.invoiceNumber,
+          customerName: invoice.customer?.name || 'Pelanggan',
+          amount: invoice.amount,
+          paymentMethod: this.formatPaymentMethod(notification.payment_type),
+          customerId: invoice.customer?.id,
+        });
+      } catch (rtErr: any) {
+        this.logger.warn(`Failed to broadcast realtime payment event: ${rtErr.message}`);
+      }
 
       // Send payment confirmation email
       if (invoice.customer.email) {

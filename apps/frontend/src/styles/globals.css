@@ -1,19 +1,257 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ==========================================================================
+   AUDIRA NET & BILLING — ENTERPRISE B2B DESIGN SYSTEM
+   Standardized from F:\AUDIRA-DESAIN-UI-UX (UI/UX Pro Max)
+   Focus: Zero AI-Slop, High Data Density, Precision Typography & WCAG Contrast
+   ========================================================================== */
+
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  /* ☀️ Light Mode: Navy Professional + High Legibility */
+  --app-bg: #f8fafc;
+  --app-surface: #ffffff;
+  --app-card: #ffffff;
+  --app-card-subtle: #f8fafc;
+  --app-card-hover: #ffffff;
+  --app-border: #e2e8f0;
+  --app-border-strong: #cbd5e1;
+  --app-border-focus: #2563eb;
+  --app-text: #0f172a;
+  --app-text-muted: #64748b;
+  --app-text-dim: #94a3b8;
+  --app-primary: #1e3a5f;
+  --app-primary-hover: #172d4a;
+  --app-primary-light: #2563eb;
+  --app-primary-text: #ffffff;
+  --app-primary-soft: #eff6ff;
+  --app-primary-border: #bfdbfe;
+  --app-accent: #059669;
+  --app-accent-soft: #ecfdf5;
+  --app-warning: #d97706;
+  --app-danger: #dc2626;
+  --app-radius: 12px;
+  --app-radius-sm: 8px;
+  --app-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.04), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
+  --app-shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.03);
+  --app-font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --app-font-mono: 'JetBrains Mono', monospace;
 }
 
+.dark, [data-theme="dark"] {
+  /* 🌙 Dark Mode: Enterprise Slate Navy (Clean, Zero-Glare, Dev-Friendly) */
+  --app-bg: #090d16;
+  --app-surface: #0f172a;
+  --app-card: #131c31;
+  --app-card-subtle: #0c1322;
+  --app-card-hover: #17223b;
+  --app-border: #1e293b;
+  --app-border-strong: #334155;
+  --app-border-focus: #38bdf8;
+  --app-text: #f8fafc;
+  --app-text-muted: #94a3b8;
+  --app-text-dim: #64748b;
+  --app-primary: #38bdf8;
+  --app-primary-hover: #0ea5e9;
+  --app-primary-light: #38bdf8;
+  --app-primary-text: #090d16;
+  --app-primary-soft: rgba(56, 189, 248, 0.1);
+  --app-primary-border: rgba(56, 189, 248, 0.25);
+  --app-accent: #10b981;
+  --app-accent-soft: rgba(16, 185, 129, 0.1);
+  --app-warning: #f59e0b;
+  --app-danger: #ef4444;
+  --app-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.35);
+  --app-shadow-md: 0 4px 12px 0 rgba(0, 0, 0, 0.45);
+}
+
+/* Base Body Styles */
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background-color: var(--app-bg);
+  color: var(--app-text);
+  font-family: var(--app-font-sans);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Typography Standards */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--app-font-sans);
+  letter-spacing: -0.02em;
+}
+
+.font-mono {
+  font-family: var(--app-font-mono);
+}
+
+/* ==========================================================================
+   ENTERPRISE DATA-DENSE COMPONENT UTILITIES (NO AI-SLOP)
+   ========================================================================== */
+
+/* Standardized Card Container */
+.bento-card, .data-card {
+  background-color: var(--app-card);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius);
+  box-shadow: var(--app-shadow);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.bento-card:hover, .data-card:hover {
+  border-color: var(--app-border-strong);
+  box-shadow: var(--app-shadow-md);
+}
+
+/* Clean Dark Mode Class Adaptations */
+.dark .bg-white {
+  background-color: var(--app-card) !important;
+  color: var(--app-text) !important;
+  border-color: var(--app-border) !important;
+}
+
+.dark .bg-slate-50,
+.dark .bg-gray-50 {
+  background-color: var(--app-bg) !important;
+}
+
+.dark .bg-slate-100,
+.dark .bg-gray-100 {
+  background-color: var(--app-card-subtle) !important;
+}
+
+.dark .border-slate-100,
+.dark .border-slate-200,
+.dark .border-gray-200 {
+  border-color: var(--app-border) !important;
+}
+
+.dark .text-slate-900 {
+  color: var(--app-text) !important;
+}
+
+.dark .text-slate-800,
+.dark .text-slate-700 {
+  color: #cbd5e1 !important;
+}
+
+.dark .text-slate-500,
+.dark .text-slate-400 {
+  color: var(--app-text-muted) !important;
+}
+
+.dark .shadow-xs,
+.dark .shadow-sm {
+  box-shadow: var(--app-shadow) !important;
+}
+
+/* ==========================================================================
+   CLEAN LIGHT MODE CLASS ADAPTATIONS
+   Eliminates pitch-black blocks, harsh black borders, and invisible white text
+   ========================================================================== */
+
+/* 1. Normalize un-prefixed bg-slate-900 / bg-slate-950 in Light Mode */
+html:not(.dark) [class*="bg-slate-900"]:not([class*="dark:bg-slate-900"]):not(pre):not(code):not([class*="terminal"]):not([class*="console"]):not([class*="font-mono"]) {
+  background-color: var(--app-card) !important;
+  border-color: var(--app-border) !important;
+  color: var(--app-text) !important;
+}
+
+html:not(.dark) [class*="border-slate-800"]:not([class*="dark:border-slate-800"]),
+html:not(.dark) [class*="border-slate-700"]:not([class*="dark:border-slate-700"]) {
+  border-color: var(--app-border) !important;
+}
+
+/* 2. Normalize pure-black borders & shadows in Light Mode */
+html:not(.dark) .border-black {
+  border-color: var(--app-border) !important;
+}
+
+html:not(.dark) [class*="border-2"][class*="border-black"] {
+  border-color: var(--app-border) !important;
+  border-width: 1px !important;
+}
+
+html:not(.dark) [class*="shadow-"][class*="#000"] {
+  box-shadow: var(--app-shadow) !important;
+}
+
+/* 3. Normalize input & select text colors in Light Mode */
+html:not(.dark) input.text-white,
+html:not(.dark) select.text-white,
+html:not(.dark) textarea.text-white {
+  color: var(--app-text) !important;
+  background-color: var(--app-surface) !important;
+}
+
+/* 4. Normalize standalone headings and labels that had hardcoded text-white */
+html:not(.dark) h1.text-white:not(button *),
+html:not(.dark) h2.text-white:not(button *),
+html:not(.dark) h3.text-white:not(button *),
+html:not(.dark) h4.text-white:not(button *),
+html:not(.dark) p.text-white:not(button *):not([class*="bg-"]),
+html:not(.dark) span.text-white:not(button *):not([class*="bg-"]):not([class*="badge"]) {
+  color: var(--app-text) !important;
+}
+
+/* Minimal Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--app-border-strong);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--app-text-dim);
+}
+
+/* ==========================================================================
+   SMOOTH TRANSITIONS & MICRO-INTERACTIONS FOR SUB-MENUS & ROUTING
+   ========================================================================== */
+
+html {
+  scroll-behavior: smooth;
+}
+
+@keyframes fadeInSmooth {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-smooth {
+  animation: fadeInSmooth 0.24s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: opacity, transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+@keyframes pulseBarGlow {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.7), 0 0 20px rgba(37, 99, 235, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 16px rgba(56, 189, 248, 1), 0 0 28px rgba(37, 99, 235, 0.7);
+  }
+}
+
+.nav-progress-glow {
+  animation: pulseBarGlow 1s ease-in-out infinite;
 }

@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useState, useEffect } from 'react'
 import Layout from '@/components/Layout'
 import { Activity, Plus, Search, Edit, Trash2, Eye, User, AlertCircle, CheckCircle, Clock, XCircle, X, Phone, Mail, MapPin, Package, Calendar, FileText, Loader2 } from 'lucide-react'
@@ -217,7 +218,7 @@ export default function Operational() {
   }
 
   // Gunakan data dari API jika ada, fallback ke mock data
-  const displayTickets = tickets.length > 0 ? tickets : mockTickets
+  const displayTickets = tickets
 
   const filteredTickets = displayTickets.filter(ticket => {
     const matchesSearch = ticket.ticketNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -294,12 +295,12 @@ export default function Operational() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gray-50 p-4 md:p-8">
+      <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] p-4 md:p-6 space-y-6">
         {/* Loading State */}
         {loading && (
           <div className="flex items-center justify-center h-64">
             <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-            <span className="ml-2 text-gray-600">Memuat data tiket...</span>
+            <span className="ml-2 text-[var(--app-muted)]">Memuat data tiket...</span>
           </div>
         )}
 
@@ -315,8 +316,8 @@ export default function Operational() {
           <>
             {/* Header */}
             <div className="flex items-center justify-between mb-8">\n              <div>
-                <h1 className="text-3xl font-bold text-gray-900">Operational Management</h1>
-                <p className="text-gray-600 mt-1">Kelola tiket dan teknisi lapangan</p>
+                <h1 className="text-3xl font-bold text-[var(--app-text)]">Operational Management</h1>
+                <p className="text-[var(--app-muted)] mt-1">Kelola tiket dan teknisi lapangan</p>
               </div>
               <button 
                 onClick={() => setShowCreateModal(true)}
@@ -329,10 +330,10 @@ export default function Operational() {
 
         {/* Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-xl shadow-sm p-6">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl shadow-xs p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm">Tiket Terbuka</p>
+                <p className="text-[var(--app-muted)] text-sm">Tiket Terbuka</p>
                 <p className="text-3xl font-bold text-blue-600 mt-1">{openTickets}</p>
               </div>
               <div className="bg-blue-100 p-3 rounded-lg">
@@ -341,10 +342,10 @@ export default function Operational() {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm p-6">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl shadow-xs p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm">Dalam Progress</p>
+                <p className="text-[var(--app-muted)] text-sm">Dalam Progress</p>
                 <p className="text-3xl font-bold text-yellow-600 mt-1">{inProgressTickets}</p>
               </div>
               <div className="bg-yellow-100 p-3 rounded-lg">
@@ -353,10 +354,10 @@ export default function Operational() {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm p-6">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl shadow-xs p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm">Terselesaikan</p>
+                <p className="text-[var(--app-muted)] text-sm">Terselesaikan</p>
                 <p className="text-3xl font-bold text-green-600 mt-1">{resolvedTickets}</p>
               </div>
               <div className="bg-green-100 p-3 rounded-lg">
@@ -365,11 +366,11 @@ export default function Operational() {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm p-6">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl shadow-xs p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm">Teknisi Tersedia</p>
-                <p className="text-3xl font-bold text-gray-900 mt-1">{availableTechnicians}</p>
+                <p className="text-[var(--app-muted)] text-sm">Teknisi Tersedia</p>
+                <p className="text-3xl font-bold text-[var(--app-text)] mt-1">{availableTechnicians}</p>
               </div>
               <div className="bg-purple-100 p-3 rounded-lg">
                 <User className="text-purple-600" size={24} />
@@ -379,7 +380,7 @@ export default function Operational() {
         </div>
 
         {/* Tabs */}
-        <div className="bg-white rounded-xl shadow-sm mb-6">
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl shadow-xs mb-6">
           <div className="border-b border-gray-200">
             <div className="flex">
               <button
@@ -387,7 +388,7 @@ export default function Operational() {
                 className={`px-6 py-4 font-medium transition-colors ${
                   activeTab === 'tickets'
                     ? 'border-b-2 border-blue-600 text-blue-600'
-                    : 'text-gray-600 hover:text-gray-900'
+                    : 'text-[var(--app-muted)] hover:text-[var(--app-text)]'
                 }`}
               >
                 Tiket Support
@@ -397,7 +398,7 @@ export default function Operational() {
                 className={`px-6 py-4 font-medium transition-colors ${
                   activeTab === 'technicians'
                     ? 'border-b-2 border-blue-600 text-blue-600'
-                    : 'text-gray-600 hover:text-gray-900'
+                    : 'text-[var(--app-muted)] hover:text-[var(--app-text)]'
                 }`}
               >
                 Teknisi
@@ -409,10 +410,10 @@ export default function Operational() {
         {activeTab === 'tickets' && (
           <>
             {/* Filters */}
-            <div className="bg-white rounded-xl shadow-sm p-4 mb-6">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl shadow-xs p-4 mb-6">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
                 <div className="relative flex-1 md:mr-4">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--app-muted)]" size={20} />
                   <input
                     type="text"
                     placeholder="Cari berdasarkan nomor tiket, judul, atau pelanggan..."
@@ -459,33 +460,33 @@ export default function Operational() {
             </div>
 
             {/* Tickets Table */}
-            <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl shadow-xs overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--app-muted)] uppercase tracking-wider">
                         No. Tiket
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--app-muted)] uppercase tracking-wider">
                         Judul
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--app-muted)] uppercase tracking-wider">
                         Pelanggan
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--app-muted)] uppercase tracking-wider">
                         Prioritas
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--app-muted)] uppercase tracking-wider">
                         Status
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--app-muted)] uppercase tracking-wider">
                         Teknisi
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--app-muted)] uppercase tracking-wider">
                         Tanggal
                       </th>
-                      <th className="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-right text-xs font-semibold text-[var(--app-muted)] uppercase tracking-wider">
                         Aksi
                       </th>
                     </tr>
@@ -498,16 +499,16 @@ export default function Operational() {
                         className="hover:bg-rose-50 transition-colors cursor-pointer"
                       >
                         <td className="px-6 py-4">
-                          <span className="font-mono font-semibold text-gray-900">{ticket.ticketNumber}</span>
+                          <span className="font-mono font-semibold text-[var(--app-text)]">{ticket.ticketNumber}</span>
                         </td>
                         <td className="px-6 py-4">
                           <div>
-                            <p className="font-semibold text-gray-900">{ticket.title}</p>
-                            <p className="text-sm text-gray-500">{ticket.description}</p>
+                            <p className="font-semibold text-[var(--app-text)]">{ticket.title}</p>
+                            <p className="text-sm text-[var(--app-muted)]">{ticket.description}</p>
                           </div>
                         </td>
                         <td className="px-6 py-4">
-                          <span className="text-gray-900">
+                          <span className="text-[var(--app-text)]">
                             {typeof ticket.customer === 'string' ? ticket.customer : (ticket.customer as any)?.name || '-'}
                           </span>
                         </td>
@@ -525,12 +526,12 @@ export default function Operational() {
                           </div>
                         </td>
                         <td className="px-6 py-4">
-                          <span className="text-sm text-gray-600">
+                          <span className="text-sm text-[var(--app-muted)]">
                             {typeof ticket.technician === 'string' ? ticket.technician : (ticket.technician as any)?.name || '-'}
                           </span>
                         </td>
                         <td className="px-6 py-4">
-                          <span className="text-sm text-gray-600">{ticket.createdDate}</span>
+                          <span className="text-sm text-[var(--app-muted)]">{ticket.createdDate}</span>
                         </td>
                         <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
                           <div className="flex items-center justify-end space-x-2">
@@ -568,15 +569,15 @@ export default function Operational() {
         {activeTab === 'technicians' && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {technicians.map((tech) => (
-              <div key={tech.id} className="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
+              <div key={tech.id} className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl shadow-xs p-6 hover:shadow-md transition-shadow">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center space-x-3">
                     <div className="bg-blue-100 p-3 rounded-full">
                       <User className="text-blue-600" size={24} />
                     </div>
                     <div>
-                      <h3 className="font-bold text-gray-900">{tech.name}</h3>
-                      <p className="text-sm text-gray-500">{tech.phone}</p>
+                      <h3 className="font-bold text-[var(--app-text)]">{tech.name}</h3>
+                      <p className="text-sm text-[var(--app-muted)]">{tech.phone}</p>
                     </div>
                   </div>
                   <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getTechnicianStatusColor(tech.status)}`}>
@@ -585,7 +586,7 @@ export default function Operational() {
                 </div>
                 
                 <div className="mb-4">
-                  <p className="text-sm text-gray-600 mb-2">Active Tickets: <span className="font-semibold text-gray-900">{tech.activeTickets}</span></p>
+                  <p className="text-sm text-[var(--app-muted)] mb-2">Active Tickets: <span className="font-semibold text-[var(--app-text)]">{tech.activeTickets}</span></p>
                   <div className="flex flex-wrap gap-2">
                     {tech.skills.map((skill, idx) => (
                       <span key={idx} className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">
@@ -599,7 +600,7 @@ export default function Operational() {
                   <button className="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-600 px-4 py-2 rounded-lg font-medium transition-colors">
                     Assign Ticket
                   </button>
-                  <button className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
+                  <button className="p-2 text-[var(--app-muted)] hover:bg-gray-50 rounded-lg transition-colors">
                     <Edit size={18} />
                   </button>
                 </div>
@@ -693,7 +694,7 @@ export default function Operational() {
                 </button>
                 <button 
                   onClick={handleCreateTicket}
-                  className="px-6 py-2.5 bg-gradient-to-r from-rose-600 to-pink-700 hover:from-rose-700 hover:to-pink-800 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl"
+                  className="px-6 py-2.5 bg-gradient-to-r from-rose-600 to-pink-700 hover:from-rose-700 hover:to-pink-800 text-[var(--app-text)] font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl"
                 >
                   Buat Tiket
                 </button>
@@ -744,22 +745,22 @@ export default function Operational() {
               {/* Ticket Info */}
               <div className="space-y-4">
                 <div>
-                  <h3 className="text-lg font-bold text-gray-900">{selectedTicket.title}</h3>
-                  <p className="text-gray-600 mt-1">{selectedTicket.description}</p>
+                  <h3 className="text-lg font-bold text-[var(--app-text)]">{selectedTicket.title}</h3>
+                  <p className="text-[var(--app-muted)] mt-1">{selectedTicket.description}</p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex items-center space-x-3 text-gray-700">
                     <Calendar className="text-blue-600" size={20} />
                     <div>
-                      <p className="text-xs text-gray-500">Created Date</p>
+                      <p className="text-xs text-[var(--app-muted)]">Created Date</p>
                       <p className="font-semibold">{selectedTicket.createdDate}</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-3 text-gray-700">
                     <User className="text-blue-600" size={20} />
                     <div>
-                      <p className="text-xs text-gray-500">Assigned Technician</p>
+                      <p className="text-xs text-[var(--app-muted)]">Assigned Technician</p>
                       <p className="font-semibold">
                         {typeof selectedTicket.technician === 'string' 
                           ? selectedTicket.technician 
@@ -772,7 +773,7 @@ export default function Operational() {
 
               {/* Customer Information */}
               <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 space-y-3">
-                <h3 className="font-bold text-gray-900 flex items-center space-x-2">
+                <h3 className="font-bold text-[var(--app-text)] flex items-center space-x-2">
                   <User className="text-blue-600" size={20} />
                   <span>Customer Information</span>
                 </h3>
@@ -780,16 +781,16 @@ export default function Operational() {
                   <div className="flex items-start space-x-3">
                     <User className="text-blue-600 mt-1" size={18} />
                     <div>
-                      <p className="text-xs text-gray-600">Name</p>
-                      <p className="font-semibold text-gray-900">{selectedTicket.customer}</p>
+                      <p className="text-xs text-[var(--app-muted)]">Name</p>
+                      <p className="font-semibold text-[var(--app-text)]">{selectedTicket.customer}</p>
                     </div>
                   </div>
                   {selectedTicket.customerEmail && (
                     <div className="flex items-start space-x-3">
                       <Mail className="text-blue-600 mt-1" size={18} />
                       <div>
-                        <p className="text-xs text-gray-600">Email</p>
-                        <p className="font-semibold text-gray-900">{selectedTicket.customerEmail}</p>
+                        <p className="text-xs text-[var(--app-muted)]">Email</p>
+                        <p className="font-semibold text-[var(--app-text)]">{selectedTicket.customerEmail}</p>
                       </div>
                     </div>
                   )}
@@ -797,8 +798,8 @@ export default function Operational() {
                     <div className="flex items-start space-x-3">
                       <Phone className="text-blue-600 mt-1" size={18} />
                       <div>
-                        <p className="text-xs text-gray-600">Phone</p>
-                        <p className="font-semibold text-gray-900">{selectedTicket.customerPhone}</p>
+                        <p className="text-xs text-[var(--app-muted)]">Phone</p>
+                        <p className="font-semibold text-[var(--app-text)]">{selectedTicket.customerPhone}</p>
                       </div>
                     </div>
                   )}
@@ -806,8 +807,8 @@ export default function Operational() {
                     <div className="flex items-start space-x-3">
                       <MapPin className="text-blue-600 mt-1" size={18} />
                       <div>
-                        <p className="text-xs text-gray-600">Address</p>
-                        <p className="font-semibold text-gray-900">{selectedTicket.customerAddress}</p>
+                        <p className="text-xs text-[var(--app-muted)]">Address</p>
+                        <p className="font-semibold text-[var(--app-text)]">{selectedTicket.customerAddress}</p>
                       </div>
                     </div>
                   )}
@@ -817,7 +818,7 @@ export default function Operational() {
               {/* History Timeline */}
               {selectedTicket.history && selectedTicket.history.length > 0 && (
                 <div className="space-y-3">
-                  <h3 className="font-bold text-gray-900 flex items-center space-x-2">
+                  <h3 className="font-bold text-[var(--app-text)] flex items-center space-x-2">
                     <Clock className="text-blue-600" size={20} />
                     <span>Ticket History</span>
                   </h3>
@@ -826,8 +827,8 @@ export default function Operational() {
                       <div key={index} className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
                         <div className="w-2 h-2 bg-blue-600 rounded-full mt-2"></div>
                         <div className="flex-1">
-                          <p className="text-sm font-semibold text-gray-900">{item.action}</p>
-                          <p className="text-xs text-gray-600">by {item.by} • {item.date}</p>
+                          <p className="text-sm font-semibold text-[var(--app-text)]">{item.action}</p>
+                          <p className="text-xs text-[var(--app-muted)]">by {item.by} • {item.date}</p>
                         </div>
                       </div>
                     ))}
@@ -843,7 +844,7 @@ export default function Operational() {
                 >
                   Tutup
                 </button>
-                <button className="px-6 py-2.5 bg-gradient-to-r from-rose-600 to-pink-700 hover:from-rose-700 hover:to-pink-800 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl">
+                <button className="px-6 py-2.5 bg-gradient-to-r from-rose-600 to-pink-700 hover:from-rose-700 hover:to-pink-800 text-[var(--app-text)] font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl">
                   Assign Technician
                 </button>
               </div>
@@ -857,7 +858,7 @@ export default function Operational() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b flex justify-between items-center">
-              <h3 className="text-xl font-bold text-gray-900">Edit Tiket</h3>
+              <h3 className="text-xl font-bold text-[var(--app-text)]">Edit Tiket</h3>
               <button
                 onClick={() => {
                   setShowEditModal(false);

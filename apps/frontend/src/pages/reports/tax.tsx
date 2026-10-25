@@ -1,3 +1,4 @@
+import Link from 'next/link';
 ﻿import React, { useState } from 'react';
 import Layout from '@/components/Layout';
 import { Search, Filter, Download, Eye, ChevronLeft, ChevronRight, ChevronDown, FileText, Info, TrendingUp, TrendingDown, MoreVertical, RefreshCw, Sliders, Star, Calendar, CheckCircle2, AlertCircle, ArrowRight, Bell, Mail, FileDown, Database } from 'lucide-react';
@@ -75,7 +76,7 @@ const StatusBadge = ({ s }: { s: string }) => {
     'Kurang Bayar': 'bg-rose-500/15 text-rose-400 border-rose-500/30',
     'Lebih Bayar': 'bg-amber-500/15 text-amber-400 border-amber-500/30',
   };
-  return <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold border ${map[s] ?? 'bg-slate-500/10 text-slate-400 border-slate-500/20'}`}>{s}</span>;
+  return <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold border ${map[s] ?? 'bg-[var(--app-bg)]0/10 text-[var(--app-muted)] border-slate-500/20'}`}>{s}</span>;
 };
 
 interface MetricCardProps {
@@ -83,7 +84,7 @@ interface MetricCardProps {
   icon: React.ReactNode; iconBg: string; spark: number[]; sparkColor: string;
 }
 const MetricCard = ({ label, value, sub, trend, trendUp, icon, iconBg, spark, sparkColor }: MetricCardProps) => (
-  <div className="bg-[#0B1528]/80 border border-blue-950 rounded-xl p-3.5 flex flex-col justify-between hover:border-blue-900/60 transition-all group">
+  <div className="bg-[var(--app-bg)]/80 border border-blue-950 rounded-xl p-3.5 flex flex-col justify-between hover:border-blue-900/60 transition-all group">
     <div className="flex justify-between items-start mb-2">
       <div className={`p-2 rounded-lg ${iconBg}`}>{icon}</div>
       <div className={`flex items-center gap-0.5 text-[10px] font-semibold px-2 py-0.5 rounded-full ${trendUp ? 'bg-emerald-500/15 text-emerald-400' : 'bg-rose-500/15 text-rose-400'}`}>
@@ -92,9 +93,9 @@ const MetricCard = ({ label, value, sub, trend, trendUp, icon, iconBg, spark, sp
       </div>
     </div>
     <div>
-      <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">{label}</p>
-      <h3 className="text-sm font-bold text-white mt-0.5 leading-tight">{value}</h3>
-      <p className="text-[9px] text-slate-500 mt-0.5">{sub}</p>
+      <p className="text-[10px] text-[var(--app-muted)] font-medium uppercase tracking-wider">{label}</p>
+      <h3 className="text-sm font-bold text-[var(--app-text)] mt-0.5 leading-tight">{value}</h3>
+      <p className="text-[9px] text-[var(--app-muted)] mt-0.5">{sub}</p>
     </div>
     <div className="h-7 mt-2 opacity-70 group-hover:opacity-100 transition-opacity"><Spark data={spark} color={sparkColor}/></div>
   </div>
@@ -111,82 +112,78 @@ export default function TaxReportPage() {
 
   return (
     <Layout>
-      <div className="bg-[#050B14] text-slate-200 min-h-screen p-5 font-sans antialiased">
-        {/* Breadcrumb & Top Bar */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 border-b border-slate-800/60 pb-3">
-          <div className="flex items-center gap-1.5 text-xs text-slate-400">
-            <span className="hover:text-white cursor-pointer">Finance</span>
-            <ChevronRight className="w-3 h-3"/>
-            <span className="hover:text-white cursor-pointer">Reports</span>
-            <ChevronRight className="w-3 h-3"/>
-            <span className="text-blue-400 font-semibold">Tax Report</span>
+      <div className="bg-[var(--app-bg)] text-slate-200 min-h-screen p-5 font-sans antialiased">
+        {/* ─── Swiss B2B Reports Header ────────────────────────────────────────────── */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-[var(--app-border)] pb-5 mb-5">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 text-xs text-[var(--app-muted)] font-mono mb-1">
+              <Link href="/" className="hover:text-[var(--app-text)]">AUDIRA</Link>
+              <span>/</span>
+              <Link href="/reports" className="hover:text-[var(--app-text)]">Laporan & Analitik</Link>
+              <span>/</span>
+              <span className="text-indigo-400 font-semibold">Laporan Perpajakan</span>
+            </div>
+            <h1 className="text-xl md:text-2xl font-bold tracking-tight text-[var(--app-text)]">
+              Rekapitulasi Faktur Pajak & PPN Telekomunikasi
+            </h1>
+            <p className="text-xs text-[var(--app-muted)]">
+              Penyusunan SPT masa PPN 11%, bukti potong PPh pasal 23/21, dan rekonsiliasi e-Faktur terbit.
+            </p>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 bg-[#0B1528] border border-blue-950 px-3 py-1.5 rounded-full text-xs">
-              <Calendar className="w-3.5 h-3.5 text-blue-400"/>
-              <span className="text-slate-300 font-medium">01 Juli 2026 <span className="text-slate-500">|</span> 08:35 WIB</span>
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse ml-1"/>
-              <span className="text-emerald-400 font-semibold text-[11px]">Normal</span>
-            </div>
-            <div className="relative">
-              <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-slate-500"/>
-              <input type="text" placeholder="Cari invoice, customer, paket, nomor invoice..." className="bg-[#0B1528] border border-blue-950 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500 w-64 transition-colors"/>
-            </div>
-            <div className="flex items-center gap-2">
-              <button className="relative p-1.5 rounded-lg hover:bg-slate-800 transition-colors text-slate-400 hover:text-white"><Bell className="w-4 h-4"/><span className="absolute top-0.5 right-0.5 h-2 w-2 bg-rose-500 rounded-full border border-[#050B14]"/></button>
-              <button className="p-1.5 rounded-lg hover:bg-slate-800 transition-colors text-slate-400 hover:text-white"><Mail className="w-4 h-4"/></button>
-              <div className="flex items-center gap-2 bg-[#0B1528] border border-blue-950 rounded-lg px-2 py-1.5 cursor-pointer hover:bg-[#0f1d38]">
-                <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-[10px] font-bold text-white">A</div>
-                <div className="text-xs"><p className="text-slate-200 font-semibold leading-none">Agus Dwi Rianto</p><p className="text-slate-500 text-[10px]">Super Admin</p></div>
-                <ChevronDown className="w-3 h-3 text-slate-500"/>
-              </div>
-            </div>
+
+          <div className="flex items-center gap-2.5">
+            <Link
+              href="/reports"
+              className="px-3 py-2 bg-[var(--app-card)] hover:bg-[var(--app-border)]/20 border border-[var(--app-border)] text-[var(--app-text)] text-xs font-semibold rounded-lg transition-all"
+            >
+              Semua Laporan
+            </Link>
           </div>
         </div>
         {/* Title & Actions */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 mb-4">
           <div>
-            <h1 className="text-xl font-bold text-white tracking-tight">Tax Report</h1>
-            <p className="text-xs text-slate-400 mt-0.5">Laporan perpajakan berdasarkan transaksi, invoice, dan periode pajak.</p>
+            <h1 className="text-xl font-bold text-[var(--app-text)] tracking-tight">Tax Report</h1>
+            <p className="text-xs text-[var(--app-muted)] mt-0.5">Laporan perpajakan berdasarkan transaksi, invoice, dan periode pajak.</p>
           </div>
           <div className="flex items-center gap-2">
             <button className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-4 py-2 rounded-lg shadow-lg transition-all"><Download className="w-3.5 h-3.5"/>Export<ChevronDown className="w-3 h-3 ml-0.5"/></button>
-            <button className="flex items-center gap-1.5 bg-[#0B1528] hover:bg-[#0f1d38] border border-blue-950 text-slate-200 text-xs font-semibold px-4 py-2 rounded-lg transition-colors"><Star className="w-3.5 h-3.5 text-slate-400"/>Jadwalkan Laporan</button>
-            <button className="p-2 rounded-lg bg-[#0B1528] border border-blue-950 hover:bg-[#0f1d38] text-slate-400 hover:text-white"><MoreVertical className="w-4 h-4"/></button>
+            <button className="flex items-center gap-1.5 bg-[var(--app-bg)] hover:bg-[var(--app-bg)] border border-blue-950 text-slate-200 text-xs font-semibold px-4 py-2 rounded-lg transition-colors"><Star className="w-3.5 h-3.5 text-[var(--app-muted)]"/>Jadwalkan Laporan</button>
+            <button className="p-2 rounded-lg bg-[var(--app-bg)] border border-blue-950 hover:bg-[var(--app-bg)] text-[var(--app-muted)] hover:text-white"><MoreVertical className="w-4 h-4"/></button>
           </div>
         </div>
 
         {/* Sub-tabs */}
-        <div className="border-b border-slate-800/80 mb-4 overflow-x-auto">
+        <div className="border-b border-[var(--app-border)] mb-4 overflow-x-auto">
           <div className="flex gap-1 pb-2 whitespace-nowrap">
             {TAX_TABS.map(tab => (
               <button key={tab} onClick={() => setActiveTaxTab(tab)}
-                className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-all ${activeTaxTab === tab ? 'bg-blue-600/15 text-blue-400 border border-blue-500/25' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/30 border border-transparent'}`}>{tab}
+                className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-all ${activeTaxTab === tab ? 'bg-blue-600/15 text-blue-600 dark:text-blue-400 border border-blue-500/25 font-bold' : 'text-[var(--app-text-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-card-subtle)] border border-transparent'}`}>{tab}
               </button>
             ))}
           </div>
         </div>
 
         {/* Filter Bar */}
-        <div className="bg-[#0B1528]/40 border border-blue-950/60 rounded-xl p-3.5 mb-4 flex flex-wrap items-end justify-between gap-3">
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-3.5 mb-4 flex flex-wrap items-end justify-between gap-3 shadow-sm">
           <div className="flex flex-wrap items-end gap-3">
             {[{lbl:'Periode Pajak',opts:['Juni 2026','Mei 2026','April 2026']},{lbl:'Dibandingkan Dengan',opts:['Mei 2026','April 2026']},{lbl:'Jenis Pajak',opts:['Semua Jenis Pajak','PPN (VAT)','PPh 23']},{lbl:'Status',opts:['Semua Status','Dibayar','Kurang Bayar']},{lbl:'Area / Region',opts:['Semua Area','Jakarta','Jawa Barat']},{lbl:'Sumber',opts:['Semua Sumber','Invoice','Payment']}].map(({lbl,opts}) => (
               <div key={lbl} className="flex flex-col gap-1">
-                <label className="text-[10px] uppercase tracking-wider font-semibold text-slate-400">{lbl}</label>
-                <select className="bg-[#050B14] border border-blue-950 rounded-lg px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-blue-500 min-w-[110px]">{opts.map(o=><option key={o}>{o}</option>)}</select>
+                <label className="text-[10px] uppercase tracking-wider font-semibold text-[var(--app-text-muted)]">{lbl}</label>
+                <select className="bg-[var(--app-surface)] border border-[var(--app-border)] rounded-lg px-3 py-1.5 text-xs text-[var(--app-text)] focus:outline-none focus:border-blue-500 min-w-[110px]">{opts.map(o=><option key={o}>{o}</option>)}</select>
               </div>
             ))}
           </div>
           <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 bg-[#0B1528] hover:bg-[#0f1d38] border border-blue-950 text-slate-300 text-xs px-3 py-1.5 rounded-lg"><Sliders className="w-3.5 h-3.5"/>Filter Lainnya</button>
-            <button className="text-slate-400 hover:text-slate-200 text-xs px-3 py-1.5 rounded-lg hover:bg-slate-800/30">Reset</button>
+            <button className="flex items-center gap-1.5 bg-[var(--app-card-subtle)] hover:bg-[var(--app-card-hover)] border border-[var(--app-border)] text-[var(--app-text)] text-xs px-3 py-1.5 rounded-lg transition-colors"><Sliders className="w-3.5 h-3.5"/>Filter Lainnya</button>
+            <button className="text-[var(--app-text-muted)] hover:text-[var(--app-text)] text-xs px-3 py-1.5 rounded-lg hover:bg-[var(--app-card-subtle)] transition-colors">Reset</button>
           </div>
         </div>
 
         {/* Last updated */}
         <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2 text-[10px] text-slate-500"><RefreshCw className="w-3 h-3"/><span>Data diperbarui: 01/07/2026 08:30 WIB</span></div>
-          <div className="flex items-center gap-1.5"><span className="text-[10px] text-slate-500">Auto-update</span><div className="w-8 h-4 rounded-full bg-blue-600 relative cursor-pointer"><div className="absolute right-0.5 top-0.5 w-3 h-3 bg-white rounded-full shadow"/></div></div>
+          <div className="flex items-center gap-2 text-[10px] text-[var(--app-muted)]"><RefreshCw className="w-3 h-3"/><span>Data diperbarui: 22/10/2026 08:30 WIB</span></div>
+          <div className="flex items-center gap-1.5"><span className="text-[10px] text-[var(--app-muted)]">Auto-update</span><div className="w-8 h-4 rounded-full bg-blue-600 relative cursor-pointer"><div className="absolute right-0.5 top-0.5 w-3 h-3 bg-white rounded-full shadow"/></div></div>
         </div>
 
         {/* 7 Metric Cards */}
@@ -202,10 +199,10 @@ export default function TaxReportPage() {
         {/* Charts Row */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 mb-5">
           {/* Trend Line Chart */}
-          <div className="lg:col-span-5 bg-[#0B1528]/60 border border-blue-950 rounded-xl p-4">
+          <div className="lg:col-span-5 bg-[var(--app-border)]/20 border border-blue-950 rounded-xl p-4">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-xs font-bold text-white">Trend Pajak Terutang <span className="text-slate-500 font-normal">(6 Bulan Terakhir)</span></h3>
-              <div className="flex items-center gap-3 text-[10px] text-slate-400">
+              <h3 className="text-xs font-bold text-[var(--app-text)]">Trend Pajak Terutang <span className="text-[var(--app-muted)] font-normal">(6 Bulan Terakhir)</span></h3>
+              <div className="flex items-center gap-3 text-[10px] text-[var(--app-muted)]">
                 <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-500 inline-block"/>PPN (VAT)</span>
                 <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-500 inline-block"/>PPh</span>
                 <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-amber-500 inline-block"/>Lainnya</span>
@@ -227,8 +224,8 @@ export default function TaxReportPage() {
           </div>
 
           {/* Donut Komposisi */}
-          <div className="lg:col-span-3 bg-[#0B1528]/60 border border-blue-950 rounded-xl p-4">
-            <h3 className="text-xs font-bold text-white mb-3">Komposisi Pajak</h3>
+          <div className="lg:col-span-3 bg-[var(--app-border)]/20 border border-blue-950 rounded-xl p-4">
+            <h3 className="text-xs font-bold text-[var(--app-text)] mb-3">Komposisi Pajak</h3>
             <div className="flex items-center gap-3">
               <div className="relative flex-shrink-0" style={{width:120,height:120}}>
                 <PieChart width={120} height={120}>
@@ -237,16 +234,16 @@ export default function TaxReportPage() {
                   </Pie>
                 </PieChart>
                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                  <p className="text-[8px] text-slate-400 font-semibold uppercase leading-none">Total</p>
-                  <p className="text-[10px] font-bold text-white leading-tight text-center">{fmt(totalTax)}</p>
-                  <p className="text-[8px] text-slate-500">Total Pajak</p>
+                  <p className="text-[8px] text-[var(--app-muted)] font-semibold uppercase leading-none">Total</p>
+                  <p className="text-[10px] font-bold text-[var(--app-text)] leading-tight text-center">{fmt(totalTax)}</p>
+                  <p className="text-[8px] text-[var(--app-muted)]">Total Pajak</p>
                 </div>
               </div>
               <div className="flex flex-col gap-1.5 flex-1">
                 {KOMPOSISI_DATA.map(d=>(
                   <div key={d.name} className="flex items-center justify-between text-[10px]">
                     <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full flex-shrink-0" style={{backgroundColor:d.color}}/><span className="text-slate-300">{d.name}</span></div>
-                    <div className="text-right"><span className="text-slate-400 mr-1">{d.pct}</span><span className="text-white font-semibold">{fmtShort(d.value)}</span></div>
+                    <div className="text-right"><span className="text-[var(--app-muted)] mr-1">{d.pct}</span><span className="text-[var(--app-text)] font-semibold">{fmtShort(d.value)}</span></div>
                   </div>
                 ))}
               </div>
@@ -254,10 +251,10 @@ export default function TaxReportPage() {
           </div>
 
           {/* Bar+Line combo */}
-          <div className="lg:col-span-4 bg-[#0B1528]/60 border border-blue-950 rounded-xl p-4">
+          <div className="lg:col-span-4 bg-[var(--app-border)]/20 border border-blue-950 rounded-xl p-4">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-xs font-bold text-white">Pajak Terutang vs Dibayar</h3>
-              <div className="flex items-center gap-2 text-[10px] text-slate-400">
+              <h3 className="text-xs font-bold text-[var(--app-text)]">Pajak Terutang vs Dibayar</h3>
+              <div className="flex items-center gap-2 text-[10px] text-[var(--app-muted)]">
                 <span className="flex items-center gap-1"><span className="w-2 h-2 rounded bg-blue-500 inline-block"/>Terutang</span>
                 <span className="flex items-center gap-1"><span className="w-2 h-2 rounded bg-emerald-500 inline-block"/>Dibayar</span>
                 <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-amber-400 inline-block"/>Selisih</span>
@@ -282,18 +279,18 @@ export default function TaxReportPage() {
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 mb-5">
           <div className="xl:col-span-9 grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Per Jenis */}
-            <div className="bg-[#0B1528]/60 border border-blue-950 rounded-xl p-4">
-              <h3 className="text-xs font-bold text-white mb-3">Pajak Terutang per Jenis</h3>
+            <div className="bg-[var(--app-border)]/20 border border-blue-950 rounded-xl p-4">
+              <h3 className="text-xs font-bold text-[var(--app-text)] mb-3">Pajak Terutang per Jenis</h3>
               <table className="w-full text-xs">
-                <thead><tr className="text-slate-400 text-[10px] uppercase border-b border-slate-800">
+                <thead><tr className="text-[var(--app-muted)] text-[10px] uppercase border-b border-slate-800">
                   <th className="py-1.5 text-left">Jenis Pajak</th><th className="py-1.5 text-right">Terutang (Rp)</th><th className="py-1.5 text-right">%</th><th className="py-1.5 text-right">vs Mei</th>
                 </tr></thead>
                 <tbody className="divide-y divide-slate-900/40">
                   {JENIS_TABLE.map((r,i)=>(
                     <tr key={i} className={`hover:bg-slate-800/10 ${r.jenis==='TOTAL'?'border-t border-slate-700/60':''}`}>
-                      <td className={`py-2 pr-2 ${r.jenis==='TOTAL'?'font-bold text-white':'text-slate-300'}`}>{r.jenis}</td>
-                      <td className={`py-2 text-right whitespace-nowrap ${r.jenis==='TOTAL'?'font-bold text-white':'text-slate-300'}`}>{fmt(r.terutang)}</td>
-                      <td className="py-2 text-right text-slate-400">{r.pct}</td>
+                      <td className={`py-2 pr-2 ${r.jenis==='TOTAL'?'font-bold text-[var(--app-text)]':'text-slate-300'}`}>{r.jenis}</td>
+                      <td className={`py-2 text-right whitespace-nowrap ${r.jenis==='TOTAL'?'font-bold text-[var(--app-text)]':'text-slate-300'}`}>{fmt(r.terutang)}</td>
+                      <td className="py-2 text-right text-[var(--app-muted)]">{r.pct}</td>
                       <td className="py-2 text-right text-emerald-400 font-semibold">{r.vs}</td>
                     </tr>
                   ))}
@@ -301,36 +298,36 @@ export default function TaxReportPage() {
               </table>
             </div>
             {/* Per Area */}
-            <div className="bg-[#0B1528]/60 border border-blue-950 rounded-xl p-4">
-              <h3 className="text-xs font-bold text-white mb-3">Pajak Terutang per Area / Region</h3>
+            <div className="bg-[var(--app-border)]/20 border border-blue-950 rounded-xl p-4">
+              <h3 className="text-xs font-bold text-[var(--app-text)] mb-3">Pajak Terutang per Area / Region</h3>
               <table className="w-full text-xs">
-                <thead><tr className="text-slate-400 text-[10px] uppercase border-b border-slate-800">
+                <thead><tr className="text-[var(--app-muted)] text-[10px] uppercase border-b border-slate-800">
                   <th className="py-1.5 text-left">Area</th><th className="py-1.5 text-right">Terutang (Rp)</th><th className="py-1.5 text-right">%</th>
                 </tr></thead>
                 <tbody className="divide-y divide-slate-900/40">
                   {AREA_TABLE.map((r,i)=>(
                     <tr key={i} className={`hover:bg-slate-800/10 ${r.area==='TOTAL'?'border-t border-slate-700/60':''}`}>
-                      <td className={`py-2 pr-2 ${r.area==='TOTAL'?'font-bold text-white':'text-slate-300'}`}>{r.area}</td>
-                      <td className={`py-2 text-right whitespace-nowrap ${r.area==='TOTAL'?'font-bold text-white':'text-slate-300'}`}>{fmt(r.terutang)}</td>
-                      <td className="py-2 text-right text-slate-400">{r.pct}</td>
+                      <td className={`py-2 pr-2 ${r.area==='TOTAL'?'font-bold text-[var(--app-text)]':'text-slate-300'}`}>{r.area}</td>
+                      <td className={`py-2 text-right whitespace-nowrap ${r.area==='TOTAL'?'font-bold text-[var(--app-text)]':'text-slate-300'}`}>{fmt(r.terutang)}</td>
+                      <td className="py-2 text-right text-[var(--app-muted)]">{r.pct}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
             {/* Status */}
-            <div className="bg-[#0B1528]/60 border border-blue-950 rounded-xl p-4">
-              <h3 className="text-xs font-bold text-white mb-3">Status Pembayaran Pajak</h3>
+            <div className="bg-[var(--app-border)]/20 border border-blue-950 rounded-xl p-4">
+              <h3 className="text-xs font-bold text-[var(--app-text)] mb-3">Status Pembayaran Pajak</h3>
               <table className="w-full text-xs">
-                <thead><tr className="text-slate-400 text-[10px] uppercase border-b border-slate-800">
+                <thead><tr className="text-[var(--app-muted)] text-[10px] uppercase border-b border-slate-800">
                   <th className="py-1.5 text-left">Status</th><th className="py-1.5 text-right">Jumlah (Rp)</th><th className="py-1.5 text-right">%</th>
                 </tr></thead>
                 <tbody className="divide-y divide-slate-900/40">
                   {STATUS_TABLE.map((r,i)=>(
                     <tr key={i} className={`hover:bg-slate-800/10 ${r.status==='TOTAL'?'border-t border-slate-700/60':''}`}>
                       <td className="py-2 pr-2"><div className="flex items-center gap-1.5"><span className={`w-2 h-2 rounded-full flex-shrink-0 ${r.dot}`}/><span className={r.color}>{r.status}</span></div></td>
-                      <td className={`py-2 text-right whitespace-nowrap ${r.status==='TOTAL'?'font-bold text-white':'text-slate-300'}`}>{fmt(r.jumlah)}</td>
-                      <td className="py-2 text-right text-slate-400">{r.pct}</td>
+                      <td className={`py-2 text-right whitespace-nowrap ${r.status==='TOTAL'?'font-bold text-[var(--app-text)]':'text-slate-300'}`}>{fmt(r.jumlah)}</td>
+                      <td className="py-2 text-right text-[var(--app-muted)]">{r.pct}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -341,38 +338,38 @@ export default function TaxReportPage() {
           {/* Right panel */}
           <div className="xl:col-span-3 flex flex-col gap-4">
             {/* Filter Cepat */}
-            <div className="bg-[#0B1528]/60 border border-blue-950 rounded-xl p-4">
-              <h3 className="text-xs font-bold text-white mb-3">Filter Cepat</h3>
+            <div className="bg-[var(--app-border)]/20 border border-blue-950 rounded-xl p-4">
+              <h3 className="text-xs font-bold text-[var(--app-text)] mb-3">Filter Cepat</h3>
               <div className="grid grid-cols-3 gap-1.5 mb-3">
                 {QUICK_TIMES.map(t=>(
-                  <button key={t} onClick={()=>setQuickTime(t)} className={`text-[10px] font-semibold px-1.5 py-1.5 rounded-lg transition-all ${quickTime===t?'bg-blue-600 text-white':'bg-[#050B14] border border-blue-950 text-slate-400 hover:text-slate-200'}`}>{t}</button>
+                  <button key={t} onClick={()=>setQuickTime(t)} className={`text-[10px] font-semibold px-1.5 py-1.5 rounded-lg transition-all ${quickTime===t?'bg-blue-600 text-white':'bg-[var(--app-bg)] border border-blue-950 text-[var(--app-muted)] hover:text-slate-200'}`}>{t}</button>
                 ))}
               </div>
               <div className="flex flex-col gap-2">
                 {['Jenis Pajak','Status','Sumber','Area / Region','Customer','PPN Type'].map(lbl=>(
                   <div key={lbl} className="flex flex-col gap-0.5">
-                    <label className="text-[9px] uppercase tracking-wider font-semibold text-slate-500">{lbl}</label>
-                    <select className="bg-[#050B14] border border-blue-950 rounded-lg px-2.5 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-blue-500"><option>Semua {lbl}</option></select>
+                    <label className="text-[9px] uppercase tracking-wider font-semibold text-[var(--app-muted)]">{lbl}</label>
+                    <select className="bg-[var(--app-bg)] border border-blue-950 rounded-lg px-2.5 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-blue-500"><option>Semua {lbl}</option></select>
                   </div>
                 ))}
                 <button className="w-full bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold py-2 rounded-lg mt-1 transition-colors">Terapkan Filter</button>
               </div>
             </div>
             {/* Aksi Cepat */}
-            <div className="bg-[#0B1528]/60 border border-blue-950 rounded-xl p-4">
-              <h3 className="text-xs font-bold text-white mb-3">Aksi Cepat</h3>
+            <div className="bg-[var(--app-border)]/20 border border-blue-950 rounded-xl p-4">
+              <h3 className="text-xs font-bold text-[var(--app-text)] mb-3">Aksi Cepat</h3>
               <div className="flex flex-col gap-1.5">
                 {[{label:'Lihat Detail Pajak',icon:Eye},{label:'Export Tax Report (Excel)',icon:FileDown},{label:'Export Tax Report (PDF)',icon:FileText},{label:'e-Faktur Summary',icon:Database},{label:'Withholding Tax Report',icon:FileText},{label:'Download Tax History',icon:Download},{label:'Rekonsiliasi Pajak',icon:RefreshCw}].map(({label,icon:Icon})=>(
-                  <button key={label} className="flex items-center justify-between px-3 py-2 rounded-lg bg-[#050B14] hover:bg-blue-950/30 border border-blue-950/40 hover:border-blue-500/30 text-xs text-slate-300 hover:text-white transition-all group">
-                    <div className="flex items-center gap-2"><Icon className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-400 transition-colors"/><span>{label}</span></div>
-                    <ChevronRight className="w-3 h-3 text-slate-600 group-hover:text-slate-300 transition-colors"/>
+                  <button key={label} className="flex items-center justify-between px-3 py-2 rounded-lg bg-[var(--app-bg)] hover:bg-blue-950/30 border border-blue-950/40 hover:border-blue-500/30 text-xs text-slate-300 hover:text-white transition-all group">
+                    <div className="flex items-center gap-2"><Icon className="w-3.5 h-3.5 text-[var(--app-muted)] group-hover:text-blue-400 transition-colors"/><span>{label}</span></div>
+                    <ChevronRight className="w-3 h-3 text-[var(--app-text)]/80 group-hover:text-slate-300 transition-colors"/>
                   </button>
                 ))}
               </div>
             </div>
             {/* Insight */}
-            <div className="bg-[#0B1528]/60 border border-blue-950 rounded-xl p-4">
-              <h3 className="text-xs font-bold text-white flex items-center gap-1.5 mb-3"><Info className="w-3.5 h-3.5 text-blue-400"/>Insight &amp; Rekomendasi</h3>
+            <div className="bg-[var(--app-border)]/20 border border-blue-950 rounded-xl p-4">
+              <h3 className="text-xs font-bold text-[var(--app-text)] flex items-center gap-1.5 mb-3"><Info className="w-3.5 h-3.5 text-blue-400"/>Insight &amp; Rekomendasi</h3>
               <ul className="text-xs text-slate-300 flex flex-col gap-2 pl-4 list-disc marker:text-blue-400">
                 <li>PPN terutang naik <span className="text-emerald-400 font-semibold">17.25%</span> dibanding periode sebelumnya.</li>
                 <li>PPh 23 mengalami kenaikan signifikan pada pembayaran ke vendor.</li>
@@ -383,25 +380,25 @@ export default function TaxReportPage() {
           </div>
         </div>
         {/* Detail Tax Report Table */}
-        <div className="bg-[#0B1528]/60 border border-blue-950 rounded-xl p-4">
+        <div className="bg-[var(--app-border)]/20 border border-blue-950 rounded-xl p-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-800/60">
-            <h3 className="text-xs font-bold text-white">Detail Tax Report</h3>
+            <h3 className="text-xs font-bold text-[var(--app-text)]">Detail Tax Report</h3>
             <div className="flex items-center gap-2">
               <div className="relative">
-                <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-slate-500"/>
-                <input type="text" placeholder="Cari nomor faktur, dokumen..." value={taxSearch} onChange={e=>setTaxSearch(e.target.value)} className="bg-[#050B14] border border-blue-950 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-300 placeholder-slate-600 focus:outline-none focus:border-blue-500 w-52 transition-colors"/>
+                <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-[var(--app-muted)]"/>
+                <input type="text" placeholder="Cari nomor faktur, dokumen..." value={taxSearch} onChange={e=>setTaxSearch(e.target.value)} className="bg-[var(--app-bg)] border border-blue-950 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-300 placeholder-slate-600 focus:outline-none focus:border-blue-500 w-52 transition-colors"/>
               </div>
               <button className="flex items-center gap-1.5 bg-blue-600/10 hover:bg-blue-600/20 text-blue-400 border border-blue-500/20 text-xs px-3 py-1.5 rounded-lg">
                 <Filter className="w-3 h-3"/>Filter
                 <span className="bg-blue-600 text-white text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center">88</span>
               </button>
-              <button className="p-1.5 rounded-lg bg-[#050B14] border border-blue-950 text-slate-400 hover:text-white"><MoreVertical className="w-3.5 h-3.5"/></button>
+              <button className="p-1.5 rounded-lg bg-[var(--app-bg)] border border-blue-950 text-[var(--app-muted)] hover:text-white"><MoreVertical className="w-3.5 h-3.5"/></button>
             </div>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="text-slate-400 text-[10px] uppercase tracking-wider border-b border-slate-800/60">
+                <tr className="text-[var(--app-muted)] text-[10px] uppercase tracking-wider border-b border-slate-800/60">
                   <th className="py-2.5 px-2 text-center w-8">NO</th>
                   <th className="py-2.5 px-2">Tanggal</th><th className="py-2.5 px-2">Jenis Pajak</th><th className="py-2.5 px-2">Dokumen</th>
                   <th className="py-2.5 px-2">Nomor</th><th className="py-2.5 px-2 text-right">DPP (Rp)</th><th className="py-2.5 px-2 text-right">Pajak (Rp)</th>
@@ -411,23 +408,23 @@ export default function TaxReportPage() {
               </thead>
               <tbody className="divide-y divide-slate-900/40">
                 {filtered.map(row=>(
-                  <tr key={row.no} className="hover:bg-slate-800/10 transition-colors">
-                    <td className="py-2.5 px-2 text-center text-slate-500">{row.no}</td>
-                    <td className="py-2.5 px-2 text-slate-300 whitespace-nowrap">{row.tgl}</td>
-                    <td className="py-2.5 px-2 text-slate-200 font-medium whitespace-nowrap">{row.jenis}</td>
-                    <td className="py-2.5 px-2"><span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 font-medium">{row.dok}</span></td>
-                    <td className="py-2.5 px-2 text-slate-400 font-mono text-[10px]">{row.nomor}</td>
-                    <td className="py-2.5 px-2 text-right text-slate-300 font-medium whitespace-nowrap">{fmt(row.dpp)}</td>
-                    <td className="py-2.5 px-2 text-right text-slate-200 font-semibold whitespace-nowrap">{fmt(row.pajak)}</td>
+                  <tr key={row.no} className="hover:bg-[var(--app-card-subtle)] transition-colors">
+                    <td className="py-2.5 px-2 text-center text-[var(--app-text-muted)]">{row.no}</td>
+                    <td className="py-2.5 px-2 text-[var(--app-text)] whitespace-nowrap">{row.tgl}</td>
+                    <td className="py-2.5 px-2 text-[var(--app-text)] font-medium whitespace-nowrap">{row.jenis}</td>
+                    <td className="py-2.5 px-2"><span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-500 dark:text-blue-400 border border-blue-500/20 font-medium">{row.dok}</span></td>
+                    <td className="py-2.5 px-2 text-[var(--app-text-muted)] font-mono text-[10px]">{row.nomor}</td>
+                    <td className="py-2.5 px-2 text-right text-[var(--app-text)] font-medium whitespace-nowrap">{fmt(row.dpp)}</td>
+                    <td className="py-2.5 px-2 text-right text-[var(--app-text)] font-semibold whitespace-nowrap">{fmt(row.pajak)}</td>
                     <td className="py-2.5 px-2 text-center"><StatusBadge s={row.status}/></td>
-                    <td className="py-2.5 px-2 text-slate-400 whitespace-nowrap">{row.tglBayar || <span className="text-slate-600">—</span>}</td>
-                    <td className="py-2.5 px-2 text-slate-400">{row.sumber}</td>
-                    <td className="py-2.5 px-2 text-slate-400">{row.area}</td>
+                    <td className="py-2.5 px-2 text-[var(--app-text-muted)] whitespace-nowrap">{row.tglBayar || <span className="text-[var(--app-text-dim)]">—</span>}</td>
+                    <td className="py-2.5 px-2 text-[var(--app-text-muted)]">{row.sumber}</td>
+                    <td className="py-2.5 px-2 text-[var(--app-text-muted)]">{row.area}</td>
                     <td className="py-2.5 px-2">
                       <div className="flex items-center justify-center gap-1">
-                        <button className="p-1 hover:bg-slate-800 rounded text-slate-500 hover:text-white"><Eye className="w-3 h-3"/></button>
-                        <button className="p-1 hover:bg-slate-800 rounded text-slate-500 hover:text-white"><Download className="w-3 h-3"/></button>
-                        <button className="p-1 hover:bg-slate-800 rounded text-slate-500 hover:text-white"><MoreVertical className="w-3 h-3"/></button>
+                        <button className="p-1 hover:bg-[var(--app-card-subtle)] rounded text-[var(--app-text-muted)] hover:text-[var(--app-text)] transition-colors"><Eye className="w-3 h-3"/></button>
+                        <button className="p-1 hover:bg-[var(--app-card-subtle)] rounded text-[var(--app-text-muted)] hover:text-[var(--app-text)] transition-colors"><Download className="w-3 h-3"/></button>
+                        <button className="p-1 hover:bg-[var(--app-card-subtle)] rounded text-[var(--app-text-muted)] hover:text-[var(--app-text)] transition-colors"><MoreVertical className="w-3 h-3"/></button>
                       </div>
                     </td>
                   </tr>
@@ -435,19 +432,19 @@ export default function TaxReportPage() {
               </tbody>
             </table>
           </div>
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-4 pt-3 border-t border-slate-800/60">
-            <span className="text-xs text-slate-400">Menampilkan 1 - {Math.min(perPage,filtered.length)} dari 245 data</span>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-4 pt-3 border-t border-[var(--app-border)]">
+            <span className="text-xs text-[var(--app-muted)]">Menampilkan 1 - {Math.min(perPage,filtered.length)} dari 245 data</span>
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1">
-                <button onClick={()=>setPage(p=>Math.max(1,p-1))} className="h-7 w-7 flex items-center justify-center rounded-lg bg-[#050B14] border border-blue-950 text-slate-500 hover:text-white"><ChevronLeft className="w-3.5 h-3.5"/></button>
+                <button onClick={()=>setPage(p=>Math.max(1,p-1))} className="h-7 w-7 flex items-center justify-center rounded-lg bg-[var(--app-bg)] border border-blue-950 text-[var(--app-muted)] hover:text-white"><ChevronLeft className="w-3.5 h-3.5"/></button>
                 {[1,2,3,4,5].map(n=>(
-                  <button key={n} onClick={()=>setPage(n)} className={`h-7 w-7 flex items-center justify-center rounded-lg text-xs font-semibold transition-colors ${page===n?'bg-blue-600 text-white':'bg-[#050B14] border border-blue-950 text-slate-400 hover:text-white'}`}>{n}</button>
+                  <button key={n} onClick={()=>setPage(n)} className={`h-7 w-7 flex items-center justify-center rounded-lg text-xs font-semibold transition-colors ${page===n?'bg-blue-600 text-white':'bg-[var(--app-bg)] border border-blue-950 text-[var(--app-muted)] hover:text-white'}`}>{n}</button>
                 ))}
-                <span className="text-slate-600 text-xs px-1">...</span>
-                <button className="h-7 px-2 flex items-center justify-center rounded-lg bg-[#050B14] border border-blue-950 text-slate-400 hover:text-white text-xs">49</button>
-                <button onClick={()=>setPage(p=>p+1)} className="h-7 w-7 flex items-center justify-center rounded-lg bg-[#050B14] border border-blue-950 text-slate-500 hover:text-white"><ChevronRight className="w-3.5 h-3.5"/></button>
+                <span className="text-[var(--app-text)]/80 text-xs px-1">...</span>
+                <button className="h-7 px-2 flex items-center justify-center rounded-lg bg-[var(--app-bg)] border border-blue-950 text-[var(--app-muted)] hover:text-white text-xs">49</button>
+                <button onClick={()=>setPage(p=>p+1)} className="h-7 w-7 flex items-center justify-center rounded-lg bg-[var(--app-bg)] border border-blue-950 text-[var(--app-muted)] hover:text-white"><ChevronRight className="w-3.5 h-3.5"/></button>
               </div>
-              <select value={perPage} onChange={e=>setPerPage(Number(e.target.value))} className="bg-[#050B14] border border-blue-950 rounded-lg px-2.5 py-1 text-xs text-slate-300 focus:outline-none focus:border-blue-500">
+              <select value={perPage} onChange={e=>setPerPage(Number(e.target.value))} className="bg-[var(--app-bg)] border border-blue-950 rounded-lg px-2.5 py-1 text-xs text-slate-300 focus:outline-none focus:border-blue-500">
                 <option value={10}>10 / halaman</option><option value={20}>20 / halaman</option><option value={50}>50 / halaman</option>
               </select>
             </div>

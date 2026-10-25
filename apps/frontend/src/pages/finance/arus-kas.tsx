@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
@@ -93,9 +94,9 @@ export default function ArusKasDashboard() {
   ]);
 
   const [transactions, setTransactions] = useState([
-    { id: 1, tanggal: '01/07/2026 09:21', jenis: 'Kas Masuk', deskripsi: 'Pembayaran Invoice INV/2026/07/001245 - Budi Santoso', kategori: 'Pendapatan', metode: 'Transfer Bank', akun: 'Bank BCA', masuk: 550000, keluar: 0 },
-    { id: 2, tanggal: '01/07/2026 08:45', jenis: 'Kas Masuk', deskripsi: 'Pembayaran Invoice INV/2026/07/001244 - Andi Pratama', kategori: 'Pendapatan', metode: 'E-Wallet', akun: 'OVO', masuk: 150000, keluar: 0 },
-    { id: 3, tanggal: '01/07/2026 08:10', jenis: 'Kas Keluar', deskripsi: 'Pembayaran Gaji Karyawan Juni 2026', kategori: 'Pengeluaran Operasional', metode: 'Transfer Bank', akun: 'Bank Mandiri', masuk: 0, keluar: 8500000 },
+    { id: 1, tanggal: '22/10/2026 09:21', jenis: 'Kas Masuk', deskripsi: 'Pembayaran Invoice INV/2026/07/001245 - Budi Santoso', kategori: 'Pendapatan', metode: 'Transfer Bank', akun: 'Bank BCA', masuk: 550000, keluar: 0 },
+    { id: 2, tanggal: '22/10/2026 08:45', jenis: 'Kas Masuk', deskripsi: 'Pembayaran Invoice INV/2026/07/001244 - Andi Pratama', kategori: 'Pendapatan', metode: 'E-Wallet', akun: 'OVO', masuk: 150000, keluar: 0 },
+    { id: 3, tanggal: '22/10/2026 08:10', jenis: 'Kas Keluar', deskripsi: 'Pembayaran Gaji Karyawan Juni 2026', kategori: 'Pengeluaran Operasional', metode: 'Transfer Bank', akun: 'Bank Mandiri', masuk: 0, keluar: 8500000 },
     { id: 4, tanggal: '30/06/2026 17:22', jenis: 'Kas Masuk', deskripsi: 'Pembayaran Invoice INV/2026/06/002542 - Siti Aminah', kategori: 'Pendapatan', metode: 'Virtual Account', akun: 'Bank BRI', masuk: 350000, keluar: 0 },
     { id: 5, tanggal: '30/06/2026 16:35', jenis: 'Kas Keluar', deskripsi: 'Pembayaran Sewa Server Bulan Juli 2026', kategori: 'Pengeluaran Operasional', metode: 'Transfer Bank', akun: 'Bank BCA', masuk: 0, keluar: 1750000 }
   ]);
@@ -213,80 +214,25 @@ export default function ArusKasDashboard() {
 
   return (
     <Layout>
-      <div className="bg-[#050B14] text-gray-100 min-h-screen p-6 font-sans antialiased">
-        {/* Custom Header Area */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 pb-6 border-b border-blue-950">
-          <div>
-            <button onClick={() => router.push('/finance/dashboard')} className="flex items-center gap-1.5 text-xs text-cyan-400 hover:text-cyan-300 mb-2 transition-colors">
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Kembali ke Dashboard</span>
-            </button>
-            <div className="flex items-center gap-2 text-xs text-gray-400">
-              <span>Finance</span>
-              <span>&gt;</span>
-              <span className="text-cyan-400 font-medium">Arus Kas</span>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-4 w-full md:w-auto">
-            <div className="bg-[#091526] px-4 py-2 rounded-lg border border-blue-900/60 flex items-center gap-3">
-              <Calendar className="w-4 h-4 text-cyan-400" />
-              <div className="text-xs">
-                <p className="text-gray-400 font-semibold">01 Juli 2026</p>
-                <p className="text-cyan-400 text-[10px]">08.35 WIB</p>
-              </div>
-            </div>
-            <div className="bg-[#091526] px-4 py-2 rounded-lg border border-blue-900/60 flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              <div className="text-xs">
-                <p className="text-gray-400 font-semibold">Status Sistem</p>
-                <p className="text-emerald-400 text-[10px]">● Normal</p>
-              </div>
-            </div>
-
-            {/* Search bar & profile */}
-            <div className="relative w-full md:w-64">
-              <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Cari invoice, customer, transaksi..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 rounded-lg bg-[#091526] border border-blue-900/60 text-xs focus:outline-none focus:border-cyan-500 placeholder-gray-500 text-gray-200"
-              />
-            </div>
-            <div className="flex items-center gap-2.5">
-              <button className="p-2 rounded-lg bg-[#091526] border border-blue-900/40 hover:border-cyan-500/50 relative">
-                <Bell className="w-4 h-4 text-gray-300" />
-                <span className="absolute -top-1 -right-1 w-4.5 h-4.5 bg-red-500 rounded-full text-[9px] font-bold flex items-center justify-center text-white px-1">12</span>
-              </button>
-              <button className="p-2 rounded-lg bg-[#091526] border border-blue-900/40 hover:border-cyan-500/50 relative">
-                <Mail className="w-4 h-4 text-gray-300" />
-                <span className="absolute -top-1 -right-1 w-4.5 h-4.5 bg-red-500 rounded-full text-[9px] font-bold flex items-center justify-center text-white px-1">6</span>
-              </button>
-              <button className="p-2 rounded-lg bg-[#091526] border border-blue-900/40 hover:border-cyan-500/50">
-                <Settings className="w-4 h-4 text-gray-300" />
-              </button>
-            </div>
-            <div className="flex items-center gap-3 pl-3 border-l border-blue-950">
-              <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center font-bold text-xs text-white">AD</div>
-              <div className="text-left hidden lg:block">
-                <p className="text-xs font-semibold text-gray-200">Agus Dwi Rianto</p>
-                <p className="text-[10px] text-gray-400">Super Admin</p>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className="bg-[var(--app-bg)] text-[var(--app-text)] min-h-screen p-6 font-sans antialiased">
+        
 
         {/* Dashboard Title & Top Bar */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 border-b border-[var(--app-border)] pb-5">
           <div>
+            <div className="flex items-center gap-2 text-xs text-[var(--app-muted)] font-mono mb-1.5">
+              <Link href="/" className="hover:text-[var(--app-text)]">AUDIRA</Link>
+              <span>/</span>
+              <Link href="/finance/dashboard" className="hover:text-[var(--app-text)]">Keuangan & Akuntansi</Link>
+              <span>/</span>
+              <span className="text-emerald-500 font-semibold">Arus Kas (Cash Flow)</span>
+            </div>
             <h1 className="text-2xl font-bold tracking-tight text-white">Arus Kas</h1>
-            <p className="text-xs text-gray-400 mt-1">Pantau arus kas masuk, keluar, dan posisi kas secara real-time.</p>
+            <p className="text-xs text-[var(--app-muted)] mt-1">Pantau arus kas masuk, keluar, dan posisi kas secara real-time.</p>
           </div>
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#091526] border border-blue-900/40 text-xs">
-              <span className="text-gray-400 font-medium">25 Juni 2026 - 01 Juli 2026</span>
+            <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--app-card)] border border-[var(--app-border)] text-xs">
+              <span className="text-[var(--app-muted)] font-medium">25 Juni 2026 - 22 Oktober 2026</span>
             </div>
             <button className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white transition-colors">
               <Filter className="w-3.5 h-3.5" />
@@ -294,11 +240,11 @@ export default function ArusKasDashboard() {
             </button>
             <button 
               onClick={() => alert('Mengekspor laporan arus kas...')}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white border border-blue-900/40 transition-colors"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white border border-[var(--app-border)] transition-colors"
             >
               <Download className="w-3.5 h-3.5" />
               <span>Ekspor</span>
-              <ChevronDown className="w-3 h-3 text-gray-400" />
+              <ChevronDown className="w-3 h-3 text-[var(--app-muted)]" />
             </button>
           </div>
         </div>
@@ -306,21 +252,21 @@ export default function ArusKasDashboard() {
         {/* Top Metric Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 mb-6">
           {/* Saldo Kas Awal */}
-          <div className="bg-[#0A1629]/70 border border-blue-900/40 rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Saldo Kas Awal</p>
+              <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Saldo Kas Awal</p>
               <div className="p-1.5 rounded-lg bg-blue-600/10 border border-blue-600/20 text-blue-400">
                 <Wallet className="w-3.5 h-3.5" />
               </div>
             </div>
             <h3 className="text-base font-bold text-white">{formatRupiah(saldoAwal)}</h3>
-            <p className="text-[9px] text-gray-400 mt-1">Per 25 Juni 2026</p>
+            <p className="text-[9px] text-[var(--app-muted)] mt-1">Per 25 Juni 2026</p>
           </div>
 
           {/* Total Kas Masuk */}
-          <div className="bg-[#0A1629]/70 border border-blue-900/40 rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Total Kas Masuk</p>
+              <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Total Kas Masuk</p>
               <div className="p-1.5 rounded-lg bg-emerald-600/10 border border-emerald-600/20 text-emerald-400">
                 <PlusCircle className="w-3.5 h-3.5" />
               </div>
@@ -333,9 +279,9 @@ export default function ArusKasDashboard() {
           </div>
 
           {/* Total Kas Keluar */}
-          <div className="bg-[#0A1629]/70 border border-blue-900/40 rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Total Kas Keluar</p>
+              <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Total Kas Keluar</p>
               <div className="p-1.5 rounded-lg bg-rose-600/10 border border-rose-600/20 text-rose-400">
                 <AlertCircle className="w-3.5 h-3.5" />
               </div>
@@ -348,9 +294,9 @@ export default function ArusKasDashboard() {
           </div>
 
           {/* Arus Kas Bersih */}
-          <div className="bg-[#0A1629]/70 border border-blue-900/40 rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Arus Kas Bersih</p>
+              <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Arus Kas Bersih</p>
               <div className="p-1.5 rounded-lg bg-cyan-600/10 border border-cyan-600/20 text-cyan-400">
                 <Activity className="w-3.5 h-3.5" />
               </div>
@@ -363,21 +309,21 @@ export default function ArusKasDashboard() {
           </div>
 
           {/* Saldo Kas Akhir */}
-          <div className="bg-[#0A1629]/70 border border-blue-900/40 rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Saldo Kas Akhir</p>
+              <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Saldo Kas Akhir</p>
               <div className="p-1.5 rounded-lg bg-blue-600/10 border border-blue-600/20 text-blue-400">
                 <Wallet className="w-3.5 h-3.5" />
               </div>
             </div>
             <h3 className="text-base font-bold text-white">{formatRupiah(saldoKasAkhir)}</h3>
-            <p className="text-[9px] text-gray-400 mt-1">Per 01 Juli 2026</p>
+            <p className="text-[9px] text-[var(--app-muted)] mt-1">Per 22 Oktober 2026</p>
           </div>
 
           {/* Rasio Kas */}
-          <div className="bg-[#0A1629]/70 border border-blue-900/40 rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Rasio Kas</p>
+              <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Rasio Kas</p>
               <div className="p-1.5 rounded-lg bg-purple-600/10 border border-purple-600/20 text-purple-400">
                 <Calculator className="w-3.5 h-3.5" />
               </div>
@@ -388,7 +334,7 @@ export default function ArusKasDashboard() {
         </div>
 
         {/* Tab Selection */}
-        <div className="flex border-b border-blue-950/80 mb-6 gap-2 overflow-x-auto pb-1">
+        <div className="flex border-b border-[var(--app-border)]/80 mb-6 gap-2 overflow-x-auto pb-1">
           {['Ringkasan', 'Arus Kas Masuk', 'Arus Kas Keluar', 'Transfer Dana', 'Proyeksi Kas', 'Rekonsiliasi Bank', 'Catatan Kas'].map((tab) => (
             <button
               key={tab}
@@ -396,7 +342,7 @@ export default function ArusKasDashboard() {
               className={`px-4 py-2 text-xs font-semibold whitespace-nowrap transition-all duration-200 border-b-2 -mb-[2px] ${
                 activeTab === tab 
                   ? 'border-blue-500 text-blue-400 font-bold' 
-                  : 'border-transparent text-gray-400 hover:text-gray-200'
+                  : 'border-transparent text-[var(--app-muted)] hover:text-[var(--app-text)]'
               }`}
             >
               {tab}
@@ -412,8 +358,8 @@ export default function ArusKasDashboard() {
               {/* Grafik Arus Kas Bar/Line */}
               <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-xs font-bold text-gray-200 uppercase tracking-wider">Grafik Arus Kas</h3>
-                  <span className="text-[10px] text-gray-400 bg-[#071225] px-2 py-1 rounded border border-blue-950">7 Hari Terakhir</span>
+                  <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider">Grafik Arus Kas</h3>
+                  <span className="text-[10px] text-[var(--app-muted)] bg-[#071225] px-2 py-1 rounded border border-[var(--app-border)]">7 Hari Terakhir</span>
                 </div>
                 <div className="h-56">
                   <ResponsiveContainer width="100%" height="100%">
@@ -436,8 +382,8 @@ export default function ArusKasDashboard() {
               {/* Arus Kas Bulanan Area Chart */}
               <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-xs font-bold text-gray-200 uppercase tracking-wider">Arus Kas Bulanan</h3>
-                  <span className="text-[10px] text-gray-400 bg-[#071225] px-2 py-1 rounded border border-blue-950">Juni 2026</span>
+                  <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider">Arus Kas Bulanan</h3>
+                  <span className="text-[10px] text-[var(--app-muted)] bg-[#071225] px-2 py-1 rounded border border-[var(--app-border)]">Juni 2026</span>
                 </div>
                 <div className="h-44">
                   <ResponsiveContainer width="100%" height="100%">
@@ -459,11 +405,11 @@ export default function ArusKasDashboard() {
 
               {/* Transaksi Arus Kas Terbaru Table */}
               <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
-                <h3 className="text-xs font-bold text-gray-200 uppercase tracking-wider mb-4">Transaksi Arus Kas Terbaru</h3>
+                <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-4">Transaksi Arus Kas Terbaru</h3>
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse text-xs">
                     <thead>
-                      <tr className="border-b border-blue-950/80 text-gray-400">
+                      <tr className="border-b border-[var(--app-border)]/80 text-[var(--app-muted)]">
                         <th className="py-2.5 font-semibold">TANGGAL</th>
                         <th className="py-2.5 font-semibold">JENIS</th>
                         <th className="py-2.5 font-semibold">DESKRIPSI</th>
@@ -474,25 +420,25 @@ export default function ArusKasDashboard() {
                         <th className="py-2.5 font-semibold text-right">SALDO KAS</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-blue-950/40 text-gray-300">
+                    <tbody className="divide-y divide-blue-950/40 text-[var(--app-text)]/90">
                       {filteredTxList.map((tx) => (
                         <tr key={tx.id} className="hover:bg-blue-950/20 transition-colors">
-                          <td className="py-3 text-[11px] text-gray-400">{tx.tanggal}</td>
+                          <td className="py-3 text-[11px] text-[var(--app-muted)]">{tx.tanggal}</td>
                           <td className="py-3 font-semibold">
                             <span className={`px-2 py-0.5 rounded text-[10px] ${tx.jenis === 'Kas Masuk' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}`}>
                               {tx.jenis}
                             </span>
                           </td>
                           <td className="py-3 max-w-[200px] truncate" title={tx.deskripsi}>{tx.deskripsi}</td>
-                          <td className="py-3 text-gray-400">{tx.kategori}</td>
-                          <td className="py-3 text-gray-400">{tx.metode}</td>
+                          <td className="py-3 text-[var(--app-muted)]">{tx.kategori}</td>
+                          <td className="py-3 text-[var(--app-muted)]">{tx.metode}</td>
                           <td className="py-3 text-right font-medium text-emerald-400">
                             {tx.masuk > 0 ? formatRupiah(tx.masuk) : '-'}
                           </td>
                           <td className="py-3 text-right font-medium text-rose-400">
                             {tx.keluar > 0 ? formatRupiah(tx.keluar) : '-'}
                           </td>
-                          <td className="py-3 text-right font-semibold text-gray-100">{formatRupiah(saldoKasAkhir)}</td>
+                          <td className="py-3 text-right font-semibold text-[var(--app-text)]">{formatRupiah(saldoKasAkhir)}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -505,20 +451,20 @@ export default function ArusKasDashboard() {
             <div className="lg:col-span-3 space-y-6">
               {/* Ringkasan Arus Kas */}
               <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
-                <h3 className="text-xs font-bold text-gray-200 uppercase tracking-wider mb-4 border-b border-blue-950 pb-2">Ringkasan Arus Kas</h3>
+                <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-4 border-b border-[var(--app-border)] pb-2">Ringkasan Arus Kas</h3>
                 <div className="space-y-3.5 text-xs">
-                  <div className="flex justify-between items-center text-gray-400">
+                  <div className="flex justify-between items-center text-[var(--app-muted)]">
                     <span>Saldo Kas Awal</span>
                     <span className="font-semibold text-white">{formatRupiah(saldoAwal)}</span>
                   </div>
                   
-                  <div className="pt-2 border-t border-blue-950">
-                    <p className="text-[10px] font-bold text-gray-400 mb-2 uppercase">KAS MASUK</p>
-                    <div className="flex justify-between items-center pl-2 text-gray-400">
+                  <div className="pt-2 border-t border-[var(--app-border)]">
+                    <p className="text-[10px] font-bold text-[var(--app-muted)] mb-2 uppercase">KAS MASUK</p>
+                    <div className="flex justify-between items-center pl-2 text-[var(--app-muted)]">
                       <span>Pendapatan</span>
                       <span className="text-white">{formatRupiah(totalKasMasuk * 0.94)}</span>
                     </div>
-                    <div className="flex justify-between items-center pl-2 text-gray-400 mt-1">
+                    <div className="flex justify-between items-center pl-2 text-[var(--app-muted)] mt-1">
                       <span>Penerimaan Lainnya</span>
                       <span className="text-white">{formatRupiah(totalKasMasuk * 0.06)}</span>
                     </div>
@@ -528,17 +474,17 @@ export default function ArusKasDashboard() {
                     </div>
                   </div>
 
-                  <div className="pt-2 border-t border-blue-950">
-                    <p className="text-[10px] font-bold text-gray-400 mb-2 uppercase">KAS KELUAR</p>
-                    <div className="flex justify-between items-center pl-2 text-gray-400">
+                  <div className="pt-2 border-t border-[var(--app-border)]">
+                    <p className="text-[10px] font-bold text-[var(--app-muted)] mb-2 uppercase">KAS KELUAR</p>
+                    <div className="flex justify-between items-center pl-2 text-[var(--app-muted)]">
                       <span>Pengeluaran Operasional</span>
                       <span className="text-white">{formatRupiah(totalKasKeluar * 0.58)}</span>
                     </div>
-                    <div className="flex justify-between items-center pl-2 text-gray-400 mt-1">
+                    <div className="flex justify-between items-center pl-2 text-[var(--app-muted)] mt-1">
                       <span>Pengeluaran Non Operasional</span>
                       <span className="text-white">{formatRupiah(totalKasKeluar * 0.15)}</span>
                     </div>
-                    <div className="flex justify-between items-center pl-2 text-gray-400 mt-1">
+                    <div className="flex justify-between items-center pl-2 text-[var(--app-muted)] mt-1">
                       <span>Pengeluaran Tetap</span>
                       <span className="text-white">{formatRupiah(totalKasKeluar * 0.27)}</span>
                     </div>
@@ -548,12 +494,12 @@ export default function ArusKasDashboard() {
                     </div>
                   </div>
 
-                  <div className="pt-3 border-t border-blue-950/80 flex justify-between items-center text-cyan-400 font-bold">
+                  <div className="pt-3 border-t border-[var(--app-border)]/80 flex justify-between items-center text-cyan-400 font-bold">
                     <span>Arus Kas Bersih</span>
                     <span>{formatRupiah(arusKasBersih)}</span>
                   </div>
 
-                  <div className="flex justify-between items-center text-gray-100 font-bold bg-[#071225] p-2 rounded border border-blue-900/30">
+                  <div className="flex justify-between items-center text-[var(--app-text)] font-bold bg-[#071225] p-2 rounded border border-blue-900/30">
                     <span>Saldo Kas Akhir</span>
                     <span className="text-cyan-400">{formatRupiah(saldoKasAkhir)}</span>
                   </div>
@@ -563,15 +509,15 @@ export default function ArusKasDashboard() {
               {/* Proyeksi Arus Kas */}
               <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-xs font-bold text-gray-200 uppercase tracking-wider">Proyeksi Arus Kas</h3>
-                  <span className="text-[9px] text-gray-400 bg-[#071225] px-1.5 py-0.5 rounded border border-blue-950">30 Hari Ke Depan</span>
+                  <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider">Proyeksi Arus Kas</h3>
+                  <span className="text-[9px] text-[var(--app-muted)] bg-[#071225] px-1.5 py-0.5 rounded border border-[var(--app-border)]">30 Hari Ke Depan</span>
                 </div>
                 <div className="space-y-1 mb-2 text-[10px]">
-                  <div className="flex justify-between text-gray-400">
+                  <div className="flex justify-between text-[var(--app-muted)]">
                     <span>Proyeksi Kas Masuk:</span>
                     <span className="text-emerald-400 font-semibold">Rp 546.210.000</span>
                   </div>
-                  <div className="flex justify-between text-gray-400">
+                  <div className="flex justify-between text-[var(--app-muted)]">
                     <span>Proyeksi Kas Keluar:</span>
                     <span className="text-rose-400 font-semibold">Rp 412.350.000</span>
                   </div>
@@ -598,7 +544,7 @@ export default function ArusKasDashboard() {
             <div className="lg:col-span-3 space-y-6">
               {/* Arus Kas per Metode Pembayaran */}
               <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
-                <h3 className="text-xs font-bold text-gray-200 uppercase tracking-wider mb-4">Arus Kas per Metode Pembayaran</h3>
+                <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-4">Arus Kas per Metode Pembayaran</h3>
                 <div className="flex flex-col items-center justify-center relative mb-4">
                   <div className="h-40 w-full">
                     <ResponsiveContainer width="100%" height="100%">
@@ -623,7 +569,7 @@ export default function ArusKasDashboard() {
                   {/* Central Text */}
                   <div className="absolute text-center">
                     <p className="text-[14px] font-bold text-white">{formatRupiah(totalKasMasuk)}</p>
-                    <p className="text-[9px] text-gray-400">Total Kas Masuk</p>
+                    <p className="text-[9px] text-[var(--app-muted)]">Total Kas Masuk</p>
                   </div>
                 </div>
                 {/* Custom Legend */}
@@ -632,11 +578,11 @@ export default function ArusKasDashboard() {
                     <div key={item.name} className="flex justify-between items-center">
                       <div className="flex items-center gap-1.5">
                         <span className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS_METODE[index % COLORS_METODE.length] }}></span>
-                        <span className="text-gray-400">{item.name}</span>
+                        <span className="text-[var(--app-muted)]">{item.name}</span>
                       </div>
                       <div className="text-right">
-                        <span className="text-white font-semibold mr-2">{formatRupiah(item.value)}</span>
-                        <span className="text-gray-400">{(item.value / totalKasMasuk * 100).toFixed(1)}%</span>
+                        <span className="text-[var(--app-text)] font-semibold mr-2">{formatRupiah(item.value)}</span>
+                        <span className="text-[var(--app-muted)]">{(item.value / totalKasMasuk * 100).toFixed(1)}%</span>
                       </div>
                     </div>
                   ))}
@@ -645,35 +591,35 @@ export default function ArusKasDashboard() {
 
               {/* Aksi Cepat */}
               <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
-                <h3 className="text-xs font-bold text-gray-200 uppercase tracking-wider mb-4">Aksi Cepat</h3>
+                <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-4">Aksi Cepat</h3>
                 <div className="space-y-2 text-xs">
                   <button 
                     onClick={() => { setModalType('MASUK'); setShowAddModal(true); }}
-                    className="w-full flex items-center gap-2 p-2.5 rounded-lg bg-[#091526] hover:bg-[#0c1d36] border border-blue-900/40 text-left text-gray-200 transition-colors"
+                    className="w-full flex items-center gap-2 p-2.5 rounded-lg bg-[var(--app-card)] hover:bg-[#0c1d36] border border-[var(--app-border)] text-left text-[var(--app-text)] transition-colors"
                   >
                     <PlusSquare className="w-4 h-4 text-emerald-400" />
                     <span>Catat Kas Masuk</span>
                   </button>
                   <button 
                     onClick={() => { setModalType('KELUAR'); setShowAddModal(true); }}
-                    className="w-full flex items-center gap-2 p-2.5 rounded-lg bg-[#091526] hover:bg-[#0c1d36] border border-blue-900/40 text-left text-gray-200 transition-colors"
+                    className="w-full flex items-center gap-2 p-2.5 rounded-lg bg-[var(--app-card)] hover:bg-[#0c1d36] border border-[var(--app-border)] text-left text-[var(--app-text)] transition-colors"
                   >
                     <MinusSquare className="w-4 h-4 text-rose-400" />
                     <span>Catat Kas Keluar</span>
                   </button>
-                  <button className="w-full flex items-center gap-2 p-2.5 rounded-lg bg-[#091526] hover:bg-[#0c1d36] border border-blue-900/40 text-left text-gray-200 transition-colors">
+                  <button className="w-full flex items-center gap-2 p-2.5 rounded-lg bg-[var(--app-card)] hover:bg-[#0c1d36] border border-[var(--app-border)] text-left text-[var(--app-text)] transition-colors">
                     <ArrowRightLeft className="w-4 h-4 text-cyan-400" />
                     <span>Transfer Dana</span>
                   </button>
-                  <button className="w-full flex items-center gap-2 p-2.5 rounded-lg bg-[#091526] hover:bg-[#0c1d36] border border-blue-900/40 text-left text-gray-200 transition-colors">
+                  <button className="w-full flex items-center gap-2 p-2.5 rounded-lg bg-[var(--app-card)] hover:bg-[#0c1d36] border border-[var(--app-border)] text-left text-[var(--app-text)] transition-colors">
                     <CheckSquare className="w-4 h-4 text-emerald-400" />
                     <span>Rekonsiliasi Bank</span>
                   </button>
-                  <button className="w-full flex items-center gap-2 p-2.5 rounded-lg bg-[#091526] hover:bg-[#0c1d36] border border-blue-900/40 text-left text-gray-200 transition-colors">
+                  <button className="w-full flex items-center gap-2 p-2.5 rounded-lg bg-[var(--app-card)] hover:bg-[#0c1d36] border border-[var(--app-border)] text-left text-[var(--app-text)] transition-colors">
                     <Briefcase className="w-4 h-4 text-purple-400" />
                     <span>Buat Anggaran Kas</span>
                   </button>
-                  <button className="w-full flex items-center gap-2 p-2.5 rounded-lg bg-[#091526] hover:bg-[#0c1d36] border border-blue-900/40 text-left text-gray-200 transition-colors">
+                  <button className="w-full flex items-center gap-2 p-2.5 rounded-lg bg-[var(--app-card)] hover:bg-[#0c1d36] border border-[var(--app-border)] text-left text-[var(--app-text)] transition-colors">
                     <FileText className="w-4 h-4 text-amber-400" />
                     <span>Export Laporan</span>
                   </button>
@@ -682,15 +628,15 @@ export default function ArusKasDashboard() {
 
               {/* Saldo Kas per Bank/Wallet */}
               <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
-                <h3 className="text-xs font-bold text-gray-200 uppercase tracking-wider mb-4">Saldo Kas per Bank/Wallet</h3>
+                <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-4">Saldo Kas per Bank/Wallet</h3>
                 <div className="space-y-3.5 text-xs">
                   {accounts.map(acc => (
-                    <div key={acc.id} className="flex justify-between items-center text-gray-400">
+                    <div key={acc.id} className="flex justify-between items-center text-[var(--app-muted)]">
                       <span>{acc.name}</span>
                       <span className="font-semibold text-white">{formatRupiah(acc.balance)}</span>
                     </div>
                   ))}
-                  <div className="pt-2.5 border-t border-blue-950 flex justify-between items-center text-gray-200 font-bold">
+                  <div className="pt-2.5 border-t border-[var(--app-border)] flex justify-between items-center text-[var(--app-text)] font-bold">
                     <span>Total Saldo</span>
                     <span className="text-cyan-400">{formatRupiah(saldoKasAkhir)}</span>
                   </div>
@@ -699,7 +645,7 @@ export default function ArusKasDashboard() {
 
               {/* Status Arus Kas Gauge */}
               <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5 text-center">
-                <h3 className="text-xs font-bold text-gray-200 uppercase tracking-wider mb-4">Status Arus Kas</h3>
+                <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-4">Status Arus Kas</h3>
                 <div className="relative flex justify-center items-center h-28">
                   {/* Custom SVG Gauge */}
                   <svg className="w-36 h-20 overflow-visible">
@@ -725,17 +671,17 @@ export default function ArusKasDashboard() {
                     <p className="text-[9px] text-emerald-400 uppercase tracking-widest mt-0.5">Sehat</p>
                   </div>
                 </div>
-                <p className="text-[10px] text-gray-400 px-2 mt-2 leading-relaxed">
+                <p className="text-[10px] text-[var(--app-muted)] px-2 mt-2 leading-relaxed">
                   Rasio Kas = Aktiva Lancar / Kewajiban Lancar. Ideal: &gt; 1.0 (Sehat)
                 </p>
               </div>
             </div>
           </div>
         ) : (
-          <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-8 text-center text-gray-400 text-sm">
+          <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-8 text-center text-[var(--app-muted)] text-sm">
             <Layers className="w-8 h-8 text-cyan-400 mx-auto mb-3 animate-pulse" />
             <p className="font-semibold text-white">Menu Tab {activeTab} Terintegrasi</p>
-            <p className="text-xs text-gray-500 mt-1.5">
+            <p className="text-xs text-[var(--app-muted)] mt-1.5">
               Halaman visualisasi data detail untuk modul {activeTab} terkoneksi dengan database utama.
             </p>
           </div>
@@ -744,47 +690,47 @@ export default function ArusKasDashboard() {
         {/* Form Modal: Catat Kas Masuk / Kas Keluar */}
         {showAddModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-            <div className="w-full max-w-md bg-[#0A1629] border border-blue-900/60 rounded-xl p-6 shadow-2xl">
-              <div className="flex justify-between items-center mb-4 pb-3 border-b border-blue-950">
+            <div className="w-full max-w-md bg-[#0A1629] border border-[var(--app-border)] rounded-xl p-6 shadow-2xl">
+              <div className="flex justify-between items-center mb-4 pb-3 border-b border-[var(--app-border)]">
                 <h3 className="text-sm font-bold text-white">
                   {modalType === 'MASUK' ? 'Catat Kas Masuk Baru' : 'Catat Kas Keluar Baru'}
                 </h3>
                 <button 
                   onClick={() => setShowAddModal(false)}
-                  className="text-gray-400 hover:text-white text-xs"
+                  className="text-[var(--app-muted)] hover:text-white text-xs"
                 >
                   Batal
                 </button>
               </div>
               <form onSubmit={handleAddTransaction} className="space-y-4 text-xs">
                 <div>
-                  <label className="block text-gray-400 mb-1">Deskripsi Transaksi</label>
+                  <label className="block text-[var(--app-muted)] mb-1">Deskripsi Transaksi</label>
                   <input
                     type="text"
                     required
                     placeholder="Contoh: Pembayaran internet, Gaji teknisi..."
                     value={newDesc}
                     onChange={(e) => setNewDesc(e.target.value)}
-                    className="w-full p-2.5 rounded bg-[#081225] border border-blue-900/40 text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500"
+                    className="w-full p-2.5 rounded bg-[#081225] border border-[var(--app-border)] text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-gray-400 mb-1">Kategori</label>
+                    <label className="block text-[var(--app-muted)] mb-1">Kategori</label>
                     <input
                       type="text"
                       placeholder="Contoh: Pendapatan, Operasional"
                       value={newCategory}
                       onChange={(e) => setNewCategory(e.target.value)}
-                      className="w-full p-2.5 rounded bg-[#081225] border border-blue-900/40 text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500"
+                      className="w-full p-2.5 rounded bg-[#081225] border border-[var(--app-border)] text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-gray-400 mb-1">Metode Pembayaran</label>
+                    <label className="block text-[var(--app-muted)] mb-1">Metode Pembayaran</label>
                     <select
                       value={newMethod}
                       onChange={(e) => setNewMethod(e.target.value)}
-                      className="w-full p-2.5 rounded bg-[#081225] border border-blue-900/40 text-white focus:outline-none focus:border-cyan-500"
+                      className="w-full p-2.5 rounded bg-[#081225] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
                     >
                       <option>Transfer Bank</option>
                       <option>E-Wallet</option>
@@ -796,11 +742,11 @@ export default function ArusKasDashboard() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-gray-400 mb-1">Dompet/Akun Bank</label>
+                    <label className="block text-[var(--app-muted)] mb-1">Dompet/Akun Bank</label>
                     <select
                       value={newAccount}
                       onChange={(e) => setNewAccount(e.target.value)}
-                      className="w-full p-2.5 rounded bg-[#081225] border border-blue-900/40 text-white focus:outline-none focus:border-cyan-500"
+                      className="w-full p-2.5 rounded bg-[#081225] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
                     >
                       {accounts.map(acc => (
                         <option key={acc.id} value={acc.name}>{acc.name}</option>
@@ -808,20 +754,20 @@ export default function ArusKasDashboard() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-gray-400 mb-1">Nominal (Rp)</label>
+                    <label className="block text-[var(--app-muted)] mb-1">Nominal (Rp)</label>
                     <input
                       type="number"
                       required
                       placeholder="Contoh: 500000"
                       value={newAmount}
                       onChange={(e) => setNewAmount(e.target.value)}
-                      className="w-full p-2.5 rounded bg-[#081225] border border-blue-900/40 text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500"
+                      className="w-full p-2.5 rounded bg-[#081225] border border-[var(--app-border)] text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500"
                     />
                   </div>
                 </div>
                 <button
                   type="submit"
-                  className={`w-full py-2.5 rounded-lg text-white font-semibold transition-colors mt-2 ${
+                  className={`w-full py-2.5 rounded-lg text-[var(--app-text)] font-semibold transition-colors mt-2 ${
                     modalType === 'MASUK' ? 'bg-emerald-600 hover:bg-emerald-500' : 'bg-rose-600 hover:bg-rose-500'
                   }`}
                 >

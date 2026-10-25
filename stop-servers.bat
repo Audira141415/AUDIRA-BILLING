@@ -30,7 +30,7 @@ echo  [OK] Frontend stopped
 echo.
 
 REM Kill processes on port 3218
-echo [2/3] Stopping Backend (port 3218)...
+echo [2/4] Stopping Backend (port 3218)...
 for /f "tokens=5" %%a in ('netstat -aon ^| findstr :3218 ^| findstr LISTENING') do (
     echo  - Terminating process %%a
     taskkill /F /PID %%a >nul 2>&1
@@ -38,10 +38,24 @@ for /f "tokens=5" %%a in ('netstat -aon ^| findstr :3218 ^| findstr LISTENING') 
 echo  [OK] Backend stopped
 echo.
 
+REM Kill processes on port 3219 and 3001
+echo [3/4] Stopping Customer Portal (port 3219)...
+for /f "tokens=5" %%a in ('netstat -aon ^| findstr :3219 ^| findstr LISTENING') do (
+    echo  - Terminating process %%a
+    taskkill /F /PID %%a >nul 2>&1
+)
+for /f "tokens=5" %%a in ('netstat -aon ^| findstr :3001 ^| findstr LISTENING') do (
+    echo  - Terminating process %%a
+    taskkill /F /PID %%a >nul 2>&1
+)
+echo  [OK] Customer Portal stopped
+echo.
+
 REM Kill Node processes with specific titles
-echo [3/3] Cleaning up Node.js processes...
+echo [4/4] Cleaning up Node.js processes...
 taskkill /FI "WindowTitle eq AudiraNET Backend*" /F >nul 2>&1
 taskkill /FI "WindowTitle eq AudiraNET Frontend*" /F >nul 2>&1
+taskkill /FI "WindowTitle eq AudiraNET Customer Portal*" /F >nul 2>&1
 echo  [OK] Cleanup complete
 echo.
 

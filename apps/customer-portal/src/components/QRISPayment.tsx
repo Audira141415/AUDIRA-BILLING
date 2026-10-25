@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import QRCode from 'qrcode';
+import { API_BASE_URL } from '../config/api';
+import { RefreshCw, X, QrCode as QrIcon, CheckCircle2, AlertCircle } from 'lucide-react';
 
 interface QRISPaymentProps {
   invoiceId: string;
@@ -31,14 +33,13 @@ export const QRISPayment: React.FC<QRISPaymentProps> = ({
       setLoading(true);
       setError('');
 
-      const response = await axios.post('http://localhost:4000/billing/create-qris-payment', {
+      const response = await axios.post(`${API_BASE_URL}/billing/create-qris-payment`, {
         invoiceId,
       });
 
       if (response.data.success) {
         const { qrString, expiryTime: expiry, orderId: order } = response.data;
         
-        // Generate QR Code image from string
         const qrDataUrl = await QRCode.toDataURL(qrString, {
           width: 300,
           margin: 2,
@@ -48,13 +49,12 @@ export const QRISPayment: React.FC<QRISPaymentProps> = ({
         setExpiryTime(expiry);
         setOrderId(order);
         
-        // Start checking payment status
         startStatusCheck(order);
       } else {
-        setError(response.data.message || 'Failed to create QRIS payment');
+        setError(response.data.message || 'Gagal membuat QRIS pembayaran');
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to create QRIS payment');
+      setError(err.response?.data?.message || 'Gagal membuat QRIS pembayaran');
     } finally {
       setLoading(false);
     }
@@ -65,7 +65,7 @@ export const QRISPayment: React.FC<QRISPaymentProps> = ({
       try {
         setChecking(true);
         const response = await axios.get(
-          `http://localhost:4000/billing/payment-status/${order}`
+          `${API_BASE_URL}/billing/payment-status/${order}`
         );
 
         if (response.data.transaction_status === 'settlement') {
@@ -76,149 +76,118 @@ export const QRISPayment: React.FC<QRISPaymentProps> = ({
           response.data.transaction_status === 'expire'
         ) {
           clearInterval(interval);
-          setError('Payment expired or cancelled');
+          setError('Sesi pembayaran telah kedaluwarsa atau dibatalkan');
         }
       } catch (err) {
         // Continue checking
       } finally {
         setChecking(false);
       }
-    }, 5000); // Check every 5 seconds
+    }, 5000);
 
-    // Stop checking after 15 minutes
     setTimeout(() => clearInterval(interval), 15 * 60 * 1000);
   };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="flex flex-col items-center justify-center p-8 font-mono text-xs text-cyan-600 dark:text-cyan-400 gap-3">
+        <div className="w-10 h-10 border-3 border-cyan-400 border-t-transparent rounded-full animate-spin"></div>
+        <span>Menghasilkan Kode QRIS Pembayaran...</span>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-        <div className="flex items-center mb-4">
-          <svg className="w-6 h-6 text-red-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <h3 className="text-lg font-semibold text-red-800">Payment Error</h3>
+      <div className="bg-rose-50 dark:bg-rose-950/40 border-2 border-rose-500 rounded-2xl p-6 text-slate-900 dark:text-white font-mono text-xs max-w-md mx-auto">
+        <div className="flex items-center gap-2 mb-3 text-rose-600 dark:text-rose-400 font-bold">
+          <AlertCircle className="w-5 h-5" />
+          <h3 className="text-sm font-black uppercase">Kendala QRIS</h3>
         </div>
-        <p className="text-red-700 mb-4">{error}</p>
+        <p className="mb-4 text-slate-700 dark:text-gray-300">{error}</p>
         <button
           onClick={createQRISPayment}
-          className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition"
+          className="px-4 py-2 bg-rose-600 text-white rounded-xl font-bold uppercase hover:bg-rose-700 transition"
         >
-          Try Again
+          Coba Kembali
         </button>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6 max-w-md mx-auto">
+    <div className="bg-white dark:bg-[#0c1322] border-2 border-black dark:border-gray-800 rounded-2xl shadow-[4px_4px_0px_#000] p-6 max-w-md mx-auto text-slate-950 dark:text-white font-sans">
       {/* Header */}
-      <div className="text-center mb-6">
-        <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
-          <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
-          </svg>
+      <div className="text-center mb-5">
+        <div className="inline-flex items-center justify-center w-14 h-14 bg-cyan-400 text-black border-2 border-black rounded-xl mb-3 shadow-[2px_2px_0px_#000]">
+          <QrIcon className="w-7 h-7 stroke-[2.5]" />
         </div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">Scan QRIS Code</h2>
-        <p className="text-gray-600">Scan dengan aplikasi e-wallet Anda</p>
+        <h2 className="text-xl font-black uppercase tracking-tight text-slate-950 dark:text-white">
+          Scan QRIS Resmi
+        </h2>
+        <p className="text-xs text-slate-600 dark:text-gray-400 font-mono mt-0.5">
+          Scan dengan GoPay, OVO, Dana, BCA, atau aplikasi perbankan Anda
+        </p>
       </div>
 
-      {/* Amount */}
-      <div className="bg-blue-50 rounded-lg p-4 mb-6">
-        <p className="text-sm text-gray-600 text-center mb-1">Total Pembayaran</p>
-        <p className="text-3xl font-bold text-blue-600 text-center">
+      {/* Amount Display */}
+      <div className="bg-slate-50 dark:bg-[#070b14] border border-slate-200 dark:border-gray-800 rounded-xl p-4 mb-5 text-center font-mono">
+        <p className="text-[11px] text-slate-500 dark:text-gray-400 uppercase font-bold mb-0.5">
+          Total Tagihan Pembayaran
+        </p>
+        <p className="text-2xl sm:text-3xl font-black text-cyan-600 dark:text-cyan-400">
           Rp {amount.toLocaleString('id-ID')}
         </p>
       </div>
 
-      {/* QR Code */}
-      <div className="bg-white border-4 border-blue-500 rounded-lg p-4 mb-6">
+      {/* QR Code Frame */}
+      <div className="bg-white border-2 border-black dark:border-cyan-500/50 rounded-xl p-4 mb-5 flex items-center justify-center shadow-inner">
         {qrCodeUrl ? (
           <img
             src={qrCodeUrl}
             alt="QRIS QR Code"
-            className="w-full h-auto"
+            className="w-full max-w-[260px] h-auto rounded"
           />
         ) : (
-          <div className="w-full h-64 bg-gray-100 animate-pulse rounded"></div>
+          <div className="w-64 h-64 bg-slate-100 animate-pulse rounded flex items-center justify-center text-xs font-mono text-slate-400">
+            Memuat QR Code...
+          </div>
         )}
-      </div>
-
-      {/* Instructions */}
-      <div className="mb-6">
-        <h3 className="font-semibold text-gray-800 mb-3">Cara Pembayaran:</h3>
-        <ol className="space-y-2 text-sm text-gray-600">
-          <li className="flex items-start">
-            <span className="inline-flex items-center justify-center w-6 h-6 bg-blue-600 text-white rounded-full mr-2 flex-shrink-0">1</span>
-            <span>Buka aplikasi e-wallet (GoPay, OVO, DANA, ShopeePay, dll)</span>
-          </li>
-          <li className="flex items-start">
-            <span className="inline-flex items-center justify-center w-6 h-6 bg-blue-600 text-white rounded-full mr-2 flex-shrink-0">2</span>
-            <span>Pilih menu Scan QR atau QRIS</span>
-          </li>
-          <li className="flex items-start">
-            <span className="inline-flex items-center justify-center w-6 h-6 bg-blue-600 text-white rounded-full mr-2 flex-shrink-0">3</span>
-            <span>Scan QR Code di atas</span>
-          </li>
-          <li className="flex items-start">
-            <span className="inline-flex items-center justify-center w-6 h-6 bg-blue-600 text-white rounded-full mr-2 flex-shrink-0">4</span>
-            <span>Konfirmasi pembayaran di aplikasi Anda</span>
-          </li>
-        </ol>
       </div>
 
       {/* Status */}
       {checking && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
-          <div className="flex items-center">
-            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-yellow-600 mr-3"></div>
-            <p className="text-yellow-800 text-sm">Menunggu pembayaran...</p>
-          </div>
+        <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-800/50 rounded-xl p-3 mb-4 font-mono text-xs flex items-center gap-2 text-amber-900 dark:text-amber-300">
+          <div className="w-3.5 h-3.5 border-2 border-amber-500 border-t-transparent rounded-full animate-spin shrink-0"></div>
+          <span>Menunggu konfirmasi pelunasan dari jaringan QRIS...</span>
         </div>
       )}
 
       {/* Expiry */}
       {expiryTime && (
-        <div className="text-center text-sm text-gray-500 mb-4">
-          Berlaku sampai: {new Date(expiryTime).toLocaleString('id-ID')}
+        <div className="text-center font-mono text-[11px] text-slate-500 dark:text-gray-400 mb-4">
+          Batas Waktu: {new Date(expiryTime).toLocaleTimeString('id-ID')} WIB
         </div>
       )}
 
       {/* Actions */}
-      <div className="flex gap-3">
+      <div className="flex gap-2.5 font-mono text-xs font-bold">
         <button
           onClick={createQRISPayment}
-          className="flex-1 bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition"
+          className="flex-1 py-2.5 rounded-xl border border-black dark:border-gray-700 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition flex items-center justify-center gap-1.5"
         >
-          Refresh QR
+          <RefreshCw className="w-3.5 h-3.5" />
+          <span>Refresh QR</span>
         </button>
         {onCancel && (
           <button
             onClick={onCancel}
-            className="flex-1 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition"
+            className="flex-1 py-2.5 rounded-xl border border-black bg-rose-600 text-white hover:bg-rose-700 transition flex items-center justify-center gap-1.5"
           >
-            Cancel
+            <X className="w-3.5 h-3.5" />
+            <span>Tutup</span>
           </button>
         )}
-      </div>
-
-      {/* Supported Apps */}
-      <div className="mt-6 pt-6 border-t border-gray-200">
-        <p className="text-xs text-gray-500 text-center mb-3">Didukung oleh:</p>
-        <div className="flex justify-center items-center gap-4 flex-wrap">
-          <span className="text-xs bg-gray-100 px-3 py-1 rounded">GoPay</span>
-          <span className="text-xs bg-gray-100 px-3 py-1 rounded">OVO</span>
-          <span className="text-xs bg-gray-100 px-3 py-1 rounded">DANA</span>
-          <span className="text-xs bg-gray-100 px-3 py-1 rounded">ShopeePay</span>
-          <span className="text-xs bg-gray-100 px-3 py-1 rounded">LinkAja</span>
-        </div>
       </div>
     </div>
   );

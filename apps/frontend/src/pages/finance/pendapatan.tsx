@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
@@ -53,7 +54,7 @@ export default function PendapatanDashboard() {
   const [activeTab, setActiveTab] = useState('Transaksi Pendapatan');
 
   // Filter states
-  const [filterPeriod, setFilterPeriod] = useState('25/06/2026 - 01/07/2026');
+  const [filterPeriod, setFilterPeriod] = useState('25/06/2026 - 22/10/2026');
   const [filterStatus, setFilterStatus] = useState('Semua Status');
   const [filterSumber, setFilterSumber] = useState('Semua Sumber');
   const [filterMetode, setFilterMetode] = useState('Semua Metode');
@@ -64,9 +65,9 @@ export default function PendapatanDashboard() {
 
   // Transaction list (Mock matching the screenshot)
   const initialTransactions = [
-    { no: 1, tanggal: '01/07/2026 08:32', invoice: 'INV/2026/07/001245', pelanggan: 'Budi Santoso', sumber: 'Layanan Internet', metode: 'Transfer Bank', total: 550000, status: 'Lunas' },
-    { no: 2, tanggal: '01/07/2026 07:45', invoice: 'INV/2026/07/001244', pelanggan: 'Andi Pratama', sumber: 'Add-on IP Public', metode: 'E-Wallet', total: 150000, status: 'Lunas' },
-    { no: 3, tanggal: '01/07/2026 06:20', invoice: 'INV/2026/07/001243', pelanggan: 'Siti Aminah', sumber: 'Layanan Internet', metode: 'Transfer Bank', total: 350000, status: 'Lunas' },
+    { no: 1, tanggal: '22/10/2026 08:32', invoice: 'INV/2026/07/001245', pelanggan: 'Budi Santoso', sumber: 'Layanan Internet', metode: 'Transfer Bank', total: 550000, status: 'Lunas' },
+    { no: 2, tanggal: '22/10/2026 07:45', invoice: 'INV/2026/07/001244', pelanggan: 'Andi Pratama', sumber: 'Add-on IP Public', metode: 'E-Wallet', total: 150000, status: 'Lunas' },
+    { no: 3, tanggal: '22/10/2026 06:20', invoice: 'INV/2026/07/001243', pelanggan: 'Siti Aminah', sumber: 'Layanan Internet', metode: 'Transfer Bank', total: 350000, status: 'Lunas' },
     { no: 4, tanggal: '30/06/2026 22:15', invoice: 'INV/2026/07/002542', pelanggan: 'Desti Istiningrum', sumber: 'Paket Berlangganan', metode: 'Transfer Bank', total: 450000, status: 'Sebagian' },
     { no: 5, tanggal: '30/06/2026 19:30', invoice: 'INV/2026/06/002541', pelanggan: 'Rina Marlina', sumber: 'Gaji Bulan Juni 2026', metode: 'Transfer Bank', total: 8500000, status: 'Lunas' },
     { no: 6, tanggal: '30/06/2026 18:05', invoice: 'INV/2026/06/002540', pelanggan: 'CV. Maju Jaya', sumber: 'Sewa Perangkat', metode: 'Virtual Account', total: 2750000, status: 'Lunas' },
@@ -81,7 +82,7 @@ export default function PendapatanDashboard() {
   const [showAddModal, setShowAddModal] = useState(false);
 
   // New transaction form state
-  const [newDate, setNewDate] = useState('01/07/2026 10:00');
+  const [newDate, setNewDate] = useState('22/10/2026 10:00');
   const [newInvoice, setNewInvoice] = useState('INV/2026/07/001250');
   const [newPelanggan, setNewPelanggan] = useState('');
   const [newSumber, setNewSumber] = useState('Layanan Internet');
@@ -199,68 +200,25 @@ export default function PendapatanDashboard() {
 
   return (
     <Layout>
-      <div className="bg-[#050B14] text-gray-100 min-h-screen p-6 font-sans antialiased">
-        {/* Custom Header Area */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 pb-6 border-b border-blue-950">
-          <div className="flex items-center gap-4">
-            <div className="bg-[#091526] px-4 py-2 rounded-lg border border-blue-900/60 flex items-center gap-3">
-              <Calendar className="w-4 h-4 text-cyan-400" />
-              <div className="text-xs">
-                <p className="text-gray-400 font-semibold">01 Juli 2026</p>
-                <p className="text-cyan-400 text-[10px]">08.35 WIB</p>
-              </div>
-            </div>
-            <div className="bg-[#091526] px-4 py-2 rounded-lg border border-blue-900/60 flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              <div className="text-xs">
-                <p className="text-gray-400 font-semibold">Status Sistem</p>
-                <p className="text-emerald-400 text-[10px]">● Normal</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Search bar & profile */}
-          <div className="flex items-center gap-4 w-full md:w-auto">
-            <div className="relative w-full md:w-64">
-              <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Cari invoice, customer, transaksi..."
-                className="w-full pl-9 pr-4 py-2 rounded-lg bg-[#091526] border border-blue-900/60 text-xs focus:outline-none focus:border-cyan-500 placeholder-gray-500 text-gray-200"
-              />
-            </div>
-            <div className="flex items-center gap-2.5">
-              <button className="p-2 rounded-lg bg-[#091526] border border-blue-900/40 hover:border-cyan-500/50 relative">
-                <Bell className="w-4 h-4 text-gray-300" />
-                <span className="absolute -top-1 -right-1 w-4.5 h-4.5 bg-red-500 rounded-full text-[9px] font-bold flex items-center justify-center text-white px-1">12</span>
-              </button>
-              <button className="p-2 rounded-lg bg-[#091526] border border-blue-900/40 hover:border-cyan-500/50 relative">
-                <Mail className="w-4 h-4 text-gray-300" />
-                <span className="absolute -top-1 -right-1 w-4.5 h-4.5 bg-red-500 rounded-full text-[9px] font-bold flex items-center justify-center text-white px-1">6</span>
-              </button>
-              <button className="p-2 rounded-lg bg-[#091526] border border-blue-900/40 hover:border-cyan-500/50">
-                <Settings className="w-4 h-4 text-gray-300" />
-              </button>
-            </div>
-            <div className="flex items-center gap-3 pl-3 border-l border-blue-950">
-              <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center font-bold text-xs text-white">AD</div>
-              <div className="text-left hidden lg:block">
-                <p className="text-xs font-semibold text-gray-200">Agus Dwi Rianto</p>
-                <p className="text-[10px] text-gray-400">Super Admin</p>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className="bg-[var(--app-bg)] text-[var(--app-text)] min-h-screen p-6 font-sans antialiased">
+        
 
         {/* Dashboard Title & Top Bar */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 border-b border-[var(--app-border)] pb-5">
           <div>
+            <div className="flex items-center gap-2 text-xs text-[var(--app-muted)] font-mono mb-1.5">
+              <Link href="/" className="hover:text-[var(--app-text)]">AUDIRA</Link>
+              <span>/</span>
+              <Link href="/finance/dashboard" className="hover:text-[var(--app-text)]">Keuangan & Akuntansi</Link>
+              <span>/</span>
+              <span className="text-emerald-500 font-semibold">Pendapatan</span>
+            </div>
             <h1 className="text-2xl font-bold tracking-tight text-white">Pendapatan</h1>
-            <p className="text-xs text-gray-400 mt-1">Kelola semua sumber pendapatan dan analisis performa pendapatan.</p>
+            <p className="text-xs text-[var(--app-muted)] mt-1">Kelola semua sumber pendapatan dan analisis performa pendapatan.</p>
           </div>
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#091526] border border-blue-900/40 text-xs">
-              <span className="text-gray-400 font-medium">25 Juni 2026 - 01 Juli 2026</span>
+            <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--app-card)] border border-[var(--app-border)] text-xs">
+              <span className="text-[var(--app-muted)] font-medium">25 Juni 2026 - 22 Oktober 2026</span>
             </div>
             <button className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white transition-colors">
               <Filter className="w-3.5 h-3.5" />
@@ -268,11 +226,11 @@ export default function PendapatanDashboard() {
             </button>
             <button 
               onClick={handleExport}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white border border-blue-900/40 transition-colors"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white border border-[var(--app-border)] transition-colors"
             >
               <Download className="w-3.5 h-3.5" />
               <span>Ekspor</span>
-              <ChevronDown className="w-3 h-3 text-gray-400" />
+              <ChevronDown className="w-3 h-3 text-[var(--app-muted)]" />
             </button>
           </div>
         </div>
@@ -280,10 +238,10 @@ export default function PendapatanDashboard() {
         {/* Top Metric Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
           {/* Total Pendapatan */}
-          <div className="bg-[#0A1629]/70 border border-blue-900/40 rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start">
               <div>
-                <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Total Pendapatan</p>
+                <p className="text-[11px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Total Pendapatan</p>
                 <h3 className="text-lg font-bold text-white mt-1">Rp 125.860.500</h3>
               </div>
               <div className="p-2 rounded-lg bg-blue-600/10 border border-blue-600/20 text-blue-400">
@@ -306,10 +264,10 @@ export default function PendapatanDashboard() {
           </div>
 
           {/* Pendapatan Diterima */}
-          <div className="bg-[#0A1629]/70 border border-blue-900/40 rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start">
               <div>
-                <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Pendapatan Diterima</p>
+                <p className="text-[11px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Pendapatan Diterima</p>
                 <h3 className="text-lg font-bold text-white mt-1">Rp 118.450.000</h3>
               </div>
               <div className="p-2 rounded-lg bg-emerald-600/10 border border-emerald-600/20 text-emerald-400">
@@ -332,10 +290,10 @@ export default function PendapatanDashboard() {
           </div>
 
           {/* Pendapatan Belum Diterima */}
-          <div className="bg-[#0A1629]/70 border border-blue-900/40 rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start">
               <div>
-                <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Pendapatan Belum Diterima</p>
+                <p className="text-[11px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Pendapatan Belum Diterima</p>
                 <h3 className="text-lg font-bold text-white mt-1">Rp 7.410.500</h3>
               </div>
               <div className="p-2 rounded-lg bg-amber-600/10 border border-amber-600/20 text-amber-400">
@@ -358,10 +316,10 @@ export default function PendapatanDashboard() {
           </div>
 
           {/* Rata-rata per Hari */}
-          <div className="bg-[#0A1629]/70 border border-blue-900/40 rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start">
               <div>
-                <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Rata-rata per Hari</p>
+                <p className="text-[11px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Rata-rata per Hari</p>
                 <h3 className="text-lg font-bold text-white mt-1">Rp 4.476.446</h3>
               </div>
               <div className="p-2 rounded-lg bg-purple-600/10 border border-purple-600/20 text-purple-400">
@@ -384,10 +342,10 @@ export default function PendapatanDashboard() {
           </div>
 
           {/* Transaksi Berhasil */}
-          <div className="bg-[#0A1629]/70 border border-blue-900/40 rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start">
               <div>
-                <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Transaksi Berhasil</p>
+                <p className="text-[11px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Transaksi Berhasil</p>
                 <h3 className="text-lg font-bold text-white mt-1">1.248</h3>
               </div>
               <div className="p-2 rounded-lg bg-cyan-600/10 border border-cyan-600/20 text-cyan-400">
@@ -411,7 +369,7 @@ export default function PendapatanDashboard() {
         </div>
 
         {/* Tab Selection */}
-        <div className="flex border-b border-blue-950/80 mb-6 gap-2 overflow-x-auto pb-1">
+        <div className="flex border-b border-[var(--app-border)]/80 mb-6 gap-2 overflow-x-auto pb-1">
           {['Ringkasan', 'Sumber Pendapatan', 'Transaksi Pendapatan', 'Pelanggan', 'Produk/Package', 'Metode Pembayaran', 'Tren Pendapatan'].map((tab) => (
             <button
               key={tab}
@@ -419,7 +377,7 @@ export default function PendapatanDashboard() {
               className={`px-4 py-2 text-xs font-semibold whitespace-nowrap transition-all duration-200 border-b-2 -mb-[2px] ${
                 activeTab === tab 
                   ? 'border-blue-500 text-blue-400 font-bold' 
-                  : 'border-transparent text-gray-400 hover:text-gray-200'
+                  : 'border-transparent text-[var(--app-muted)] hover:text-[var(--app-text)]'
               }`}
             >
               {tab}
@@ -432,12 +390,12 @@ export default function PendapatanDashboard() {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-6">
             {/* Filter Sidebar (1/4 column) */}
             <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4 space-y-4">
-              <h3 className="text-xs font-bold text-gray-200 tracking-wide uppercase border-b border-blue-950/60 pb-2">Filter Transaksi</h3>
+              <h3 className="text-xs font-bold text-[var(--app-text)] tracking-wide uppercase border-b border-[var(--app-border)]/60 pb-2">Filter Transaksi</h3>
 
               <div className="space-y-3.5 text-xs">
                 {/* Periode */}
                 <div className="space-y-1">
-                  <label className="text-[10px] text-gray-400 font-semibold uppercase">Periode</label>
+                  <label className="text-[10px] text-[var(--app-muted)] font-semibold uppercase">Periode</label>
                   <div className="relative">
                     <input 
                       type="text" 
@@ -450,7 +408,7 @@ export default function PendapatanDashboard() {
 
                 {/* Status */}
                 <div className="space-y-1">
-                  <label className="text-[10px] text-gray-400 font-semibold uppercase">Status</label>
+                  <label className="text-[10px] text-[var(--app-muted)] font-semibold uppercase">Status</label>
                   <select 
                     value={filterStatus}
                     onChange={(e) => setFilterStatus(e.target.value)}
@@ -466,7 +424,7 @@ export default function PendapatanDashboard() {
 
                 {/* Sumber Pendapatan */}
                 <div className="space-y-1">
-                  <label className="text-[10px] text-gray-400 font-semibold uppercase">Sumber Pendapatan</label>
+                  <label className="text-[10px] text-[var(--app-muted)] font-semibold uppercase">Sumber Pendapatan</label>
                   <select 
                     value={filterSumber}
                     onChange={(e) => setFilterSumber(e.target.value)}
@@ -484,7 +442,7 @@ export default function PendapatanDashboard() {
 
                 {/* Metode Pembayaran */}
                 <div className="space-y-1">
-                  <label className="text-[10px] text-gray-400 font-semibold uppercase">Metode Pembayaran</label>
+                  <label className="text-[10px] text-[var(--app-muted)] font-semibold uppercase">Metode Pembayaran</label>
                   <select 
                     value={filterMetode}
                     onChange={(e) => setFilterMetode(e.target.value)}
@@ -501,7 +459,7 @@ export default function PendapatanDashboard() {
 
                 {/* Pelanggan */}
                 <div className="space-y-1">
-                  <label className="text-[10px] text-gray-400 font-semibold uppercase">Pelanggan</label>
+                  <label className="text-[10px] text-[var(--app-muted)] font-semibold uppercase">Pelanggan</label>
                   <select 
                     value={filterPelanggan}
                     onChange={(e) => setFilterPelanggan(e.target.value)}
@@ -513,7 +471,7 @@ export default function PendapatanDashboard() {
 
                 {/* Package / Produk */}
                 <div className="space-y-1">
-                  <label className="text-[10px] text-gray-400 font-semibold uppercase">Package / Produk</label>
+                  <label className="text-[10px] text-[var(--app-muted)] font-semibold uppercase">Package / Produk</label>
                   <select 
                     value={filterProduk}
                     onChange={(e) => setFilterProduk(e.target.value)}
@@ -526,7 +484,7 @@ export default function PendapatanDashboard() {
                 {/* Minimal/Maksimal Nominal */}
                 <div className="grid grid-cols-2 gap-2">
                   <div className="space-y-1">
-                    <label className="text-[10px] text-gray-400 font-semibold uppercase">Min Nominal</label>
+                    <label className="text-[10px] text-[var(--app-muted)] font-semibold uppercase">Min Nominal</label>
                     <input 
                       type="text" 
                       placeholder="Rp 0" 
@@ -536,7 +494,7 @@ export default function PendapatanDashboard() {
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] text-gray-400 font-semibold uppercase">Max Nominal</label>
+                    <label className="text-[10px] text-[var(--app-muted)] font-semibold uppercase">Max Nominal</label>
                     <input 
                       type="text" 
                       placeholder="Rp 0" 
@@ -548,7 +506,7 @@ export default function PendapatanDashboard() {
                 </div>
 
                 {/* Buttons */}
-                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-blue-950/40">
+                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[var(--app-border)]/40">
                   <button 
                     onClick={applyFilters}
                     className="w-full py-2 bg-blue-600 hover:bg-blue-500 rounded text-xs font-semibold text-white transition-colors"
@@ -557,7 +515,7 @@ export default function PendapatanDashboard() {
                   </button>
                   <button 
                     onClick={resetFilters}
-                    className="w-full py-2 bg-blue-950 hover:bg-blue-900 rounded text-xs font-semibold text-gray-300 hover:text-white transition-colors border border-blue-900/30"
+                    className="w-full py-2 bg-blue-950 hover:bg-blue-900 rounded text-xs font-semibold text-[var(--app-text)]/90 hover:text-white transition-colors border border-blue-900/30"
                   >
                     Reset Filter
                   </button>
@@ -565,35 +523,35 @@ export default function PendapatanDashboard() {
               </div>
 
               {/* Status Breakdown Checklist */}
-              <div className="pt-3.5 border-t border-blue-950/40 space-y-2">
-                <div className="flex justify-between items-center text-[10px] text-gray-400 font-semibold uppercase">
+              <div className="pt-3.5 border-t border-[var(--app-border)]/40 space-y-2">
+                <div className="flex justify-between items-center text-[10px] text-[var(--app-muted)] font-semibold uppercase">
                   <span>Status</span>
                   <span>1.248</span>
                 </div>
                 <div className="space-y-1.5 text-xs">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-300 flex items-center gap-1.5">
+                    <span className="text-[var(--app-text)]/90 flex items-center gap-1.5">
                       <span className="w-2 h-2 rounded bg-emerald-500"></span> Lunas
                     </span>
-                    <span className="font-semibold text-white">1.048 <span className="text-[10px] font-normal text-gray-400">(84.1%)</span></span>
+                    <span className="font-semibold text-white">1.048 <span className="text-[10px] font-normal text-[var(--app-muted)]">(84.1%)</span></span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-300 flex items-center gap-1.5">
+                    <span className="text-[var(--app-text)]/90 flex items-center gap-1.5">
                       <span className="w-2 h-2 rounded bg-amber-500"></span> Sebagian
                     </span>
-                    <span className="font-semibold text-white">86 <span className="text-[10px] font-normal text-gray-400">(6.9%)</span></span>
+                    <span className="font-semibold text-white">86 <span className="text-[10px] font-normal text-[var(--app-muted)]">(6.9%)</span></span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-300 flex items-center gap-1.5">
+                    <span className="text-[var(--app-text)]/90 flex items-center gap-1.5">
                       <span className="w-2 h-2 rounded bg-orange-500"></span> Belum Lunas
                     </span>
-                    <span className="font-semibold text-white">72 <span className="text-[10px] font-normal text-gray-400">(5.8%)</span></span>
+                    <span className="font-semibold text-white">72 <span className="text-[10px] font-normal text-[var(--app-muted)]">(5.8%)</span></span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-300 flex items-center gap-1.5">
+                    <span className="text-[var(--app-text)]/90 flex items-center gap-1.5">
                       <span className="w-2 h-2 rounded bg-red-600"></span> Gagal
                     </span>
-                    <span className="font-semibold text-white">42 <span className="text-[10px] font-normal text-gray-400">(3.2%)</span></span>
+                    <span className="font-semibold text-white">42 <span className="text-[10px] font-normal text-[var(--app-muted)]">(3.2%)</span></span>
                   </div>
                 </div>
               </div>
@@ -602,7 +560,7 @@ export default function PendapatanDashboard() {
             {/* Table (3/4 column) */}
             <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4 lg:col-span-3 space-y-4">
               <div className="flex justify-between items-center gap-4">
-                <h3 className="text-xs font-bold text-gray-200 tracking-wide uppercase">Transaksi Pendapatan</h3>
+                <h3 className="text-xs font-bold text-[var(--app-text)] tracking-wide uppercase">Transaksi Pendapatan</h3>
                 <button 
                   onClick={() => setShowAddModal(true)}
                   className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white rounded-lg transition-colors"
@@ -615,7 +573,7 @@ export default function PendapatanDashboard() {
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs border-collapse">
                   <thead>
-                    <tr className="border-b border-blue-950 text-gray-400">
+                    <tr className="border-b border-[var(--app-border)] text-[var(--app-muted)]">
                       <th className="py-2.5 font-medium">NO</th>
                       <th className="py-2.5 font-medium">TANGGAL</th>
                       <th className="py-2.5 font-medium">NO. INVOICE</th>
@@ -627,15 +585,15 @@ export default function PendapatanDashboard() {
                       <th className="py-2.5 font-medium text-center">AKSI</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-blue-950/40 text-gray-300">
+                  <tbody className="divide-y divide-blue-950/40 text-[var(--app-text)]/90">
                     {filteredTransactions.map((tx, idx) => (
                       <tr key={idx} className="hover:bg-blue-950/20">
-                        <td className="py-3 text-gray-400">{tx.no}</td>
-                        <td className="py-3 text-gray-400 whitespace-nowrap">{tx.tanggal}</td>
+                        <td className="py-3 text-[var(--app-muted)]">{tx.no}</td>
+                        <td className="py-3 text-[var(--app-muted)] whitespace-nowrap">{tx.tanggal}</td>
                         <td className="py-3 font-semibold text-cyan-400 whitespace-nowrap">{tx.invoice}</td>
                         <td className="py-3 font-medium text-white">{tx.pelanggan}</td>
-                        <td className="py-3 text-gray-400">{tx.sumber}</td>
-                        <td className="py-3 text-gray-300">{tx.metode}</td>
+                        <td className="py-3 text-[var(--app-muted)]">{tx.sumber}</td>
+                        <td className="py-3 text-[var(--app-text)]/90">{tx.metode}</td>
                         <td className="py-3 text-right font-bold text-white whitespace-nowrap">{formatRupiah(tx.total)}</td>
                         <td className="py-3 text-center">
                           <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-semibold ${
@@ -649,7 +607,7 @@ export default function PendapatanDashboard() {
                         </td>
                         <td className="py-3 text-center">
                           <div className="flex items-center justify-center gap-1.5">
-                            <button className="p-1 text-gray-400 hover:text-cyan-400">
+                            <button className="p-1 text-[var(--app-muted)] hover:text-cyan-400">
                               <Eye className="w-3.5 h-3.5" />
                             </button>
                             <button 
@@ -660,7 +618,7 @@ export default function PendapatanDashboard() {
                                   setFilteredTransactions(updated);
                                 }
                               }}
-                              className="p-1 text-gray-400 hover:text-rose-500"
+                              className="p-1 text-[var(--app-muted)] hover:text-rose-500"
                             >
                               <Trash className="w-3.5 h-3.5" />
                             </button>
@@ -673,21 +631,21 @@ export default function PendapatanDashboard() {
               </div>
 
               {/* Pagination */}
-              <div className="flex justify-between items-center pt-4 border-t border-blue-950/40 text-xs text-gray-400">
+              <div className="flex justify-between items-center pt-4 border-t border-[var(--app-border)]/40 text-xs text-[var(--app-muted)]">
                 <span>Menampilkan 1 - 10 dari 1.248 transaksi</span>
                 <div className="flex items-center gap-1">
-                  <button className="px-2 py-1 rounded bg-[#091526] border border-blue-900/40 text-gray-300 font-semibold hover:border-cyan-500">&lt;</button>
-                  <button className="px-2.5 py-1 rounded bg-blue-600 text-white font-bold">1</button>
-                  <button className="px-2.5 py-1 rounded bg-[#091526] border border-blue-900/40 text-gray-300 font-semibold hover:border-cyan-500">2</button>
-                  <button className="px-2.5 py-1 rounded bg-[#091526] border border-blue-900/40 text-gray-300 font-semibold hover:border-cyan-500">3</button>
-                  <button className="px-2.5 py-1 rounded bg-[#091526] border border-blue-900/40 text-gray-300 font-semibold hover:border-cyan-500">4</button>
-                  <button className="px-2.5 py-1 rounded bg-[#091526] border border-blue-900/40 text-gray-300 font-semibold hover:border-cyan-500">5</button>
+                  <button className="px-2 py-1 rounded bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)]/90 font-semibold hover:border-cyan-500">&lt;</button>
+                  <button className="px-2.5 py-1 rounded bg-blue-600 text-[var(--app-text)] font-bold">1</button>
+                  <button className="px-2.5 py-1 rounded bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)]/90 font-semibold hover:border-cyan-500">2</button>
+                  <button className="px-2.5 py-1 rounded bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)]/90 font-semibold hover:border-cyan-500">3</button>
+                  <button className="px-2.5 py-1 rounded bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)]/90 font-semibold hover:border-cyan-500">4</button>
+                  <button className="px-2.5 py-1 rounded bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)]/90 font-semibold hover:border-cyan-500">5</button>
                   <span>...</span>
-                  <button className="px-2.5 py-1 rounded bg-[#091526] border border-blue-900/40 text-gray-300 font-semibold hover:border-cyan-500">125</button>
-                  <button className="px-2 py-1 rounded bg-[#091526] border border-blue-900/40 text-gray-300 font-semibold hover:border-cyan-500">&gt;</button>
+                  <button className="px-2.5 py-1 rounded bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)]/90 font-semibold hover:border-cyan-500">125</button>
+                  <button className="px-2 py-1 rounded bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)]/90 font-semibold hover:border-cyan-500">&gt;</button>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <select className="bg-[#081225] border border-blue-900/40 rounded p-1 text-[11px] text-white">
+                  <select className="bg-[#081225] border border-[var(--app-border)] rounded p-1 text-[11px] text-white">
                     <option>10 / halaman</option>
                     <option>25 / halaman</option>
                     <option>50 / halaman</option>
@@ -703,8 +661,8 @@ export default function PendapatanDashboard() {
           {/* Tren Pendapatan Harian */}
           <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4">
             <div className="flex justify-between items-center mb-4">
-              <h4 className="text-xs font-bold text-gray-200 tracking-wide uppercase">Tren Pendapatan Harian</h4>
-              <span className="text-[10px] text-gray-400 bg-blue-950/60 px-2 py-0.5 rounded border border-blue-900/30">7 Hari Terakhir</span>
+              <h4 className="text-xs font-bold text-[var(--app-text)] tracking-wide uppercase">Tren Pendapatan Harian</h4>
+              <span className="text-[10px] text-[var(--app-muted)] bg-blue-950/60 px-2 py-0.5 rounded border border-blue-900/30">7 Hari Terakhir</span>
             </div>
             <div className="h-52">
               <ResponsiveContainer width="100%" height="100%">
@@ -720,7 +678,7 @@ export default function PendapatanDashboard() {
 
           {/* Pendapatan per Metode Pembayaran */}
           <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4 flex flex-col justify-between">
-            <h4 className="text-xs font-bold text-gray-200 tracking-wide uppercase mb-3">Pendapatan per Metode Pembayaran</h4>
+            <h4 className="text-xs font-bold text-[var(--app-text)] tracking-wide uppercase mb-3">Pendapatan per Metode Pembayaran</h4>
             <div className="flex items-center gap-4">
               <div className="relative w-28 h-28 flex-shrink-0">
                 <ResponsiveContainer width="100%" height="100%">
@@ -741,7 +699,7 @@ export default function PendapatanDashboard() {
                   </PieChart>
                 </ResponsiveContainer>
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                  <p className="text-[8px] text-gray-400 font-semibold uppercase">Total</p>
+                  <p className="text-[8px] text-[var(--app-muted)] font-semibold uppercase">Total</p>
                   <p className="text-[9px] font-bold text-white">125.8M</p>
                 </div>
               </div>
@@ -751,11 +709,11 @@ export default function PendapatanDashboard() {
                   <div key={index} className="flex justify-between items-center">
                     <div className="flex items-center gap-1.5">
                       <span className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS_METODE[index] }}></span>
-                      <span className="text-gray-300 max-w-[80px] truncate">{e.name}</span>
+                      <span className="text-[var(--app-text)]/90 max-w-[80px] truncate">{e.name}</span>
                     </div>
                     <div className="text-right">
-                      <span className="text-white font-semibold block">{formatRupiah(e.value)}</span>
-                      <span className="text-[9px] text-gray-400">{e.percent}</span>
+                      <span className="text-[var(--app-text)] font-semibold block">{formatRupiah(e.value)}</span>
+                      <span className="text-[9px] text-[var(--app-muted)]">{e.percent}</span>
                     </div>
                   </div>
                 ))}
@@ -765,7 +723,7 @@ export default function PendapatanDashboard() {
 
           {/* Pendapatan per Sumber */}
           <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4 flex flex-col justify-between">
-            <h4 className="text-xs font-bold text-gray-200 tracking-wide uppercase mb-3">Pendapatan per Sumber</h4>
+            <h4 className="text-xs font-bold text-[var(--app-text)] tracking-wide uppercase mb-3">Pendapatan per Sumber</h4>
             <div className="flex items-center gap-4">
               <div className="relative w-28 h-28 flex-shrink-0">
                 <ResponsiveContainer width="100%" height="100%">
@@ -786,7 +744,7 @@ export default function PendapatanDashboard() {
                   </PieChart>
                 </ResponsiveContainer>
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                  <p className="text-[8px] text-gray-400 font-semibold uppercase">Total</p>
+                  <p className="text-[8px] text-[var(--app-muted)] font-semibold uppercase">Total</p>
                   <p className="text-[9px] font-bold text-white">125.8M</p>
                 </div>
               </div>
@@ -796,11 +754,11 @@ export default function PendapatanDashboard() {
                   <div key={index} className="flex justify-between items-center">
                     <div className="flex items-center gap-1.5">
                       <span className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS_SUMBER[index] }}></span>
-                      <span className="text-gray-300 max-w-[90px] truncate">{e.name}</span>
+                      <span className="text-[var(--app-text)]/90 max-w-[90px] truncate">{e.name}</span>
                     </div>
                     <div className="text-right">
-                      <span className="text-white font-semibold block">{formatRupiah(e.value)}</span>
-                      <span className="text-[9px] text-gray-400">{e.percent}</span>
+                      <span className="text-[var(--app-text)] font-semibold block">{formatRupiah(e.value)}</span>
+                      <span className="text-[9px] text-[var(--app-muted)]">{e.percent}</span>
                     </div>
                   </div>
                 ))}
@@ -813,48 +771,48 @@ export default function PendapatanDashboard() {
         {showAddModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
             <form onSubmit={handleAddTransaction} className="bg-[#0A1629] border border-blue-900 rounded-xl max-w-md w-full p-6 space-y-4 shadow-2xl">
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider border-b border-blue-950 pb-2">Tambah Pendapatan Baru</h3>
+              <h3 className="text-sm font-bold text-white uppercase tracking-wider border-b border-[var(--app-border)] pb-2">Tambah Pendapatan Baru</h3>
 
               <div className="grid grid-cols-2 gap-3 text-xs">
                 <div className="space-y-1">
-                  <label className="text-gray-400">Tanggal & Waktu</label>
+                  <label className="text-[var(--app-muted)]">Tanggal & Waktu</label>
                   <input 
                     type="text" 
                     value={newDate} 
                     onChange={(e) => setNewDate(e.target.value)}
-                    className="w-full bg-[#081225] border border-blue-900/60 p-2 rounded text-white" 
+                    className="w-full bg-[#081225] border border-[var(--app-border)] p-2 rounded text-white" 
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-gray-400">No. Invoice</label>
+                  <label className="text-[var(--app-muted)]">No. Invoice</label>
                   <input 
                     type="text" 
                     value={newInvoice} 
                     onChange={(e) => setNewInvoice(e.target.value)}
-                    className="w-full bg-[#081225] border border-blue-900/60 p-2 rounded text-white" 
+                    className="w-full bg-[#081225] border border-[var(--app-border)] p-2 rounded text-white" 
                   />
                 </div>
               </div>
 
               <div className="space-y-1 text-xs">
-                <label className="text-gray-400">Pelanggan</label>
+                <label className="text-[var(--app-muted)]">Pelanggan</label>
                 <input 
                   type="text" 
                   required
                   placeholder="Nama pelanggan..."
                   value={newPelanggan} 
                   onChange={(e) => setNewPelanggan(e.target.value)}
-                  className="w-full bg-[#081225] border border-blue-900/60 p-2 rounded text-white" 
+                  className="w-full bg-[#081225] border border-[var(--app-border)] p-2 rounded text-white" 
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3 text-xs">
                 <div className="space-y-1">
-                  <label className="text-gray-400">Sumber Pendapatan</label>
+                  <label className="text-[var(--app-muted)]">Sumber Pendapatan</label>
                   <select 
                     value={newSumber} 
                     onChange={(e) => setNewSumber(e.target.value)}
-                    className="w-full bg-[#081225] border border-blue-900/60 p-2 rounded text-white"
+                    className="w-full bg-[#081225] border border-[var(--app-border)] p-2 rounded text-white"
                   >
                     <option>Layanan Internet</option>
                     <option>Add-on IP Public</option>
@@ -865,11 +823,11 @@ export default function PendapatanDashboard() {
                   </select>
                 </div>
                 <div className="space-y-1">
-                  <label className="text-gray-400">Metode Pembayaran</label>
+                  <label className="text-[var(--app-muted)]">Metode Pembayaran</label>
                   <select 
                     value={newMetode} 
                     onChange={(e) => setNewMetode(e.target.value)}
-                    className="w-full bg-[#081225] border border-blue-900/60 p-2 rounded text-white"
+                    className="w-full bg-[#081225] border border-[var(--app-border)] p-2 rounded text-white"
                   >
                     <option>Transfer Bank</option>
                     <option>E-Wallet</option>
@@ -882,22 +840,22 @@ export default function PendapatanDashboard() {
 
               <div className="grid grid-cols-2 gap-3 text-xs">
                 <div className="space-y-1">
-                  <label className="text-gray-400">Total Nominal (Rp)</label>
+                  <label className="text-[var(--app-muted)]">Total Nominal (Rp)</label>
                   <input 
                     type="number" 
                     required
                     placeholder="Contoh: 550000"
                     value={newTotal} 
                     onChange={(e) => setNewTotal(e.target.value)}
-                    className="w-full bg-[#081225] border border-blue-900/60 p-2 rounded text-white" 
+                    className="w-full bg-[#081225] border border-[var(--app-border)] p-2 rounded text-white" 
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-gray-400">Status</label>
+                  <label className="text-[var(--app-muted)]">Status</label>
                   <select 
                     value={newStatus} 
                     onChange={(e) => setNewStatus(e.target.value)}
-                    className="w-full bg-[#081225] border border-blue-900/60 p-2 rounded text-white"
+                    className="w-full bg-[#081225] border border-[var(--app-border)] p-2 rounded text-white"
                   >
                     <option>Lunas</option>
                     <option>Sebagian</option>
@@ -907,11 +865,11 @@ export default function PendapatanDashboard() {
                 </div>
               </div>
 
-              <div className="flex justify-end gap-2 pt-2 border-t border-blue-950">
+              <div className="flex justify-end gap-2 pt-2 border-t border-[var(--app-border)]">
                 <button 
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 rounded bg-blue-950 hover:bg-blue-900 text-xs font-semibold text-gray-300"
+                  className="px-4 py-2 rounded bg-blue-950 hover:bg-blue-900 text-xs font-semibold text-[var(--app-text)]/90"
                 >
                   Batal
                 </button>

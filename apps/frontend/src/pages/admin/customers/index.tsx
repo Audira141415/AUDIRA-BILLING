@@ -46,7 +46,7 @@ interface CustomerFormData {
   packageId: string;
 }
 
-const API_BASE_URL = 'http://localhost:1993/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3218';
 
 export default function AdminCustomersPage() {
   const router = useRouter();
@@ -413,23 +413,23 @@ export default function AdminCustomersPage() {
         {statistics && (
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
             <div className="bg-white rounded-lg shadow p-6">
-              <div className="text-sm font-medium text-gray-500">Total Customers</div>
+              <div className="text-sm font-medium text-slate-400">Total Customers</div>
               <div className="mt-2 text-3xl font-semibold text-gray-900">{statistics.total}</div>
             </div>
             <div className="bg-white rounded-lg shadow p-6">
-              <div className="text-sm font-medium text-gray-500">Active</div>
+              <div className="text-sm font-medium text-slate-400">Active</div>
               <div className="mt-2 text-3xl font-semibold text-green-600">{statistics.active}</div>
             </div>
             <div className="bg-white rounded-lg shadow p-6">
-              <div className="text-sm font-medium text-gray-500">Inactive</div>
+              <div className="text-sm font-medium text-slate-400">Inactive</div>
               <div className="mt-2 text-3xl font-semibold text-gray-600">{statistics.inactive}</div>
             </div>
             <div className="bg-white rounded-lg shadow p-6">
-              <div className="text-sm font-medium text-gray-500">Suspended</div>
+              <div className="text-sm font-medium text-slate-400">Suspended</div>
               <div className="mt-2 text-3xl font-semibold text-red-600">{statistics.suspended}</div>
             </div>
             <div className="bg-white rounded-lg shadow p-6">
-              <div className="text-sm font-medium text-gray-500">New (30 days)</div>
+              <div className="text-sm font-medium text-slate-400">New (30 days)</div>
               <div className="mt-2 text-3xl font-semibold text-blue-600">{statistics.newCustomers}</div>
             </div>
           </div>
@@ -489,25 +489,25 @@ export default function AdminCustomersPage() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onClick={() => handleSort('name')}>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onClick={() => handleSort('name')}>
                     Name {sortBy === 'name' && (sortOrder === 'asc' ? '↑' : '↓')}
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onClick={() => handleSort('email')}>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onClick={() => handleSort('email')}>
                     Email {sortBy === 'email' && (sortOrder === 'asc' ? '↑' : '↓')}
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
                     Phone
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
                     Internet No.
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
                     Package
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
@@ -515,13 +515,13 @@ export default function AdminCustomersPage() {
               <tbody className="bg-white divide-y divide-gray-200">
                 {loading ? (
                   <tr>
-                    <td colSpan={7} className="px-6 py-4 text-center text-gray-500">
+                    <td colSpan={7} className="px-6 py-4 text-center text-slate-400">
                       Loading...
                     </td>
                   </tr>
                 ) : customers.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-6 py-4 text-center text-gray-500">
+                    <td colSpan={7} className="px-6 py-4 text-center text-slate-400">
                       No customers found
                     </td>
                   </tr>
@@ -545,10 +545,10 @@ export default function AdminCustomersPage() {
                           {customer.currentPackage ? (
                             <div>
                               <div className="font-medium">{customer.currentPackage.name}</div>
-                              <div className="text-xs text-gray-500">{customer.currentPackage.speed}</div>
+                              <div className="text-xs text-slate-400">{customer.currentPackage.speed}</div>
                             </div>
                           ) : (
-                            <span className="text-gray-400">No package</span>
+                            <span className="text-slate-500">No package</span>
                           )}
                         </div>
                       </td>
@@ -898,7 +898,7 @@ export default function AdminCustomersPage() {
               <p className="text-gray-700 mb-4">
                 Are you sure you want to delete customer <strong>{selectedCustomer.name}</strong>?
               </p>
-              <p className="text-sm text-gray-500 mb-6">
+              <p className="text-sm text-slate-400 mb-6">
                 This will soft delete the customer by setting their status to 'deleted'. This action can be reversed.
               </p>
               <div className="flex justify-end gap-2">

@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:1993';
+const API_BASE_URL = process.env.API_URL || 'http://localhost:3218';
 
 async function testServiceManagement() {
   console.log('='.repeat(80));
@@ -25,7 +25,7 @@ async function testServiceManagement() {
     }
 
     const loginData = await loginResponse.json();
-    token = loginData.token;
+    token = loginData.access_token || loginData.token;
     console.log('✅ Login successful');
     console.log(`   Token: ${token.substring(0, 20)}...`);
     console.log('');

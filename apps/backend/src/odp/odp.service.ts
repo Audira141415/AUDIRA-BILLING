@@ -88,33 +88,145 @@ export class OdpService {
     });
   }
 
+  /**
+   * Ambil status fisik port 1..N dari ODP
+   * Menginisialisasi port secara otomatis jika belum dibuat di database
+   */
   async getOdpPorts(id: string) {
     const odp = await this.prisma.oDP.findUnique({
       where: { id },
+      include: { ports: { orderBy: { portNumber: 'asc' } } },
     });
 
     if (!odp) {
       return { ports: [] };
     }
 
-    const ports = Array.from({ length: odp.capacity || 16 }, (_, i) => ({
-      portNumber: i + 1,
-      status: i < odp.usedPorts ? 'USED' : 'AVAILABLE',
-      customer: null,
-    }));
+    const capacity = odp.capacity || 16;
 
-    return { ports };
-  }
-
-  async assignPort(id: string, data: any) {
-    const odp = await this.prisma.oDP.findUnique({ where: { id } });
-    if (odp) {
-      await this.prisma.oDP.update({
-        where: { id },
-        data: { usedPorts: odp.usedPorts + 1 },
+    // Jika belum ada port di database, generate otomatis
+    if (odp.ports.length === 0) {
+      const portCreates = Array.from({ length: capacity }, (_, i) => ({
+        odpId: id,
+        portNumber: i + 1,
+        status: 'AVAILABLE',
+        opticalLoss: -18.5,
+      }));
+      await this.prisma.odpPort.createMany({ data: portCreates });
+      
+      const refreshed = await this.prisma.odpPort.findMany({
+        where: { odpId: id },
+        orderBy: { portNumber: 'asc' },
       });
+      return { odp, ports: refreshed };
     }
 
-    return { success: true, message: 'Port assigned successfully' };
+    return { odp, ports: odp.ports };
+  }
+
+  /**
+   * Alokasikan port fisik ODP ke pelanggan
+   */
+  async assignPort(
+    odpId: string,
+    portNumber: number,
+    data: { customerId?: string; customerName?: string; opticalLoss?: number }
+  ) {
+    const port = await this.prisma.odpPort.upsert({
+      where: { odpId_portNumber: { odpId, portNumber } },
+      update: {
+        status: 'USED',
+        customerId: data.customerId || null,
+        customerName: data.customerName || null,
+        opticalLoss: data.opticalLoss || -19.2,
+      },
+      create: {
+        odpId,
+        portNumber,
+        status: 'USED',
+        customerId: data.customerId || null,
+        customerName: data.customerName || null,
+        opticalLoss: data.opticalLoss || -19.2,
+      },
+    });
+
+    // Update counter usedPorts di ODP
+    const usedCount = await this.prisma.odpPort.count({
+      where: { odpId, status: 'USED' },
+    });
+    await this.prisma.oDP.update({
+      where: { id: odpId },
+      data: { usedPorts: usedCount },
+    });
+
+    return { success: true, message: `Port ${portNumber} berhasil dialokasikan`, port };
+  }
+
+  /**
+   * Lepas port fisik ODP (menjadi KOSONG)
+   */
+  async releasePort(odpId: string, portNumber: number) {
+    const port = await this.prisma.odpPort.update({
+      where: { odpId_portNumber: { odpId, portNumber } },
+      data: {
+        status: 'AVAILABLE',
+        customerId: null,
+        customerName: null,
+      },
+    });
+
+    const usedCount = await this.prisma.odpPort.count({
+      where: { odpId, status: 'USED' },
+    });
+    await this.prisma.oDP.update({
+      where: { id: odpId },
+      data: { usedPorts: usedCount },
+    });
+
+    return { success: true, message: `Port ${portNumber} berhasil dilepas dan kembali KOSONG`, port };
+  }
+
+  /**
+   * Cari ODP terdekat dengan port kosong berdasarkan koordinat GPS
+   */
+  async findNearest(latitude: number, longitude: number, maxRadiusMeter = 500) {
+    const odps = await this.prisma.oDP.findMany({
+      where: {
+        status: 'active',
+        latitude: { not: null },
+        longitude: { not: null },
+      },
+      include: {
+        _count: {
+          select: { ports: { where: { status: 'AVAILABLE' } } },
+        },
+      },
+    });
+
+    const results = odps
+      .map((odp) => {
+        // Haversine formula calculation
+        const R = 6371e3; // Earth radius in meters
+        const phi1 = (latitude * Math.PI) / 180;
+        const phi2 = ((odp.latitude as number) * Math.PI) / 180;
+        const deltaPhi = (((odp.latitude as number) - latitude) * Math.PI) / 180;
+        const deltaLambda = (((odp.longitude as number) - longitude) * Math.PI) / 180;
+
+        const a =
+          Math.sin(deltaPhi / 2) * Math.sin(deltaPhi / 2) +
+          Math.cos(phi1) * Math.cos(phi2) * Math.sin(deltaLambda / 2) * Math.sin(deltaLambda / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        const distanceMeter = Math.round(R * c);
+
+        return {
+          ...odp,
+          distanceMeter,
+          availablePorts: odp.capacity - odp.usedPorts,
+        };
+      })
+      .filter((odp) => odp.distanceMeter <= maxRadiusMeter)
+      .sort((a, b) => a.distanceMeter - b.distanceMeter);
+
+    return results;
   }
 }

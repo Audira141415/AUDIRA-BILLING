@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useState } from 'react'
 import Layout from '@/components/Layout'
 import { 
@@ -472,10 +473,10 @@ tail -f apps/backend/logs/error.log
     <Layout>
       <div className="flex h-screen overflow-hidden">
         {/* Sidebar */}
-        <div className="w-64 bg-white border-r border-gray-200 overflow-y-auto">
+        <div className="w-64 bg-[var(--app-card)] border-r border-[var(--app-border)] overflow-y-auto">
           <div className="p-4">
             <div className="relative mb-4">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--app-muted)]" />
               <input
                 type="text"
                 placeholder="Search docs..."
@@ -496,7 +497,7 @@ tail -f apps/backend/logs/error.log
                     className={`w-full flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg ${
                       activeSection === section.id
                         ? 'bg-blue-50 text-blue-700'
-                        : 'text-gray-700 hover:bg-gray-50'
+                        : 'text-[var(--app-text)]/90 hover:bg-[var(--app-bg)]'
                     }`}
                   >
                     <section.icon className="h-4 w-4" />
@@ -511,7 +512,7 @@ tail -f apps/backend/logs/error.log
                           className={`w-full text-left px-3 py-1.5 text-sm rounded ${
                             activeSubsection === sub.id
                               ? 'text-blue-700 bg-blue-50'
-                              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                              : 'text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-bg)]'
                           }`}
                         >
                           {sub.title}
@@ -530,10 +531,10 @@ tail -f apps/backend/logs/error.log
           <div className="max-w-4xl mx-auto px-8 py-8">
             {currentSubsection && (
               <div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                <h1 className="text-3xl font-bold text-[var(--app-text)] mb-2">
                   {currentSubsection.title}
                 </h1>
-                <div className="flex items-center gap-2 text-sm text-gray-500 mb-6">
+                <div className="flex items-center gap-2 text-sm text-[var(--app-muted)] mb-6">
                   <BookOpen className="h-4 w-4" />
                   <span>{currentSection?.title}</span>
                   <ChevronRight className="h-4 w-4" />
@@ -541,7 +542,7 @@ tail -f apps/backend/logs/error.log
                 </div>
 
                 <div className="prose prose-blue max-w-none">
-                  <div className="text-gray-700 whitespace-pre-line leading-relaxed">
+                  <div className="text-[var(--app-text)]/90 whitespace-pre-line leading-relaxed">
                     {currentSubsection.content}
                   </div>
 
@@ -568,7 +569,7 @@ tail -f apps/backend/logs/error.log
                 </div>
 
                 {/* Navigation */}
-                <div className="mt-12 pt-6 border-t border-gray-200 flex justify-between">
+                <div className="mt-12 pt-6 border-t border-[var(--app-border)] flex justify-between">
                   <div>
                     {currentSection && currentSection.subsections.findIndex(s => s.id === activeSubsection) > 0 && (
                       <button
@@ -604,34 +605,34 @@ tail -f apps/backend/logs/error.log
         </div>
 
         {/* Right Sidebar - On This Page */}
-        <div className="hidden xl:block w-64 bg-gray-50 border-l border-gray-200 p-6">
-          <h3 className="text-sm font-semibold text-gray-900 mb-4">Quick Links</h3>
+        <div className="hidden xl:block w-64 bg-[var(--app-bg)] border-l border-[var(--app-border)] p-6">
+          <h3 className="text-sm font-semibold text-[var(--app-text)] mb-4">Quick Links</h3>
           <div className="space-y-2 text-sm">
             <a href="/test-api" className="flex items-center gap-2 text-blue-600 hover:text-blue-700">
               <Terminal className="h-4 w-4" />
               API Test Dashboard
             </a>
-            <a href="https://github.com/yourusername/audiranet" target="_blank" className="flex items-center gap-2 text-gray-600 hover:text-gray-900">
+            <a href="https://github.com/yourusername/audiranet" target="_blank" className="flex items-center gap-2 text-[var(--app-muted)] hover:text-[var(--app-text)]">
               <ExternalLink className="h-4 w-4" />
               GitHub Repository
             </a>
-            <a href="#" className="flex items-center gap-2 text-gray-600 hover:text-gray-900">
+            <a href="#" className="flex items-center gap-2 text-[var(--app-muted)] hover:text-[var(--app-text)]">
               <FileText className="h-4 w-4" />
               Changelog
             </a>
           </div>
 
           <div className="mt-8">
-            <h3 className="text-sm font-semibold text-gray-900 mb-4">Need Help?</h3>
+            <h3 className="text-sm font-semibold text-[var(--app-text)] mb-4">Need Help?</h3>
             <div className="space-y-3 text-sm">
-              <div className="bg-white p-3 rounded-lg border border-gray-200">
-                <p className="text-gray-600 mb-2">Join our community</p>
+              <div className="bg-[var(--app-card)] p-3 rounded-lg border border-[var(--app-border)]">
+                <p className="text-[var(--app-muted)] mb-2">Join our community</p>
                 <a href="#" className="text-blue-600 hover:text-blue-700 font-medium">
                   Discord Server →
                 </a>
               </div>
-              <div className="bg-white p-3 rounded-lg border border-gray-200">
-                <p className="text-gray-600 mb-2">Report an issue</p>
+              <div className="bg-[var(--app-card)] p-3 rounded-lg border border-[var(--app-border)]">
+                <p className="text-[var(--app-muted)] mb-2">Report an issue</p>
                 <a href="#" className="text-blue-600 hover:text-blue-700 font-medium">
                   GitHub Issues →
                 </a>

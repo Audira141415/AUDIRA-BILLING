@@ -59,7 +59,7 @@ interface ServiceFormData {
   status: string;
 }
 
-const API_BASE_URL = 'http://localhost:1993';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3218';
 
 export default function ServiceManagementPage() {
   const router = useRouter();
@@ -429,7 +429,7 @@ export default function ServiceManagementPage() {
             <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-500">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-500 text-sm font-medium">Total Services</p>
+                  <p className="text-slate-400 text-sm font-medium">Total Services</p>
                   <p className="text-3xl font-bold text-gray-900 mt-2">{statistics.total}</p>
                 </div>
                 <Server className="w-12 h-12 text-blue-500 opacity-20" />
@@ -439,7 +439,7 @@ export default function ServiceManagementPage() {
             <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-green-500">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-500 text-sm font-medium">Active</p>
+                  <p className="text-slate-400 text-sm font-medium">Active</p>
                   <p className="text-3xl font-bold text-green-600 mt-2">{statistics.active}</p>
                 </div>
                 <UserCheck className="w-12 h-12 text-green-500 opacity-20" />
@@ -449,17 +449,17 @@ export default function ServiceManagementPage() {
             <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-gray-500">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-500 text-sm font-medium">Inactive</p>
+                  <p className="text-slate-400 text-sm font-medium">Inactive</p>
                   <p className="text-3xl font-bold text-gray-600 mt-2">{statistics.inactive}</p>
                 </div>
-                <UserX className="w-12 h-12 text-gray-500 opacity-20" />
+                <UserX className="w-12 h-12 text-slate-400 opacity-20" />
               </div>
             </div>
 
             <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-yellow-500">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-500 text-sm font-medium">Suspended</p>
+                  <p className="text-slate-400 text-sm font-medium">Suspended</p>
                   <p className="text-3xl font-bold text-yellow-600 mt-2">{statistics.suspended}</p>
                 </div>
                 <PauseCircle className="w-12 h-12 text-yellow-500 opacity-20" />
@@ -469,7 +469,7 @@ export default function ServiceManagementPage() {
             <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-500">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-500 text-sm font-medium">PPPoE</p>
+                  <p className="text-slate-400 text-sm font-medium">PPPoE</p>
                   <p className="text-3xl font-bold text-blue-600 mt-2">{statistics.pppoeCount}</p>
                 </div>
                 <Wifi className="w-12 h-12 text-blue-500 opacity-20" />
@@ -479,7 +479,7 @@ export default function ServiceManagementPage() {
             <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-purple-500">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-500 text-sm font-medium">Hotspot</p>
+                  <p className="text-slate-400 text-sm font-medium">Hotspot</p>
                   <p className="text-3xl font-bold text-purple-600 mt-2">{statistics.hotspotCount}</p>
                 </div>
                 <Globe className="w-12 h-12 text-purple-500 opacity-20" />
@@ -494,7 +494,7 @@ export default function ServiceManagementPage() {
             <div className="lg:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 w-5 h-5" />
                 <input
                   type="text"
                   value={search}
@@ -572,28 +572,28 @@ export default function ServiceManagementPage() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onClick={() => handleSort('name')}>
+                  <th className="px-6 py-4 text-left text-xs font-medium text-slate-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onClick={() => handleSort('name')}>
                     Service Name {sortBy === 'name' && (sortOrder === 'asc' ? '↑' : '↓')}
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onClick={() => handleSort('type')}>
+                  <th className="px-6 py-4 text-left text-xs font-medium text-slate-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onClick={() => handleSort('type')}>
                     Type {sortBy === 'type' && (sortOrder === 'asc' ? '↑' : '↓')}
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
                     Username
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
                     Customer
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
                     Package
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onClick={() => handleSort('createdAt')}>
+                  <th className="px-6 py-4 text-left text-xs font-medium text-slate-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onClick={() => handleSort('createdAt')}>
                     Created {sortBy === 'createdAt' && (sortOrder === 'asc' ? '↑' : '↓')}
                   </th>
-                  <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-right text-xs font-medium text-slate-400 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
@@ -601,13 +601,13 @@ export default function ServiceManagementPage() {
               <tbody className="bg-white divide-y divide-gray-200">
                 {loading ? (
                   <tr>
-                    <td colSpan={8} className="px-6 py-8 text-center text-gray-500">
+                    <td colSpan={8} className="px-6 py-8 text-center text-slate-400">
                       Loading...
                     </td>
                   </tr>
                 ) : services.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="px-6 py-8 text-center text-gray-500">
+                    <td colSpan={8} className="px-6 py-8 text-center text-slate-400">
                       No services found
                     </td>
                   </tr>
@@ -617,7 +617,7 @@ export default function ServiceManagementPage() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="font-medium text-gray-900">{service.name}</div>
                         {service.description && (
-                          <div className="text-sm text-gray-500">{service.description.substring(0, 50)}{service.description.length > 50 ? '...' : ''}</div>
+                          <div className="text-sm text-slate-400">{service.description.substring(0, 50)}{service.description.length > 50 ? '...' : ''}</div>
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -631,16 +631,16 @@ export default function ServiceManagementPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">{service.customer.name}</div>
-                        <div className="text-xs text-gray-500">{service.customer.email}</div>
+                        <div className="text-xs text-slate-400">{service.customer.email}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         {service.package ? (
                           <div>
                             <div className="text-sm font-medium text-gray-900">{service.package.name}</div>
-                            <div className="text-xs text-gray-500">{service.package.speed}</div>
+                            <div className="text-xs text-slate-400">{service.package.speed}</div>
                           </div>
                         ) : (
-                          <span className="text-sm text-gray-400">No package</span>
+                          <span className="text-sm text-slate-500">No package</span>
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -648,7 +648,7 @@ export default function ServiceManagementPage() {
                           {service.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
                         {formatDate(service.createdAt)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -942,7 +942,7 @@ export default function ServiceManagementPage() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Password <span className="text-gray-500">(leave empty to keep current)</span>
+                      Password <span className="text-slate-400">(leave empty to keep current)</span>
                     </label>
                     <input
                       type="password"

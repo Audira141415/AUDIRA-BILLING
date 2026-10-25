@@ -4,7 +4,7 @@
  */
 
 // Base API URL - akan otomatis menggunakan environment variable
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1993';
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3218';
 
 // API Endpoints
 export const API_ENDPOINTS = {

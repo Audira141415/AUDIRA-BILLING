@@ -224,35 +224,35 @@ export default function ModemMonitor() {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Pelanggan</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No. Internet</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">IP Address</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipe Modem</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Latency</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Nama Pelanggan</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">No. Internet</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">IP Address</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Tipe Modem</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Status</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Latency</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {filteredModems.map((modem) => (
               <tr key={modem.customerId} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{modem.customerName}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{modem.internetNumber}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-500">{modem.ipAddress}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{modem.modemType}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">{modem.internetNumber}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-slate-400">{modem.ipAddress}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">{modem.modemType}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                   <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(modem.status)}`}>
                     {getStatusIcon(modem.status)}
                     {modem.status}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
                   {modem.status === 'online' ? `${modem.responseTime || 0} ms` : '-'}
                 </td>
               </tr>
             ))}
             {filteredModems.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-6 py-12 text-center text-gray-500 text-sm">
+                <td colSpan={6} className="px-6 py-12 text-center text-slate-400 text-sm">
                   Tidak ada modem yang cocok dengan filter pencarian.
                 </td>
               </tr>

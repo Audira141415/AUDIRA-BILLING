@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React, { useState } from 'react';
 import Layout from '@/components/Layout';
 import {
@@ -47,13 +48,13 @@ interface RefundVoidRow {
 }
 
 const mockRefundVoids: RefundVoidRow[] = [
-  { id: '1', date: '01/07/2026 08:32', type: 'Refund', refNo: 'RFND-20260701-0001', invoiceNo: 'INV/2026/07/0012', customerName: 'Budi Santoso', method: 'Transfer Bank - BCA', amount: 1200000, percentage: 100, status: 'Selesai', reason: 'Permintaan Customer' },
-  { id: '2', date: '01/07/2026 08:16', type: 'Void', refNo: 'VOID-20260701-0002', invoiceNo: 'INV/2026/07/0011', customerName: 'Siti Aminah', method: 'QRIS', amount: 450000, percentage: 100, status: 'Selesai', reason: 'Salah Input' },
-  { id: '3', date: '01/07/2026 07:58', type: 'Refund', refNo: 'RFND-20260701-0003', invoiceNo: 'INV/2026/07/0010', customerName: 'Andi Pratama', method: 'Transfer Bank - BRI', amount: 1100000, percentage: 50, status: 'Selesai', reason: 'Kelebihan Bayar' },
-  { id: '4', date: '01/07/2026 07:40', type: 'Void', refNo: 'VOID-20260701-0004', invoiceNo: 'INV/2026/07/0009', customerName: 'Dewi Lestari', method: 'OVO', amount: 350000, percentage: 100, status: 'Selesai', reason: 'Duplikat Invoice' },
-  { id: '5', date: '01/07/2026 07:22', type: 'Refund', refNo: 'RFND-20260701-0005', invoiceNo: 'INV/2026/07/0008', customerName: 'Fajar Nugroho', method: 'DANA', amount: 900000, percentage: 20, status: 'Proses', reason: 'Partial Refund' },
-  { id: '6', date: '01/07/2026 06:51', type: 'Refund', refNo: 'RFND-20260701-0006', invoiceNo: 'INV/2026/07/0007', customerName: 'Nina Wulandari', method: 'Transfer Bank - BCA', amount: 250000, percentage: 100, status: 'Selesai', reason: 'Batal Langganan' },
-  { id: '7', date: '01/07/2026 06:45', type: 'Void', refNo: 'VOID-20260701-0007', invoiceNo: 'INV/2026/07/0006', customerName: 'Yudi Hermawan', method: 'Virtual Account - BCA', amount: 1300000, percentage: 100, status: 'Selesai', reason: 'Salah Paket' },
+  { id: '1', date: '22/10/2026 08:32', type: 'Refund', refNo: 'RFND-20260701-0001', invoiceNo: 'INV/2026/07/0012', customerName: 'Budi Santoso', method: 'Transfer Bank - BCA', amount: 1200000, percentage: 100, status: 'Selesai', reason: 'Permintaan Customer' },
+  { id: '2', date: '22/10/2026 08:16', type: 'Void', refNo: 'VOID-20260701-0002', invoiceNo: 'INV/2026/07/0011', customerName: 'Siti Aminah', method: 'QRIS', amount: 450000, percentage: 100, status: 'Selesai', reason: 'Salah Input' },
+  { id: '3', date: '22/10/2026 07:58', type: 'Refund', refNo: 'RFND-20260701-0003', invoiceNo: 'INV/2026/07/0010', customerName: 'Andi Pratama', method: 'Transfer Bank - BRI', amount: 1100000, percentage: 50, status: 'Selesai', reason: 'Kelebihan Bayar' },
+  { id: '4', date: '22/10/2026 07:40', type: 'Void', refNo: 'VOID-20260701-0004', invoiceNo: 'INV/2026/07/0009', customerName: 'Dewi Lestari', method: 'OVO', amount: 350000, percentage: 100, status: 'Selesai', reason: 'Duplikat Invoice' },
+  { id: '5', date: '22/10/2026 07:22', type: 'Refund', refNo: 'RFND-20260701-0005', invoiceNo: 'INV/2026/07/0008', customerName: 'Fajar Nugroho', method: 'DANA', amount: 900000, percentage: 20, status: 'Proses', reason: 'Partial Refund' },
+  { id: '6', date: '22/10/2026 06:51', type: 'Refund', refNo: 'RFND-20260701-0006', invoiceNo: 'INV/2026/07/0007', customerName: 'Nina Wulandari', method: 'Transfer Bank - BCA', amount: 250000, percentage: 100, status: 'Selesai', reason: 'Batal Langganan' },
+  { id: '7', date: '22/10/2026 06:45', type: 'Void', refNo: 'VOID-20260701-0007', invoiceNo: 'INV/2026/07/0006', customerName: 'Yudi Hermawan', method: 'Virtual Account - BCA', amount: 1300000, percentage: 100, status: 'Selesai', reason: 'Salah Paket' },
   { id: '8', date: '30/06/2026 16:12', type: 'Refund', refNo: 'RFND-20260630-0001', invoiceNo: 'INV/2026/06/0099', customerName: 'PT. Maju Bersama', method: 'Transfer Bank - Mandiri', amount: 3500000, percentage: 30, status: 'Proses', reason: 'Kelebihan Bayar' },
   { id: '9', date: '30/06/2026 15:31', type: 'Void', refNo: 'VOID-20260630-0002', invoiceNo: 'INV/2026/06/0098', customerName: 'CV. Sinar Abadi', method: 'QRIS', amount: 1100000, percentage: 100, status: 'Selesai', reason: 'Pembatalan Order' },
   { id: '10', date: '30/06/2026 14:46', type: 'Refund', refNo: 'RFND-20260630-0003', invoiceNo: 'INV/2026/06/0097', customerName: 'Rina Marlina', method: 'ShopeePay', amount: 750000, percentage: 25, status: 'Selesai', reason: 'Partial Refund' }
@@ -74,84 +75,41 @@ export default function RefundVoidPage() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-[#070c19] text-gray-200 p-4 md:p-6 space-y-6">
+      <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] p-4 md:p-6 space-y-6">
         
         {/* ─── Top Header bar ────────────────────────────────────────────── */}
-        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 border-b border-[#131d35] pb-5">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-[var(--app-border)] pb-5">
           <div className="space-y-1">
-            <div className="flex items-center gap-2 text-xs text-gray-400 font-medium">
-              <span>Home</span>
-              <span>&gt;</span>
-              <span>Payment</span>
-              <span>&gt;</span>
-              <span className="text-blue-400">Refund & Void</span>
+            <div className="flex items-center gap-2 text-xs text-[var(--app-muted)] font-mono mb-1">
+              <Link href="/" className="hover:text-[var(--app-text)]">AUDIRA</Link>
+              <span>/</span>
+              <Link href="/payment" className="hover:text-[var(--app-text)]">Kasir & Pembayaran</Link>
+              <span>/</span>
+              <span className="text-blue-500 font-semibold">Status Refund</span>
             </div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">Refund & Void</h1>
+            <h1 className="text-xl md:text-2xl font-bold tracking-tight text-[var(--app-text)]">
+              Monitoring Status Pengembalian Pembayaran
+            </h1>
+            <p className="text-xs text-[var(--app-muted)]">
+              Tracking penyelesaian proses refund dana ke rekening pelanggan yang telah disetujui manajemen.
+            </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-4 w-full xl:w-auto">
-            {/* Calendar */}
-            <div className="flex items-center gap-2 bg-[#0b1329] border border-[#131d35] px-3 py-2 rounded-xl text-xs text-gray-300">
-              <Calendar size={14} className="text-blue-400" />
-              <span>01 Juli 2026</span>
-              <span className="text-[10px] text-gray-500">08:35 WIB</span>
-            </div>
-            
-            {/* Status Sistem */}
-            <div className="flex items-center gap-2 bg-[#0b1329] border border-[#131d35] px-3 py-2 rounded-xl text-xs">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-              <span className="text-gray-400">Status Sistem</span>
-              <span className="text-green-400 font-bold">Normal</span>
-            </div>
-
-            {/* Global Search */}
-            <div className="relative w-full sm:w-60">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <input 
-                type="text" 
-                placeholder="Cari customer, invoice, tagihan..."
-                className="w-full bg-[#0b1329] border border-[#131d35] rounded-xl text-xs pl-9 pr-4 py-2 text-white focus:outline-none focus:border-blue-500"
-              />
-            </div>
-
-            {/* Notification and Profile icons */}
-            <div className="flex items-center gap-3">
-              <button className="relative p-2 bg-[#0b1329] border border-[#131d35] rounded-xl hover:bg-[#121c38] transition-colors">
-                <Bell size={16} className="text-gray-400" />
-                <span className="absolute -top-1 -right-1 bg-red-500 text-[9px] font-bold text-white px-1.5 py-0.5 rounded-full scale-75">12</span>
-              </button>
-              <button className="relative p-2 bg-[#0b1329] border border-[#131d35] rounded-xl hover:bg-[#121c38] transition-colors">
-                <Mail size={16} className="text-gray-400" />
-                <span className="absolute -top-1 -right-1 bg-red-500 text-[9px] font-bold text-white px-1.5 py-0.5 rounded-full scale-75">6</span>
-              </button>
-              <button className="p-2 bg-[#0b1329] border border-[#131d35] rounded-xl hover:bg-[#121c38] transition-colors max-sm:hidden">
-                <Maximize2 size={16} className="text-gray-400" />
-              </button>
-              
-              {/* Profile */}
-              <div className="flex items-center gap-2 pl-2 border-l border-[#131d35]">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xs overflow-hidden">
-                  <span className="text-xs">AR</span>
-                </div>
-                <div className="hidden md:block text-left">
-                  <div className="text-xs font-semibold text-white">Agus Dwi Rianto</div>
-                  <div className="text-[9px] text-gray-500 font-bold uppercase">Super Admin</div>
-                </div>
-              </div>
-            </div>
+          <div className="flex items-center gap-2.5">
+            <Link href="/payment/history" className="px-3 py-2 bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)] text-xs font-semibold rounded-lg">Semua Mutasi</Link>
           </div>
         </div>
 
         {/* ─── KPI Cards Row ─────────────────────────────────────────────── */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
           {/* Card 1: Total Refund */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex items-center gap-4">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4 flex items-center gap-4">
             <div className="p-3.5 bg-purple-500/10 text-purple-400 border border-purple-500/20 rounded-xl">
               <Wallet size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Total Refund</p>
-              <p className="text-lg font-black text-white mt-0.5">Rp 156.230.000</p>
+              <p className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider">Total Refund</p>
+              <p className="text-lg font-black text-[var(--app-text)] mt-0.5">Rp 156.230.000</p>
               <p className="text-[10px] text-green-400 mt-0.5 font-medium flex items-center gap-0.5">
                 <ArrowUpRight size={12} />
                 <span>+12.8% dari periode lalu</span>
@@ -160,13 +118,13 @@ export default function RefundVoidPage() {
           </div>
 
           {/* Card 2: Total Void */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex items-center gap-4">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4 flex items-center gap-4">
             <div className="p-3.5 bg-green-500/10 text-green-400 border border-green-500/20 rounded-xl">
               <XCircle size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Total Void</p>
-              <p className="text-lg font-black text-white mt-0.5">Rp 78.480.000</p>
+              <p className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider">Total Void</p>
+              <p className="text-lg font-black text-[var(--app-text)] mt-0.5">Rp 78.480.000</p>
               <p className="text-[10px] text-green-400 mt-0.5 font-medium flex items-center gap-0.5">
                 <ArrowUpRight size={12} />
                 <span>+8.4% dari periode lalu</span>
@@ -175,13 +133,13 @@ export default function RefundVoidPage() {
           </div>
 
           {/* Card 3: Total Transaksi Refund */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex items-center gap-4">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4 flex items-center gap-4">
             <div className="p-3.5 bg-orange-500/10 text-orange-400 border border-orange-500/20 rounded-xl">
               <FileText size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Total Transaksi Refund</p>
-              <p className="text-2xl font-black text-white mt-0.5">156</p>
+              <p className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider">Total Transaksi Refund</p>
+              <p className="text-2xl font-black text-[var(--app-text)] mt-0.5">156</p>
               <p className="text-[10px] text-green-400 mt-0.5 font-medium flex items-center gap-0.5">
                 <ArrowUpRight size={12} />
                 <span>+14.2% dari periode lalu</span>
@@ -190,13 +148,13 @@ export default function RefundVoidPage() {
           </div>
 
           {/* Card 4: Total Transaksi Void */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex items-center gap-4">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4 flex items-center gap-4">
             <div className="p-3.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded-xl">
               <AlertCircle size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Total Transaksi Void</p>
-              <p className="text-2xl font-black text-white mt-0.5">78</p>
+              <p className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider">Total Transaksi Void</p>
+              <p className="text-2xl font-black text-[var(--app-text)] mt-0.5">78</p>
               <p className="text-[10px] text-green-400 mt-0.5 font-medium flex items-center gap-0.5">
                 <ArrowUpRight size={12} />
                 <span>+9.7% dari periode lalu</span>
@@ -205,13 +163,13 @@ export default function RefundVoidPage() {
           </div>
 
           {/* Card 5: Total Nilai Terdampak */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4 flex items-center gap-4">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4 flex items-center gap-4">
             <div className="p-3.5 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-xl">
               <Wallet size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Total Nilai Terdampak</p>
-              <p className="text-lg font-black text-white mt-0.5">Rp 234.710.000</p>
+              <p className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider">Total Nilai Terdampak</p>
+              <p className="text-lg font-black text-[var(--app-text)] mt-0.5">Rp 234.710.000</p>
               <p className="text-[10px] text-green-400 mt-0.5 font-medium flex items-center gap-0.5">
                 <ArrowUpRight size={12} />
                 <span>+11.5% dari periode lalu</span>
@@ -221,32 +179,32 @@ export default function RefundVoidPage() {
         </div>
 
         {/* ─── Filter Bar ────────────────────────────────────────────────── */}
-        <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-4">
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4">
           <div className="flex flex-wrap items-center gap-4">
             {/* Date range */}
-            <div className="flex items-center gap-2 bg-[#080d19] border border-[#131d35] px-3 py-2.5 rounded-xl text-xs text-gray-300 cursor-pointer">
-              <Calendar size={14} className="text-gray-500" />
-              <span>01/06/2026 - 01/07/2026</span>
+            <div className="flex items-center gap-2 bg-[var(--app-bg)] border border-[var(--app-border)] px-3 py-2.5 rounded-xl text-xs text-[var(--app-text)]/80 cursor-pointer">
+              <Calendar size={14} className="text-[var(--app-muted)]" />
+              <span>01/06/2026 - 22/10/2026</span>
             </div>
 
-            <select className="bg-[#080d19] border border-[#131d35] text-xs py-2.5 px-4 rounded-xl text-gray-300 focus:outline-none min-w-[180px]">
+            <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[180px]">
               <option>Semua Tipe (Refund & Void)</option>
             </select>
 
-            <select className="bg-[#080d19] border border-[#131d35] text-xs py-2.5 px-4 rounded-xl text-gray-300 focus:outline-none min-w-[140px]">
+            <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]">
               <option>Semua Metode</option>
             </select>
 
-            <select className="bg-[#080d19] border border-[#131d35] text-xs py-2.5 px-4 rounded-xl text-gray-300 focus:outline-none min-w-[140px]">
+            <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]">
               <option>Semua Status</option>
             </select>
             
             <div className="relative flex-1 min-w-[200px]">
-              <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-gray-500 w-4 h-4" />
+              <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-[var(--app-muted)] w-4 h-4" />
               <input 
                 type="text" 
                 placeholder="Cari invoice, customer, referensi..."
-                className="w-full bg-[#080d19] border border-[#131d35] text-xs pl-10 pr-4 py-2.5 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
+                className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] text-xs pl-10 pr-4 py-2.5 rounded-xl text-[var(--app-text)] placeholder-slate-400 focus:outline-none focus:border-blue-500 transition-colors"
               />
             </div>
 
@@ -274,10 +232,10 @@ export default function RefundVoidPage() {
           <div className="lg:col-span-9 space-y-6">
             
             {/* Table Card with internal Sub-tabs */}
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl overflow-hidden">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs overflow-hidden">
               
               {/* Tabs row */}
-              <div className="flex border-b border-[#131d35] bg-[#0b1329]/40 text-xs font-bold text-gray-500 overflow-x-auto">
+              <div className="flex border-b border-[var(--app-border)] bg-white/40 text-xs font-bold text-[var(--app-muted)] overflow-x-auto">
                 {[
                   { label: 'Semua', count: 234 },
                   { label: 'Refund', count: 156 },
@@ -289,12 +247,12 @@ export default function RefundVoidPage() {
                       key={tab.label}
                       onClick={() => setActiveTab(tab.label)}
                       className={`py-3 px-5 border-b-2 transition-all flex items-center gap-1.5 ${
-                        isActive ? 'border-blue-500 text-white font-bold' : 'border-transparent hover:text-gray-300'
+                        isActive ? 'border-blue-500 text-[var(--app-text)] font-bold' : 'border-transparent hover:text-[var(--app-text)]/80'
                       }`}
                     >
                       <span>{tab.label}</span>
                       <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
-                        isActive ? 'bg-[#0052cc] text-white' : 'bg-[#101935] text-gray-400'
+                        isActive ? 'bg-[#0052cc] text-white' : 'bg-[var(--app-bg)] text-[var(--app-muted)]'
                       }`}>
                         {tab.count}
                       </span>
@@ -305,9 +263,9 @@ export default function RefundVoidPage() {
 
               {/* Table */}
               <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse text-xs text-gray-300">
+                <table className="w-full text-left border-collapse text-xs text-[var(--app-text)]/80">
                   <thead>
-                    <tr className="border-b border-[#131d35] bg-[#101935]/40 text-gray-400 text-[10px] font-bold uppercase tracking-wider">
+                    <tr className="border-b border-[var(--app-border)] bg-[var(--app-border)]/10 text-[var(--app-muted)] text-[10px] font-bold uppercase tracking-wider">
                       <th className="p-4 w-12">NO</th>
                       <th className="p-4">TANGGAL</th>
                       <th className="p-4 w-24">TIPE</th>
@@ -322,11 +280,11 @@ export default function RefundVoidPage() {
                       <th className="p-4 text-center">AKSI</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#131d35]">
+                  <tbody className="divide-y divide-[var(--app-border)]">
                     {mockRefundVoids.map((d, idx) => (
-                      <tr key={d.id} className="hover:bg-[#121c38]/40 transition-colors">
-                        <td className="p-4 text-gray-500 font-medium">{idx + 1}</td>
-                        <td className="p-4 text-gray-400 font-medium">{d.date}</td>
+                      <tr key={d.id} className="hover:bg-[var(--app-border)]/20 transition-colors">
+                        <td className="p-4 text-[var(--app-muted)] font-medium">{idx + 1}</td>
+                        <td className="p-4 text-[var(--app-muted)] font-medium">{d.date}</td>
                         <td className="p-4">
                           <span className={`px-2 py-0.5 text-[9px] font-bold rounded-full ${
                             d.type === 'Refund'
@@ -336,12 +294,12 @@ export default function RefundVoidPage() {
                             {d.type}
                           </span>
                         </td>
-                        <td className="p-4 font-mono font-semibold text-gray-400">{d.refNo}</td>
+                        <td className="p-4 font-mono font-semibold text-[var(--app-muted)]">{d.refNo}</td>
                         <td className="p-4 font-mono font-semibold text-blue-400">{d.invoiceNo}</td>
-                        <td className="p-4 font-bold text-white">{d.customerName}</td>
-                        <td className="p-4 text-gray-400 font-medium">{d.method}</td>
-                        <td className="p-4 font-bold text-white">{formatCurrency(d.amount)}</td>
-                        <td className="p-4 font-semibold text-gray-300">{d.percentage}%</td>
+                        <td className="p-4 font-bold text-[var(--app-text)]">{d.customerName}</td>
+                        <td className="p-4 text-[var(--app-muted)] font-medium">{d.method}</td>
+                        <td className="p-4 font-bold text-[var(--app-text)]">{formatCurrency(d.amount)}</td>
+                        <td className="p-4 font-semibold text-[var(--app-text)]/80">{d.percentage}%</td>
                         <td className="p-4">
                           <span className={`px-2.5 py-1 text-[10px] font-bold rounded-full ${
                             d.status === 'Selesai' 
@@ -351,13 +309,13 @@ export default function RefundVoidPage() {
                             {d.status}
                           </span>
                         </td>
-                        <td className="p-4 text-gray-400 font-medium">{d.reason}</td>
+                        <td className="p-4 text-[var(--app-muted)] font-medium">{d.reason}</td>
                         <td className="p-4">
                           <div className="flex items-center justify-center gap-1.5">
-                            <button className="p-1.5 hover:bg-[#1b2647] rounded-lg text-gray-400 hover:text-white transition-colors">
+                            <button className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors">
                               <Eye size={13} />
                             </button>
-                            <button className="p-1.5 hover:bg-[#1b2647] rounded-lg text-gray-400 hover:text-white transition-colors">
+                            <button className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors">
                               <MoreVertical size={13} />
                             </button>
                           </div>
@@ -369,8 +327,8 @@ export default function RefundVoidPage() {
               </div>
 
               {/* Table pagination */}
-              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-t border-[#131d35] bg-[#0b1329]/60">
-                <span className="text-xs text-gray-500">
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-t border-[var(--app-border)] bg-white/60">
+                <span className="text-xs text-[var(--app-muted)]">
                   Menampilkan <span className="font-semibold text-white">1 - 10</span> dari <span className="font-semibold text-white">234</span> data
                 </span>
                 
@@ -378,22 +336,22 @@ export default function RefundVoidPage() {
                   <div className="flex items-center gap-2">
                     <button 
                       disabled
-                      className="p-2 border border-[#131d35] hover:bg-[#121c38] rounded-xl text-gray-500 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                      className="p-2 border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 rounded-xl text-[var(--app-muted)] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                     >
                       <ChevronLeft size={14} />
                     </button>
                     <button className="w-8 h-8 rounded-xl text-xs font-semibold border bg-[#0052cc] text-white border-[#0052cc]">1</button>
-                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border border-[#131d35] text-gray-400 hover:text-white hover:bg-[#121c38]">2</button>
-                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border border-[#131d35] text-gray-400 hover:text-white hover:bg-[#121c38]">3</button>
+                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/30">2</button>
+                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/30">3</button>
                     <span className="text-gray-600 text-xs px-1">...</span>
-                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border border-[#131d35] text-gray-400 hover:text-white hover:bg-[#121c38]">24</button>
-                    <button className="p-2 border border-[#131d35] hover:bg-[#121c38] rounded-xl text-gray-400 transition-colors">
+                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/30">24</button>
+                    <button className="p-2 border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 rounded-xl text-[var(--app-muted)] transition-colors">
                       <ChevronRight size={14} />
                     </button>
                   </div>
 
                   <select
-                    className="bg-[#080d19] border border-[#131d35] text-xs py-1.5 px-3 rounded-lg text-gray-300 focus:outline-none"
+                    className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-1.5 px-3 rounded-lg text-[var(--app-text)]/80 focus:outline-none"
                   >
                     <option value={10}>10 / halaman</option>
                   </select>
@@ -405,24 +363,24 @@ export default function RefundVoidPage() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
               
               {/* Buat Refund Form */}
-              <div className="lg:col-span-4 bg-[#0b1329] border border-[#131d35] rounded-2xl p-5 space-y-4">
+              <div className="lg:col-span-4 bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-4">
                 <h4 className="text-xs font-bold uppercase tracking-wider text-white">Buat Refund</h4>
                 
-                <div className="space-y-3.5 text-xs font-bold text-gray-400">
+                <div className="space-y-3.5 text-xs font-bold text-[var(--app-muted)]">
                   <div className="space-y-1">
-                    <span className="text-[10px] text-gray-500 font-bold uppercase block">No Invoice *</span>
-                    <select className="w-full bg-[#080d19] border border-[#131d35] text-xs py-2 px-3 rounded-xl text-gray-300 focus:outline-none">
+                    <span className="text-[10px] text-[var(--app-muted)] font-bold uppercase block">No Invoice *</span>
+                    <select className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2 px-3 rounded-xl text-[var(--app-text)]/80 focus:outline-none">
                       <option>Pilih Invoice</option>
                     </select>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3 text-[10px] font-bold">
                     <div className="space-y-0.5">
-                      <span className="text-gray-500 block uppercase">Customer</span>
+                      <span className="text-[var(--app-muted)] block uppercase">Customer</span>
                       <p className="text-white">-</p>
                     </div>
                     <div className="space-y-0.5">
-                      <span className="text-gray-500 block uppercase">Metode Pembayaran</span>
+                      <span className="text-[var(--app-muted)] block uppercase">Metode Pembayaran</span>
                       <p className="text-white">-</p>
                     </div>
                   </div>
@@ -434,7 +392,7 @@ export default function RefundVoidPage() {
 
                   <div className="space-y-1">
                     <div className="flex justify-between items-center text-[10px]">
-                      <span className="text-gray-500 uppercase">Persentase Refund (%) *</span>
+                      <span className="text-[var(--app-muted)] uppercase">Persentase Refund (%) *</span>
                       <span className="text-white">{refundPercentage}%</span>
                     </div>
                     <input 
@@ -443,7 +401,7 @@ export default function RefundVoidPage() {
                       max="100" 
                       value={refundPercentage}
                       onChange={(e) => setRefundPercentage(parseInt(e.target.value))}
-                      className="w-full accent-blue-500 bg-[#080d19] h-1.5 rounded-lg appearance-none cursor-pointer" 
+                      className="w-full accent-blue-500 bg-[var(--app-bg)] h-1.5 rounded-lg appearance-none cursor-pointer" 
                     />
                   </div>
 
@@ -453,19 +411,19 @@ export default function RefundVoidPage() {
                   </div>
 
                   <div className="space-y-1">
-                    <span className="text-[10px] text-gray-500 font-bold uppercase block">Alasan Refund *</span>
-                    <select className="w-full bg-[#080d19] border border-[#131d35] text-xs py-2 px-3 rounded-xl text-gray-300 focus:outline-none">
+                    <span className="text-[10px] text-[var(--app-muted)] font-bold uppercase block">Alasan Refund *</span>
+                    <select className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2 px-3 rounded-xl text-[var(--app-text)]/80 focus:outline-none">
                       <option>Pilih Alasan</option>
                     </select>
                   </div>
 
                   <div className="space-y-1">
-                    <span className="text-[10px] text-gray-500 font-bold uppercase block">Catatan (Opsional)</span>
-                    <textarea rows={2} placeholder="Tulis catatan refund..." className="w-full bg-[#080d19] border border-[#131d35] rounded-xl text-xs px-3.5 py-2 text-white focus:outline-none resize-none" />
+                    <span className="text-[10px] text-[var(--app-muted)] font-bold uppercase block">Catatan (Opsional)</span>
+                    <textarea rows={2} placeholder="Tulis catatan refund..." className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl text-xs px-3.5 py-2 text-white focus:outline-none resize-none" />
                   </div>
 
                   <div className="grid grid-cols-2 gap-3 pt-2">
-                    <button className="text-xs font-bold text-gray-400 hover:text-white py-2.5 border border-[#131d35] rounded-xl hover:bg-[#121c38]/40 transition-colors">
+                    <button className="text-xs font-bold text-[var(--app-muted)] hover:text-[var(--app-text)] py-2.5 border border-[var(--app-border)] rounded-xl hover:bg-[var(--app-border)]/20 transition-colors">
                       Reset
                     </button>
                     <button className="bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold py-2.5 rounded-xl shadow-md transition-all border-none">
@@ -476,19 +434,19 @@ export default function RefundVoidPage() {
               </div>
 
               {/* Buat Void Form */}
-              <div className="lg:col-span-4 bg-[#0b1329] border border-[#131d35] rounded-2xl p-5 space-y-4">
+              <div className="lg:col-span-4 bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-4">
                 <h4 className="text-xs font-bold uppercase tracking-wider text-white">Buat Void</h4>
                 
-                <div className="space-y-3.5 text-xs font-bold text-gray-400">
+                <div className="space-y-3.5 text-xs font-bold text-[var(--app-muted)]">
                   <div className="space-y-1">
-                    <span className="text-[10px] text-gray-500 font-bold uppercase block">No Invoice *</span>
-                    <select className="w-full bg-[#080d19] border border-[#131d35] text-xs py-2 px-3 rounded-xl text-gray-300 focus:outline-none">
+                    <span className="text-[10px] text-[var(--app-muted)] font-bold uppercase block">No Invoice *</span>
+                    <select className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2 px-3 rounded-xl text-[var(--app-text)]/80 focus:outline-none">
                       <option>Pilih Invoice</option>
                     </select>
                   </div>
 
                   <div className="space-y-0.5 text-[10px] font-bold">
-                    <span className="text-gray-500 block uppercase">Customer</span>
+                    <span className="text-[var(--app-muted)] block uppercase">Customer</span>
                     <p className="text-white">-</p>
                   </div>
 
@@ -499,7 +457,7 @@ export default function RefundVoidPage() {
 
                   <div className="space-y-1">
                     <div className="flex justify-between items-center text-[10px]">
-                      <span className="text-gray-500 uppercase">Persentase Void (%) *</span>
+                      <span className="text-[var(--app-muted)] uppercase">Persentase Void (%) *</span>
                       <span className="text-white">{voidPercentage}%</span>
                     </div>
                     <input 
@@ -508,7 +466,7 @@ export default function RefundVoidPage() {
                       max="100" 
                       value={voidPercentage}
                       onChange={(e) => setVoidPercentage(parseInt(e.target.value))}
-                      className="w-full accent-red-500 bg-[#080d19] h-1.5 rounded-lg appearance-none cursor-pointer" 
+                      className="w-full accent-red-500 bg-[var(--app-bg)] h-1.5 rounded-lg appearance-none cursor-pointer" 
                     />
                   </div>
 
@@ -518,19 +476,19 @@ export default function RefundVoidPage() {
                   </div>
 
                   <div className="space-y-1">
-                    <span className="text-[10px] text-gray-500 font-bold uppercase block">Alasan Void *</span>
-                    <select className="w-full bg-[#080d19] border border-[#131d35] text-xs py-2 px-3 rounded-xl text-gray-300 focus:outline-none">
+                    <span className="text-[10px] text-[var(--app-muted)] font-bold uppercase block">Alasan Void *</span>
+                    <select className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2 px-3 rounded-xl text-[var(--app-text)]/80 focus:outline-none">
                       <option>Pilih Alasan</option>
                     </select>
                   </div>
 
                   <div className="space-y-1">
-                    <span className="text-[10px] text-gray-500 font-bold uppercase block">Catatan (Opsional)</span>
-                    <textarea rows={2} placeholder="Tulis catatan void..." className="w-full bg-[#080d19] border border-[#131d35] rounded-xl text-xs px-3.5 py-2 text-white focus:outline-none resize-none" />
+                    <span className="text-[10px] text-[var(--app-muted)] font-bold uppercase block">Catatan (Opsional)</span>
+                    <textarea rows={2} placeholder="Tulis catatan void..." className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl text-xs px-3.5 py-2 text-white focus:outline-none resize-none" />
                   </div>
 
                   <div className="grid grid-cols-2 gap-3 pt-2">
-                    <button className="text-xs font-bold text-gray-400 hover:text-white py-2.5 border border-[#131d35] rounded-xl hover:bg-[#121c38]/40 transition-colors">
+                    <button className="text-xs font-bold text-[var(--app-muted)] hover:text-[var(--app-text)] py-2.5 border border-[var(--app-border)] rounded-xl hover:bg-[var(--app-border)]/20 transition-colors">
                       Reset
                     </button>
                     <button className="bg-red-650 bg-red-650 bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-2.5 rounded-xl shadow-md transition-all border-none">
@@ -541,28 +499,28 @@ export default function RefundVoidPage() {
               </div>
 
               {/* Aktivitas Terbaru */}
-              <div className="lg:col-span-4 bg-[#0b1329] border border-[#131d35] rounded-2xl p-5 space-y-4 flex flex-col justify-between">
+              <div className="lg:col-span-4 bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-4 flex flex-col justify-between">
                 <div>
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400">Aktivitas Terbaru</h4>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Aktivitas Terbaru</h4>
                   
-                  <div className="relative border-l border-[#131d35] ml-2 pl-4 space-y-4 text-[9px] text-gray-500 font-bold mt-4">
+                  <div className="relative border-l border-[var(--app-border)] ml-2 pl-4 space-y-4 text-[9px] text-[var(--app-muted)] font-bold mt-4">
                     {[
-                      { title: 'Refund RFND-20260701-0001 diselesaikan', time: '01/07/2026 08:32 WIB', color: 'bg-green-500' },
-                      { title: 'Void VOID-20260701-0002 diselesaikan', time: '01/07/2026 08:16 WIB', color: 'bg-red-500' },
-                      { title: 'Refund RFND-20260701-0003 diselesaikan', time: '01/07/2026 07:58 WIB', color: 'bg-green-500' },
-                      { title: 'Void VOID-20260701-0004 diselesaikan', time: '01/07/2026 07:40 WIB', color: 'bg-red-500' },
-                      { title: 'Refund RFND-20260701-0005 masih diproses', time: '01/07/2026 07:22 WIB', color: 'bg-orange-500' }
+                      { title: 'Refund RFND-20260701-0001 diselesaikan', time: '22/10/2026 08:32 WIB', color: 'bg-green-500' },
+                      { title: 'Void VOID-20260701-0002 diselesaikan', time: '22/10/2026 08:16 WIB', color: 'bg-red-500' },
+                      { title: 'Refund RFND-20260701-0003 diselesaikan', time: '22/10/2026 07:58 WIB', color: 'bg-green-500' },
+                      { title: 'Void VOID-20260701-0004 diselesaikan', time: '22/10/2026 07:40 WIB', color: 'bg-red-500' },
+                      { title: 'Refund RFND-20260701-0005 masih diproses', time: '22/10/2026 07:22 WIB', color: 'bg-orange-500' }
                     ].map((item, idx) => (
                       <div key={idx} className="relative">
-                        <span className={`absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full border border-[#070c19] ${item.color}`}></span>
+                        <span className={`absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full border border-[var(--app-border)] ${item.color}`}></span>
                         <span className="text-white block leading-none">{item.title}</span>
-                        <span className="text-gray-500 text-[8px] font-semibold mt-1 block">{item.time}</span>
+                        <span className="text-[var(--app-muted)] text-[8px] font-semibold mt-1 block">{item.time}</span>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                <button className="w-full text-center text-xs font-bold text-blue-500 hover:underline pt-2 border-t border-[#131d35] block mt-4">
+                <button className="w-full text-center text-xs font-bold text-blue-500 hover:underline pt-2 border-t border-[var(--app-border)] block mt-4">
                   Lihat Semua Aktivitas &rarr;
                 </button>
               </div>
@@ -570,8 +528,8 @@ export default function RefundVoidPage() {
             </div>
 
             {/* Bottom-most horizontal row: Aksi Cepat */}
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-5 space-y-4">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400">Aksi Cepat</h4>
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-4">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Aksi Cepat</h4>
               
               <div className="grid grid-cols-2 md:grid-cols-7 gap-3">
                 {[
@@ -580,8 +538,8 @@ export default function RefundVoidPage() {
                   { name: 'Daftar Refund', desc: 'Lihat semua refund', icon: FileText, color: 'bg-green-500/10 text-green-400 border border-green-500/20' },
                   { name: 'Daftar Void', desc: 'Lihat semua void', icon: XCircle, color: 'bg-orange-500/10 text-orange-400 border border-orange-500/20' },
                   { name: 'Export Laporan', desc: 'Download laporan', icon: Download, color: 'bg-purple-500/10 text-purple-400 border border-purple-500/20' },
-                  { name: 'Pengaturan Refund', desc: 'Atur kebijakan refund', icon: Settings, color: 'bg-gray-500/10 text-gray-400 border border-gray-500/20' },
-                  { name: 'Pengaturan Void', desc: 'Atur kebijakan void', icon: Settings, color: 'bg-gray-500/10 text-gray-400 border border-gray-500/20' }
+                  { name: 'Pengaturan Refund', desc: 'Atur kebijakan refund', icon: Settings, color: 'bg-gray-500/10 text-[var(--app-muted)] border border-gray-500/20' },
+                  { name: 'Pengaturan Void', desc: 'Atur kebijakan void', icon: Settings, color: 'bg-gray-500/10 text-[var(--app-muted)] border border-gray-500/20' }
                 ].map((item, idx) => {
                   const Icon = item.icon;
                   return (
@@ -591,7 +549,7 @@ export default function RefundVoidPage() {
                     >
                       <Icon size={14} className="mb-1.5" />
                       <p className="text-[9px] font-bold leading-tight">{item.name}</p>
-                      <p className="text-[7px] text-gray-500 font-normal mt-0.5 leading-tight">{item.desc}</p>
+                      <p className="text-[7px] text-[var(--app-muted)] font-normal mt-0.5 leading-tight">{item.desc}</p>
                     </button>
                   );
                 })}
@@ -604,8 +562,8 @@ export default function RefundVoidPage() {
           <div className="lg:col-span-3 space-y-6">
             
             {/* Card 1: Ringkasan Refund & Void Donut */}
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-5 space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400">Ringkasan Refund & Void</h3>
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Ringkasan Refund & Void</h3>
               
               <div className="relative flex justify-center py-2">
                 <svg width="140" height="140" viewBox="0 0 42 42" className="transform -rotate-90">
@@ -636,52 +594,52 @@ export default function RefundVoidPage() {
                   />
                 </svg>
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-                  <p className="text-base font-black text-white leading-none">234</p>
-                  <p className="text-[7px] text-gray-500 font-bold uppercase mt-0.5">Total Transaksi</p>
+                  <p className="text-base font-black text-[var(--app-text)] leading-none">234</p>
+                  <p className="text-[7px] text-[var(--app-muted)] font-bold uppercase mt-0.5">Total Transaksi</p>
                 </div>
               </div>
 
               {/* Legends */}
-              <div className="space-y-2 text-[10px] text-gray-400">
+              <div className="space-y-2 text-[10px] text-[var(--app-muted)]">
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded bg-green-500" />Refund Selesai</span>
-                  <span className="text-white font-bold">132 (56.4%)</span>
+                  <span className="text-[var(--app-text)] font-bold">132 (56.4%)</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded bg-orange-500" />Refund Proses</span>
-                  <span className="text-white font-bold">24 (10.3%)</span>
+                  <span className="text-[var(--app-text)] font-bold">24 (10.3%)</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded bg-red-500" />Void Selesai</span>
-                  <span className="text-white font-bold">70 (29.9%)</span>
+                  <span className="text-[var(--app-text)] font-bold">70 (29.9%)</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded bg-blue-500" />Void Proses</span>
-                  <span className="text-white font-bold">8 (3.4%)</span>
+                  <span className="text-[var(--app-text)] font-bold">8 (3.4%)</span>
                 </div>
               </div>
             </div>
 
             {/* Card 2: Ringkasan Nilai */}
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-5 space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400">Ringkasan Nilai</h3>
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Ringkasan Nilai</h3>
               
-              <div className="space-y-3 text-xs text-gray-400 font-semibold pt-1">
+              <div className="space-y-3 text-xs text-[var(--app-muted)] font-semibold pt-1">
                 <div className="flex justify-between">
                   <span>Total Nilai Refund</span>
-                  <span className="text-white font-bold">Rp 156.230.000</span>
+                  <span className="text-[var(--app-text)] font-bold">Rp 156.230.000</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Total Nilai Void</span>
-                  <span className="text-white font-bold">Rp 78.480.000</span>
+                  <span className="text-[var(--app-text)] font-bold">Rp 78.480.000</span>
                 </div>
-                <div className="flex justify-between border-b border-[#131d35] pb-3">
+                <div className="flex justify-between border-b border-[var(--app-border)] pb-3">
                   <span>Total Nilai Terdampak</span>
                   <span className="text-blue-400 font-bold">Rp 234.710.000</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Rata-rata Persentase</span>
-                  <span className="text-white font-bold">72.6%</span>
+                  <span className="text-[var(--app-text)] font-bold">72.6%</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Refund 100%</span>
@@ -695,8 +653,8 @@ export default function RefundVoidPage() {
             </div>
 
             {/* Card 3: Statistik Persentase */}
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-5 space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400">Statistik Persentase</h3>
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Statistik Persentase</h3>
               
               <div className="space-y-3">
                 {[
@@ -708,10 +666,10 @@ export default function RefundVoidPage() {
                 ].map((item, idx) => (
                   <div key={idx} className="space-y-1">
                     <div className="flex justify-between text-xs font-semibold">
-                      <span className="text-gray-300">{item.range}</span>
-                      <span className="text-gray-400">{item.tx} transaksi ({item.pct}%)</span>
+                      <span className="text-[var(--app-text)]/80">{item.range}</span>
+                      <span className="text-[var(--app-muted)]">{item.tx} transaksi ({item.pct}%)</span>
                     </div>
-                    <div className="w-full bg-[#101935] h-1.5 rounded-full overflow-hidden">
+                    <div className="w-full bg-[var(--app-bg)] h-1.5 rounded-full overflow-hidden">
                       <div className="bg-blue-600 h-full rounded-full" style={{ width: `${item.pct}%` }}></div>
                     </div>
                   </div>
@@ -720,10 +678,10 @@ export default function RefundVoidPage() {
             </div>
 
             {/* Card 4: Alasan Terbanyak */}
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-5 space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400">Alasan Terbanyak</h3>
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Alasan Terbanyak</h3>
               
-              <div className="space-y-3.5 text-xs font-semibold text-gray-400">
+              <div className="space-y-3.5 text-xs font-semibold text-[var(--app-muted)]">
                 {[
                   { name: 'Permintaan Customer', tx: 56, pct: 23.9, color: 'bg-blue-500' },
                   { name: 'Kelebihan Bayar', tx: 48, pct: 20.5, color: 'bg-green-500' },
@@ -734,7 +692,7 @@ export default function RefundVoidPage() {
                 ].map((item, idx) => (
                   <div key={idx} className="space-y-1">
                     <div className="flex justify-between items-center text-xs font-semibold">
-                      <span className="text-gray-300 flex items-center gap-1.5">
+                      <span className="text-[var(--app-text)]/80 flex items-center gap-1.5">
                         <span className={`w-1.5 h-1.5 rounded-full ${item.color}`} />
                         <span>{item.name}</span>
                       </span>

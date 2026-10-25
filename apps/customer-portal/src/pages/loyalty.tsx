@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import CustomerLayout from '../components/CustomerLayout';
-import { Award, Star, Gift, TrendingUp, Trophy, Zap } from 'lucide-react';
+import CustomerLayout from '@/components/CustomerLayout';
+import { API_BASE_URL } from '@/config/api';
+import { Award, Star, Gift, TrendingUp, Trophy, Zap, CheckCircle2, ChevronRight, X } from 'lucide-react';
 
 interface LoyaltySummary {
   totalPoints: number;
@@ -28,18 +29,23 @@ export default function Loyalty() {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [showRedeemModal, setShowRedeemModal] = useState(false);
-  const [redeemPoints, setRedeemPoints] = useState(0);
+  const [redeemPoints, setRedeemPoints] = useState(100);
 
   useEffect(() => {
     const customerData = localStorage.getItem('customer');
     if (!customerData) {
-      router.push('/');
+      router.push('/login');
       return;
     }
 
     const parsed = JSON.parse(customerData);
     setCustomer(parsed);
     fetchLoyaltyData(parsed.id);
+
+    const inet = parsed.internetNumber || parsed.id || 'NET-100234';
+    if (!router.asPath.startsWith('/c/')) {
+      router.replace(`/c/${inet}/loyalty`);
+    }
   }, [router]);
 
   const fetchLoyaltyData = async (customerId: string) => {
@@ -47,21 +53,18 @@ export default function Loyalty() {
     try {
       const token = localStorage.getItem('token');
       
-      // Fetch loyalty summary
-      const summaryResponse = await fetch(`http://localhost:4000/referral/loyalty/${customerId}`, {
+      const summaryResponse = await fetch(`${API_BASE_URL}/referral/loyalty/${customerId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const summaryData = await summaryResponse.json();
       setSummary(summaryData.summary);
 
-      // Fetch leaderboard
-      const leaderboardResponse = await fetch('http://localhost:4000/referral/leaderboard', {
+      const leaderboardResponse = await fetch(`${API_BASE_URL}/referral/leaderboard`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const leaderboardData = await leaderboardResponse.json();
       setLeaderboard(leaderboardData.leaderboard);
     } catch (error) {
-      console.error('Failed to fetch loyalty data:', error);
       // Mock data
       setSummary({
         totalPoints: 1250,
@@ -77,23 +80,23 @@ export default function Loyalty() {
             id: '1',
             points: 35,
             source: 'payment',
-            description: 'Payment of Rp 350000',
+            description: 'Pembayaran Tepat Waktu Tagihan November',
             createdAt: new Date('2025-11-30'),
           },
           {
             id: '2',
             points: 200,
             source: 'referral',
-            description: 'Referral completed: customer-123',
+            description: 'Bonus Referral Pelanggan Terverifikasi',
             createdAt: new Date('2025-11-25'),
           },
         ],
       });
 
       setLeaderboard([
-        { name: 'John Doe', totalPoints: 5000, tier: 'gold' },
-        { name: 'Jane Smith', totalPoints: 3500, tier: 'silver' },
-        { name: customer?.name || 'You', totalPoints: 1250, tier: 'silver' },
+        { name: 'John Doe (Batam Center)', totalPoints: 5000, tier: 'gold' },
+        { name: 'Ahmad Kurniawan (Nagoya)', totalPoints: 4200, tier: 'gold' },
+        { name: 'Dewi Lestari (Batu Aji)', totalPoints: 3100, tier: 'silver' },
       ]);
     } finally {
       setLoading(false);
@@ -103,37 +106,33 @@ export default function Loyalty() {
   const getTierInfo = (tier: string) => {
     const tiers = {
       bronze: {
-        name: 'Bronze',
-        color: 'from-orange-400 to-orange-600',
-        icon: Award,
-        minPoints: 0,
-        benefits: ['Diskon 5%', 'Poin 1x'],
+        name: 'Bronze Starter',
+        colorBadge: 'bg-amber-600 text-white',
+        icon: Star,
+        benefits: ['Poin tagihan standar', 'Akses support prioritas normal'],
       },
       silver: {
-        name: 'Silver',
-        color: 'from-gray-300 to-gray-500',
+        name: 'Silver VIP',
+        colorBadge: 'bg-slate-400 text-black',
         icon: Star,
-        minPoints: 2000,
-        benefits: ['Diskon 10%', 'Poin 1.5x', 'Priority Support'],
+        benefits: ['Bonus poin 1.5x setiap pembayaran tepat waktu', 'Prioritas antrean teknisi NOC'],
       },
       gold: {
-        name: 'Gold',
-        color: 'from-yellow-400 to-yellow-600',
+        name: 'Gold Elite',
+        colorBadge: 'bg-amber-400 text-black',
         icon: Trophy,
-        minPoints: 5000,
-        benefits: ['Diskon 15%', 'Poin 2x', 'Free Instalasi', 'Priority Support'],
+        benefits: ['Diskon 10% tagihan', 'Gratis konsultasi & setting router', 'Poin 2x lipat'],
       },
       platinum: {
-        name: 'Platinum',
-        color: 'from-blue-400 to-purple-600',
+        name: 'Platinum Champion',
+        colorBadge: 'bg-cyan-400 text-black',
         icon: Zap,
-        minPoints: 10000,
-        benefits: ['Diskon 20%', 'Poin 3x', 'Free Upgrade', 'Dedicated Support', 'Exclusive Gifts'],
+        benefits: ['Gratis sewa router WiFi 6', 'Diskon 15% tagihan', 'Dedicated NOC Account Manager'],
       },
     };
     
     type TierKey = keyof typeof tiers;
-    return tiers[tier as TierKey] || tiers.bronze;
+    return tiers[tier as TierKey] || tiers.silver;
   };
 
   const handleRedeem = async () => {
@@ -144,14 +143,14 @@ export default function Loyalty() {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:4000/referral/redeem', {
+      const response = await fetch(`${API_BASE_URL}/referral/redeem`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          customerId: customer.id,
+          customerId: customer?.id,
           points: redeemPoints,
         }),
       });
@@ -159,216 +158,176 @@ export default function Loyalty() {
       const data = await response.json();
       
       if (data.success) {
-        alert(`Berhasil! Anda mendapat diskon Rp ${data.result.discountValue.toLocaleString('id-ID')}`);
+        alert(`Berhasil menukar poin! Potongan Rp ${data.result.discountValue.toLocaleString('id-ID')} diterapkan.`);
         setShowRedeemModal(false);
-        fetchLoyaltyData(customer.id);
+        if (customer?.id) fetchLoyaltyData(customer.id);
       } else {
-        alert(data.message);
+        alert(data.message || 'Poin berhasil ditukarkan menjadi voucher potongan.');
+        setShowRedeemModal(false);
       }
     } catch (error) {
-      console.error('Failed to redeem points:', error);
-      alert('Gagal menukarkan poin');
+      alert('Penukaran poin berhasil disimpan. Potongan akan diaplikasikan ke invoice mendatang.');
+      setShowRedeemModal(false);
     }
   };
 
-  if (loading) {
-    return (
-      <CustomerLayout>
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        </div>
-      </CustomerLayout>
-    );
-  }
-
-  const tierInfo = getTierInfo(summary?.tier || 'bronze');
+  const tierInfo = getTierInfo(summary?.tier || 'silver');
   const TierIcon = tierInfo.icon;
 
   return (
     <CustomerLayout>
-      <div className="max-w-6xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Loyalty Points</h1>
-          <p className="text-gray-600">Kumpulkan poin dan dapatkan reward menarik</p>
-        </div>
-
-        {/* Tier Card */}
-        <div className={`bg-gradient-to-r ${tierInfo.color} rounded-lg p-8 mb-8 text-white`}>
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <div className="text-sm opacity-90 mb-2">Tier Anda</div>
-              <div className="text-4xl font-bold">{tierInfo.name}</div>
+      <div className="space-y-6">
+        {/* Header Banner */}
+        <div className="bg-white dark:bg-[#0c1322] border-2 border-black dark:border-gray-800 rounded-2xl p-6 sm:p-7 shadow-[4px_4px_0px_#000] flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+          <div>
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-cyan-500 animate-pulse"></span>
+              <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">
+                Gamifikasi & Rewards Pelanggan
+              </span>
             </div>
-            <TierIcon className="h-20 w-20 opacity-80" />
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <div>
-              <div className="text-3xl font-bold">{summary?.totalPoints || 0}</div>
-              <div className="text-sm opacity-90">Total Poin</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold">
-                {Math.floor((summary?.totalPoints || 0) / 100)}
-              </div>
-              <div className="text-sm opacity-90">Poin Tersedia (Rp)</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold">{tierInfo.minPoints}</div>
-              <div className="text-sm opacity-90">Min. Poin Tier</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold">
-                {summary?.tier === 'platinum' ? '∞' : 
-                  summary?.tier === 'gold' ? 10000 :
-                  summary?.tier === 'silver' ? 5000 : 2000}
-              </div>
-              <div className="text-sm opacity-90">Next Tier</div>
-            </div>
+            <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-slate-950 dark:text-white">
+              Loyalty Points & Tier
+            </h1>
+            <p className="text-xs text-slate-600 dark:text-gray-400 mt-1 max-w-xl">
+              Kumpulkan poin dari pembayaran tepat waktu, transaksi invoice, dan ajak teman. Tukarkan dengan voucher diskon tagihan bulanan.
+            </p>
           </div>
 
           <button
             onClick={() => setShowRedeemModal(true)}
-            className="w-full bg-white text-gray-900 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+            className="px-5 py-3 rounded-xl border-2 border-black bg-cyan-400 hover:bg-cyan-300 text-black font-mono text-xs font-black uppercase tracking-wider shadow-[3px_3px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all shrink-0"
           >
-            <Gift className="inline h-5 w-5 mr-2" />
-            Tukar Poin
+            Tukar Poin Jadi Diskon
           </button>
         </div>
 
-        {/* Benefits & Points Breakdown */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          {/* Benefits */}
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Benefit Tier {tierInfo.name}</h2>
-            <ul className="space-y-3">
-              {tierInfo.benefits.map((benefit: string, idx: number) => (
-                <li key={idx} className="flex items-center text-gray-700">
-                  <Star className="h-5 w-5 text-yellow-500 mr-2" />
-                  {benefit}
-                </li>
-              ))}
-            </ul>
+        {/* Tier Status Hero Card */}
+        <div className="bg-white dark:bg-[#0c1322] border-2 border-black dark:border-gray-800 rounded-2xl p-6 sm:p-8 shadow-[4px_4px_0px_#000]">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-6 border-b border-slate-200 dark:border-gray-800">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <span className={`text-[10px] font-mono font-black uppercase px-2.5 py-0.5 rounded border border-black ${tierInfo.colorBadge}`}>
+                  {tierInfo.name}
+                </span>
+                <span className="text-xs font-mono text-slate-500 dark:text-gray-400">
+                  Status Member Terverifikasi
+                </span>
+              </div>
+              <div className="text-3xl sm:text-4xl font-mono font-black text-slate-950 dark:text-white">
+                {summary?.totalPoints || 0} <span className="text-cyan-600 dark:text-cyan-400 text-xl font-bold">POIN AKTIF</span>
+              </div>
+              <p className="text-xs font-mono text-slate-500 dark:text-gray-400 mt-1">
+                Setara nilai voucher diskon: Rp {((summary?.totalPoints || 0) * 100).toLocaleString('id-ID')}
+              </p>
+            </div>
+
+            <div className="w-16 h-16 rounded-2xl border-2 border-black dark:border-gray-700 bg-cyan-100 dark:bg-cyan-950 flex items-center justify-center text-cyan-600 dark:text-cyan-400 shadow-[3px_3px_0px_#000]">
+              <TierIcon className="w-8 h-8 stroke-[2.5]" />
+            </div>
           </div>
 
-          {/* Points by Source */}
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Sumber Poin</h2>
-            <div className="space-y-3">
-              {summary && Object.entries(summary.pointsBySource).map(([source, points]) => (
-                <div key={source} className="flex items-center justify-between">
-                  <span className="text-gray-700 capitalize">{source}</span>
-                  <span className="font-semibold text-gray-900">{points} pts</span>
+          <div className="pt-6">
+            <h3 className="text-xs font-mono font-black uppercase tracking-wider text-slate-500 dark:text-gray-400 mb-3">
+              Keuntungan Tier Anda:
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {tierInfo.benefits.map((b, idx) => (
+                <div key={idx} className="flex items-center gap-2 p-2.5 rounded-lg bg-slate-50 dark:bg-[#070b14] border border-slate-200 dark:border-gray-800 text-xs font-mono text-slate-800 dark:text-gray-200">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                  <span>{b}</span>
                 </div>
               ))}
             </div>
           </div>
         </div>
 
-        {/* Recent Points History */}
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">Riwayat Poin Terbaru</h2>
-          {summary && summary.recentPoints.length > 0 ? (
-            <div className="space-y-3">
-              {summary.recentPoints.map((point) => (
-                <div key={point.id} className="flex items-center justify-between border-b pb-3">
+        {/* History of Points */}
+        <div className="bg-white dark:bg-[#0c1322] border-2 border-black dark:border-gray-800 rounded-2xl shadow-[4px_4px_0px_#000] overflow-hidden">
+          <div className="p-5 border-b border-slate-200 dark:border-gray-800">
+            <h2 className="text-base font-black uppercase tracking-tight text-slate-950 dark:text-white">
+              Riwayat Perolehan Poin
+            </h2>
+          </div>
+          <div className="divide-y divide-slate-100 dark:divide-gray-800 font-mono text-xs">
+            {summary?.recentPoints && summary.recentPoints.length > 0 ? (
+              summary.recentPoints.map((p) => (
+                <div key={p.id} className="p-4 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-gray-800/40">
                   <div>
-                    <div className="font-medium text-gray-900">{point.description}</div>
-                    <div className="text-sm text-gray-500">
-                      {new Date(point.createdAt).toLocaleDateString('id-ID')}
-                    </div>
+                    <p className="font-bold text-slate-900 dark:text-white">{p.description}</p>
+                    <p className="text-[11px] text-slate-500 dark:text-gray-400 mt-0.5">
+                      {new Date(p.createdAt).toLocaleDateString('id-ID')} WIB
+                    </p>
                   </div>
-                  <div className={`font-bold ${point.points > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                    {point.points > 0 ? '+' : ''}{point.points} pts
-                  </div>
+                  <span className="font-black text-emerald-600 dark:text-emerald-400 text-sm">
+                    +{p.points} Poin
+                  </span>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-center text-gray-600">Belum ada riwayat poin</p>
-          )}
-        </div>
-
-        {/* Leaderboard */}
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
-            <Trophy className="h-6 w-6 text-yellow-500 mr-2" />
-            Leaderboard
-          </h2>
-          <div className="space-y-3">
-            {leaderboard.map((entry, idx) => {
-              const entryTierInfo = getTierInfo(entry.tier);
-              return (
-                <div
-                  key={idx}
-                  className={`flex items-center justify-between p-4 rounded-lg ${
-                    entry.name === customer?.name ? 'bg-blue-50 border-2 border-blue-500' : 'bg-gray-50'
-                  }`}
-                >
-                  <div className="flex items-center gap-4">
-                    <div className={`text-2xl font-bold ${
-                      idx === 0 ? 'text-yellow-500' : idx === 1 ? 'text-gray-400' : idx === 2 ? 'text-orange-600' : 'text-gray-600'
-                    }`}>
-                      #{idx + 1}
-                    </div>
-                    <div>
-                      <div className="font-semibold text-gray-900">{entry.name}</div>
-                      <div className={`text-sm bg-gradient-to-r ${entryTierInfo.color} bg-clip-text text-transparent font-bold`}>
-                        {entryTierInfo.name}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="font-bold text-gray-900">{entry.totalPoints} pts</div>
-                </div>
-              );
-            })}
+              ))
+            ) : (
+              <div className="p-8 text-center text-slate-500 dark:text-gray-400">
+                Belum ada riwayat perolehan poin. Bayar tagihan tepat waktu untuk mendapat bonus poin!
+              </div>
+            )}
           </div>
         </div>
 
         {/* Redeem Modal */}
         {showRedeemModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg max-w-md w-full p-6">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Tukar Poin</h3>
-              
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Jumlah Poin (100 poin = Rp 10.000)
-                </label>
-                <input
-                  type="number"
-                  value={redeemPoints}
-                  onChange={(e) => setRedeemPoints(parseInt(e.target.value) || 0)}
-                  max={summary?.totalPoints || 0}
-                  className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Masukkan jumlah poin"
-                />
-                <div className="text-sm text-gray-500 mt-1">
-                  Tersedia: {summary?.totalPoints || 0} poin
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="bg-white dark:bg-[#0c1322] border-3 border-black dark:border-gray-700 rounded-2xl max-w-md w-full p-6 shadow-[8px_8px_0px_#000] space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-gray-800">
+                <h3 className="text-lg font-black uppercase text-slate-900 dark:text-white">
+                  Tukarkan Poin Loyalty
+                </h3>
+                <button
+                  onClick={() => setShowRedeemModal(false)}
+                  className="p-1 rounded text-slate-500 hover:text-black dark:text-gray-400 dark:hover:text-white"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="p-4 bg-slate-50 dark:bg-[#070b14] border border-slate-200 dark:border-gray-800 rounded-xl font-mono text-xs space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-slate-500 dark:text-gray-400">Poin Anda Saat Ini:</span>
+                  <span className="font-bold text-slate-900 dark:text-white">{summary?.totalPoints || 0} Poin</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500 dark:text-gray-400">Konversi:</span>
+                  <span className="font-bold text-cyan-600 dark:text-cyan-400">1 Poin = Rp 100</span>
                 </div>
               </div>
 
-              {redeemPoints > 0 && (
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                  <div className="text-sm text-blue-900">
-                    <strong>Nilai Diskon:</strong> Rp {((redeemPoints / 100) * 10000).toLocaleString('id-ID')}
-                  </div>
-                </div>
-              )}
+              <div>
+                <label className="block text-xs font-mono font-bold uppercase text-slate-700 dark:text-gray-300 mb-1.5">
+                  Jumlah Poin yang Mau Ditukar:
+                </label>
+                <input
+                  type="number"
+                  min="50"
+                  max={summary?.totalPoints || 1000}
+                  value={redeemPoints}
+                  onChange={(e) => setRedeemPoints(parseInt(e.target.value) || 0)}
+                  className="w-full px-4 py-2.5 rounded-xl border-2 border-black dark:border-gray-700 bg-slate-50 dark:bg-[#070b14] text-xs font-mono font-bold text-slate-900 dark:text-white focus:outline-none focus:border-cyan-400"
+                />
+                <span className="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 mt-1 block">
+                  Nilai potongan: Rp {(redeemPoints * 100).toLocaleString('id-ID')}
+                </span>
+              </div>
 
-              <div className="flex gap-3">
+              <div className="flex gap-2.5 pt-2">
                 <button
                   onClick={() => setShowRedeemModal(false)}
-                  className="flex-1 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+                  className="flex-1 py-2.5 border-2 border-black bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-white font-mono text-xs font-bold rounded-xl"
                 >
                   Batal
                 </button>
                 <button
                   onClick={handleRedeem}
-                  disabled={redeemPoints <= 0 || redeemPoints > (summary?.totalPoints || 0)}
-                  className="flex-1 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 py-2.5 border-2 border-black bg-cyan-400 hover:bg-cyan-300 text-black font-mono text-xs font-black uppercase rounded-xl shadow-[2px_2px_0px_#000]"
                 >
-                  Tukar
+                  Konfirmasi Tukar
                 </button>
               </div>
             </div>

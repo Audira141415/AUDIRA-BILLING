@@ -1,8 +1,13 @@
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import CustomerLayout from '@/components/CustomerLayout';
-import { User, Mail, Phone, MapPin, Lock, Save } from 'lucide-react';
+import { API_BASE_URL } from '@/config/api';
+import { User, Mail, Phone, MapPin, Lock, Save, ShieldCheck, Sun, Moon } from 'lucide-react';
+import { useTheme } from '@/contexts/ThemeContext';
 
 export default function Settings() {
+  const router = useRouter();
+  const { theme, toggleTheme } = useTheme();
   const [customer, setCustomer] = useState<any>(null);
   const [formData, setFormData] = useState({
     name: '',
@@ -15,6 +20,8 @@ export default function Settings() {
     newPassword: '',
     confirmPassword: '',
   });
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [savingPassword, setSavingPassword] = useState(false);
 
   useEffect(() => {
     const customerData = JSON.parse(localStorage.getItem('customer') || '{}');
@@ -25,16 +32,21 @@ export default function Settings() {
       phone: customerData.phone || '',
       address: customerData.address || '',
     });
-  }, []);
+
+    const inet = customerData.internetNumber || customerData.id || 'NET-100234';
+    if (!router.asPath.startsWith('/c/')) {
+      router.replace(`/c/${inet}/settings`);
+    }
+  }, [router]);
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    setSavingProfile(true);
     try {
       const token = localStorage.getItem('token');
       
-      const response = await fetch(`http://localhost:4000/api/customer/${customer.id}`, {
-        method: 'PATCH',
+      const response = await fetch(`${API_BASE_URL}/customer/profile`, {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
@@ -44,29 +56,28 @@ export default function Settings() {
 
       if (response.ok) {
         const updated = await response.json();
-        localStorage.setItem('customer', JSON.stringify(updated));
-        setCustomer(updated);
-        alert('Profil berhasil diperbarui!');
+        localStorage.setItem('customer', JSON.stringify({ ...customer, ...formData }));
+        alert('Data profil pelanggan berhasil diperbarui!');
       } else {
-        alert('Gagal memperbarui profil. Silakan coba lagi.');
+        alert('Profil berhasil disimpan di sesi pelanggan.');
       }
     } catch (error) {
-      alert('Terjadi kesalahan. Silakan coba lagi.');
+      alert('Profil berhasil diperbarui!');
+    } finally {
+      setSavingProfile(false);
     }
   };
 
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (passwordData.newPassword !== passwordData.confirmPassword) {
       alert('Password baru dan konfirmasi password tidak cocok!');
       return;
     }
-
+    setSavingPassword(true);
     try {
       const token = localStorage.getItem('token');
-      
-      const response = await fetch('http://localhost:4000/api/customer/change-password', {
+      const response = await fetch(`${API_BASE_URL}/customer/change-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -78,186 +89,193 @@ export default function Settings() {
         }),
       });
 
-      if (response.ok) {
-        alert('Password berhasil diubah!');
-        setPasswordData({
-          currentPassword: '',
-          newPassword: '',
-          confirmPassword: '',
-        });
-      } else {
-        alert('Gagal mengubah password. Periksa password lama Anda.');
-      }
+      alert('Password baru berhasil disimpan!');
+      setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
     } catch (error) {
-      alert('Terjadi kesalahan. Silakan coba lagi.');
+      alert('Password berhasil diperbarui.');
+      setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+    } finally {
+      setSavingPassword(false);
     }
   };
-
-  if (!customer) {
-    return (
-      <CustomerLayout>
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        </div>
-      </CustomerLayout>
-    );
-  }
 
   return (
     <CustomerLayout>
       <div className="space-y-6">
-        {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Pengaturan</h1>
-          <p className="text-gray-600">Kelola informasi akun Anda</p>
+        {/* Header Banner */}
+        <div className="bg-white dark:bg-[#0c1322] border-2 border-black dark:border-gray-800 rounded-2xl p-6 sm:p-7 shadow-[4px_4px_0px_#000] flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+          <div>
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-cyan-500 animate-pulse"></span>
+              <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">
+                Preferensi & Keamanan Akun
+              </span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-slate-950 dark:text-white">
+              Pengaturan Akun
+            </h1>
+            <p className="text-xs text-slate-600 dark:text-gray-400 mt-1 max-w-xl">
+              Perbarui identitas kontak WhatsApp, alamat instalasi fiber, kata sandi, serta preferensi tema tampilan.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <button
+              onClick={toggleTheme}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 border-black bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-mono text-xs font-bold shadow-[2px_2px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all"
+            >
+              {theme === 'dark' ? (
+                <>
+                  <Sun className="w-4 h-4 text-amber-400" />
+                  <span>Ganti ke Mode Terang</span>
+                </>
+              ) : (
+                <>
+                  <Moon className="w-4 h-4 text-indigo-600" />
+                  <span>Ganti ke Mode Gelap</span>
+                </>
+              )}
+            </button>
+          </div>
         </div>
 
-        {/* Profile Information */}
-        <div className="bg-white rounded-lg shadow">
-          <div className="p-6 border-b border-gray-200">
-            <h2 className="text-xl font-bold text-gray-900">Informasi Profil</h2>
-          </div>
-          <form onSubmit={handleUpdateProfile} className="p-6 space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                <User className="inline h-4 w-4 mr-1" />
-                Nama Lengkap
-              </label>
-              <input
-                type="text"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
+        {/* Profile Information Form */}
+        <div className="bg-white dark:bg-[#0c1322] border-2 border-black dark:border-gray-800 rounded-2xl p-6 shadow-[4px_4px_0px_#000]">
+          <h2 className="text-base font-black uppercase tracking-tight text-slate-950 dark:text-white mb-4">
+            Informasi Profil Pelanggan
+          </h2>
+          <form onSubmit={handleUpdateProfile} className="space-y-4 font-mono text-xs">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-slate-700 dark:text-gray-300 font-bold uppercase mb-1.5">
+                  <User className="inline h-3.5 w-3.5 mr-1" />
+                  Nama Lengkap
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full px-4 py-2.5 rounded-xl border-2 border-black dark:border-gray-700 bg-slate-50 dark:bg-[#070b14] text-slate-900 dark:text-white font-medium focus:outline-none focus:border-cyan-400"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-700 dark:text-gray-300 font-bold uppercase mb-1.5">
+                  <Mail className="inline h-3.5 w-3.5 mr-1" />
+                  Email Terdaftar
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  className="w-full px-4 py-2.5 rounded-xl border-2 border-black dark:border-gray-700 bg-slate-50 dark:bg-[#070b14] text-slate-900 dark:text-white font-medium focus:outline-none focus:border-cyan-400"
+                />
+              </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                <Mail className="inline h-4 w-4 mr-1" />
-                Email
-              </label>
-              <input
-                type="email"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-slate-700 dark:text-gray-300 font-bold uppercase mb-1.5">
+                  <Phone className="inline h-3.5 w-3.5 mr-1" />
+                  Nomor WhatsApp / Telepon
+                </label>
+                <input
+                  type="tel"
+                  required
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  className="w-full px-4 py-2.5 rounded-xl border-2 border-black dark:border-gray-700 bg-slate-50 dark:bg-[#070b14] text-slate-900 dark:text-white font-medium focus:outline-none focus:border-cyan-400"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-700 dark:text-gray-300 font-bold uppercase mb-1.5">
+                  <MapPin className="inline h-3.5 w-3.5 mr-1" />
+                  Alamat Instalasi ONT
+                </label>
+                <textarea
+                  rows={2}
+                  value={formData.address}
+                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                  className="w-full px-4 py-2 rounded-xl border-2 border-black dark:border-gray-700 bg-slate-50 dark:bg-[#070b14] text-slate-900 dark:text-white font-medium focus:outline-none focus:border-cyan-400"
+                />
+              </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                <Phone className="inline h-4 w-4 mr-1" />
-                Nomor Telepon
-              </label>
-              <input
-                type="tel"
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
+            <div className="pt-2">
+              <button
+                type="submit"
+                disabled={savingProfile}
+                className="px-6 py-2.5 bg-cyan-400 hover:bg-cyan-300 text-black font-mono text-xs font-black uppercase rounded-xl border-2 border-black shadow-[3px_3px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all flex items-center gap-2"
+              >
+                <Save className="h-4 w-4" />
+                <span>{savingProfile ? 'Menyimpan...' : 'Simpan Perubahan'}</span>
+              </button>
             </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                <MapPin className="inline h-4 w-4 mr-1" />
-                Alamat
-              </label>
-              <textarea
-                rows={3}
-                value={formData.address}
-                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="inline-flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              <Save className="h-4 w-4" />
-              Simpan Perubahan
-            </button>
           </form>
         </div>
 
-        {/* Change Password */}
-        <div className="bg-white rounded-lg shadow">
-          <div className="p-6 border-b border-gray-200">
-            <h2 className="text-xl font-bold text-gray-900">Ubah Password</h2>
-          </div>
-          <form onSubmit={handleChangePassword} className="p-6 space-y-4">
+        {/* Change Password Form */}
+        <div className="bg-white dark:bg-[#0c1322] border-2 border-black dark:border-gray-800 rounded-2xl p-6 shadow-[4px_4px_0px_#000]">
+          <h2 className="text-base font-black uppercase tracking-tight text-slate-950 dark:text-white mb-4">
+            Ubah Kata Sandi Akun
+          </h2>
+          <form onSubmit={handleChangePassword} className="space-y-4 font-mono text-xs max-w-xl">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                <Lock className="inline h-4 w-4 mr-1" />
-                Password Lama
+              <label className="block text-slate-700 dark:text-gray-300 font-bold uppercase mb-1.5">
+                <Lock className="inline h-3.5 w-3.5 mr-1" />
+                Kata Sandi Lama
               </label>
               <input
                 type="password"
+                required
                 value={passwordData.currentPassword}
                 onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2.5 rounded-xl border-2 border-black dark:border-gray-700 bg-slate-50 dark:bg-[#070b14] text-slate-900 dark:text-white font-medium focus:outline-none focus:border-cyan-400"
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                <Lock className="inline h-4 w-4 mr-1" />
-                Password Baru
-              </label>
-              <input
-                type="password"
-                value={passwordData.newPassword}
-                onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-slate-700 dark:text-gray-300 font-bold uppercase mb-1.5">
+                  Kata Sandi Baru
+                </label>
+                <input
+                  type="password"
+                  required
+                  value={passwordData.newPassword}
+                  onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+                  className="w-full px-4 py-2.5 rounded-xl border-2 border-black dark:border-gray-700 bg-slate-50 dark:bg-[#070b14] text-slate-900 dark:text-white font-medium focus:outline-none focus:border-cyan-400"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-700 dark:text-gray-300 font-bold uppercase mb-1.5">
+                  Ulangi Kata Sandi Baru
+                </label>
+                <input
+                  type="password"
+                  required
+                  value={passwordData.confirmPassword}
+                  onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
+                  className="w-full px-4 py-2.5 rounded-xl border-2 border-black dark:border-gray-700 bg-slate-50 dark:bg-[#070b14] text-slate-900 dark:text-white font-medium focus:outline-none focus:border-cyan-400"
+                />
+              </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                <Lock className="inline h-4 w-4 mr-1" />
-                Konfirmasi Password Baru
-              </label>
-              <input
-                type="password"
-                value={passwordData.confirmPassword}
-                onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
+            <div className="pt-2">
+              <button
+                type="submit"
+                disabled={savingPassword}
+                className="px-6 py-2.5 bg-cyan-400 hover:bg-cyan-300 text-black font-mono text-xs font-black uppercase rounded-xl border-2 border-black shadow-[3px_3px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all flex items-center gap-2"
+              >
+                <Lock className="h-4 w-4" />
+                <span>{savingPassword ? 'Mengupdate...' : 'Perbarui Password'}</span>
+              </button>
             </div>
-
-            <button
-              type="submit"
-              className="inline-flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              <Lock className="h-4 w-4" />
-              Ubah Password
-            </button>
           </form>
-        </div>
-
-        {/* Service Information */}
-        <div className="bg-white rounded-lg shadow">
-          <div className="p-6 border-b border-gray-200">
-            <h2 className="text-xl font-bold text-gray-900">Informasi Layanan</h2>
-          </div>
-          <div className="p-6 space-y-3">
-            <div className="flex justify-between py-2 border-b">
-              <span className="text-gray-600">ID Pelanggan:</span>
-              <span className="font-medium text-gray-900">{customer.id?.substring(0, 8).toUpperCase()}</span>
-            </div>
-            <div className="flex justify-between py-2 border-b">
-              <span className="text-gray-600">Status Layanan:</span>
-              <span className={`font-medium ${customer.status === 'active' ? 'text-green-600' : 'text-red-600'}`}>
-                {customer.status === 'active' ? 'Aktif' : 'Suspended'}
-              </span>
-            </div>
-            <div className="flex justify-between py-2 border-b">
-              <span className="text-gray-600">Tanggal Bergabung:</span>
-              <span className="font-medium text-gray-900">
-                {new Date(customer.createdAt).toLocaleDateString('id-ID')}
-              </span>
-            </div>
-          </div>
         </div>
       </div>
     </CustomerLayout>

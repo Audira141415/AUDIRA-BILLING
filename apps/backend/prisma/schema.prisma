@@ -56,6 +56,12 @@ model Customer {
   referralsReceived Referral[]       @relation("ReferralReferred")
   loyaltyPoints     LoyaltyPoint[]
   workOrders        WorkOrder[]
+  salesPartnerId    String?
+  salesPartner      SalesPartner?    @relation("SalesPartnerCustomers", fields: [salesPartnerId], references: [id])
+  promiseDate       DateTime?        // Batas tanggal janji bayar
+  isGracePeriod     Boolean          @default(false) // Status dispensasi isolir aktif
+  graceNotes        String?          // Alasan/catatan janji bayar
+  boosters          CustomerBooster[]
 
   @@map("customers")
 }
@@ -67,6 +73,7 @@ model Package {
   speed       String
   description String?
   status      String    @default("active")
+  salesCommission Float @default(0)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   customerId  String?
@@ -89,6 +96,8 @@ model Transaction {
   updatedAt         DateTime  @updatedAt
   customerId        String?
   customer          Customer? @relation(fields: [customerId], references: [id])
+  collectorShiftId  String?
+  collectorShift    CollectorShift? @relation(fields: [collectorShiftId], references: [id])
 
   @@map("transactions")
 }
@@ -180,17 +189,20 @@ model Technician {
 }
 
 model ODP {
-  id          String   @id @default(uuid())
-  name        String
+  id          String    @id @default(uuid())
+  name        String    @unique
   location    String
   latitude    Float?
   longitude   Float?
-  capacity    Int
-  usedPorts   Int      @default(0)
-  status      String   @default("active")
+  capacity    Int       @default(16)
+  usedPorts   Int       @default(0)
+  status      String    @default("active")
   description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  odcId       String?
+  odc         ODC?      @relation(fields: [odcId], references: [id], onDelete: SetNull)
+  ports       OdpPort[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   @@map("odps")
 }
@@ -679,4 +691,221 @@ model AuditLog {
   @@index([createdAt], map: "idx_audit_logs_created_at")
   @@index([status], map: "idx_audit_logs_status")
 }
+
+// ─── Mitra Sales Luar / Freelance Partner ───
+model SalesPartner {
+  id              String               @id @default(uuid())
+  code            String               @unique // Kode referral unik (misal: AGUS01)
+  name            String
+  phone           String               @unique // Nomor WhatsApp aktif
+  email           String?              @unique
+  password        String               // Hashed password untuk login portal mitra
+  zone            String?              // Wilayah cover (misal: Batam Kota, Sekupang)
+  bio             String?
+  status          String               @default("PENDING") // PENDING, ACTIVE, SUSPENDED
+  balance         Float                @default(0) // Saldo aktif yang bisa ditarik
+  pendingBalance  Float                @default(0) // Saldo komisi menunggu invoice lunas
+  bankName        String?              // Nama Bank / E-Wallet (BCA, Mandiri, DANA, GoPay)
+  bankAccount     String?              // Nomor Rekening / Nomor HP E-Wallet
+  bankAccountName String?              // Nama Pemilik Rekening
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+  
+  commissions     CommissionLedger[]
+  withdrawals     WithdrawalRequest[]
+  leads           Customer[]           @relation("SalesPartnerCustomers")
+
+  @@map("sales_partners")
+}
+
+// ─── Buku Kas Mutasi Komisi (Commission Ledger) ───
+model CommissionLedger {
+  id              String        @id @default(uuid())
+  salesPartnerId  String
+  salesPartner    SalesPartner  @relation(fields: [salesPartnerId], references: [id], onDelete: Cascade)
+  customerId      String?
+  packageId       String?
+  invoiceId       String?
+  type            String        // CREDIT_PSB, CREDIT_RECURRING, DEBIT_WITHDRAW, ADJUSTMENT
+  amount          Float
+  status          String        @default("AVAILABLE") // HELD, AVAILABLE, PAID, CANCELLED
+  description     String
+  createdAt       DateTime      @default(now())
+
+  @@map("commission_ledgers")
+}
+
+// ─── Permintaan Pencairan Saldo (Withdrawal Request) ───
+model WithdrawalRequest {
+  id              String        @id @default(uuid())
+  salesPartnerId  String
+  salesPartner    SalesPartner  @relation(fields: [salesPartnerId], references: [id], onDelete: Cascade)
+  amount          Float
+  bankName        String
+  bankAccount     String
+  bankAccountName String
+  status          String        @default("PENDING") // PENDING, APPROVED, REJECTED
+  transferReceipt String?       // URL foto/bukti transfer
+  notes           String?
+  approvedBy      String?       // User ID Admin yang memproses
+  approvedAt      DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@map("withdrawal_requests")
+}
+
+// ─── Optical Distribution Cabinet (ODC) ───
+model ODC {
+  id          String   @id @default(uuid())
+  name        String   @unique // Misal: ODC-BT-01
+  location    String
+  latitude    Float?
+  longitude   Float?
+  capacity    Int      @default(48) // Total core
+  odps        ODP[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("odcs")
+}
+
+// ─── Port Fisik ODP ───
+model OdpPort {
+  id           String   @id @default(uuid())
+  odpId        String
+  odp          ODP      @relation(fields: [odpId], references: [id], onDelete: Cascade)
+  portNumber   Int
+  status       String   @default("AVAILABLE") // AVAILABLE, USED, BROKEN
+  customerId   String?
+  customerName String?
+  opticalLoss  Float?   // Nilai redaman pada port (dBm)
+  updatedAt    DateTime @updatedAt
+
+  @@unique([odpId, portNumber])
+  @@map("odp_ports")
+}
+
+// ─── Hotspot Profile (Kecepatan & Kuota) ───
+model HotspotProfile {
+  id          String           @id @default(uuid())
+  name        String           // Misal: "Paket 2 Jam Rp 3.000", "24 Jam Rp 10.000"
+  price       Int
+  duration    Int              // Durasi menit (120, 1440, dll)
+  rateLimit   String           @default("2M/2M")
+  sharedUsers Int              @default(1)
+  vouchers    HotspotVoucher[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@map("hotspot_profiles")
+}
+
+// ─── Hotspot Voucher Siap Jual ───
+model HotspotVoucher {
+  id          String         @id @default(uuid())
+  code        String         @unique // Kode unik voucher / password
+  username    String         @unique
+  password    String
+  profileId   String
+  profile     HotspotProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  batchCode   String         // Kode kelompok cetak (misal: BATCH-20261021-01)
+  status      String         @default("ACTIVE") // ACTIVE, USED, EXPIRED
+  createdAt   DateTime       @default(now())
+  usedAt      DateTime?
+
+  @@map("hotspot_vouchers")
+}
+
+// ─── Turbo Bandwidth Booster Packages ───
+model BoosterPackage {
+  id          String            @id @default(uuid())
+  name        String            // Misal: "Turbo 50 Mbps (24 Jam)"
+  speed       String            // "50M/50M"
+  duration    Int               // Durasi jam (6, 24, 48, dll)
+  price       Int               // Rp 15.000
+  description String?
+  isActive    Boolean           @default(true)
+  createdAt   DateTime          @default(now())
+  boosters    CustomerBooster[]
+
+  @@map("booster_packages")
+}
+
+// ─── Customer Active & History Boosters ───
+model CustomerBooster {
+  id            String         @id @default(uuid())
+  customerId    String
+  customer      Customer       @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  packageId     String
+  package       BoosterPackage @relation(fields: [packageId], references: [id])
+  originalSpeed String         @default("10M/10M") // Speed awal untuk auto-revert
+  startedAt     DateTime       @default(now())
+  expiresAt     DateTime
+  status        String         @default("ACTIVE") // ACTIVE, EXPIRED, CANCELLED
+  createdAt     DateTime       @default(now())
+
+  @@map("customer_boosters")
+}
+
+// ─── Shift & Rekonsiliasi Kas Kolektor Lapangan ───
+model CollectorShift {
+  id            String        @id @default(uuid())
+  collectorId   String        // User / Employee ID
+  collectorName String        // Nama Petugas Kolektor
+  date          DateTime      @default(now())
+  totalCollected Float        @default(0)
+  isHandedOver  Boolean       @default(false) // Status serah terima kas ke bendahara kantor
+  handoverNotes String?
+  handedOverAt  DateTime?
+  payments      Transaction[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@map("collector_shifts")
+}
+
+// ─── OLT Chassis Devices (ZTE, Huawei, VSOL, HiOSO) ───
+model OltDevice {
+  id          String    @id @default(uuid())
+  name        String    // Misal: "OLT-ZTE-C320-Pusat", "OLT-VSOL-GPON-01"
+  brand       String    // ZTE, HUAWEI, VSOL, HIOSO
+  ipAddress   String    @unique
+  snmpPort    Int       @default(161)
+  telnetPort  Int       @default(23)
+  sshPort     Int       @default(22)
+  username    String
+  password    String
+  ponCount    Int       @default(8)
+  status      String    @default("ONLINE") // ONLINE, OFFLINE
+  description String?
+  onus        OltOnu[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("olt_devices")
+}
+
+// ─── ONU / ONT Binding di Port PON ───
+model OltOnu {
+  id           String    @id @default(uuid())
+  oltId        String
+  olt          OltDevice @relation(fields: [oltId], references: [id], onDelete: Cascade)
+  ponPort      String    // Misal: "1/1/1" atau "gpon-olt_1/1/1"
+  onuIndex     Int?      // Nomor index ONU di PON (1..128)
+  serialNumber String    // Misal: "ZTEGC8923412", "HWTC12345678"
+  status       String    @default("UNREGISTERED") // UNREGISTERED, REGISTERED, OFFLINE
+  vlanId       Int?      // VLAN ID Service Profile
+  customerId   String?
+  customerName String?
+  rxPower      Float?    // Redaman optik di OLT (dBm)
+  registeredAt DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@unique([oltId, serialNumber])
+  @@map("olt_onus")
+}
+
+
 

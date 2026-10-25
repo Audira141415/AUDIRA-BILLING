@@ -127,8 +127,8 @@ export default function CustomerDetailPage() {
   const [notes, setNotes] = useState<CustomerNote[]>([
     {
       id: '1',
-      date: '01 Juli 2026 08:20',
-      content: 'Pelanggan sudah bayar untuk bulan Juli.',
+      date: new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }) + ' 08:20',
+      content: 'Pelanggan sudah bayar untuk bulan ini.',
       author: 'Agus Dwi Rianto'
     },
     {
@@ -321,10 +321,10 @@ export default function CustomerDetailPage() {
   if (loading) {
     return (
       <Layout>
-        <div className="min-h-screen bg-[#080d19] flex items-center justify-center">
+        <div className="min-h-screen bg-slate-50 flex items-center justify-center">
           <div className="flex flex-col items-center space-y-4">
             <RefreshCw className="animate-spin text-blue-500 h-10 w-10" />
-            <p className="text-gray-400 text-sm">Memuat detail pelanggan...</p>
+            <p className="text-slate-500 text-sm">Memuat detail pelanggan...</p>
           </div>
         </div>
       </Layout>
@@ -334,10 +334,10 @@ export default function CustomerDetailPage() {
   if (error || !customer) {
     return (
       <Layout>
-        <div className="min-h-screen bg-[#080d19] p-6 flex flex-col items-center justify-center">
+        <div className="min-h-screen bg-slate-50 p-6 flex flex-col items-center justify-center">
           <ShieldAlert className="text-red-500 h-16 w-16 mb-4" />
-          <h2 className="text-2xl font-bold text-white mb-2">Pelanggan Tidak Ditemukan</h2>
-          <p className="text-gray-400 mb-6">{error || 'Data pelanggan tidak dapat dimuat.'}</p>
+          <h2 className="text-2xl font-bold text-slate-800 mb-2">Pelanggan Tidak Ditemukan</h2>
+          <p className="text-slate-500 mb-6">{error || 'Data pelanggan tidak dapat dimuat.'}</p>
           <Link href="/pelanggan" className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-all">
             Kembali ke Daftar Pelanggan
           </Link>
@@ -364,44 +364,44 @@ export default function CustomerDetailPage() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-[#080d19] text-gray-200 p-4 md:p-6 space-y-6 overflow-hidden">
+      <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] p-4 md:p-6 space-y-6">
         
         {/* ─── Top Breadcrumbs and Header ───────────────────────────────── */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-[#131d35] pb-5">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-[var(--app-border)] pb-5">
           <div className="space-y-1">
-            <div className="flex items-center gap-2 text-xs text-gray-400 font-medium">
-              <Link href="/pelanggan" className="hover:text-blue-400 transition-colors">Customer</Link>
-              <span>&gt;</span>
-              <span className="text-blue-400">Detail Customer</span>
+            <div className="flex items-center gap-2 text-xs text-[var(--app-muted)] font-mono mb-1">
+              <Link href="/" className="hover:text-[var(--app-text)]">AUDIRA</Link>
+              <span>/</span>
+              <Link href="/pelanggan" className="hover:text-[var(--app-text)]">Customer CRM</Link>
+              <span>/</span>
+              <span className="text-[var(--app-primary)]">{customer.name}</span>
             </div>
-            <h1 className="text-2xl font-bold text-white flex items-center gap-2.5">
-              <Link href="/pelanggan" className="p-1 hover:bg-[#131d35] rounded-lg transition text-gray-400 hover:text-white">
+            <h1 className="text-xl md:text-2xl font-bold tracking-tight text-[var(--app-text)] flex items-center gap-2.5">
+              <Link href="/pelanggan" className="p-1 hover:bg-[var(--app-border)] rounded-lg transition text-[var(--app-muted)] hover:text-[var(--app-text)]">
                 <ArrowLeft size={20} />
               </Link>
-              Customer Detail
+              Profil & Detail Teknis Pelanggan
             </h1>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-            <div className="flex items-center gap-2 bg-[#0b1329] border border-[#131d35] px-3.5 py-2 rounded-xl text-xs font-semibold">
-              <Calendar size={14} className="text-blue-400" />
-              <span>01 Juli 2026 | 08:35 WIB</span>
-            </div>
-            <div className="flex items-center gap-2 bg-[#0b1329] border border-[#131d35] px-3.5 py-2 rounded-xl text-xs font-semibold">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-              <span className="text-gray-400">Status Sistem: <span className="text-green-400 font-bold">Normal</span></span>
-            </div>
+          <div className="flex items-center gap-2.5">
+            <Link
+              href="/pelanggan"
+              className="px-4 py-2 border border-[var(--app-border)] bg-[var(--app-card)] hover:bg-[var(--app-border)] text-[var(--app-text)] text-xs font-semibold rounded-lg transition-all flex items-center gap-2 shadow-xs"
+            >
+              Kembali
+            </Link>
           </div>
         </div>
 
         {/* ─── Customer Header Information Box ──────────────────────────── */}
-        <div className="bg-[#0b1329] border border-[#131d35] rounded-3xl p-6 md:p-8 flex flex-col xl:flex-row justify-between gap-8 items-stretch relative overflow-hidden">
+        <div className="bg-white border border-slate-200 rounded-3xl p-6 md:p-8 flex flex-col xl:flex-row justify-between gap-8 items-stretch relative overflow-hidden">
           {/* Left Panel: Profile Detail */}
           <div className="flex flex-col md:flex-row items-center md:items-start gap-6 flex-1">
             <div className="flex flex-col items-center">
-              <div className="w-24 h-24 bg-gradient-to-br from-blue-600 to-indigo-800 rounded-full flex items-center justify-center text-white text-3xl font-bold border-4 border-[#131d35] shadow-lg relative">
+              <div className="w-24 h-24 bg-gradient-to-br from-blue-600 to-indigo-800 rounded-full flex items-center justify-center text-white text-3xl font-bold border-4 border-slate-200 shadow-lg relative">
                 {customer.name.split(' ').map(n => n[0]).slice(0, 2).join('')}
-                <span className={`absolute bottom-0 right-0 w-5 h-5 rounded-full border-4 border-[#0b1329] ${customer.status === 'active' ? 'bg-green-500' : customer.status === 'suspended' ? 'bg-orange-500' : 'bg-red-500'}`} />
+                <span className={`absolute bottom-0 right-0 w-5 h-5 rounded-full border-4 border-slate-200 ${customer.status === 'active' ? 'bg-green-500' : customer.status === 'suspended' ? 'bg-orange-500' : 'bg-red-500'}`} />
               </div>
               <span className={`mt-3 px-3 py-1 rounded-full text-xs font-bold ${customer.status === 'active' ? 'bg-green-500/10 text-green-400 border border-green-500/20' : customer.status === 'suspended' ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'}`}>
                 {customer.status === 'active' ? 'Aktif' : customer.status === 'suspended' ? 'Suspended' : 'Nonaktif'}
@@ -411,7 +411,7 @@ export default function CustomerDetailPage() {
             <div className="flex-1 space-y-4 text-center md:text-left">
               <div>
                 <div className="flex items-center justify-center md:justify-start gap-2.5">
-                  <h2 className="text-2xl font-bold text-white">{customer.name}</h2>
+                  <h2 className="text-2xl font-bold text-slate-800">{customer.name}</h2>
                   <button onClick={() => {
                     setEditName(customer.name)
                     setEditEmail(customer.email || '')
@@ -420,25 +420,25 @@ export default function CustomerDetailPage() {
                     setEditIp(customer.ipAddress || '')
                     setEditKtp(ktp)
                     setShowEditModal(true)
-                  }} className="text-gray-400 hover:text-blue-400 p-1 rounded-lg hover:bg-[#131d35] transition">
+                  }} className="text-slate-500 hover:text-blue-400 p-1 rounded-lg hover:bg-slate-100 transition">
                     <Edit size={16} />
                   </button>
                 </div>
-                <p className="text-sm text-gray-400 mt-1 flex items-center justify-center md:justify-start gap-1">
+                <p className="text-sm text-slate-500 mt-1 flex items-center justify-center md:justify-start gap-1">
                   <Phone size={14} className="text-green-500" /> {customer.phone}
                 </p>
-                <p className="text-sm text-gray-400 mt-0.5 flex items-center justify-center md:justify-start gap-1">
+                <p className="text-sm text-slate-500 mt-0.5 flex items-center justify-center md:justify-start gap-1">
                   <Mail size={14} className="text-blue-400" /> {customer.email || 'Tidak ada email'}
                 </p>
-                <p className="text-sm text-gray-400 mt-0.5 flex items-center justify-center md:justify-start gap-1">
-                  <MapPin size={14} className="text-gray-500" /> {customer.address || 'Tidak ada alamat'}
+                <p className="text-sm text-slate-500 mt-0.5 flex items-center justify-center md:justify-start gap-1">
+                  <MapPin size={14} className="text-slate-400" /> {customer.address || 'Tidak ada alamat'}
                 </p>
               </div>
             </div>
           </div>
 
           {/* Center Panel: Key Metadata Fields Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-3.5 border-t xl:border-t-0 xl:border-l border-[#131d35] pt-6 xl:pt-0 xl:pl-8 text-xs max-w-2xl flex-1 justify-center">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-3.5 border-t xl:border-t-0 xl:border-l border-slate-200 pt-6 xl:pt-0 xl:pl-8 text-xs max-w-2xl flex-1 justify-center">
             {[
               { label: 'Customer ID', value: customer.internetNumber || 'CUST-2026-00125' },
               { label: 'Nomor Induk', value: ktp },
@@ -451,14 +451,14 @@ export default function CustomerDetailPage() {
               { label: 'Catatan', value: noteText }
             ].map(meta => (
               <div key={meta.label}>
-                <span className="text-gray-500 font-medium">{meta.label}</span>
+                <span className="text-slate-400 font-medium">{meta.label}</span>
                 <p className={`font-bold mt-0.5 ${meta.colorClass || 'text-white'}`}>{meta.value}</p>
               </div>
             ))}
           </div>
 
           {/* Right Panel: Actions & QR Code */}
-          <div className="flex flex-col sm:flex-row xl:flex-col justify-between items-center xl:items-end gap-6 border-t xl:border-t-0 xl:border-l border-[#131d35] pt-6 xl:pt-0 xl:pl-8">
+          <div className="flex flex-col sm:flex-row xl:flex-col justify-between items-center xl:items-end gap-6 border-t xl:border-t-0 xl:border-l border-slate-200 pt-6 xl:pt-0 xl:pl-8">
             <div className="flex flex-wrap gap-2.5 justify-center">
               <button onClick={() => {
                 setEditName(customer.name)
@@ -482,8 +482,8 @@ export default function CustomerDetailPage() {
               </button>
             </div>
 
-            <div className="flex flex-col items-center bg-[#131d35]/30 p-3 rounded-2xl border border-[#131d35] text-center w-36">
-              <span className="text-[10px] text-gray-500 font-bold mb-1.5">Customer QR Code</span>
+            <div className="flex flex-col items-center bg-slate-100 p-3 rounded-2xl border border-slate-200 text-center w-36">
+              <span className="text-[10px] text-slate-400 font-bold mb-1.5">Customer QR Code</span>
               <QrCode size={64} className="text-white" />
               <button className="text-[10px] text-blue-400 font-bold hover:underline mt-2 flex items-center gap-1">
                 <Download size={10} /> Download
@@ -512,7 +512,7 @@ export default function CustomerDetailPage() {
             {
               title: 'Status Pembayaran',
               value: isPaidThisMonth ? 'Lunas' : 'Belum Lunas',
-              desc: isPaidThisMonth ? 'Terakhir bayar 01 Jul 2026' : 'Menunggu pembayaran',
+              desc: isPaidThisMonth ? 'Terakhir bayar 22 Okt 2026' : 'Menunggu pembayaran',
               icon: CheckCircle,
               iconColor: isPaidThisMonth 
                 ? 'text-green-400 bg-green-500/10 border border-green-500/20' 
@@ -532,14 +532,14 @@ export default function CustomerDetailPage() {
               icon: Ban,
               iconColor: totalOverdueAmount > 0 
                 ? 'text-red-400 bg-red-500/10 border border-red-500/20' 
-                : 'text-gray-400 bg-gray-500/10 border border-gray-500/20'
+                : 'text-slate-500 bg-gray-500/10 border border-gray-500/20'
             }
           ].map((card, i) => (
-            <div key={i} className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-5 flex items-center justify-between">
+            <div key={i} className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs flex items-center justify-between">
               <div>
-                <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">{card.title}</span>
-                <p className="text-lg font-black text-white mt-1">{card.value}</p>
-                <span className="text-[10px] text-gray-400 block mt-1">{card.desc}</span>
+                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{card.title}</span>
+                <p className="text-lg font-black text-slate-900 mt-1">{card.value}</p>
+                <span className="text-[10px] text-slate-500 block mt-1">{card.desc}</span>
               </div>
               <div className={`p-2.5 rounded-xl ${card.iconColor}`}>
                 <card.icon size={20} />
@@ -549,7 +549,7 @@ export default function CustomerDetailPage() {
         </div>
 
         {/* ─── Navigation Tabs Row ──────────────────────────────────────── */}
-        <div className="flex overflow-x-auto gap-2 border-b border-[#131d35] pb-px scrollbar-none">
+        <div className="flex overflow-x-auto gap-2 border-b border-slate-200 pb-px scrollbar-none">
           {[
             'Informasi',
             'Paket & Layanan',
@@ -568,7 +568,7 @@ export default function CustomerDetailPage() {
               className={`px-5 py-3 font-semibold text-xs whitespace-nowrap border-b-2 transition-all ${
                 activeTab === tab 
                   ? 'border-blue-500 text-blue-400 bg-blue-500/5' 
-                  : 'border-transparent text-gray-400 hover:text-gray-200'
+                  : 'border-transparent text-slate-500 hover:text-gray-200'
               }`}
             >
               {tab}
@@ -581,8 +581,8 @@ export default function CustomerDetailPage() {
           {activeTab === 'Informasi' && (
             <>
               {/* Card 1: Informasi Pribadi */}
-              <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-6 xl:col-span-1 space-y-4">
-                <h3 className="text-sm font-bold text-white flex items-center gap-2 pb-3 border-b border-[#131d35]">
+              <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs xl:col-span-1 space-y-4">
+                <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2 pb-3 border-b border-slate-200">
                   <User size={16} className="text-blue-400" />
                   Informasi Pribadi
                 </h3>
@@ -599,8 +599,8 @@ export default function CustomerDetailPage() {
                     { label: 'Catatan', value: noteText }
                   ].map((field, index) => (
                     <div key={index} className="space-y-1">
-                      <span className="text-gray-500 font-semibold">{field.label}</span>
-                      <p className="font-bold text-white flex items-center gap-1">
+                      <span className="text-slate-400 font-semibold">{field.label}</span>
+                      <p className="font-bold text-slate-800 flex items-center gap-1">
                         {field.value}
                         {field.phoneIcon && <span className="inline-block w-3.5 h-3.5 bg-green-500/20 text-green-400 rounded-full flex items-center justify-center text-[8px] font-black">WA</span>}
                       </p>
@@ -610,9 +610,9 @@ export default function CustomerDetailPage() {
               </div>
 
               {/* Card 2: Informasi Layanan */}
-              <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-6 xl:col-span-1 space-y-4">
-                <div className="flex justify-between items-center pb-3 border-b border-[#131d35]">
-                  <h3 className="text-sm font-bold text-white flex items-center gap-2">
+              <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs xl:col-span-1 space-y-4">
+                <div className="flex justify-between items-center pb-3 border-b border-slate-200">
+                  <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
                     <Server size={16} className="text-blue-400" />
                     Informasi Layanan
                   </h3>
@@ -633,7 +633,7 @@ export default function CustomerDetailPage() {
                     { label: 'Catatan Layanan', value: '-' }
                   ].map((field, index) => (
                     <div key={index} className="space-y-1">
-                      <span className="text-gray-500 font-semibold">{field.label}</span>
+                      <span className="text-slate-400 font-semibold">{field.label}</span>
                       <p className={`font-bold ${field.colorClass || 'text-white'}`}>{field.value}</p>
                     </div>
                   ))}
@@ -641,8 +641,8 @@ export default function CustomerDetailPage() {
               </div>
 
               {/* Card 3: Kontak Darurat */}
-              <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-6 xl:col-span-1 space-y-4">
-                <h3 className="text-sm font-bold text-white flex items-center gap-2 pb-3 border-b border-[#131d35]">
+              <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs xl:col-span-1 space-y-4">
+                <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2 pb-3 border-b border-slate-200">
                   <Phone size={16} className="text-blue-400" />
                   Kontak Darurat
                 </h3>
@@ -654,32 +654,32 @@ export default function CustomerDetailPage() {
                     { label: 'Alamat', value: emergencyContact.address }
                   ].map((field, index) => (
                     <div key={index} className="space-y-1">
-                      <span className="text-gray-500 font-semibold">{field.label}</span>
-                      <p className="font-bold text-white">{field.value}</p>
+                      <span className="text-slate-400 font-semibold">{field.label}</span>
+                      <p className="font-bold text-slate-800">{field.value}</p>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* Card 4: Riwayat Status */}
-              <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-6 xl:col-span-1 space-y-4">
-                <h3 className="text-sm font-bold text-white flex items-center gap-2 pb-3 border-b border-[#131d35]">
+              <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs xl:col-span-1 space-y-4">
+                <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2 pb-3 border-b border-slate-200">
                   <Activity size={16} className="text-blue-400" />
                   Riwayat Status
                 </h3>
                 
-                <div className="relative border-l border-[#131d35] ml-2 pl-4 space-y-5 text-xs py-1">
+                <div className="relative border-l border-slate-200 ml-2 pl-4 space-y-5 text-xs py-1">
                   {[
                     { time: '15 Jan 2026 10:30', title: 'Aktif', desc: 'Akun diaktifkan', dotClass: 'bg-green-500' },
                     { time: '01 Apr 2026 09:15', title: 'Ubah Paket', desc: 'Paket diubah dari Home 20 Mbps menjadi Home 50 Mbps', dotClass: 'bg-blue-500' },
                     { time: '05 Jun 2026 08:20', title: 'Reminder', desc: 'Pengingat pembayaran dikirim', dotClass: 'bg-amber-500' },
-                    { time: '01 Jul 2026 08:15', title: 'Tunggakan Clear', desc: 'Pembayaran diterima', dotClass: 'bg-red-500' }
+                    { time: '22 Okt 2026 08:15', title: 'Tunggakan Clear', desc: 'Pembayaran diterima', dotClass: 'bg-red-500' }
                   ].map((hist, idx) => (
                     <div key={idx} className="relative">
-                      <span className={`absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full ${hist.dotClass} border-2 border-[#0b1329]`} />
-                      <span className="text-[10px] text-gray-500 font-bold block">{hist.time}</span>
+                      <span className={`absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full ${hist.dotClass} border-2 border-slate-200`} />
+                      <span className="text-[10px] text-slate-400 font-bold block">{hist.time}</span>
                       <span className="text-white font-bold block mt-0.5">{hist.title}</span>
-                      <span className="text-gray-400 block mt-0.5">{hist.desc}</span>
+                      <span className="text-slate-500 block mt-0.5">{hist.desc}</span>
                     </div>
                   ))}
                 </div>
@@ -688,10 +688,10 @@ export default function CustomerDetailPage() {
           )}
 
           {activeTab !== 'Informasi' && (
-            <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-12 xl:col-span-4 text-center">
+            <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs p-12 xl:col-span-4 text-center">
               <Activity size={48} className="mx-auto text-gray-600 mb-3" />
-              <h4 className="text-lg font-bold text-white">Tab {activeTab}</h4>
-              <p className="text-xs text-gray-400 mt-1">Data dan detail historis untuk sub-layanan ini.</p>
+              <h4 className="text-lg font-bold text-slate-800">Tab {activeTab}</h4>
+              <p className="text-xs text-slate-500 mt-1">Data dan detail historis untuk sub-layanan ini.</p>
             </div>
           )}
         </div>
@@ -699,16 +699,16 @@ export default function CustomerDetailPage() {
         {/* ─── Bottom Section Grid (Invoice, Payments, Notes) ───────────── */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Column 1: Invoice Terakhir */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-6 flex flex-col justify-between">
+          <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs flex flex-col justify-between">
             <div className="flex justify-between items-center mb-4">
-              <h4 className="text-sm font-bold text-white">Invoice Terakhir</h4>
+              <h4 className="text-sm font-bold text-slate-800">Invoice Terakhir</h4>
               <button onClick={() => setActiveTab('Invoice')} className="text-[10px] text-blue-400 font-bold hover:underline">Lihat Semua</button>
             </div>
             
             <div className="overflow-x-auto">
               <table className="w-full text-xs text-left">
                 <thead>
-                  <tr className="border-b border-[#131d35] text-gray-500">
+                  <tr className="border-b border-slate-200 text-slate-400">
                     <th className="pb-2">INVOICE #</th>
                     <th className="pb-2">PERIODE</th>
                     <th className="pb-2">NOMINAL</th>
@@ -717,10 +717,10 @@ export default function CustomerDetailPage() {
                 </thead>
                 <tbody>
                   {invoices.slice(0, 5).map(inv => (
-                    <tr key={inv.id} className="border-b border-[#131d35]/30 last:border-b-0 hover:bg-[#131d35]/20">
+                    <tr key={inv.id} className="border-b border-slate-200/60 last:border-b-0 hover:bg-slate-50">
                       <td className="py-2.5 font-bold text-blue-400">{inv.invoiceNumber}</td>
-                      <td className="py-2.5 text-gray-400">{inv.month || 'Jul 2026'}</td>
-                      <td className="py-2.5 font-bold text-white">Rp {inv.amount.toLocaleString('id-ID')}</td>
+                      <td className="py-2.5 text-slate-500">{inv.month || 'Jul 2026'}</td>
+                      <td className="py-2.5 font-bold text-slate-800">Rp {inv.amount.toLocaleString('id-ID')}</td>
                       <td className="py-2.5">
                         <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${inv.status === 'paid' ? 'bg-green-500/10 text-green-400' : 'bg-amber-500/10 text-amber-400'}`}>
                           {inv.status === 'paid' ? 'Lunas' : 'Pending'}
@@ -730,7 +730,7 @@ export default function CustomerDetailPage() {
                   ))}
                   {invoices.length === 0 && (
                     <tr>
-                      <td colSpan={4} className="py-6 text-center text-gray-500">Belum ada invoice</td>
+                      <td colSpan={4} className="py-6 text-center text-slate-400">Belum ada invoice</td>
                     </tr>
                   )}
                 </tbody>
@@ -739,16 +739,16 @@ export default function CustomerDetailPage() {
           </div>
 
           {/* Column 2: Pembayaran Terakhir */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-6 flex flex-col justify-between">
+          <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs flex flex-col justify-between">
             <div className="flex justify-between items-center mb-4">
-              <h4 className="text-sm font-bold text-white">Pembayaran Terakhir</h4>
+              <h4 className="text-sm font-bold text-slate-800">Pembayaran Terakhir</h4>
               <button onClick={() => setActiveTab('Pembayaran')} className="text-[10px] text-blue-400 font-bold hover:underline">Lihat Semua</button>
             </div>
             
             <div className="overflow-x-auto">
               <table className="w-full text-xs text-left">
                 <thead>
-                  <tr className="border-b border-[#131d35] text-gray-500">
+                  <tr className="border-b border-slate-200 text-slate-400">
                     <th className="pb-2">TANGGAL</th>
                     <th className="pb-2">METODE</th>
                     <th className="pb-2">NOMINAL</th>
@@ -757,16 +757,16 @@ export default function CustomerDetailPage() {
                 </thead>
                 <tbody>
                   {invoices.filter(inv => inv.status === 'paid').slice(0, 5).map(inv => (
-                    <tr key={inv.id} className="border-b border-[#131d35]/30 last:border-b-0 hover:bg-[#131d35]/20">
-                      <td className="py-2.5 text-gray-400">{new Date(inv.paidAt || inv.createdAt).toLocaleDateString('id-ID')}</td>
-                      <td className="py-2.5 font-bold text-white uppercase">{inv.paymentMethod || 'QRIS'}</td>
+                    <tr key={inv.id} className="border-b border-slate-200/60 last:border-b-0 hover:bg-slate-50">
+                      <td className="py-2.5 text-slate-500">{new Date(inv.paidAt || inv.createdAt).toLocaleDateString('id-ID')}</td>
+                      <td className="py-2.5 font-bold text-slate-800 uppercase">{inv.paymentMethod || 'QRIS'}</td>
                       <td className="py-2.5 font-bold text-green-400">Rp {inv.amount.toLocaleString('id-ID')}</td>
                       <td className="py-2.5 text-blue-400 cursor-pointer hover:underline"><Eye size={12} /></td>
                     </tr>
                   ))}
                   {invoices.filter(inv => inv.status === 'paid').length === 0 && (
                     <tr>
-                      <td colSpan={4} className="py-6 text-center text-gray-500">Belum ada pembayaran lunas</td>
+                      <td colSpan={4} className="py-6 text-center text-slate-400">Belum ada pembayaran lunas</td>
                     </tr>
                   )}
                 </tbody>
@@ -775,9 +775,9 @@ export default function CustomerDetailPage() {
           </div>
 
           {/* Column 3: Catatan */}
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-2xl p-6 flex flex-col justify-between">
+          <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs flex flex-col justify-between">
             <div className="flex justify-between items-center mb-4">
-              <h4 className="text-sm font-bold text-white">Catatan</h4>
+              <h4 className="text-sm font-bold text-slate-800">Catatan</h4>
               <button onClick={() => {
                 const note = prompt('Tambah Catatan Baru:')
                 if (note) {
@@ -795,8 +795,8 @@ export default function CustomerDetailPage() {
             
             <div className="space-y-3 max-h-[160px] overflow-y-auto pr-1">
               {notes.map(note => (
-                <div key={note.id} className="bg-[#131d35]/30 border border-[#131d35] rounded-xl p-3 space-y-1">
-                  <span className="text-[9px] text-gray-500 font-bold">{note.date}</span>
+                <div key={note.id} className="bg-slate-100 border border-slate-200 rounded-xl p-3 space-y-1">
+                  <span className="text-[9px] text-slate-400 font-bold">{note.date}</span>
                   <p className="text-[11px] text-gray-200 font-semibold">{note.content}</p>
                   <span className="text-[9px] text-blue-400 font-medium">oleh {note.author}</span>
                 </div>
@@ -810,40 +810,40 @@ export default function CustomerDetailPage() {
       {/* ─── MODAL: Edit Customer Details ─────────────────────────────── */}
       {showEditModal && (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl">
-            <div className="p-6 border-b border-[#131d35] flex justify-between items-center bg-[#131d35]/20">
-              <h3 className="text-base font-bold text-white">Edit Customer Detail</h3>
-              <button onClick={() => setShowEditModal(false)} className="text-gray-400 hover:text-white">✕</button>
+          <div className="bg-white border border-slate-200 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl">
+            <div className="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+              <h3 className="text-base font-bold text-slate-800">Edit Customer Detail</h3>
+              <button onClick={() => setShowEditModal(false)} className="text-slate-500 hover:text-slate-900">✕</button>
             </div>
             <div className="p-6 space-y-4">
               <div className="space-y-1.5">
-                <label className="text-xs text-gray-400 font-bold block">Nama Lengkap</label>
-                <input value={editName} onChange={e => setEditName(e.target.value)} className="w-full bg-[#131d35] border border-[#1e293b] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500" />
+                <label className="text-xs text-slate-500 font-bold block">Nama Lengkap</label>
+                <input value={editName} onChange={e => setEditName(e.target.value)} className="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-blue-500" />
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs text-gray-400 font-bold block">Email</label>
-                <input value={editEmail} onChange={e => setEditEmail(e.target.value)} className="w-full bg-[#131d35] border border-[#1e293b] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500" />
+                <label className="text-xs text-slate-500 font-bold block">Email</label>
+                <input value={editEmail} onChange={e => setEditEmail(e.target.value)} className="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-blue-500" />
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs text-gray-400 font-bold block">No. Telepon</label>
-                <input value={editPhone} onChange={e => setEditPhone(e.target.value)} className="w-full bg-[#131d35] border border-[#1e293b] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500" />
+                <label className="text-xs text-slate-500 font-bold block">No. Telepon</label>
+                <input value={editPhone} onChange={e => setEditPhone(e.target.value)} className="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-blue-500" />
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs text-gray-400 font-bold block">Alamat</label>
-                <textarea value={editAddress} onChange={e => setEditAddress(e.target.value)} rows={3} className="w-full bg-[#131d35] border border-[#1e293b] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500" />
+                <label className="text-xs text-slate-500 font-bold block">Alamat</label>
+                <textarea value={editAddress} onChange={e => setEditAddress(e.target.value)} rows={3} className="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-blue-500" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs text-gray-400 font-bold block">No. KTP</label>
-                  <input value={editKtp} onChange={e => setEditKtp(e.target.value)} className="w-full bg-[#131d35] border border-[#1e293b] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500" />
+                  <label className="text-xs text-slate-500 font-bold block">No. KTP</label>
+                  <input value={editKtp} onChange={e => setEditKtp(e.target.value)} className="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-blue-500" />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs text-gray-400 font-bold block">IP Address</label>
-                  <input value={editIp} onChange={e => setEditIp(e.target.value)} className="w-full bg-[#131d35] border border-[#1e293b] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500" />
+                  <label className="text-xs text-slate-500 font-bold block">IP Address</label>
+                  <input value={editIp} onChange={e => setEditIp(e.target.value)} className="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-blue-500" />
                 </div>
               </div>
             </div>
-            <div className="p-6 border-t border-[#131d35] flex justify-end gap-3 bg-[#131d35]/10">
+            <div className="p-6 border-t border-slate-200 flex justify-end gap-3 bg-slate-100/10">
               <button onClick={() => setShowEditModal(false)} className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-xl text-xs font-bold transition">Batal</button>
               <button onClick={handleSaveChanges} disabled={actionLoading === 'save'} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition">Simpan Perubahan</button>
             </div>
@@ -854,23 +854,23 @@ export default function CustomerDetailPage() {
       {/* ─── MODAL: Add Invoice Manual ───────────────────────────────── */}
       {showAddInvoiceModal && (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-3xl w-full max-w-md overflow-hidden shadow-2xl">
+          <div className="bg-white border border-slate-200 rounded-3xl w-full max-w-md overflow-hidden shadow-2xl">
             <form onSubmit={handleCreateInvoice}>
-              <div className="p-6 border-b border-[#131d35] flex justify-between items-center bg-[#131d35]/20">
-                <h3 className="text-base font-bold text-white">Tambah Invoice Baru</h3>
-                <button type="button" onClick={() => setShowAddInvoiceModal(false)} className="text-gray-400 hover:text-white">✕</button>
+              <div className="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                <h3 className="text-base font-bold text-slate-800">Tambah Invoice Baru</h3>
+                <button type="button" onClick={() => setShowAddInvoiceModal(false)} className="text-slate-500 hover:text-slate-900">✕</button>
               </div>
               <div className="p-6 space-y-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs text-gray-400 font-bold block">Nominal Tagihan (Rp)</label>
-                  <input type="number" required value={invoiceAmount} onChange={e => setInvoiceAmount(e.target.value)} className="w-full bg-[#131d35] border border-[#1e293b] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500" />
+                  <label className="text-xs text-slate-500 font-bold block">Nominal Tagihan (Rp)</label>
+                  <input type="number" required value={invoiceAmount} onChange={e => setInvoiceAmount(e.target.value)} className="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-blue-500" />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs text-gray-400 font-bold block">Periode Bulan</label>
-                  <input type="month" required value={invoiceMonth} onChange={e => setInvoiceMonth(e.target.value)} className="w-full bg-[#131d35] border border-[#1e293b] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500" />
+                  <label className="text-xs text-slate-500 font-bold block">Periode Bulan</label>
+                  <input type="month" required value={invoiceMonth} onChange={e => setInvoiceMonth(e.target.value)} className="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-blue-500" />
                 </div>
               </div>
-              <div className="p-6 border-t border-[#131d35] flex justify-end gap-3 bg-[#131d35]/10">
+              <div className="p-6 border-t border-slate-200 flex justify-end gap-3 bg-slate-100/10">
                 <button type="button" onClick={() => setShowAddInvoiceModal(false)} className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-xl text-xs font-bold transition">Batal</button>
                 <button type="submit" disabled={actionLoading === 'add-invoice'} className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-xl text-xs font-bold transition">Terbitkan Invoice</button>
               </div>
@@ -882,15 +882,15 @@ export default function CustomerDetailPage() {
       {/* ─── MODAL: Change Active Package ────────────────────────────── */}
       {showChangePackageModal && (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-[#0b1329] border border-[#131d35] rounded-3xl w-full max-w-md overflow-hidden shadow-2xl">
-            <div className="p-6 border-b border-[#131d35] flex justify-between items-center bg-[#131d35]/20">
-              <h3 className="text-base font-bold text-white">Ubah Paket Layanan</h3>
-              <button onClick={() => setShowChangePackageModal(false)} className="text-gray-400 hover:text-white">✕</button>
+          <div className="bg-white border border-slate-200 rounded-3xl w-full max-w-md overflow-hidden shadow-2xl">
+            <div className="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+              <h3 className="text-base font-bold text-slate-800">Ubah Paket Layanan</h3>
+              <button onClick={() => setShowChangePackageModal(false)} className="text-slate-500 hover:text-slate-900">✕</button>
             </div>
             <div className="p-6 space-y-4">
               <div className="space-y-1.5">
-                <label className="text-xs text-gray-400 font-bold block">Pilih Paket</label>
-                <select value={selectedPackageId} onChange={e => setSelectedPackageId(e.target.value)} className="w-full bg-[#131d35] border border-[#1e293b] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500">
+                <label className="text-xs text-slate-500 font-bold block">Pilih Paket</label>
+                <select value={selectedPackageId} onChange={e => setSelectedPackageId(e.target.value)} className="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-blue-500">
                   {Array.isArray(availablePackages) && availablePackages.map(pkg => (
                     <option key={pkg.id} value={pkg.id}>
                       {pkg.name} ({pkg.speed}) - Rp {pkg.price.toLocaleString('id-ID')}
@@ -899,7 +899,7 @@ export default function CustomerDetailPage() {
                 </select>
               </div>
             </div>
-            <div className="p-6 border-t border-[#131d35] flex justify-end gap-3 bg-[#131d35]/10">
+            <div className="p-6 border-t border-slate-200 flex justify-end gap-3 bg-slate-100/10">
               <button onClick={() => setShowChangePackageModal(false)} className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-xl text-xs font-bold transition">Batal</button>
               <button onClick={handleChangePackage} disabled={actionLoading === 'change-package'} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition">Ubah Paket</button>
             </div>

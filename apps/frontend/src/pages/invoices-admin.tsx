@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
+import Link from 'next/link'
 import { 
   FileText, 
   DollarSign, 
@@ -15,8 +16,11 @@ import {
   CreditCard,
   Download,
   Calendar,
-  User
+  User,
+  MessageSquare
 } from 'lucide-react'
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3218'
 
 interface Invoice {
   id: string
@@ -118,7 +122,7 @@ export default function InvoicesAdmin() {
         ...(endDate && { endDate })
       })
 
-      const response = await fetch(`http://localhost:1993/invoices?${params}`, {
+      const response = await fetch(`${API_BASE_URL}/invoices?${params}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       })
 
@@ -137,7 +141,7 @@ export default function InvoicesAdmin() {
   const fetchStatistics = async () => {
     try {
       const token = localStorage.getItem('token')
-      const response = await fetch('http://localhost:1993/invoices/statistics/overview', {
+      const response = await fetch(`${API_BASE_URL}/invoices/statistics/overview`, {
         headers: { 'Authorization': `Bearer ${token}` }
       })
 
@@ -153,7 +157,7 @@ export default function InvoicesAdmin() {
   const fetchCustomers = async () => {
     try {
       const token = localStorage.getItem('token')
-      const response = await fetch('http://localhost:1993/admin/customers?limit=1000', {
+      const response = await fetch(`${API_BASE_URL}/admin/customers?limit=1000`, {
         headers: { 'Authorization': `Bearer ${token}` }
       })
 
@@ -172,7 +176,7 @@ export default function InvoicesAdmin() {
 
     try {
       const token = localStorage.getItem('token')
-      const response = await fetch('http://localhost:1993/invoices', {
+      const response = await fetch(`${API_BASE_URL}/invoices`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -209,7 +213,7 @@ export default function InvoicesAdmin() {
 
     try {
       const token = localStorage.getItem('token')
-      const response = await fetch(`http://localhost:1993/invoices/${selectedInvoice.id}`, {
+      const response = await fetch(`${API_BASE_URL}/invoices/${selectedInvoice.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -246,7 +250,7 @@ export default function InvoicesAdmin() {
 
     try {
       const token = localStorage.getItem('token')
-      const response = await fetch(`http://localhost:1993/invoices/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/invoices/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       })
@@ -271,7 +275,7 @@ export default function InvoicesAdmin() {
 
     try {
       const token = localStorage.getItem('token')
-      const response = await fetch(`http://localhost:1993/invoices/${selectedInvoice.id}/payment`, {
+      const response = await fetch(`${API_BASE_URL}/invoices/${selectedInvoice.id}/payment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -429,7 +433,7 @@ export default function InvoicesAdmin() {
                 <div>
                   <p className="text-sm text-gray-600">Total Revenue</p>
                   <p className="text-2xl font-bold text-blue-600">{formatCurrency(statistics.totalRevenue)}</p>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-slate-400 mt-1">
                     Pending: {formatCurrency(statistics.pendingRevenue)}
                   </p>
                 </div>
@@ -444,7 +448,7 @@ export default function InvoicesAdmin() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             {/* Search */}
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500" size={20} />
               <input
                 type="text"
                 placeholder="Cari invoice, customer..."
@@ -510,13 +514,23 @@ export default function InvoicesAdmin() {
               Reset Filters
             </button>
 
-            <button
-              onClick={() => setShowCreateModal(true)}
-              className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
-            >
-              <Plus size={20} />
-              <span>Create Invoice</span>
-            </button>
+            <div className="flex items-center space-x-2">
+              <Link
+                href="/whatsapp/billing-scheduler"
+                className="flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg transition-colors font-medium text-sm"
+              >
+                <MessageSquare size={18} />
+                <span>🤖 WhatsApp Scheduler</span>
+              </Link>
+
+              <button
+                onClick={() => setShowCreateModal(true)}
+                className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+              >
+                <Plus size={20} />
+                <span>Create Invoice</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -526,13 +540,13 @@ export default function InvoicesAdmin() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Invoice #</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Due Date</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Paid</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Invoice #</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Customer</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Amount</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Due Date</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Paid</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -545,12 +559,12 @@ export default function InvoicesAdmin() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">{invoice.invoiceNumber}</div>
                         {invoice.month && (
-                          <div className="text-xs text-gray-500">{invoice.month}</div>
+                          <div className="text-xs text-slate-400">{invoice.month}</div>
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">{invoice.customer.name}</div>
-                        <div className="text-xs text-gray-500">{invoice.customer.email}</div>
+                        <div className="text-xs text-slate-400">{invoice.customer.email}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">{formatCurrency(invoice.amount)}</div>
@@ -581,6 +595,22 @@ export default function InvoicesAdmin() {
                           >
                             <Eye size={18} />
                           </button>
+                          <a
+                            href={`${API_BASE_URL}/billing/invoices/${invoice.id}/receipt-pdf`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-purple-600 hover:text-purple-900"
+                            title="Cetak Kwitansi PDF Resmi AUDIRA"
+                          >
+                            <FileText size={18} />
+                          </a>
+                          <Link
+                            href="/whatsapp/billing-scheduler"
+                            className="text-emerald-600 hover:text-emerald-900"
+                            title="WhatsApp Billing Scheduler (Fonnte)"
+                          >
+                            <MessageSquare size={18} />
+                          </Link>
                           {invoice.status !== 'PAID' && (
                             <button
                               onClick={() => openPaymentModal(invoice)}
@@ -981,7 +1011,7 @@ export default function InvoicesAdmin() {
                   <div>
                     <p className="text-sm text-gray-600">Customer</p>
                     <p className="font-medium">{selectedInvoice.customer.name}</p>
-                    <p className="text-sm text-gray-500">{selectedInvoice.customer.email}</p>
+                    <p className="text-sm text-slate-400">{selectedInvoice.customer.email}</p>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">

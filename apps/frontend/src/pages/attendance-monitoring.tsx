@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { API_BASE_URL, API_ENDPOINTS } from '../config/api';
 import { useRouter } from 'next/router';
@@ -252,31 +253,31 @@ export default function AttendanceMonitoring() {
       <div className="p-6">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Monitoring Absensi Karyawan</h1>
-          <p className="text-gray-600">Real-time tracking kehadiran dan absensi</p>
+          <h1 className="text-3xl font-bold text-[var(--app-text)] mb-2">Monitoring Absensi Karyawan</h1>
+          <p className="text-[var(--app-muted)]">Real-time tracking kehadiran dan absensi</p>
         </div>
 
         {/* Stats Cards */}
         {stats && (
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-[var(--app-card)] rounded-lg shadow p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Total Karyawan</p>
-                  <p className="text-3xl font-bold text-gray-900">{stats.totalEmployees}</p>
+                  <p className="text-sm text-[var(--app-muted)] mb-1">Total Karyawan</p>
+                  <p className="text-3xl font-bold text-[var(--app-text)]">{stats.totalEmployees}</p>
                 </div>
                 <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
-                  <User className="text-gray-600" size={24} />
+                  <User className="text-[var(--app-muted)]" size={24} />
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-[var(--app-card)] rounded-lg shadow p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Hadir</p>
+                  <p className="text-sm text-[var(--app-muted)] mb-1">Hadir</p>
                   <p className="text-3xl font-bold text-green-600">{stats.present}</p>
-                  <p className="text-xs text-gray-500">{stats.attendanceRate}%</p>
+                  <p className="text-xs text-[var(--app-muted)]">{stats.attendanceRate}%</p>
                 </div>
                 <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
                   <CheckCircle className="text-green-600" size={24} />
@@ -284,10 +285,10 @@ export default function AttendanceMonitoring() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-[var(--app-card)] rounded-lg shadow p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Terlambat</p>
+                  <p className="text-sm text-[var(--app-muted)] mb-1">Terlambat</p>
                   <p className="text-3xl font-bold text-orange-600">{stats.late}</p>
                 </div>
                 <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
@@ -296,10 +297,10 @@ export default function AttendanceMonitoring() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-[var(--app-card)] rounded-lg shadow p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Absent</p>
+                  <p className="text-sm text-[var(--app-muted)] mb-1">Absent</p>
                   <p className="text-3xl font-bold text-red-600">{stats.absent}</p>
                 </div>
                 <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
@@ -308,10 +309,10 @@ export default function AttendanceMonitoring() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-[var(--app-card)] rounded-lg shadow p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Masih Kerja</p>
+                  <p className="text-sm text-[var(--app-muted)] mb-1">Masih Kerja</p>
                   <p className="text-3xl font-bold text-blue-600">{stats.stillWorking}</p>
                 </div>
                 <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -323,15 +324,15 @@ export default function AttendanceMonitoring() {
         )}
 
         {/* Data Table */}
-        <div className="bg-white rounded-lg shadow">
+        <div className="bg-[var(--app-card)] rounded-lg shadow">
           <div className="p-6 border-b">
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
-              <h2 className="text-xl font-bold text-gray-900">Data Absensi</h2>
+              <h2 className="text-xl font-bold text-[var(--app-text)]">Data Absensi</h2>
               
               <div className="flex flex-wrap items-center gap-3">
                 {/* Search */}
                 <div className="relative">
-                  <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--app-muted)]" />
                   <input
                     type="text"
                     placeholder="Cari nama/email..."
@@ -370,7 +371,7 @@ export default function AttendanceMonitoring() {
 
                 {/* Date Picker */}
                 <div className="flex items-center gap-2">
-                  <Calendar size={20} className="text-gray-600" />
+                  <Calendar size={20} className="text-[var(--app-muted)]" />
                   <input
                     type="date"
                     value={selectedDate}
@@ -393,7 +394,7 @@ export default function AttendanceMonitoring() {
             {/* Active Filters Display */}
             {(searchQuery || roleFilter !== 'all' || statusFilter !== 'all') && (
               <div className="mt-4 flex items-center gap-2 flex-wrap">
-                <span className="text-sm text-gray-600">Filter aktif:</span>
+                <span className="text-sm text-[var(--app-muted)]">Filter aktif:</span>
                 {searchQuery && (
                   <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm flex items-center gap-1">
                     Search: {searchQuery}
@@ -418,23 +419,23 @@ export default function AttendanceMonitoring() {
 
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 border-b">
+              <thead className="bg-[var(--app-bg)] border-b">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Karyawan</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Check-In</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Lokasi Check-In</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Check-Out</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Lokasi Check-Out</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Durasi</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--app-muted)] uppercase">Karyawan</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--app-muted)] uppercase">Role</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--app-muted)] uppercase">Check-In</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--app-muted)] uppercase">Lokasi Check-In</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--app-muted)] uppercase">Check-Out</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--app-muted)] uppercase">Lokasi Check-Out</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--app-muted)] uppercase">Durasi</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--app-muted)] uppercase">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--app-muted)] uppercase">Aksi</th>
                 </tr>
               </thead>
               <tbody className="divide-y">
                 {filteredAttendances.length === 0 ? (
                   <tr>
-                    <td colSpan={9} className="px-6 py-12 text-center text-gray-500">
+                    <td colSpan={9} className="px-6 py-12 text-center text-[var(--app-muted)]">
                       {attendances.length === 0 
                         ? 'Tidak ada data absensi untuk tanggal ini'
                         : 'Tidak ada data yang sesuai dengan filter'
@@ -443,18 +444,18 @@ export default function AttendanceMonitoring() {
                   </tr>
                 ) : (
                   filteredAttendances.map((item) => (
-                    <tr key={item.id} className="hover:bg-gray-50">
+                    <tr key={item.id} className="hover:bg-[var(--app-bg)]">
                       <td className="px-6 py-4">
                         <div>
-                          <div className="font-medium text-gray-900">{item.user.name}</div>
-                          <div className="text-sm text-gray-500">{item.user.email}</div>
+                          <div className="font-medium text-[var(--app-text)]">{item.user.name}</div>
+                          <div className="text-sm text-[var(--app-muted)]">{item.user.email}</div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
                         <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">{item.user.role}</span>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-sm text-gray-900">{formatTime(item.checkInTime)}</div>
+                        <div className="text-sm text-[var(--app-text)]">{formatTime(item.checkInTime)}</div>
                         {item.checkInPhoto && (
                           <img 
                             src={item.checkInPhoto} 
@@ -476,11 +477,11 @@ export default function AttendanceMonitoring() {
                             Lihat
                           </button>
                         ) : (
-                          <span className="text-xs text-gray-400">-</span>
+                          <span className="text-xs text-[var(--app-muted)]">-</span>
                         )}
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-sm text-gray-900">{formatTime(item.checkOutTime)}</div>
+                        <div className="text-sm text-[var(--app-text)]">{formatTime(item.checkOutTime)}</div>
                         {item.checkOutPhoto && (
                           <img 
                             src={item.checkOutPhoto} 
@@ -502,10 +503,10 @@ export default function AttendanceMonitoring() {
                             Lihat
                           </button>
                         ) : (
-                          <span className="text-xs text-gray-400">-</span>
+                          <span className="text-xs text-[var(--app-muted)]">-</span>
                         )}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">
+                      <td className="px-6 py-4 text-sm text-[var(--app-muted)]">
                         {formatDuration(item.workDuration)}
                       </td>
                       <td className="px-6 py-4">
@@ -540,9 +541,9 @@ export default function AttendanceMonitoring() {
         {/* Detail Modal */}
         {showDetailModal && selectedRecord && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-[var(--app-card)] rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6 border-b flex justify-between items-center">
-                <h3 className="text-xl font-bold text-gray-900">Detail Absensi</h3>
+                <h3 className="text-xl font-bold text-[var(--app-text)]">Detail Absensi</h3>
                 <button
                   onClick={() => setShowDetailModal(false)}
                   className="p-2 hover:bg-gray-100 rounded"
@@ -554,24 +555,24 @@ export default function AttendanceMonitoring() {
               <div className="p-6 space-y-6">
                 {/* Employee Info */}
                 <div>
-                  <h4 className="font-semibold text-gray-900 mb-3">Informasi Karyawan</h4>
+                  <h4 className="font-semibold text-[var(--app-text)] mb-3">Informasi Karyawan</h4>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <p className="text-sm text-gray-600">Nama</p>
+                      <p className="text-sm text-[var(--app-muted)]">Nama</p>
                       <p className="font-medium">{selectedRecord.user.name}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Email</p>
+                      <p className="text-sm text-[var(--app-muted)]">Email</p>
                       <p className="font-medium">{selectedRecord.user.email}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Role</p>
+                      <p className="text-sm text-[var(--app-muted)]">Role</p>
                       <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded">
                         {selectedRecord.user.role}
                       </span>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Telepon</p>
+                      <p className="text-sm text-[var(--app-muted)]">Telepon</p>
                       <p className="font-medium">{selectedRecord.user.phone || '-'}</p>
                     </div>
                   </div>
@@ -579,14 +580,14 @@ export default function AttendanceMonitoring() {
 
                 {/* Attendance Info */}
                 <div>
-                  <h4 className="font-semibold text-gray-900 mb-3">Informasi Absensi</h4>
+                  <h4 className="font-semibold text-[var(--app-text)] mb-3">Informasi Absensi</h4>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <p className="text-sm text-gray-600">Status</p>
+                      <p className="text-sm text-[var(--app-muted)]">Status</p>
                       {getStatusBadge(selectedRecord.status, !!selectedRecord.checkInTime)}
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Durasi Kerja</p>
+                      <p className="text-sm text-[var(--app-muted)]">Durasi Kerja</p>
                       <p className="font-medium">{formatDuration(selectedRecord.workDuration)}</p>
                     </div>
                   </div>
@@ -595,15 +596,15 @@ export default function AttendanceMonitoring() {
                 {/* Check-In Info */}
                 {selectedRecord.checkInTime && (
                   <div>
-                    <h4 className="font-semibold text-gray-900 mb-3">Check-In</h4>
+                    <h4 className="font-semibold text-[var(--app-text)] mb-3">Check-In</h4>
                     <div className="space-y-4">
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <p className="text-sm text-gray-600">Waktu</p>
+                          <p className="text-sm text-[var(--app-muted)]">Waktu</p>
                           <p className="font-medium">{new Date(selectedRecord.checkInTime).toLocaleString('id-ID')}</p>
                         </div>
                         <div>
-                          <p className="text-sm text-gray-600 mb-1">Lokasi GPS</p>
+                          <p className="text-sm text-[var(--app-muted)] mb-1">Lokasi GPS</p>
                           {selectedRecord.checkInLat && selectedRecord.checkInLong ? (
                             <div className="space-y-1">
                               <p className="font-medium text-sm">
@@ -624,7 +625,7 @@ export default function AttendanceMonitoring() {
                       </div>
                       {selectedRecord.checkInPhoto && (
                         <div>
-                          <p className="text-sm text-gray-600 mb-2">Foto</p>
+                          <p className="text-sm text-[var(--app-muted)] mb-2">Foto</p>
                           <img 
                             src={selectedRecord.checkInPhoto} 
                             alt="Check-in" 
@@ -640,15 +641,15 @@ export default function AttendanceMonitoring() {
                 {/* Check-Out Info */}
                 {selectedRecord.checkOutTime && (
                   <div>
-                    <h4 className="font-semibold text-gray-900 mb-3">Check-Out</h4>
+                    <h4 className="font-semibold text-[var(--app-text)] mb-3">Check-Out</h4>
                     <div className="space-y-4">
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <p className="text-sm text-gray-600">Waktu</p>
+                          <p className="text-sm text-[var(--app-muted)]">Waktu</p>
                           <p className="font-medium">{new Date(selectedRecord.checkOutTime).toLocaleString('id-ID')}</p>
                         </div>
                         <div>
-                          <p className="text-sm text-gray-600 mb-1">Lokasi GPS</p>
+                          <p className="text-sm text-[var(--app-muted)] mb-1">Lokasi GPS</p>
                           {selectedRecord.checkOutLat && selectedRecord.checkOutLong ? (
                             <div className="space-y-1">
                               <p className="font-medium text-sm">
@@ -669,7 +670,7 @@ export default function AttendanceMonitoring() {
                       </div>
                       {selectedRecord.checkOutPhoto && (
                         <div>
-                          <p className="text-sm text-gray-600 mb-2">Foto</p>
+                          <p className="text-sm text-[var(--app-muted)] mb-2">Foto</p>
                           <img 
                             src={selectedRecord.checkOutPhoto} 
                             alt="Check-out" 
@@ -689,9 +690,9 @@ export default function AttendanceMonitoring() {
         {/* Edit Status Modal */}
         {showEditModal && editingRecord && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <div className="bg-[var(--app-card)] rounded-lg shadow-xl max-w-md w-full">
               <div className="p-6 border-b flex justify-between items-center">
-                <h3 className="text-xl font-bold text-gray-900">Edit Status Absensi</h3>
+                <h3 className="text-xl font-bold text-[var(--app-text)]">Edit Status Absensi</h3>
                 <button
                   onClick={() => setShowEditModal(false)}
                   className="p-2 hover:bg-gray-100 rounded"
@@ -702,12 +703,12 @@ export default function AttendanceMonitoring() {
 
               <div className="p-6 space-y-4">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Karyawan</p>
+                  <p className="text-sm text-[var(--app-muted)] mb-1">Karyawan</p>
                   <p className="font-medium text-lg">{editingRecord.user.name}</p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-[var(--app-text)]/90 mb-2">
                     Status Absensi
                   </label>
                   <select
@@ -720,7 +721,7 @@ export default function AttendanceMonitoring() {
                     <option value="leave">Izin</option>
                     <option value="sick">Sakit</option>
                   </select>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-[var(--app-muted)] mt-1">
                     * Ubah status jika ada koreksi yang diperlukan
                   </p>
                 </div>
@@ -728,7 +729,7 @@ export default function AttendanceMonitoring() {
                 <div className="flex gap-3 pt-4">
                   <button
                     onClick={() => setShowEditModal(false)}
-                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                    className="flex-1 px-4 py-2 border border-gray-300 text-[var(--app-text)]/90 rounded-lg hover:bg-[var(--app-bg)]"
                   >
                     Batal
                   </button>

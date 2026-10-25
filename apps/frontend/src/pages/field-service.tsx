@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { API_BASE_URL, API_ENDPOINTS } from '../config/api';
 import Layout from '../components/Layout';
@@ -62,7 +63,7 @@ export default function FieldServiceManagement() {
   const loadWorkOrders = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('${API_BASE_URL}/field-service/jobs', {
+      const response = await fetch(`${API_BASE_URL}/field-service/jobs`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         }
@@ -77,75 +78,13 @@ export default function FieldServiceManagement() {
       console.error('Error loading work orders:', error);
     }
 
-    // Fallback to mock data
-    const mockData: WorkOrder[] = [
-      {
-        id: '1',
-        type: 'installation',
-        priority: 'high',
-        status: 'assigned',
-        title: 'Instalasi Baru - Paket 50 Mbps',
-        description: 'Instalasi router dan ONT untuk pelanggan baru',
-        scheduledAt: new Date().toISOString(),
-        customer: {
-          id: 'cust-1',
-          name: 'Budi Santoso',
-          phone: '08123456789',
-          address: 'Jl. Merdeka No. 123, Jakarta',
-        },
-        technician: {
-          id: 'tech-1',
-          name: 'Ahmad Rizki',
-        },
-        location: 'Jl. Merdeka No. 123',
-        latitude: -6.2088,
-        longitude: 106.8456,
-      },
-      {
-        id: '2',
-        type: 'repair',
-        priority: 'urgent',
-        status: 'pending',
-        title: 'Perbaikan Koneksi Lambat',
-        description: 'Pelanggan melaporkan kecepatan internet sangat lambat',
-        scheduledAt: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
-        customer: {
-          id: 'cust-2',
-          name: 'Siti Rahayu',
-          phone: '08198765432',
-          address: 'Jl. Sudirman No. 45, Jakarta',
-        },
-        location: 'Jl. Sudirman No. 45',
-      },
-      {
-        id: '3',
-        type: 'maintenance',
-        priority: 'medium',
-        status: 'in-progress',
-        title: 'Maintenance Rutin - ONT Check',
-        description: 'Pemeriksaan rutin perangkat ONT',
-        scheduledAt: new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString(),
-        customer: {
-          id: 'cust-3',
-          name: 'Andi Wijaya',
-          phone: '08156781234',
-          address: 'Jl. Gatot Subroto No. 78, Jakarta',
-        },
-        technician: {
-          id: 'tech-2',
-          name: 'Rudi Hartono',
-        },
-        location: 'Jl. Gatot Subroto No. 78',
-      },
-    ];
-
-    setWorkOrders(mockData);
+    setWorkOrders([]);
   };
 
   const loadTechnicians = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('${API_BASE_URL}/operational/technicians', {
+      const response = await fetch(`${API_BASE_URL}/operational/technicians`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         }
@@ -179,7 +118,7 @@ export default function FieldServiceManagement() {
   const loadStats = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('${API_BASE_URL}/field-service/stats', {
+      const response = await fetch(`${API_BASE_URL}/field-service/stats`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         }
@@ -269,7 +208,7 @@ export default function FieldServiceManagement() {
                 <p className="text-sm text-gray-600">Total</p>
                 <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
               </div>
-              <Calendar className="w-8 h-8 text-gray-400" />
+              <Calendar className="w-8 h-8 text-[var(--app-muted)]" />
             </div>
           </div>
           
@@ -319,7 +258,7 @@ export default function FieldServiceManagement() {
                 <p className="text-sm text-gray-600">Avg Time</p>
                 <p className="text-2xl font-bold text-gray-900">{stats.avgCompletionTime}m</p>
               </div>
-              <Clock className="w-8 h-8 text-gray-400" />
+              <Clock className="w-8 h-8 text-[var(--app-muted)]" />
             </div>
           </div>
         </div>
@@ -344,7 +283,7 @@ export default function FieldServiceManagement() {
                   </span>
                 </div>
                 <p className="text-sm text-gray-600">{tech.email}</p>
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-[var(--app-muted)] mt-1">
                   {tech.activeJobs} pekerjaan aktif
                 </p>
               </div>
@@ -425,22 +364,22 @@ export default function FieldServiceManagement() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--app-muted)] uppercase tracking-wider">
                     Work Order
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--app-muted)] uppercase tracking-wider">
                     Pelanggan
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--app-muted)] uppercase tracking-wider">
                     Teknisi
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--app-muted)] uppercase tracking-wider">
                     Jadwal
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--app-muted)] uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[var(--app-muted)] uppercase tracking-wider">
                     Aksi
                   </th>
                 </tr>
@@ -453,8 +392,8 @@ export default function FieldServiceManagement() {
                         <AlertCircle className={`w-5 h-5 mt-0.5 ${getPriorityColor(order.priority)}`} />
                         <div>
                           <div className="text-sm font-medium text-gray-900">{order.title}</div>
-                          <div className="text-sm text-gray-500">{order.description}</div>
-                          <div className="text-xs text-gray-400 mt-1">
+                          <div className="text-sm text-[var(--app-muted)]">{order.description}</div>
+                          <div className="text-xs text-[var(--app-muted)] mt-1">
                             {order.type} • {order.priority} priority
                           </div>
                         </div>
@@ -462,14 +401,14 @@ export default function FieldServiceManagement() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="text-sm text-gray-900">{order.customer.name}</div>
-                      <div className="text-sm text-gray-500">{order.customer.phone}</div>
-                      <div className="text-xs text-gray-400">{order.location}</div>
+                      <div className="text-sm text-[var(--app-muted)]">{order.customer.phone}</div>
+                      <div className="text-xs text-[var(--app-muted)]">{order.location}</div>
                     </td>
                     <td className="px-6 py-4">
                       {order.technician ? (
                         <div className="text-sm text-gray-900">{order.technician.name}</div>
                       ) : (
-                        <span className="text-sm text-gray-400 italic">Belum ditugaskan</span>
+                        <span className="text-sm text-[var(--app-muted)] italic">Belum ditugaskan</span>
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -515,8 +454,8 @@ export default function FieldServiceManagement() {
         </div>
 
         {filteredOrders.length === 0 && (
-          <div className="text-center py-8 text-gray-500">
-            <AlertCircle className="w-12 h-12 mx-auto mb-2 text-gray-400" />
+          <div className="text-center py-8 text-[var(--app-muted)]">
+            <AlertCircle className="w-12 h-12 mx-auto mb-2 text-[var(--app-muted)]" />
             <p>Tidak ada work order yang sesuai filter</p>
           </div>
         )}
@@ -530,7 +469,7 @@ export default function FieldServiceManagement() {
               <h2 className="text-xl font-bold">Tambah Work Order</h2>
               <button
                 onClick={() => setShowAddModal(false)}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-[var(--app-muted)] hover:text-gray-700"
               >
                 <XCircle className="w-6 h-6" />
               </button>

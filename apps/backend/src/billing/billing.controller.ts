@@ -1,8 +1,11 @@
-import { Controller, Post, Body, Get, Param } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Res, HttpStatus } from '@nestjs/common';
+import { Response } from 'express';
 import { BillingService } from './billing.service';
 import { BillingCronService } from './billing.cron.service';
 import { PaymentGatewayService } from './payment-gateway.service';
+import { ReceiptPdfService } from './receipt-pdf.service';
 import { WhatsAppService } from '../whatsapp/whatsapp.service';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Controller('billing')
 export class BillingController {
@@ -10,8 +13,96 @@ export class BillingController {
     private readonly billingService: BillingService,
     private readonly billingCron: BillingCronService,
     private readonly paymentGateway: PaymentGatewayService,
+    private readonly receiptPdfService: ReceiptPdfService,
     private readonly whatsappService: WhatsAppService,
+    private readonly prisma: PrismaService,
   ) {}
+
+  /**
+   * 🤖 Daftar Seluruh Tagihan & Data Customer Real-time
+   * Dipakai oleh antarmuka WhatsApp Billing Scheduler UI
+   */
+  @Get('invoices-all')
+  async getAllInvoices() {
+    return this.prisma.invoice.findMany({
+      include: {
+        customer: {
+          select: {
+            id: true,
+            name: true,
+            phone: true,
+            email: true,
+            internetNumber: true,
+            status: true,
+          },
+        },
+        payments: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: 100,
+    });
+  }
+
+  /**
+   * 🤖 Ringkasan Metrik Pelanggan untuk Scheduler
+   */
+  @Get('scheduler-summary')
+  async getSchedulerSummary() {
+    const totalCustomers = await this.prisma.customer.count();
+    const activeCustomers = await this.prisma.customer.count({ where: { status: 'active' } });
+    const pendingInvoices = await this.prisma.invoice.count({ where: { status: 'PENDING' } });
+    const paidInvoices = await this.prisma.invoice.count({ where: { status: 'PAID' } });
+
+    return {
+      totalCustomers,
+      activeCustomers,
+      pendingInvoices,
+      paidInvoices,
+    };
+  }
+
+  /**
+   * Unduh / Preview Berkas PDF Kwitansi Resmi AUDIRA
+   * Endpoint publik/terverifikasi untuk lampiran WhatsApp Fonnte & Portal
+   */
+  @Get(['invoices/:id/receipt-pdf', 'receipt/:id/pdf'])
+  async getReceiptPdf(@Param('id') invoiceId: string, @Res() res: Response) {
+    try {
+      const pdfBuffer = await this.receiptPdfService.generateReceiptPdf(invoiceId);
+      
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader(
+        'Content-Disposition',
+        `inline; filename="Kwitansi-${invoiceId}.pdf"`,
+      );
+      res.setHeader('Content-Length', pdfBuffer.length);
+      
+      return res.status(HttpStatus.OK).send(pdfBuffer);
+    } catch (err: any) {
+      return res.status(HttpStatus.NOT_FOUND).json({
+        success: false,
+        message: err.message || 'Kwitansi PDF tidak dapat dibuat',
+      });
+    }
+  }
+
+  /**
+   * 🤖 Manual Trigger: Jalankan pengiriman WhatsApp H-3 ke pelanggan
+   */
+  @Post('scheduler/run-h3')
+  async triggerH3Scheduler() {
+    return this.billingCron.manualSendH3Reminders();
+  }
+
+  /**
+   * 🤖 Manual Trigger: Jalankan pengiriman WhatsApp Hari-H (QRIS) ke pelanggan
+   */
+  @Post('scheduler/run-hari-h')
+  async triggerHariHScheduler() {
+    return this.billingCron.manualSendHariHReminders();
+  }
 
   /**
    * Manual trigger to generate invoices (for testing)
@@ -151,8 +242,8 @@ export class BillingController {
           transactionId: notification.transaction_id,
         });
 
-        // Send WhatsApp confirmation
-        await this.whatsappService.sendPaymentConfirmation(invoice.customer, payment);
+        // Send WhatsApp confirmation with official AUDIRA PDF receipt
+        await this.whatsappService.sendPaymentReceivedWithReceipt(invoice.customer, invoice, payment);
       }
 
       return { success: true, message: 'Notification processed' };
@@ -168,5 +259,33 @@ export class BillingController {
   async checkPaymentStatus(@Param('orderId') orderId: string) {
     const status = await this.paymentGateway.checkStatus(orderId);
     return status;
+  }
+
+  /**
+   * Manual CoA / Reconnect Sesi Pelanggan On-Demand ("Bayar, Langsung Nyala")
+   */
+  @Post('coa/reconnect/:customerId')
+  async reconnectSession(@Param('customerId') customerId: string) {
+    return this.billingService.reconnectCustomerSession(customerId);
+  }
+
+  /**
+   * Set Janji Bayar / Dispensasi Isolir Sementara
+   */
+  @Post('grace-period/:customerId')
+  async setGracePeriod(
+    @Param('customerId') customerId: string,
+    @Body('promiseDate') promiseDate: string,
+    @Body('notes') notes?: string,
+  ) {
+    return this.billingService.setGracePeriod(customerId, promiseDate, notes);
+  }
+
+  /**
+   * Batalkan Janji Bayar dan isolir kembali
+   */
+  @Post('grace-period/:customerId/cancel')
+  async cancelGracePeriod(@Param('customerId') customerId: string) {
+    return this.billingService.cancelGracePeriod(customerId);
   }
 }
