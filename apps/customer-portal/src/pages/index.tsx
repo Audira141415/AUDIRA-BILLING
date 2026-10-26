@@ -649,7 +649,7 @@ export default function LandingPage() {
   const [simSpeed, setSimSpeed] = useState<number>(50);
   const [activeFaq, setActiveFaq] = useState<number | null>(0);
   const [orderModalOpen, setOrderModalOpen] = useState(false);
-  const [selectedPackage, setSelectedPackage] = useState<PackageItem | null>(null);
+  const [selectedPackage, setSelectedPackage] = useState<PackageItem | null>(PACKAGES[1]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Language state (ID / EN) with persistent localStorage synchronization
@@ -811,6 +811,25 @@ export default function LandingPage() {
       c.area.toLowerCase().includes(searchArea.toLowerCase())
     );
   }, [searchArea]);
+
+  const handleSelectCategory = (cat: 'home' | 'business') => {
+    setSelectedCategory(cat);
+    const defaultPkg =
+      PACKAGES.find((p) => p.category === cat && p.isPopular) ||
+      PACKAGES.find((p) => p.category === cat) ||
+      null;
+    if (defaultPkg) {
+      setSelectedPackage(defaultPkg);
+      setFormData((prev) => ({ ...prev, packageId: defaultPkg.id }));
+      setRegForm((prev) => ({ ...prev, packageId: defaultPkg.id }));
+    }
+  };
+
+  const handleSelectPackageCard = (pkg: PackageItem) => {
+    setSelectedPackage(pkg);
+    setFormData((prev) => ({ ...prev, packageId: pkg.id }));
+    setRegForm((prev) => ({ ...prev, packageId: pkg.id }));
+  };
 
   const handleOpenOrder = (pkg: PackageItem) => {
     setSelectedPackage(pkg);
@@ -1546,11 +1565,39 @@ export default function LandingPage() {
                   className="w-full h-3 bg-slate-200 dark:bg-gray-800 rounded-lg appearance-none cursor-pointer accent-cyan-500 border border-slate-300 dark:border-gray-700"
                 />
 
-                <div className="flex justify-between text-[11px] font-mono text-slate-500 dark:text-gray-500">
-                  <span>20 Mbps (Starter)</span>
-                  <span>50 Mbps (Gamer)</span>
-                  <span>100 Mbps (Pro)</span>
-                  <span>300 Mbps (Enterprise)</span>
+                {/* Interactive Preset Buttons */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2">
+                  {[
+                    { speed: 20, label: '20 Mbps (Starter)', pkgId: 'home-20', cat: 'home' },
+                    { speed: 50, label: '50 Mbps (Gamer)', pkgId: 'home-50', cat: 'home' },
+                    { speed: 100, label: '100 Mbps (Pro)', pkgId: 'home-100', cat: 'home' },
+                    { speed: 300, label: '300 Mbps (Enterprise)', pkgId: 'biz-300', cat: 'business' },
+                  ].map((preset) => {
+                    const isCurrent = simSpeed === preset.speed;
+                    return (
+                      <button
+                        key={preset.speed}
+                        type="button"
+                        onClick={() => {
+                          setSimSpeed(preset.speed);
+                          const matchedPkg = PACKAGES.find((p) => p.id === preset.pkgId);
+                          if (matchedPkg) {
+                            setSelectedCategory(preset.cat as 'home' | 'business');
+                            setSelectedPackage(matchedPkg);
+                            setFormData((prev) => ({ ...prev, packageId: matchedPkg.id }));
+                            setRegForm((prev) => ({ ...prev, packageId: matchedPkg.id }));
+                          }
+                        }}
+                        className={`px-3 py-2 rounded-lg text-xs font-mono font-bold transition-all border-2 text-center cursor-pointer ${
+                          isCurrent
+                            ? 'bg-cyan-400 text-black border-black shadow-[2px_2px_0px_#000]'
+                            : 'bg-slate-100 dark:bg-[#070b14] text-slate-600 dark:text-gray-400 border-slate-300 dark:border-gray-800 hover:border-cyan-400'
+                        }`}
+                      >
+                        {preset.label}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -1583,6 +1630,19 @@ export default function LandingPage() {
                   <p className="text-[11px] text-slate-500 dark:text-gray-400 mt-1">{t.simStreamSub}</p>
                 </div>
               </div>
+
+              {/* Simulator Action to Package */}
+              <div className="mt-6 pt-5 border-t border-slate-200 dark:border-gray-800 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+                <span className="text-slate-600 dark:text-gray-400">
+                  {lang === 'id' ? `Kecepatan ${simSpeed} Mbps cocok dengan rekomendasi paket AudiraNET.` : `Speed of ${simSpeed} Mbps matches an official AudiraNET package.`}
+                </span>
+                <a
+                  href="#paket"
+                  className="px-4 py-2 rounded-lg bg-cyan-400 hover:bg-cyan-300 text-black font-black uppercase text-xs border border-black shadow-[2px_2px_0px_#000] inline-flex items-center gap-1.5"
+                >
+                  <span>{lang === 'id' ? 'Lihat Pilihan Paket ➔' : 'View Package Options ➔'}</span>
+                </a>
+              </div>
             </div>
           </div>
         </section>
@@ -1606,8 +1666,9 @@ export default function LandingPage() {
                 {/* Category Switcher */}
                 <div className="inline-flex p-1 bg-white dark:bg-[#0e1626] border-2 border-black dark:border-gray-800 rounded-xl shadow-[3px_3px_0px_#000]">
                   <button
-                    onClick={() => setSelectedCategory('home')}
-                    className={`px-5 py-2 rounded-lg text-xs font-mono font-bold uppercase transition-all ${
+                    type="button"
+                    onClick={() => handleSelectCategory('home')}
+                    className={`px-5 py-2 rounded-lg text-xs font-mono font-bold uppercase transition-all cursor-pointer ${
                       selectedCategory === 'home'
                         ? 'bg-cyan-400 text-black shadow-[2px_2px_0px_#000]'
                         : 'text-slate-600 dark:text-gray-400 hover:text-black dark:hover:text-white'
@@ -1616,8 +1677,9 @@ export default function LandingPage() {
                     {t.catHome}
                   </button>
                   <button
-                    onClick={() => setSelectedCategory('business')}
-                    className={`px-5 py-2 rounded-lg text-xs font-mono font-bold uppercase transition-all ${
+                    type="button"
+                    onClick={() => handleSelectCategory('business')}
+                    className={`px-5 py-2 rounded-lg text-xs font-mono font-bold uppercase transition-all cursor-pointer ${
                       selectedCategory === 'business'
                         ? 'bg-cyan-400 text-black shadow-[2px_2px_0px_#000]'
                         : 'text-slate-600 dark:text-gray-400 hover:text-black dark:hover:text-white'
@@ -1630,20 +1692,22 @@ export default function LandingPage() {
                 {/* Billing Cycle Switcher */}
                 <div className="inline-flex p-1 bg-white dark:bg-[#0e1626] border border-slate-300 dark:border-gray-800 rounded-xl items-center shadow-sm">
                   <button
+                    type="button"
                     onClick={() => setBillingCycle('monthly')}
-                    className={`px-4 py-2 rounded-lg text-xs font-mono font-bold uppercase transition-all ${
+                    className={`px-4 py-2 rounded-lg text-xs font-mono font-bold uppercase transition-all cursor-pointer ${
                       billingCycle === 'monthly'
-                        ? 'bg-cyan-500 text-white shadow-sm'
+                        ? 'bg-cyan-500 text-white shadow-sm font-black'
                         : 'text-slate-600 dark:text-gray-400 hover:text-black dark:hover:text-white'
                     }`}
                   >
                     {t.billMonthly}
                   </button>
                   <button
+                    type="button"
                     onClick={() => setBillingCycle('yearly')}
-                    className={`px-4 py-2 rounded-lg text-xs font-mono font-bold uppercase transition-all flex items-center gap-1.5 ${
+                    className={`px-4 py-2 rounded-lg text-xs font-mono font-bold uppercase transition-all flex items-center gap-1.5 cursor-pointer ${
                       billingCycle === 'yearly'
-                        ? 'bg-emerald-500 text-white shadow-sm'
+                        ? 'bg-emerald-500 text-white shadow-sm font-black'
                         : 'text-slate-600 dark:text-gray-400 hover:text-black dark:hover:text-white'
                     }`}
                   >
@@ -1657,8 +1721,9 @@ export default function LandingPage() {
             </div>
 
             {/* Packages Grid */}
-            <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
+            <div className={`mt-14 grid grid-cols-1 md:grid-cols-2 ${filteredPackages.length > 2 ? 'lg:grid-cols-3' : 'lg:grid-cols-2 max-w-4xl mx-auto'} gap-8 items-stretch`}>
               {filteredPackages.map((pkg) => {
+                const isSelected = selectedPackage ? selectedPackage.id === pkg.id : pkg.isPopular;
                 const price =
                   billingCycle === 'yearly'
                     ? Math.round((pkg.monthlyPrice * 10) / 12)
@@ -1667,10 +1732,19 @@ export default function LandingPage() {
                 return (
                   <div
                     key={pkg.id}
-                    className={`relative bg-white dark:bg-[#0e1626] border-2 rounded-2xl p-7 flex flex-col justify-between transition-all hover:-translate-y-1 ${
-                      pkg.isPopular
-                        ? 'border-cyan-500 dark:border-cyan-400 shadow-[8px_8px_0px_#00dfd8]'
-                        : 'border-black dark:border-gray-800 shadow-[6px_6px_0px_#000] hover:border-gray-600'
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => handleSelectPackageCard(pkg)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        handleSelectPackageCard(pkg);
+                      }
+                    }}
+                    className={`group relative bg-white dark:bg-[#0e1626] border-2 rounded-2xl p-7 flex flex-col justify-between transition-all cursor-pointer select-none ${
+                      isSelected
+                        ? 'border-cyan-500 dark:border-cyan-400 shadow-[8px_8px_0px_#00dfd8] ring-4 ring-cyan-400/30 -translate-y-1'
+                        : 'border-black dark:border-gray-800 shadow-[6px_6px_0px_#000] hover:border-cyan-400/80 hover:shadow-[8px_8px_0px_rgba(0,223,216,0.25)] hover:-translate-y-0.5'
                     }`}
                   >
                     {/* Badge */}
@@ -1681,18 +1755,50 @@ export default function LandingPage() {
                     )}
 
                     <div>
-                      {/* Speed Indicator */}
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-mono font-bold uppercase text-slate-600 dark:text-gray-400 tracking-wider">
-                          {pkg.name}
-                        </span>
-                        <div className="flex items-center gap-1 text-cyan-600 dark:text-cyan-400 font-mono text-xs font-bold">
+                      {/* Selection Radio Indicator Header */}
+                      <div className="flex items-center justify-between gap-2 pb-3 border-b border-slate-200 dark:border-gray-800">
+                        <div className="flex items-center gap-2">
+                          <div
+                            className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
+                              isSelected
+                                ? 'border-cyan-500 bg-cyan-400 text-black shadow-sm'
+                                : 'border-slate-300 dark:border-gray-700 bg-slate-100 dark:bg-gray-800 text-transparent group-hover:border-cyan-400'
+                            }`}
+                          >
+                            <Check className="w-3.5 h-3.5 stroke-[3.5]" />
+                          </div>
+                          <span
+                            className={`text-xs font-mono font-black uppercase tracking-wider transition-colors ${
+                              isSelected
+                                ? 'text-cyan-600 dark:text-cyan-400'
+                                : 'text-slate-500 dark:text-gray-400 group-hover:text-black dark:group-hover:text-white'
+                            }`}
+                          >
+                            {isSelected
+                              ? (lang === 'id' ? 'PAKET DIPILIH' : 'SELECTED')
+                              : (lang === 'id' ? 'KLIK UNTUK MEMILIH' : 'CLICK TO SELECT')}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-1 text-cyan-600 dark:text-cyan-400 font-mono text-xs font-bold shrink-0">
                           <Zap className="w-3.5 h-3.5 fill-cyan-500" />
                           <span>FIBER 1:1</span>
                         </div>
                       </div>
 
-                      <div className="mt-4 flex items-baseline gap-1.5">
+                      {/* Package Name & Speed */}
+                      <div className="mt-4 flex items-center justify-between">
+                        <span className="text-xs font-mono font-bold uppercase text-slate-600 dark:text-gray-400 tracking-wider">
+                          {pkg.name}
+                        </span>
+                        {isSelected && (
+                          <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30">
+                            ACTIVE
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="mt-2 flex items-baseline gap-1.5">
                         <span className="text-5xl font-black text-slate-950 dark:text-white font-mono">{pkg.speed}</span>
                         <span className="text-lg font-mono text-cyan-600 dark:text-cyan-400 font-bold">Mbps</span>
                       </div>
@@ -1731,14 +1837,22 @@ export default function LandingPage() {
                     {/* CTA Button */}
                     <div className="mt-8 pt-4">
                       <button
-                        onClick={() => handleOpenOrder(pkg)}
-                        className={`w-full py-3.5 px-4 rounded-xl font-bold uppercase text-xs tracking-wider transition-all flex items-center justify-center gap-2 ${
-                          pkg.isPopular
-                            ? 'bg-cyan-500 hover:bg-cyan-400 text-white shadow-sm hover:shadow'
-                            : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-white dark:border-slate-700 shadow-sm'
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleOpenOrder(pkg);
+                        }}
+                        className={`w-full py-3.5 px-4 rounded-xl font-bold uppercase text-xs tracking-wider transition-all flex items-center justify-center gap-2 border-2 cursor-pointer ${
+                          isSelected
+                            ? 'bg-cyan-500 hover:bg-cyan-400 text-white border-black shadow-[4px_4px_0px_#000] hover:shadow-[2px_2px_0px_#000]'
+                            : 'bg-slate-100 hover:bg-cyan-50 text-slate-800 border-slate-300 dark:bg-slate-800 dark:hover:bg-gray-800 dark:text-white dark:border-slate-700 shadow-sm hover:border-cyan-400'
                         }`}
                       >
-                        <span>{t.orderThisPlan} ({pkg.name})</span>
+                        <span>
+                          {isSelected
+                            ? (lang === 'id' ? `Daftar Paket Ini (${pkg.name})` : `Order This Plan (${pkg.name})`)
+                            : (lang === 'id' ? `Pilih Paket Ini (${pkg.name})` : `Select This Plan (${pkg.name})`)}
+                        </span>
                         <ArrowRight className="w-4 h-4 stroke-[2.5]" />
                       </button>
                     </div>
@@ -1746,6 +1860,40 @@ export default function LandingPage() {
                 );
               })}
             </div>
+
+            {/* Active Selected Package Summary Bar */}
+            {selectedPackage && (
+              <div className="mt-10 max-w-4xl mx-auto p-4 sm:p-5 bg-cyan-50/70 dark:bg-cyan-950/30 border-2 border-cyan-500 dark:border-cyan-400 rounded-2xl shadow-[6px_6px_0px_#000] flex flex-wrap items-center justify-between gap-4">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-11 h-11 rounded-xl bg-cyan-400 text-black flex items-center justify-center font-black border-2 border-black shadow-[2px_2px_0px_#000] shrink-0">
+                    <Zap className="w-6 h-6 fill-black" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-mono font-bold text-cyan-700 dark:text-cyan-300 uppercase tracking-widest block">
+                      {lang === 'id' ? 'STATUS: PAKET BERHASIL DIPILIH' : 'STATUS: PLAN SELECTED'}
+                    </span>
+                    <div className="font-mono font-black text-slate-950 dark:text-white text-base sm:text-lg flex flex-wrap items-center gap-2 mt-0.5">
+                      <span>{selectedPackage.name}</span>
+                      <span className="px-2 py-0.5 rounded bg-cyan-400 text-black text-xs font-bold">
+                        {selectedPackage.speed} Mbps
+                      </span>
+                      <span className="text-sm font-bold text-cyan-600 dark:text-cyan-400">
+                        • Rp {formatNumber(billingCycle === 'yearly' ? Math.round((selectedPackage.monthlyPrice * 10) / 12) : selectedPackage.monthlyPrice)} / {t.perMonth.replace('/', '').trim()}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => handleOpenOrder(selectedPackage)}
+                  className="px-6 py-3.5 bg-cyan-400 hover:bg-cyan-300 text-black font-black uppercase text-xs rounded-xl border-2 border-black shadow-[3px_3px_0px_#000] hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all flex items-center gap-2 cursor-pointer"
+                >
+                  <Zap className="w-4 h-4 fill-black" />
+                  <span>{lang === 'id' ? 'Lanjut Pasang Baru Sekarang ➔' : 'Proceed With Registration ➔'}</span>
+                </button>
+              </div>
+            )}
           </div>
         </section>
 
@@ -1842,14 +1990,22 @@ export default function LandingPage() {
                           </div>
 
                           <button
+                            type="button"
                             onClick={() => {
+                              const pkg = selectedPackage || PACKAGES[1];
                               setFormData((prev) => ({
                                 ...prev,
                                 address: item.area,
+                                packageId: pkg.id,
                               }));
-                              setOrderModalOpen(true);
+                              setRegForm((prev) => ({
+                                ...prev,
+                                address: item.area,
+                                packageId: pkg.id,
+                              }));
+                              handleOpenOrder(pkg);
                             }}
-                            className="px-3.5 py-1.5 bg-cyan-400 hover:bg-cyan-300 text-black font-black uppercase text-xs rounded-lg border-2 border-black shadow-[2px_2px_0px_#000]"
+                            className="px-3.5 py-1.5 bg-cyan-400 hover:bg-cyan-300 text-black font-black uppercase text-xs rounded-lg border-2 border-black shadow-[2px_2px_0px_#000] cursor-pointer"
                           >
                             {t.covBtn}
                           </button>
@@ -2315,9 +2471,9 @@ export default function LandingPage() {
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
               <button
+                type="button"
                 onClick={() => {
-                  setSelectedPackage(PACKAGES[1]);
-                  setOrderModalOpen(true);
+                  handleOpenOrder(selectedPackage || PACKAGES[1]);
                 }}
                 className="px-8 py-4 bg-cyan-400 hover:bg-cyan-300 text-black font-black uppercase text-sm rounded-xl border-2 border-black shadow-[6px_6px_0px_#000] hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all flex items-center gap-2"
               >
@@ -2553,25 +2709,59 @@ export default function LandingPage() {
                         const pkg = PACKAGES.find((p) => p.id === regForm.packageId) || selectedPackage;
                         const finalPrice = pkg ? (billingCycle === 'yearly' ? pkg.monthlyPrice * 10 : pkg.monthlyPrice) : 285000;
                         return (
-                          <div className="p-3 rounded-xl border-2 border-cyan-500/40 bg-cyan-500/10 dark:bg-cyan-950/30 flex items-center justify-between">
-                            <div>
-                              <span className="text-[10px] font-mono font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-widest block">
-                                PAKET DIPILIH
-                              </span>
-                              <div className="font-mono font-black text-sm text-slate-900 dark:text-white flex items-center gap-2 mt-0.5">
-                                <span>{pkg?.name || 'Paket Internet'}</span>
-                                <span className="px-1.5 py-0.5 rounded bg-cyan-400 text-black text-[10px] font-bold">
-                                  {pkg?.speed || 50} Mbps
+                          <div className="p-3.5 rounded-xl border-2 border-cyan-500/50 bg-cyan-500/10 dark:bg-cyan-950/30 space-y-2">
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <span className="text-[10px] font-mono font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-widest block">
+                                  PAKET DIPILIH
+                                </span>
+                                <div className="font-mono font-black text-sm text-slate-900 dark:text-white flex items-center gap-2 mt-0.5">
+                                  <span>{pkg?.name || 'Paket Internet'}</span>
+                                  <span className="px-1.5 py-0.5 rounded bg-cyan-400 text-black text-[10px] font-bold">
+                                    {pkg?.speed || 50} Mbps
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="text-right font-mono">
+                                <span className="text-[10px] text-slate-500 dark:text-gray-400 block">
+                                  {billingCycle === 'yearly' ? 'Tagihan Tahunan (10 Bln)' : 'Tagihan Bulanan'}
+                                </span>
+                                <span className="text-base font-black text-cyan-600 dark:text-cyan-400">
+                                  Rp {formatNumber(finalPrice)}
                                 </span>
                               </div>
                             </div>
-                            <div className="text-right font-mono">
-                              <span className="text-[10px] text-slate-500 dark:text-gray-400 block">
-                                {billingCycle === 'yearly' ? 'Tagihan Tahunan (10 Bln)' : 'Tagihan Bulanan'}
+
+                            {/* Billing Cycle Switcher within Modal */}
+                            <div className="pt-2 border-t border-cyan-500/20 flex items-center justify-between text-[11px]">
+                              <span className="text-slate-500 dark:text-gray-400 font-bold uppercase text-[10px]">
+                                Siklus Tagihan:
                               </span>
-                              <span className="text-base font-black text-cyan-600 dark:text-cyan-400">
-                                Rp {formatNumber(finalPrice)}
-                              </span>
+                              <div className="inline-flex p-0.5 bg-white dark:bg-[#070b14] border border-slate-300 dark:border-gray-700 rounded-lg">
+                                <button
+                                  type="button"
+                                  onClick={() => setBillingCycle('monthly')}
+                                  className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase transition-all ${
+                                    billingCycle === 'monthly'
+                                      ? 'bg-cyan-500 text-white'
+                                      : 'text-slate-600 dark:text-gray-400'
+                                  }`}
+                                >
+                                  Bulanan
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setBillingCycle('yearly')}
+                                  className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase transition-all flex items-center gap-1 ${
+                                    billingCycle === 'yearly'
+                                      ? 'bg-emerald-500 text-white'
+                                      : 'text-slate-600 dark:text-gray-400'
+                                  }`}
+                                >
+                                  <span>Tahunan</span>
+                                  <span className="text-[9px] bg-emerald-700 text-white px-1 rounded">HEMAT 2 BLN</span>
+                                </button>
+                              </div>
                             </div>
                           </div>
                         );
@@ -2642,7 +2832,16 @@ export default function LandingPage() {
                         </label>
                         <select
                           value={regForm.packageId}
-                          onChange={(e) => setRegForm({ ...regForm, packageId: e.target.value })}
+                          onChange={(e) => {
+                            const newId = e.target.value;
+                            const targetPkg = PACKAGES.find((p) => p.id === newId);
+                            if (targetPkg) {
+                              setSelectedPackage(targetPkg);
+                              setSelectedCategory(targetPkg.category);
+                            }
+                            setRegForm((prev) => ({ ...prev, packageId: newId }));
+                            setFormData((prev) => ({ ...prev, packageId: newId }));
+                          }}
                           className="w-full bg-slate-50 dark:bg-[#070b14] border-2 border-slate-300 dark:border-gray-700 rounded-lg px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-cyan-500 font-sans text-xs"
                         >
                           {PACKAGES.map((p) => (
@@ -3009,7 +3208,16 @@ export default function LandingPage() {
                     <select
                       id="reg-package"
                       value={formData.packageId}
-                      onChange={(e) => setFormData({ ...formData, packageId: e.target.value })}
+                      onChange={(e) => {
+                        const newId = e.target.value;
+                        const targetPkg = PACKAGES.find((p) => p.id === newId);
+                        if (targetPkg) {
+                          setSelectedPackage(targetPkg);
+                          setSelectedCategory(targetPkg.category);
+                        }
+                        setFormData((prev) => ({ ...prev, packageId: newId }));
+                        setRegForm((prev) => ({ ...prev, packageId: newId }));
+                      }}
                       className="w-full bg-slate-50 dark:bg-[#070b14] border-2 border-slate-300 dark:border-gray-700 rounded-lg px-3.5 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-cyan-500 font-sans text-sm"
                     >
                       {PACKAGES.map((p) => (
