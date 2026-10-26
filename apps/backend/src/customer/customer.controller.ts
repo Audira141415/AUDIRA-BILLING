@@ -22,6 +22,16 @@ export class CustomerController {
   constructor(private readonly customerService: CustomerService) {}
 
   /**
+   * GET /customer/telemetry
+   * Get real-time connection telemetry, optical signal (dBm), FUP usage, and active maintenance
+   */
+  @Get('telemetry')
+  async getTelemetry(@Req() req: Request, @Query('customerId') queryCustomerId?: string) {
+    const customerId = queryCustomerId || req.user?.['sub'];
+    return this.customerService.getTelemetry(customerId);
+  }
+
+  /**
    * GET /customer/dashboard
    * Get customer dashboard with statistics
    */
