@@ -235,7 +235,7 @@ export default function AkunDashboard() {
               <span>/</span>
               <span className="text-emerald-500 font-semibold">Bagan Akun (COA)</span>
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-white">Akun</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-[var(--app-text)]">Akun</h1>
             <p className="text-xs text-[var(--app-muted)] mt-1">Kelola semua akun/COA perusahaan. Buat, edit, dan atur struktur akun dengan mudah.</p>
           </div>
           <div className="flex items-center gap-3">
@@ -246,7 +246,7 @@ export default function AkunDashboard() {
               <Plus className="w-3.5 h-3.5" />
               <span>Akun Baru</span>
             </button>
-            <button className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white border border-[var(--app-border)] transition-colors">
+            <button className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--app-card)] hover:bg-[var(--app-card-subtle)] text-xs font-semibold text-[var(--app-text)] border border-[var(--app-border)] shadow-xs transition-colors">
               <FolderOpen className="w-3.5 h-3.5 text-[var(--app-muted)]" />
               <span>Import Akun</span>
             </button>
@@ -264,74 +264,74 @@ export default function AkunDashboard() {
         {/* Top Metric Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
           {/* Total Akun */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
               <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Total Akun</p>
               <div className="p-1.5 rounded-lg bg-blue-600/10 border border-blue-600/20 text-blue-400">
                 <Layers className="w-3.5 h-3.5" />
               </div>
             </div>
-            <h3 className="text-base font-bold text-white">{totalAkun}</h3>
+            <h3 className="text-base font-bold text-[var(--app-text)]">{totalAkun}</h3>
             <span className="text-[9px] text-emerald-400 font-semibold mt-1">+ 12 akun baru bulan ini</span>
           </div>
 
           {/* Akun Aktif */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
               <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Akun Aktif</p>
               <div className="p-1.5 rounded-lg bg-emerald-600/10 border border-emerald-600/20 text-emerald-400">
                 <CheckSquare className="w-3.5 h-3.5" />
               </div>
             </div>
-            <h3 className="text-base font-bold text-white">{akunAktif}</h3>
+            <h3 className="text-base font-bold text-[var(--app-text)]">{akunAktif}</h3>
             <span className="text-[9px] text-emerald-400 font-semibold mt-1">95.8% dari total akun</span>
           </div>
 
           {/* Akun Non Aktif */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
               <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Akun Non Aktif</p>
               <div className="p-1.5 rounded-lg bg-orange-600/10 border border-orange-600/20 text-orange-400">
                 <Lock className="w-3.5 h-3.5" />
               </div>
             </div>
-            <h3 className="text-base font-bold text-white">{akunNonAktif}</h3>
+            <h3 className="text-base font-bold text-[var(--app-text)]">{akunNonAktif}</h3>
             <span className="text-[9px] text-orange-400 font-semibold mt-1">4.2% dari total akun</span>
           </div>
 
           {/* Akun Header */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
               <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Akun Header</p>
               <div className="p-1.5 rounded-lg bg-purple-600/10 border border-purple-600/20 text-purple-400">
                 <Folder className="w-3.5 h-3.5" />
               </div>
             </div>
-            <h3 className="text-base font-bold text-white">{accountsHeader}</h3>
+            <h3 className="text-base font-bold text-[var(--app-text)]">{accountsHeader}</h3>
             <span className="text-[9px] text-purple-400 font-semibold mt-1">15.7% dari total akun</span>
           </div>
 
           {/* Akun Detail */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
               <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Akun Detail</p>
               <div className="p-1.5 rounded-lg bg-cyan-600/10 border border-cyan-600/20 text-cyan-400">
                 <FileText className="w-3.5 h-3.5" />
               </div>
             </div>
-            <h3 className="text-base font-bold text-white">{accountsDetail}</h3>
+            <h3 className="text-base font-bold text-[var(--app-text)]">{accountsDetail}</h3>
             <span className="text-[9px] text-cyan-400 font-semibold mt-1">84.3% dari total akun</span>
           </div>
 
           {/* Level Terdalam */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
               <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Level Terdalam</p>
               <div className="p-1.5 rounded-lg bg-rose-600/10 border border-rose-600/20 text-rose-400">
                 <Activity className="w-3.5 h-3.5 text-rose-400" />
               </div>
             </div>
-            <h3 className="text-base font-bold text-white">{deepestLevel}</h3>
+            <h3 className="text-base font-bold text-[var(--app-text)]">{deepestLevel}</h3>
             <span className="text-[9px] text-[var(--app-muted)] font-semibold mt-1">Struktur COA</span>
           </div>
         </div>
@@ -356,7 +356,7 @@ export default function AkunDashboard() {
         {/* Middle Visualization Row */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
           {/* Donut Chart: Struktur Akun */}
-          <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5 flex flex-col md:flex-row items-center gap-6">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5 flex flex-col md:flex-row items-center gap-6">
             <div className="relative w-36 h-36 flex items-center justify-center shrink-0">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -377,7 +377,7 @@ export default function AkunDashboard() {
                 </PieChart>
               </ResponsiveContainer>
               <div className="absolute text-center">
-                <p className="text-lg font-bold text-white">{totalAkun}</p>
+                <p className="text-lg font-bold text-[var(--app-text)]">{totalAkun}</p>
                 <p className="text-[8px] text-[var(--app-muted)]">Total Akun</p>
               </div>
             </div>
@@ -395,14 +395,14 @@ export default function AkunDashboard() {
           </div>
 
           {/* Bar Chart: Distribusi Level Akun */}
-          <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5">
             <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-3">Distribusi Level Akun</h3>
             <div className="h-28">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={distributionLevelData}>
                   <XAxis dataKey="level" stroke="#64748b" fontSize={9} />
                   <YAxis stroke="#64748b" fontSize={9} />
-                  <Tooltip contentStyle={{ backgroundColor: '#091526', borderColor: '#1e3a8a', fontSize: '10px' }} />
+                  <Tooltip contentStyle={{ backgroundColor: 'var(--app-card)', borderColor: 'var(--app-border)', color: 'var(--app-text)', borderRadius: 8 }} />
                   <Bar dataKey="value" fill="#10B981" radius={[2, 2, 0, 0]} barSize={18} />
                 </BarChart>
               </ResponsiveContainer>
@@ -410,7 +410,7 @@ export default function AkunDashboard() {
           </div>
 
           {/* Saldo Per Kategori */}
-          <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5">
             <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-3">Saldo per Kategori</h3>
             <div className="space-y-1.5 text-xs text-[var(--app-text)]/90">
               <div className="flex justify-between items-center">
@@ -444,7 +444,7 @@ export default function AkunDashboard() {
         {/* Bottom Section: Tree Table on Left, Details Panel on Right */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* COA Tree Table */}
-          <div className="lg:col-span-8 bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
+          <div className="lg:col-span-8 bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5">
             <div className="flex flex-wrap items-center gap-3 mb-4 text-xs">
               <div className="relative flex-1 min-w-[150px]">
                 <Search className="absolute left-2.5 top-2 w-3.5 h-3.5 text-[var(--app-muted)]" />
@@ -453,14 +453,14 @@ export default function AkunDashboard() {
                   placeholder="Cari akun..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-8 pr-3 py-1.5 bg-[#081225] border border-blue-900/50 rounded text-white focus:outline-none"
+                  className="w-full pl-8 pr-3 py-1.5 bg-[var(--app-card-subtle)] border border-[var(--app-border)] rounded text-white focus:outline-none"
                 />
               </div>
 
               <select
                 value={filterCategory}
                 onChange={(e) => setFilterCategory(e.target.value)}
-                className="bg-[#081225] border border-blue-900/50 p-1.5 rounded text-white text-[11px]"
+                className="bg-[var(--app-card-subtle)] border border-[var(--app-border)] p-1.5 rounded text-white text-[11px]"
               >
                 <option>Semua Kategori</option>
                 <option>Aset</option>
@@ -473,7 +473,7 @@ export default function AkunDashboard() {
               <select
                 value={filterLevel}
                 onChange={(e) => setFilterLevel(e.target.value)}
-                className="bg-[#081225] border border-blue-900/50 p-1.5 rounded text-white text-[11px]"
+                className="bg-[var(--app-card-subtle)] border border-[var(--app-border)] p-1.5 rounded text-white text-[11px]"
               >
                 <option>Semua Level</option>
                 <option>1</option>
@@ -486,7 +486,7 @@ export default function AkunDashboard() {
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="bg-[#081225] border border-blue-900/50 p-1.5 rounded text-white text-[11px]"
+                className="bg-[var(--app-card-subtle)] border border-[var(--app-border)] p-1.5 rounded text-white text-[11px]"
               >
                 <option>Semua Status</option>
                 <option>Aktif</option>
@@ -520,7 +520,7 @@ export default function AkunDashboard() {
                     <th className="py-2.5 text-right">SALDO (KREDIT)</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-blue-950/40 text-[var(--app-text)]/90">
+                <tbody className="divide-y divide-[var(--app-border)] text-[var(--app-text)]/90">
                   {filteredAccounts.map((acc) => {
                     const isCollapsed = collapsedNodes[acc.code];
                     const hasChildren = accounts.some(child => child.parent === acc.code);
@@ -529,8 +529,8 @@ export default function AkunDashboard() {
                       <tr 
                         key={acc.code} 
                         onClick={() => setSelectedAccCode(acc.code)}
-                        className={`hover:bg-blue-950/20 cursor-pointer transition-colors ${
-                          selectedAccCode === acc.code ? 'bg-blue-950/40 text-cyan-400 font-semibold' : ''
+                        className={`hover:bg-[var(--app-card-subtle)]/20 cursor-pointer transition-colors ${
+                          selectedAccCode === acc.code ? 'bg-[var(--app-card-subtle)]/40 text-cyan-400 font-semibold' : ''
                         }`}
                       >
                         <td className="py-2.5 font-mono text-[11px]">{acc.code}</td>
@@ -582,16 +582,16 @@ export default function AkunDashboard() {
               <span>Menampilkan 1 - {filteredAccounts.length} dari {totalAkun} akun</span>
               <div className="flex items-center gap-1.5">
                 <button className="px-2 py-0.5 rounded bg-blue-600 text-white">1</button>
-                <button className="px-2 py-0.5 rounded bg-[#081225] hover:text-white">2</button>
-                <button className="px-2 py-0.5 rounded bg-[#081225] hover:text-white">3</button>
+                <button className="px-2 py-0.5 rounded bg-[var(--app-card-subtle)] hover:text-white">2</button>
+                <button className="px-2 py-0.5 rounded bg-[var(--app-card-subtle)] hover:text-white">3</button>
                 <span>...</span>
-                <button className="px-2 py-0.5 rounded bg-[#081225] hover:text-white">29</button>
+                <button className="px-2 py-0.5 rounded bg-[var(--app-card-subtle)] hover:text-white">29</button>
               </div>
             </div>
           </div>
 
           {/* Account Detail Panel */}
-          <div className="lg:col-span-4 bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5 space-y-5">
+          <div className="lg:col-span-4 bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5 space-y-5">
             <div className="flex justify-between items-center pb-2 border-b border-[var(--app-border)]/60">
               <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider">Detail Akun</h3>
               <span className={`px-2 py-0.5 rounded text-[10px] ${
@@ -604,11 +604,11 @@ export default function AkunDashboard() {
             <div className="space-y-3.5 text-xs text-[var(--app-text)]/90">
               <div className="grid grid-cols-3">
                 <span className="text-[var(--app-muted)]">Kode Akun</span>
-                <span className="col-span-2 font-mono font-semibold text-white">{selectedAcc.code}</span>
+                <span className="col-span-2 font-mono font-semibold text-[var(--app-text)]">{selectedAcc.code}</span>
               </div>
               <div className="grid grid-cols-3">
                 <span className="text-[var(--app-muted)]">Nama Akun</span>
-                <span className="col-span-2 font-semibold text-white">{selectedAcc.name}</span>
+                <span className="col-span-2 font-semibold text-[var(--app-text)]">{selectedAcc.name}</span>
               </div>
               <div className="grid grid-cols-3">
                 <span className="text-[var(--app-muted)]">Kategori</span>
@@ -676,7 +676,7 @@ export default function AkunDashboard() {
         {/* Modal: Tambah Akun Baru */}
         {showAddModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-            <div className="w-full max-w-md bg-[#0A1629] border border-[var(--app-border)] rounded-xl p-6 shadow-2xl">
+            <div className="w-full max-w-md bg-[var(--app-surface)] border border-[var(--app-border)] rounded-xl p-6 shadow-2xl">
               <div className="flex justify-between items-center mb-4 pb-3 border-b border-[var(--app-border)]">
                 <h3 className="text-sm font-bold text-white">Buat Akun Baru</h3>
                 <button 
@@ -696,7 +696,7 @@ export default function AkunDashboard() {
                       placeholder="Contoh: 1.1.1.04"
                       value={newCode}
                       onChange={(e) => setNewCode(e.target.value)}
-                      className="w-full p-2.5 rounded bg-[#081225] border border-[var(--app-border)] text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500"
+                      className="w-full p-2.5 rounded bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500"
                     />
                   </div>
                   <div>
@@ -707,7 +707,7 @@ export default function AkunDashboard() {
                       placeholder="Contoh: Kas Kecil"
                       value={newName}
                       onChange={(e) => setNewName(e.target.value)}
-                      className="w-full p-2.5 rounded bg-[#081225] border border-[var(--app-border)] text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500"
+                      className="w-full p-2.5 rounded bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500"
                     />
                   </div>
                 </div>
@@ -718,7 +718,7 @@ export default function AkunDashboard() {
                     <select
                       value={newCategory}
                       onChange={(e) => setNewCategory(e.target.value)}
-                      className="w-full p-2.5 rounded bg-[#081225] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
+                      className="w-full p-2.5 rounded bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
                     >
                       <option>Aset</option>
                       <option>Liabilitas</option>
@@ -732,7 +732,7 @@ export default function AkunDashboard() {
                     <select
                       value={newLevel}
                       onChange={(e) => setNewLevel(Number(e.target.value))}
-                      className="w-full p-2.5 rounded bg-[#081225] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
+                      className="w-full p-2.5 rounded bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
                     >
                       <option>1</option>
                       <option>2</option>
@@ -746,7 +746,7 @@ export default function AkunDashboard() {
                     <select
                       value={newType}
                       onChange={(e) => setNewType(e.target.value)}
-                      className="w-full p-2.5 rounded bg-[#081225] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
+                      className="w-full p-2.5 rounded bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
                     >
                       <option>Detail</option>
                       <option>Header</option>
@@ -762,7 +762,7 @@ export default function AkunDashboard() {
                       placeholder="0"
                       value={newDebit}
                       onChange={(e) => setNewDebit(e.target.value)}
-                      className="w-full p-2.5 rounded bg-[#081225] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
+                      className="w-full p-2.5 rounded bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
                     />
                   </div>
                   <div>
@@ -772,7 +772,7 @@ export default function AkunDashboard() {
                       placeholder="0"
                       value={newKredit}
                       onChange={(e) => setNewKredit(e.target.value)}
-                      className="w-full p-2.5 rounded bg-[#081225] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
+                      className="w-full p-2.5 rounded bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
                     />
                   </div>
                 </div>
@@ -784,7 +784,7 @@ export default function AkunDashboard() {
                     placeholder="Deskripsi singkat akun..."
                     value={newDesc}
                     onChange={(e) => setNewDesc(e.target.value)}
-                    className="w-full p-2.5 rounded bg-[#081225] border border-[var(--app-border)] text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500"
+                    className="w-full p-2.5 rounded bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500"
                   />
                 </div>
 

@@ -227,7 +227,7 @@ export default function LabaRugiDashboard() {
               <span>/</span>
               <span className="text-emerald-500 font-semibold">Laba Rugi (P&L)</span>
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-white">Laba Rugi</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-[var(--app-text)]">Laba Rugi</h1>
             <p className="text-xs text-[var(--app-muted)] mt-1">Laporan laba rugi untuk analisis kinerja profitabilitas bisnis.</p>
           </div>
           <div className="flex items-center gap-3">
@@ -246,7 +246,7 @@ export default function LabaRugiDashboard() {
             </button>
             <button 
               onClick={() => alert('Mengekspor laporan laba rugi...')}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white border border-[var(--app-border)] transition-colors"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--app-card)] hover:bg-[var(--app-card-subtle)] text-xs font-semibold text-[var(--app-text)] border border-[var(--app-border)] shadow-xs transition-colors"
             >
               <Download className="w-3.5 h-3.5" />
               <span>Ekspor</span>
@@ -258,14 +258,14 @@ export default function LabaRugiDashboard() {
         {/* Top Metric Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
           {/* Pendapatan */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
               <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Pendapatan</p>
               <div className="p-1.5 rounded-lg bg-blue-600/10 border border-blue-600/20 text-blue-400">
                 <DollarSign className="w-3.5 h-3.5" />
               </div>
             </div>
-            <h3 className="text-base font-bold text-white">{formatRupiah(activeData.pendapatan)}</h3>
+            <h3 className="text-base font-bold text-[var(--app-text)]">{formatRupiah(activeData.pendapatan)}</h3>
             <span className="text-[9px] text-emerald-400 flex items-center font-semibold mt-1">
               <TrendingUp className="w-3 h-3 mr-0.5" />
               ▲ 12.5% dari periode lalu
@@ -273,14 +273,14 @@ export default function LabaRugiDashboard() {
           </div>
 
           {/* HPP */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
               <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Harga Pokok Penjualan</p>
               <div className="p-1.5 rounded-lg bg-emerald-600/10 border border-emerald-600/20 text-emerald-400">
                 <Calculator className="w-3.5 h-3.5" />
               </div>
             </div>
-            <h3 className="text-base font-bold text-white">{formatRupiah(activeData.hpp)}</h3>
+            <h3 className="text-base font-bold text-[var(--app-text)]">{formatRupiah(activeData.hpp)}</h3>
             <span className="text-[9px] text-rose-400 flex items-center font-semibold mt-1">
               <TrendingUp className="w-3 h-3 mr-0.5" />
               ▲ 6.2% dari periode lalu
@@ -288,14 +288,14 @@ export default function LabaRugiDashboard() {
           </div>
 
           {/* Laba Kotor */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
               <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Laba Kotor</p>
               <div className="p-1.5 rounded-lg bg-cyan-600/10 border border-cyan-600/20 text-cyan-400">
                 <Activity className="w-3.5 h-3.5" />
               </div>
             </div>
-            <h3 className="text-base font-bold text-white">{formatRupiah(activeData.labaKotor)}</h3>
+            <h3 className="text-base font-bold text-[var(--app-text)]">{formatRupiah(activeData.labaKotor)}</h3>
             <span className="text-[9px] text-emerald-400 flex items-center font-semibold mt-1">
               <TrendingUp className="w-3 h-3 mr-0.5" />
               ▲ 15.8% dari periode lalu
@@ -303,14 +303,14 @@ export default function LabaRugiDashboard() {
           </div>
 
           {/* Beban Operasional */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
               <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Beban Operasional</p>
               <div className="p-1.5 rounded-lg bg-orange-600/10 border border-orange-600/20 text-orange-400">
                 <Briefcase className="w-3.5 h-3.5" />
               </div>
             </div>
-            <h3 className="text-base font-bold text-white">{formatRupiah(activeData.bebanOps)}</h3>
+            <h3 className="text-base font-bold text-[var(--app-text)]">{formatRupiah(activeData.bebanOps)}</h3>
             <span className="text-[9px] text-rose-400 flex items-center font-semibold mt-1">
               <TrendingUp className="w-3 h-3 mr-0.5" />
               ▲ 4.3% dari periode lalu
@@ -318,14 +318,14 @@ export default function LabaRugiDashboard() {
           </div>
 
           {/* Laba Operasional */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
               <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Laba Operasional</p>
               <div className="p-1.5 rounded-lg bg-purple-600/10 border border-purple-600/20 text-purple-400">
                 <Layers className="w-3.5 h-3.5" />
               </div>
             </div>
-            <h3 className="text-base font-bold text-white">{formatRupiah(activeData.labaOps)}</h3>
+            <h3 className="text-base font-bold text-[var(--app-text)]">{formatRupiah(activeData.labaOps)}</h3>
             <span className="text-[9px] text-emerald-400 flex items-center font-semibold mt-1">
               <TrendingUp className="w-3 h-3 mr-0.5" />
               ▲ 18.7% dari periode lalu
@@ -333,14 +333,14 @@ export default function LabaRugiDashboard() {
           </div>
 
           {/* Laba Bersih */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
               <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Laba Bersih</p>
               <div className="p-1.5 rounded-lg bg-pink-600/10 border border-pink-600/20 text-pink-400">
                 <CheckCircle className="w-3.5 h-3.5" />
               </div>
             </div>
-            <h3 className="text-base font-bold text-white">{formatRupiah(activeData.labaBersih)}</h3>
+            <h3 className="text-base font-bold text-[var(--app-text)]">{formatRupiah(activeData.labaBersih)}</h3>
             <span className="text-[9px] text-emerald-400 flex items-center font-semibold mt-1">
               <TrendingUp className="w-3 h-3 mr-0.5" />
               ▲ 21.3% dari periode lalu
@@ -372,7 +372,7 @@ export default function LabaRugiDashboard() {
             {/* Left 6 Columns: Laporan Laba Rugi & Profitabilitas Segmen */}
             <div className="lg:col-span-6 space-y-6">
               {/* Laporan Laba Rugi Detail */}
-              <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
+              <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5">
                 <div className="flex justify-between items-center mb-4 pb-2 border-b border-[var(--app-border)]/60">
                   <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider">Laporan Laba Rugi</h3>
                   <span className="text-[10px] text-[var(--app-muted)] bg-[#071225] px-2 py-1 rounded border border-[var(--app-border)]">25 Jun - 22 Oktober 2026</span>
@@ -388,7 +388,7 @@ export default function LabaRugiDashboard() {
                         <th className="py-2.5 font-semibold text-right">% PERUBAHAN</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-blue-950/40 text-[var(--app-text)]/90">
+                    <tbody className="divide-y divide-[var(--app-border)] text-[var(--app-text)]/90">
                       {filteredPlRows.map((row) => {
                         const isHeader = row.type.includes('header');
                         const isTotal = row.type.includes('total') || row.type.includes('grand');
@@ -399,10 +399,10 @@ export default function LabaRugiDashboard() {
                         return (
                           <tr 
                             key={row.code} 
-                            className={`hover:bg-blue-950/20 transition-colors ${
-                              isHeader ? 'bg-blue-950/10 font-bold text-white text-[12px]' : ''
+                            className={`hover:bg-[var(--app-card-subtle)]/20 transition-colors ${
+                              isHeader ? 'bg-[var(--app-card-subtle)]/10 font-bold text-white text-[12px]' : ''
                             } ${
-                              isTotal ? 'bg-blue-950/30 font-bold text-cyan-400 text-[12px]' : ''
+                              isTotal ? 'bg-[var(--app-card-subtle)]/30 font-bold text-cyan-400 text-[12px]' : ''
                             }`}
                           >
                             <td className="py-2.5 whitespace-pre-wrap">{row.name}</td>
@@ -427,7 +427,7 @@ export default function LabaRugiDashboard() {
               </div>
 
               {/* Analisis Profitabilitas per Segmen */}
-              <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
+              <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5">
                 <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-4 border-b border-[var(--app-border)] pb-2">Analisis Profitabilitas per Segmen</h3>
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse text-xs">
@@ -442,9 +442,9 @@ export default function LabaRugiDashboard() {
                         <th className="py-2.5 font-semibold text-right">MARGIN</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-blue-950/40 text-[var(--app-text)]/90">
+                    <tbody className="divide-y divide-[var(--app-border)] text-[var(--app-text)]/90">
                       {segmentData.map((seg) => (
-                        <tr key={seg.name} className="hover:bg-blue-950/20 transition-colors">
+                        <tr key={seg.name} className="hover:bg-[var(--app-card-subtle)]/20 transition-colors">
                           <td className="py-3 font-semibold text-[var(--app-text)]">{seg.name}</td>
                           <td className="py-3 text-right">{formatRupiah(seg.pendapatan)}</td>
                           <td className="py-3 text-right text-[var(--app-muted)]">({formatRupiah(seg.hpp)})</td>
@@ -454,7 +454,7 @@ export default function LabaRugiDashboard() {
                           <td className="py-3 text-right font-semibold text-emerald-400">{seg.margin}%</td>
                         </tr>
                       ))}
-                      <tr className="bg-blue-950/40 font-bold text-white">
+                      <tr className="bg-[var(--app-card-subtle)]/40 font-bold text-white">
                         <td className="py-3">TOTAL</td>
                         <td className="py-3 text-right">{formatRupiah(totalSegPendapatan)}</td>
                         <td className="py-3 text-right">({formatRupiah(totalSegHpp)})</td>
@@ -472,7 +472,7 @@ export default function LabaRugiDashboard() {
             {/* Middle 3 Columns: Line Chart, Profit Margin Gauges, & Period Comparisons */}
             <div className="lg:col-span-3 space-y-6">
               {/* Tren Laba Rugi Chart */}
-              <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
+              <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider">Tren Laba Rugi</h3>
                   <span className="text-[10px] text-[var(--app-muted)] bg-[#071225] px-2 py-1 rounded border border-[var(--app-border)]">7 Hari Terakhir</span>
@@ -483,7 +483,7 @@ export default function LabaRugiDashboard() {
                       <XAxis dataKey="name" stroke="#64748b" fontSize={9} />
                       <YAxis stroke="#64748b" fontSize={9} tickFormatter={(v) => `${v / 1000000}M`} />
                       <Tooltip 
-                        contentStyle={{ backgroundColor: '#091526', borderColor: '#1e3a8a', fontSize: '11px', color: '#fff' }}
+                        contentStyle={{ backgroundColor: 'var(--app-card)', borderColor: 'var(--app-border)', color: 'var(--app-text)', borderRadius: 8 }}
                         formatter={(value: any) => formatRupiah(value)}
                       />
                       <Legend wrapperStyle={{ fontSize: '10px' }} />
@@ -496,7 +496,7 @@ export default function LabaRugiDashboard() {
               </div>
 
               {/* Margin Profitabilitas Gauge Lists */}
-              <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
+              <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5">
                 <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-4 border-b border-[var(--app-border)] pb-2">Margin Profitabilitas</h3>
                 <div className="space-y-4">
                   {/* Gauge 1 */}
@@ -533,7 +533,7 @@ export default function LabaRugiDashboard() {
               </div>
 
               {/* Perbandingan Periode */}
-              <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
+              <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5">
                 <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-3">Perbandingan Periode</h3>
                 <div className="space-y-3.5 text-xs">
                   <div className="flex justify-between text-[var(--app-muted)] border-b border-[var(--app-border)] pb-2">
@@ -568,7 +568,7 @@ export default function LabaRugiDashboard() {
             {/* Right 3 Columns: Donut Chart, Ratio list, Summary quick-facts, Catatan insight */}
             <div className="lg:col-span-3 space-y-6">
               {/* Komposisi Pendapatan */}
-              <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
+              <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5">
                 <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-4">Komposisi Pendapatan</h3>
                 <div className="flex flex-col items-center justify-center relative mb-4">
                   <div className="h-40 w-full">
@@ -593,7 +593,7 @@ export default function LabaRugiDashboard() {
                   </div>
                   {/* Central Text */}
                   <div className="absolute text-center">
-                    <p className="text-[12px] font-bold text-white">{formatRupiah(activeData.pendapatan)}</p>
+                    <p className="text-[12px] font-bold text-[var(--app-text)]">{formatRupiah(activeData.pendapatan)}</p>
                     <p className="text-[8px] text-[var(--app-muted)]">Total Pendapatan</p>
                   </div>
                 </div>
@@ -615,7 +615,7 @@ export default function LabaRugiDashboard() {
               </div>
 
               {/* Rasio Keuangan */}
-              <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
+              <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5">
                 <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-4">Rasio Keuangan</h3>
                 <div className="space-y-3 text-xs">
                   {[
@@ -628,7 +628,7 @@ export default function LabaRugiDashboard() {
                     <div key={rasio.name} className="flex justify-between items-center text-[var(--app-muted)]">
                       <span>{rasio.name}</span>
                       <div className="flex items-center gap-2">
-                        <span className="font-semibold text-white">{rasio.val}</span>
+                        <span className="font-semibold text-[var(--app-text)]">{rasio.val}</span>
                         <span className="px-1.5 py-0.5 rounded text-[9px] bg-emerald-500/10 text-emerald-400">Sehat</span>
                       </div>
                     </div>
@@ -637,24 +637,24 @@ export default function LabaRugiDashboard() {
               </div>
 
               {/* Ringkasan Laba Rugi QuickFacts */}
-              <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
+              <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5">
                 <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-3">Ringkasan Laba Rugi</h3>
                 <div className="space-y-2.5 text-xs">
                   <div className="flex justify-between text-[var(--app-muted)]">
                     <span>Total Pendapatan</span>
-                    <span className="font-semibold text-white">{formatRupiah(activeData.pendapatan)}</span>
+                    <span className="font-semibold text-[var(--app-text)]">{formatRupiah(activeData.pendapatan)}</span>
                   </div>
                   <div className="flex justify-between text-[var(--app-muted)]">
                     <span>Total HPP</span>
-                    <span className="font-semibold text-white">({formatRupiah(activeData.hpp)})</span>
+                    <span className="font-semibold text-[var(--app-text)]">({formatRupiah(activeData.hpp)})</span>
                   </div>
                   <div className="flex justify-between text-[var(--app-muted)]">
                     <span>Total Beban Operasional</span>
-                    <span className="font-semibold text-white">({formatRupiah(activeData.bebanOps)})</span>
+                    <span className="font-semibold text-[var(--app-text)]">({formatRupiah(activeData.bebanOps)})</span>
                   </div>
                   <div className="flex justify-between text-[var(--app-muted)]">
                     <span>Total Pendapatan Lainnya</span>
-                    <span className="font-semibold text-white">{formatRupiah(1450000)}</span>
+                    <span className="font-semibold text-[var(--app-text)]">{formatRupiah(1450000)}</span>
                   </div>
                   <div className="flex justify-between text-cyan-400 font-bold border-t border-[var(--app-border)] pt-2">
                     <span>Laba Bersih</span>
@@ -668,7 +668,7 @@ export default function LabaRugiDashboard() {
               </div>
 
               {/* Catatan & Insight */}
-              <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
+              <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5">
                 <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-3">Catatan & Insight</h3>
                 <div className="space-y-3 text-xs text-[var(--app-text)]/90">
                   <div className="flex items-start gap-2">
@@ -699,7 +699,7 @@ export default function LabaRugiDashboard() {
             </div>
           </div>
         ) : (
-          <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-8 text-center text-[var(--app-muted)] text-sm">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-8 text-center text-[var(--app-muted)] text-sm">
             <Layers className="w-8 h-8 text-cyan-400 mx-auto mb-3 animate-pulse" />
             <p className="font-semibold text-white">Menu Tab {activeTab} Terintegrasi</p>
             <p className="text-xs text-[var(--app-muted)] mt-1.5">

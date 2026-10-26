@@ -213,7 +213,7 @@ export default function NeracaDashboard() {
               <span>/</span>
               <span className="text-emerald-500 font-semibold">Neraca (Balance Sheet)</span>
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-white">Neraca</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-[var(--app-text)]">Neraca</h1>
             <p className="text-xs text-[var(--app-muted)] mt-1">Laporan posisi keuangan perusahaan pada periode tertentu.</p>
           </div>
           <div className="flex items-center gap-3">
@@ -231,7 +231,7 @@ export default function NeracaDashboard() {
             </button>
             <button 
               onClick={() => alert('Mengekspor laporan neraca...')}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white border border-[var(--app-border)] transition-colors"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--app-card)] hover:bg-[var(--app-card-subtle)] text-xs font-semibold text-[var(--app-text)] border border-[var(--app-border)] shadow-xs transition-colors"
             >
               <Download className="w-3.5 h-3.5" />
               <span>Ekspor</span>
@@ -243,14 +243,14 @@ export default function NeracaDashboard() {
         {/* Top Metric Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
           {/* Total Aset */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
               <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Total Aset</p>
               <div className="p-1.5 rounded-lg bg-blue-600/10 border border-blue-600/20 text-blue-400">
                 <Wallet className="w-3.5 h-3.5" />
               </div>
             </div>
-            <h3 className="text-base font-bold text-white">{formatRupiah(activeData.totalAset)}</h3>
+            <h3 className="text-base font-bold text-[var(--app-text)]">{formatRupiah(activeData.totalAset)}</h3>
             <span className="text-[9px] text-emerald-400 flex items-center font-semibold mt-1">
               <TrendingUp className="w-3 h-3 mr-0.5" />
               ▲ 8.7% dari periode lalu
@@ -258,14 +258,14 @@ export default function NeracaDashboard() {
           </div>
 
           {/* Total Liabilitas */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
               <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Total Liabilitas</p>
               <div className="p-1.5 rounded-lg bg-rose-600/10 border border-rose-600/20 text-rose-400">
                 <Scale className="w-3.5 h-3.5" />
               </div>
             </div>
-            <h3 className="text-base font-bold text-white">{formatRupiah(activeData.totalLiabilitas)}</h3>
+            <h3 className="text-base font-bold text-[var(--app-text)]">{formatRupiah(activeData.totalLiabilitas)}</h3>
             <span className="text-[9px] text-rose-400 flex items-center font-semibold mt-1">
               <TrendingUp className="w-3 h-3 mr-0.5" />
               ▲ 6.3% dari periode lalu
@@ -273,14 +273,14 @@ export default function NeracaDashboard() {
           </div>
 
           {/* Total Ekuitas */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
               <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Total Ekuitas</p>
               <div className="p-1.5 rounded-lg bg-emerald-600/10 border border-emerald-600/20 text-emerald-400">
                 <CheckSquare className="w-3.5 h-3.5" />
               </div>
             </div>
-            <h3 className="text-base font-bold text-white">{formatRupiah(activeData.totalEkuitas)}</h3>
+            <h3 className="text-base font-bold text-[var(--app-text)]">{formatRupiah(activeData.totalEkuitas)}</h3>
             <span className="text-[9px] text-emerald-400 flex items-center font-semibold mt-1">
               <TrendingUp className="w-3 h-3 mr-0.5" />
               ▲ 10.4% dari periode lalu
@@ -288,38 +288,38 @@ export default function NeracaDashboard() {
           </div>
 
           {/* Rasio Lancar */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
               <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Rasio Lancar</p>
               <div className="p-1.5 rounded-lg bg-orange-600/10 border border-orange-600/20 text-orange-400">
                 <Calculator className="w-3.5 h-3.5" />
               </div>
             </div>
-            <h3 className="text-base font-bold text-white">{activeData.rasioLancar}</h3>
+            <h3 className="text-base font-bold text-[var(--app-text)]">{activeData.rasioLancar}</h3>
             <span className="text-[9px] text-emerald-400 font-semibold mt-1">Sehat</span>
           </div>
 
           {/* Rasio Liabilitas/Aset */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
               <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Rasio Liabilitas/Aset</p>
               <div className="p-1.5 rounded-lg bg-purple-600/10 border border-purple-600/20 text-purple-400">
                 <Percent className="w-3.5 h-3.5" />
               </div>
             </div>
-            <h3 className="text-base font-bold text-white">{activeData.rasioLtbAset}%</h3>
+            <h3 className="text-base font-bold text-[var(--app-text)]">{activeData.rasioLtbAset}%</h3>
             <span className="text-[9px] text-emerald-400 font-semibold mt-1">Sehat</span>
           </div>
 
           {/* Rasio Liabilitas/Ekuitas */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
               <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Rasio Liabilitas/Ekuitas</p>
               <div className="p-1.5 rounded-lg bg-pink-600/10 border border-pink-600/20 text-pink-400">
                 <Calculator className="w-3.5 h-3.5" />
               </div>
             </div>
-            <h3 className="text-base font-bold text-white">{activeData.rasioLtbEkuitas}</h3>
+            <h3 className="text-base font-bold text-[var(--app-text)]">{activeData.rasioLtbEkuitas}</h3>
             <span className="text-[9px] text-emerald-400 font-semibold mt-1">Sehat</span>
           </div>
         </div>
@@ -347,7 +347,7 @@ export default function NeracaDashboard() {
             
             {/* Left Column: Aset Table */}
             <div className="lg:col-span-5 space-y-6">
-              <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
+              <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5">
                 <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-4 pb-2 border-b border-[var(--app-border)]/60">Aset</h3>
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse text-xs">
@@ -358,9 +358,9 @@ export default function NeracaDashboard() {
                         <th className="py-2.5 font-semibold text-right">%</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-blue-950/40 text-[var(--app-text)]/90">
+                    <tbody className="divide-y divide-[var(--app-border)] text-[var(--app-text)]/90">
                       {searchFilter('Aset Lancar') && (
-                        <tr className="bg-blue-950/20 font-bold text-white">
+                        <tr className="bg-[var(--app-card-subtle)]/20 font-bold text-white">
                           <td className="py-2.5">Aset Lancar</td>
                           <td className="py-2.5 text-right">{formatRupiah(assetLancarTotal)}</td>
                           <td className="py-2.5 text-right">{(assetLancarTotal / activeData.totalAset * 100).toFixed(1)}%</td>
@@ -373,7 +373,7 @@ export default function NeracaDashboard() {
                         { name: '  Pajak Dibayar Dimuka', val: activeData.pajakDimuka },
                         { name: '  Biaya Dibayar Dimuka', val: activeData.biayaDimuka }
                       ].filter(item => searchFilter(item.name)).map(item => (
-                        <tr key={item.name} className="hover:bg-blue-950/10 transition-colors">
+                        <tr key={item.name} className="hover:bg-[var(--app-card-subtle)]/10 transition-colors">
                           <td className="py-2.5 whitespace-pre-wrap text-[var(--app-text)]/90">{item.name}</td>
                           <td className="py-2.5 text-right">{formatRupiah(item.val)}</td>
                           <td className="py-2.5 text-right text-[var(--app-muted)]">{(item.val / activeData.totalAset * 100).toFixed(1)}%</td>
@@ -381,7 +381,7 @@ export default function NeracaDashboard() {
                       ))}
                       
                       {searchFilter('Aset Tidak Lancar') && (
-                        <tr className="bg-blue-950/20 font-bold text-white pt-4">
+                        <tr className="bg-[var(--app-card-subtle)]/20 font-bold text-white pt-4">
                           <td className="py-2.5">Aset Tidak Lancar</td>
                           <td className="py-2.5 text-right">{formatRupiah(assetTidakLancarTotal)}</td>
                           <td className="py-2.5 text-right">{(assetTidakLancarTotal / activeData.totalAset * 100).toFixed(1)}%</td>
@@ -394,7 +394,7 @@ export default function NeracaDashboard() {
                         { name: '  Investasi Jangka Panjang', val: activeData.investasiJp },
                         { name: '  Aset Lain-lain', val: activeData.asetLain }
                       ].filter(item => searchFilter(item.name)).map(item => (
-                        <tr key={item.name} className="hover:bg-blue-950/10 transition-colors">
+                        <tr key={item.name} className="hover:bg-[var(--app-card-subtle)]/10 transition-colors">
                           <td className="py-2.5 whitespace-pre-wrap text-[var(--app-text)]/90">{item.name}</td>
                           <td className={`py-2.5 text-right ${item.isNeg ? 'text-rose-300 font-semibold' : ''}`}>
                             {item.isNeg ? `(${formatRupiah(Math.abs(item.val))})` : formatRupiah(item.val)}
@@ -416,7 +416,7 @@ export default function NeracaDashboard() {
 
             {/* Middle Column: Liabilitas & Ekuitas Table */}
             <div className="lg:col-span-4 space-y-6">
-              <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
+              <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5">
                 <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-4 pb-2 border-b border-[var(--app-border)]/60">Liabilitas & Ekuitas</h3>
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse text-xs">
@@ -427,9 +427,9 @@ export default function NeracaDashboard() {
                         <th className="py-2.5 font-semibold text-right">%</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-blue-950/40 text-[var(--app-text)]/90">
+                    <tbody className="divide-y divide-[var(--app-border)] text-[var(--app-text)]/90">
                       {searchFilter('Liabilitas') && (
-                        <tr className="bg-blue-950/20 font-bold text-white">
+                        <tr className="bg-[var(--app-card-subtle)]/20 font-bold text-white">
                           <td className="py-2.5">Liabilitas</td>
                           <td className="py-2.5 text-right">{formatRupiah(liabilitasTotal)}</td>
                           <td className="py-2.5 text-right">{(liabilitasTotal / activeData.totalAset * 100).toFixed(1)}%</td>
@@ -449,7 +449,7 @@ export default function NeracaDashboard() {
                         { name: '    Pendapatan Diterima Dimuka', val: activeData.pendapatanDimuka },
                         { name: '    Utang Lain-lain', val: activeData.utangLainJp }
                       ].filter(item => searchFilter(item.name)).map(item => (
-                        <tr key={item.name} className="hover:bg-blue-950/10 transition-colors text-[var(--app-muted)]">
+                        <tr key={item.name} className="hover:bg-[var(--app-card-subtle)]/10 transition-colors text-[var(--app-muted)]">
                           <td className="py-2.5 whitespace-pre-wrap">{item.name}</td>
                           <td className="py-2.5 text-right">{formatRupiah(item.val)}</td>
                           <td className="py-2.5 text-right">{(item.val / activeData.totalAset * 100).toFixed(1)}%</td>
@@ -468,7 +468,7 @@ export default function NeracaDashboard() {
                         { name: '    Utang Sewa Pembiayaan', val: activeData.utangSewa },
                         { name: '    Liabilitas Lain-lain', val: activeData.liabilitasLain }
                       ].filter(item => searchFilter(item.name)).map(item => (
-                        <tr key={item.name} className="hover:bg-blue-950/10 transition-colors text-[var(--app-muted)]">
+                        <tr key={item.name} className="hover:bg-[var(--app-card-subtle)]/10 transition-colors text-[var(--app-muted)]">
                           <td className="py-2.5 whitespace-pre-wrap">{item.name}</td>
                           <td className="py-2.5 text-right">{formatRupiah(item.val)}</td>
                           <td className="py-2.5 text-right">{(item.val / activeData.totalAset * 100).toFixed(1)}%</td>
@@ -476,7 +476,7 @@ export default function NeracaDashboard() {
                       ))}
 
                       {searchFilter('Ekuitas') && (
-                        <tr className="bg-blue-950/20 font-bold text-white">
+                        <tr className="bg-[var(--app-card-subtle)]/20 font-bold text-white">
                           <td className="py-2.5">Ekuitas</td>
                           <td className="py-2.5 text-right">{formatRupiah(ekuitasTotal)}</td>
                           <td className="py-2.5 text-right">{(ekuitasTotal / activeData.totalAset * 100).toFixed(1)}%</td>
@@ -487,7 +487,7 @@ export default function NeracaDashboard() {
                         { name: '  Laba Ditahan', val: activeData.labaDitahan },
                         { name: '  Laba (Rugi) Tahun Berjalan', val: activeData.labaBerjalan }
                       ].filter(item => searchFilter(item.name)).map(item => (
-                        <tr key={item.name} className="hover:bg-blue-950/10 transition-colors text-[var(--app-text)]/90">
+                        <tr key={item.name} className="hover:bg-[var(--app-card-subtle)]/10 transition-colors text-[var(--app-text)]/90">
                           <td className="py-2.5 whitespace-pre-wrap">{item.name}</td>
                           <td className="py-2.5 text-right">{formatRupiah(item.val)}</td>
                           <td className="py-2.5 text-right">{(item.val / activeData.totalAset * 100).toFixed(1)}%</td>
@@ -508,7 +508,7 @@ export default function NeracaDashboard() {
             {/* Right Column: Donut charts, Ratios, Line trend & Insights */}
             <div className="lg:col-span-3 space-y-6">
               {/* Grafik Komposisi */}
-              <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
+              <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5">
                 <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-4">Grafik Komposisi</h3>
                 <div className="grid grid-cols-2 gap-4 items-center">
                   <div className="flex flex-col items-center relative">
@@ -531,7 +531,7 @@ export default function NeracaDashboard() {
                       </ResponsiveContainer>
                     </div>
                     <div className="absolute text-center mt-2.5">
-                      <p className="text-[9px] font-bold text-white">Aset</p>
+                      <p className="text-[9px] font-bold text-[var(--app-text)]">Aset</p>
                     </div>
                   </div>
 
@@ -555,7 +555,7 @@ export default function NeracaDashboard() {
                       </ResponsiveContainer>
                     </div>
                     <div className="absolute text-center mt-2.5">
-                      <p className="text-[9px] font-bold text-white">Pasiva</p>
+                      <p className="text-[9px] font-bold text-[var(--app-text)]">Pasiva</p>
                     </div>
                   </div>
                 </div>
@@ -563,25 +563,25 @@ export default function NeracaDashboard() {
                 <div className="space-y-1.5 text-[9px] text-[var(--app-muted)] mt-4 border-t border-[var(--app-border)] pt-3">
                   <div className="flex justify-between">
                     <span>Aset Lancar:</span>
-                    <span className="font-semibold text-white">{formatRupiah(assetLancarTotal)} ({(assetLancarTotal / activeData.totalAset * 100).toFixed(1)}%)</span>
+                    <span className="font-semibold text-[var(--app-text)]">{formatRupiah(assetLancarTotal)} ({(assetLancarTotal / activeData.totalAset * 100).toFixed(1)}%)</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Aset Tidak Lancar:</span>
-                    <span className="font-semibold text-white">{formatRupiah(assetTidakLancarTotal)} ({(assetTidakLancarTotal / activeData.totalAset * 100).toFixed(1)}%)</span>
+                    <span className="font-semibold text-[var(--app-text)]">{formatRupiah(assetTidakLancarTotal)} ({(assetTidakLancarTotal / activeData.totalAset * 100).toFixed(1)}%)</span>
                   </div>
                   <div className="flex justify-between border-t border-[var(--app-border)]/60 pt-1.5">
                     <span>Liabilitas:</span>
-                    <span className="font-semibold text-white">{formatRupiah(liabilitasTotal)} ({(liabilitasTotal / activeData.totalAset * 100).toFixed(1)}%)</span>
+                    <span className="font-semibold text-[var(--app-text)]">{formatRupiah(liabilitasTotal)} ({(liabilitasTotal / activeData.totalAset * 100).toFixed(1)}%)</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Ekuitas:</span>
-                    <span className="font-semibold text-white">{formatRupiah(ekuitasTotal)} ({(ekuitasTotal / activeData.totalAset * 100).toFixed(1)}%)</span>
+                    <span className="font-semibold text-[var(--app-text)]">{formatRupiah(ekuitasTotal)} ({(ekuitasTotal / activeData.totalAset * 100).toFixed(1)}%)</span>
                   </div>
                 </div>
               </div>
 
               {/* Rasio Keuangan */}
-              <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
+              <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5">
                 <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-4">Rasio Keuangan</h3>
                 <div className="space-y-3 text-xs">
                   {[
@@ -594,7 +594,7 @@ export default function NeracaDashboard() {
                     <div key={rasio.name} className="flex justify-between items-center text-[var(--app-muted)]">
                       <span>{rasio.name}</span>
                       <div className="flex items-center gap-2">
-                        <span className="font-semibold text-white">{rasio.val}</span>
+                        <span className="font-semibold text-[var(--app-text)]">{rasio.val}</span>
                         <span className="px-1.5 py-0.5 rounded text-[9px] bg-emerald-500/10 text-emerald-400">Sehat</span>
                       </div>
                     </div>
@@ -603,7 +603,7 @@ export default function NeracaDashboard() {
               </div>
 
               {/* Catatan Neraca */}
-              <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
+              <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5">
                 <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-3">Catatan Neraca</h3>
                 <div className="space-y-3 text-xs text-[var(--app-text)]/90">
                   <div className="flex items-start gap-2">
@@ -634,7 +634,7 @@ export default function NeracaDashboard() {
             </div>
           </div>
         ) : (
-          <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-8 text-center text-[var(--app-muted)] text-sm">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-8 text-center text-[var(--app-muted)] text-sm">
             <Layers className="w-8 h-8 text-cyan-400 mx-auto mb-3 animate-pulse" />
             <p className="font-semibold text-white">Menu Tab {activeTab} Terintegrasi</p>
             <p className="text-xs text-[var(--app-muted)] mt-1.5">
@@ -647,7 +647,7 @@ export default function NeracaDashboard() {
         {activeTab === 'Ringkasan Neraca' && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
             {/* Periode Perbandingan */}
-            <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
+            <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5">
               <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-4">Perbandingan Periode</h3>
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse text-xs">
@@ -660,7 +660,7 @@ export default function NeracaDashboard() {
                       <th className="py-2 text-right">% PERUBAHAN</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-blue-950/40 text-[var(--app-text)]/90">
+                  <tbody className="divide-y divide-[var(--app-border)] text-[var(--app-text)]/90">
                     <tr>
                       <td className="py-2.5 font-medium">Total Aset</td>
                       <td className="py-2.5 text-right font-semibold">{formatRupiah(activeData.totalAset)}</td>
@@ -688,7 +688,7 @@ export default function NeracaDashboard() {
             </div>
 
             {/* Tren Line Chart */}
-            <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
+            <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider">Tren Aset, Liabilitas & Ekuitas</h3>
                 <span className="text-[10px] text-[var(--app-muted)] bg-[#071225] px-2 py-1 rounded border border-[var(--app-border)]">7 Hari Terakhir</span>
@@ -699,7 +699,7 @@ export default function NeracaDashboard() {
                     <XAxis dataKey="name" stroke="#64748b" fontSize={9} />
                     <YAxis stroke="#64748b" fontSize={9} tickFormatter={(v) => `${v / 1000000}M`} />
                     <Tooltip 
-                      contentStyle={{ backgroundColor: '#091526', borderColor: '#1e3a8a', fontSize: '11px', color: '#fff' }}
+                      contentStyle={{ backgroundColor: 'var(--app-card)', borderColor: 'var(--app-border)', color: 'var(--app-text)', borderRadius: 8 }}
                       formatter={(value: any) => formatRupiah(value)}
                     />
                     <Legend wrapperStyle={{ fontSize: '10px' }} />

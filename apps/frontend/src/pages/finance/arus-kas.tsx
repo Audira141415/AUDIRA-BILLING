@@ -227,7 +227,7 @@ export default function ArusKasDashboard() {
               <span>/</span>
               <span className="text-emerald-500 font-semibold">Arus Kas (Cash Flow)</span>
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-white">Arus Kas</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-[var(--app-text)]">Arus Kas</h1>
             <p className="text-xs text-[var(--app-muted)] mt-1">Pantau arus kas masuk, keluar, dan posisi kas secara real-time.</p>
           </div>
           <div className="flex items-center gap-3">
@@ -240,7 +240,7 @@ export default function ArusKasDashboard() {
             </button>
             <button 
               onClick={() => alert('Mengekspor laporan arus kas...')}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white border border-[var(--app-border)] transition-colors"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--app-card)] hover:bg-[var(--app-card-subtle)] text-xs font-semibold text-[var(--app-text)] border border-[var(--app-border)] shadow-xs transition-colors"
             >
               <Download className="w-3.5 h-3.5" />
               <span>Ekspor</span>
@@ -252,26 +252,26 @@ export default function ArusKasDashboard() {
         {/* Top Metric Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 mb-6">
           {/* Saldo Kas Awal */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
               <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Saldo Kas Awal</p>
               <div className="p-1.5 rounded-lg bg-blue-600/10 border border-blue-600/20 text-blue-400">
                 <Wallet className="w-3.5 h-3.5" />
               </div>
             </div>
-            <h3 className="text-base font-bold text-white">{formatRupiah(saldoAwal)}</h3>
+            <h3 className="text-base font-bold text-[var(--app-text)]">{formatRupiah(saldoAwal)}</h3>
             <p className="text-[9px] text-[var(--app-muted)] mt-1">Per 25 Juni 2026</p>
           </div>
 
           {/* Total Kas Masuk */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
               <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Total Kas Masuk</p>
               <div className="p-1.5 rounded-lg bg-emerald-600/10 border border-emerald-600/20 text-emerald-400">
                 <PlusCircle className="w-3.5 h-3.5" />
               </div>
             </div>
-            <h3 className="text-base font-bold text-white">{formatRupiah(totalKasMasuk)}</h3>
+            <h3 className="text-base font-bold text-[var(--app-text)]">{formatRupiah(totalKasMasuk)}</h3>
             <span className="text-[9px] text-emerald-400 flex items-center font-semibold mt-1">
               <TrendingUp className="w-3 h-3 mr-0.5" />
               ▲ 12.5% dari periode lalu
@@ -279,14 +279,14 @@ export default function ArusKasDashboard() {
           </div>
 
           {/* Total Kas Keluar */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
               <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Total Kas Keluar</p>
               <div className="p-1.5 rounded-lg bg-rose-600/10 border border-rose-600/20 text-rose-400">
                 <AlertCircle className="w-3.5 h-3.5" />
               </div>
             </div>
-            <h3 className="text-base font-bold text-white">{formatRupiah(totalKasKeluar)}</h3>
+            <h3 className="text-base font-bold text-[var(--app-text)]">{formatRupiah(totalKasKeluar)}</h3>
             <span className="text-[9px] text-rose-400 flex items-center font-semibold mt-1">
               <TrendingUp className="w-3 h-3 mr-0.5" />
               ▲ 8.4% dari periode lalu
@@ -294,14 +294,14 @@ export default function ArusKasDashboard() {
           </div>
 
           {/* Arus Kas Bersih */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
               <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Arus Kas Bersih</p>
               <div className="p-1.5 rounded-lg bg-cyan-600/10 border border-cyan-600/20 text-cyan-400">
                 <Activity className="w-3.5 h-3.5" />
               </div>
             </div>
-            <h3 className="text-base font-bold text-white">{formatRupiah(arusKasBersih)}</h3>
+            <h3 className="text-base font-bold text-[var(--app-text)]">{formatRupiah(arusKasBersih)}</h3>
             <span className="text-[9px] text-emerald-400 flex items-center font-semibold mt-1">
               <TrendingUp className="w-3 h-3 mr-0.5" />
               ▲ 22.7% dari periode lalu
@@ -309,26 +309,26 @@ export default function ArusKasDashboard() {
           </div>
 
           {/* Saldo Kas Akhir */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
               <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Saldo Kas Akhir</p>
               <div className="p-1.5 rounded-lg bg-blue-600/10 border border-blue-600/20 text-blue-400">
                 <Wallet className="w-3.5 h-3.5" />
               </div>
             </div>
-            <h3 className="text-base font-bold text-white">{formatRupiah(saldoKasAkhir)}</h3>
+            <h3 className="text-base font-bold text-[var(--app-text)]">{formatRupiah(saldoKasAkhir)}</h3>
             <p className="text-[9px] text-[var(--app-muted)] mt-1">Per 22 Oktober 2026</p>
           </div>
 
           {/* Rasio Kas */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
               <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Rasio Kas</p>
               <div className="p-1.5 rounded-lg bg-purple-600/10 border border-purple-600/20 text-purple-400">
                 <Calculator className="w-3.5 h-3.5" />
               </div>
             </div>
-            <h3 className="text-base font-bold text-white">{rasioKas}</h3>
+            <h3 className="text-base font-bold text-[var(--app-text)]">{rasioKas}</h3>
             <p className="text-[9px] text-emerald-400 font-semibold mt-1">Sehat</p>
           </div>
         </div>
@@ -356,7 +356,7 @@ export default function ArusKasDashboard() {
             {/* Left 6 Columns: Graphs, Monthly, and Recent Transactions */}
             <div className="lg:col-span-6 space-y-6">
               {/* Grafik Arus Kas Bar/Line */}
-              <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
+              <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider">Grafik Arus Kas</h3>
                   <span className="text-[10px] text-[var(--app-muted)] bg-[#071225] px-2 py-1 rounded border border-[var(--app-border)]">7 Hari Terakhir</span>
@@ -367,7 +367,7 @@ export default function ArusKasDashboard() {
                       <XAxis dataKey="name" stroke="#64748b" fontSize={9} />
                       <YAxis stroke="#64748b" fontSize={9} tickFormatter={(v) => `${v / 1000000}M`} />
                       <Tooltip 
-                        contentStyle={{ backgroundColor: '#091526', borderColor: '#1e3a8a', fontSize: '11px', color: '#fff' }}
+                        contentStyle={{ backgroundColor: 'var(--app-card)', borderColor: 'var(--app-border)', color: 'var(--app-text)', borderRadius: 8 }}
                         formatter={(value: any) => formatRupiah(value)}
                       />
                       <Legend wrapperStyle={{ fontSize: '10px' }} />
@@ -380,7 +380,7 @@ export default function ArusKasDashboard() {
               </div>
 
               {/* Arus Kas Bulanan Area Chart */}
-              <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
+              <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider">Arus Kas Bulanan</h3>
                   <span className="text-[10px] text-[var(--app-muted)] bg-[#071225] px-2 py-1 rounded border border-[var(--app-border)]">Juni 2026</span>
@@ -391,7 +391,7 @@ export default function ArusKasDashboard() {
                       <XAxis dataKey="name" stroke="#64748b" fontSize={9} />
                       <YAxis stroke="#64748b" fontSize={9} tickFormatter={(v) => `${v / 1000000}M`} />
                       <Tooltip 
-                        contentStyle={{ backgroundColor: '#091526', borderColor: '#1e3a8a', fontSize: '11px' }}
+                        contentStyle={{ backgroundColor: 'var(--app-card)', borderColor: 'var(--app-border)', color: 'var(--app-text)', borderRadius: 8 }}
                         formatter={(value: any) => formatRupiah(value)}
                       />
                       <Legend wrapperStyle={{ fontSize: '10px' }} />
@@ -404,7 +404,7 @@ export default function ArusKasDashboard() {
               </div>
 
               {/* Transaksi Arus Kas Terbaru Table */}
-              <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
+              <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5">
                 <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-4">Transaksi Arus Kas Terbaru</h3>
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse text-xs">
@@ -420,9 +420,9 @@ export default function ArusKasDashboard() {
                         <th className="py-2.5 font-semibold text-right">SALDO KAS</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-blue-950/40 text-[var(--app-text)]/90">
+                    <tbody className="divide-y divide-[var(--app-border)] text-[var(--app-text)]/90">
                       {filteredTxList.map((tx) => (
-                        <tr key={tx.id} className="hover:bg-blue-950/20 transition-colors">
+                        <tr key={tx.id} className="hover:bg-[var(--app-card-subtle)]/20 transition-colors">
                           <td className="py-3 text-[11px] text-[var(--app-muted)]">{tx.tanggal}</td>
                           <td className="py-3 font-semibold">
                             <span className={`px-2 py-0.5 rounded text-[10px] ${tx.jenis === 'Kas Masuk' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}`}>
@@ -450,12 +450,12 @@ export default function ArusKasDashboard() {
             {/* Middle 3 Columns: Summary Figures & Projection */}
             <div className="lg:col-span-3 space-y-6">
               {/* Ringkasan Arus Kas */}
-              <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
+              <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5">
                 <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-4 border-b border-[var(--app-border)] pb-2">Ringkasan Arus Kas</h3>
                 <div className="space-y-3.5 text-xs">
                   <div className="flex justify-between items-center text-[var(--app-muted)]">
                     <span>Saldo Kas Awal</span>
-                    <span className="font-semibold text-white">{formatRupiah(saldoAwal)}</span>
+                    <span className="font-semibold text-[var(--app-text)]">{formatRupiah(saldoAwal)}</span>
                   </div>
                   
                   <div className="pt-2 border-t border-[var(--app-border)]">
@@ -499,7 +499,7 @@ export default function ArusKasDashboard() {
                     <span>{formatRupiah(arusKasBersih)}</span>
                   </div>
 
-                  <div className="flex justify-between items-center text-[var(--app-text)] font-bold bg-[#071225] p-2 rounded border border-blue-900/30">
+                  <div className="flex justify-between items-center text-[var(--app-text)] font-bold bg-[#071225] p-2 rounded border border-[var(--app-border)]">
                     <span>Saldo Kas Akhir</span>
                     <span className="text-cyan-400">{formatRupiah(saldoKasAkhir)}</span>
                   </div>
@@ -507,7 +507,7 @@ export default function ArusKasDashboard() {
               </div>
 
               {/* Proyeksi Arus Kas */}
-              <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
+              <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider">Proyeksi Arus Kas</h3>
                   <span className="text-[9px] text-[var(--app-muted)] bg-[#071225] px-1.5 py-0.5 rounded border border-[var(--app-border)]">30 Hari Ke Depan</span>
@@ -528,7 +528,7 @@ export default function ArusKasDashboard() {
                       <XAxis dataKey="name" stroke="#64748b" fontSize={8} />
                       <YAxis stroke="#64748b" fontSize={8} tickFormatter={(v) => `${v / 1000000}M`} />
                       <Tooltip 
-                        contentStyle={{ backgroundColor: '#091526', borderColor: '#1e3a8a', fontSize: '10px' }}
+                        contentStyle={{ backgroundColor: 'var(--app-card)', borderColor: 'var(--app-border)', color: 'var(--app-text)', borderRadius: 8 }}
                         formatter={(value: any) => formatRupiah(value)}
                       />
                       <Line type="monotone" dataKey="Kas Masuk" stroke="#10b981" strokeWidth={1} dot={false} />
@@ -543,7 +543,7 @@ export default function ArusKasDashboard() {
             {/* Right 3 Columns: Payment Breakdown, Quick Action, Account Balances & Status */}
             <div className="lg:col-span-3 space-y-6">
               {/* Arus Kas per Metode Pembayaran */}
-              <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
+              <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5">
                 <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-4">Arus Kas per Metode Pembayaran</h3>
                 <div className="flex flex-col items-center justify-center relative mb-4">
                   <div className="h-40 w-full">
@@ -568,7 +568,7 @@ export default function ArusKasDashboard() {
                   </div>
                   {/* Central Text */}
                   <div className="absolute text-center">
-                    <p className="text-[14px] font-bold text-white">{formatRupiah(totalKasMasuk)}</p>
+                    <p className="text-[14px] font-bold text-[var(--app-text)]">{formatRupiah(totalKasMasuk)}</p>
                     <p className="text-[9px] text-[var(--app-muted)]">Total Kas Masuk</p>
                   </div>
                 </div>
@@ -590,7 +590,7 @@ export default function ArusKasDashboard() {
               </div>
 
               {/* Aksi Cepat */}
-              <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
+              <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5">
                 <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-4">Aksi Cepat</h3>
                 <div className="space-y-2 text-xs">
                   <button 
@@ -627,13 +627,13 @@ export default function ArusKasDashboard() {
               </div>
 
               {/* Saldo Kas per Bank/Wallet */}
-              <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
+              <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5">
                 <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-4">Saldo Kas per Bank/Wallet</h3>
                 <div className="space-y-3.5 text-xs">
                   {accounts.map(acc => (
                     <div key={acc.id} className="flex justify-between items-center text-[var(--app-muted)]">
                       <span>{acc.name}</span>
-                      <span className="font-semibold text-white">{formatRupiah(acc.balance)}</span>
+                      <span className="font-semibold text-[var(--app-text)]">{formatRupiah(acc.balance)}</span>
                     </div>
                   ))}
                   <div className="pt-2.5 border-t border-[var(--app-border)] flex justify-between items-center text-[var(--app-text)] font-bold">
@@ -644,7 +644,7 @@ export default function ArusKasDashboard() {
               </div>
 
               {/* Status Arus Kas Gauge */}
-              <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5 text-center">
+              <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5 text-center">
                 <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-4">Status Arus Kas</h3>
                 <div className="relative flex justify-center items-center h-28">
                   {/* Custom SVG Gauge */}
@@ -667,7 +667,7 @@ export default function ArusKasDashboard() {
                     />
                   </svg>
                   <div className="absolute mt-6">
-                    <p className="text-2xl font-bold text-white">{rasioKas}</p>
+                    <p className="text-2xl font-bold text-[var(--app-text)]">{rasioKas}</p>
                     <p className="text-[9px] text-emerald-400 uppercase tracking-widest mt-0.5">Sehat</p>
                   </div>
                 </div>
@@ -678,7 +678,7 @@ export default function ArusKasDashboard() {
             </div>
           </div>
         ) : (
-          <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-8 text-center text-[var(--app-muted)] text-sm">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-8 text-center text-[var(--app-muted)] text-sm">
             <Layers className="w-8 h-8 text-cyan-400 mx-auto mb-3 animate-pulse" />
             <p className="font-semibold text-white">Menu Tab {activeTab} Terintegrasi</p>
             <p className="text-xs text-[var(--app-muted)] mt-1.5">
@@ -690,7 +690,7 @@ export default function ArusKasDashboard() {
         {/* Form Modal: Catat Kas Masuk / Kas Keluar */}
         {showAddModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-            <div className="w-full max-w-md bg-[#0A1629] border border-[var(--app-border)] rounded-xl p-6 shadow-2xl">
+            <div className="w-full max-w-md bg-[var(--app-surface)] border border-[var(--app-border)] rounded-xl p-6 shadow-2xl">
               <div className="flex justify-between items-center mb-4 pb-3 border-b border-[var(--app-border)]">
                 <h3 className="text-sm font-bold text-white">
                   {modalType === 'MASUK' ? 'Catat Kas Masuk Baru' : 'Catat Kas Keluar Baru'}
@@ -711,7 +711,7 @@ export default function ArusKasDashboard() {
                     placeholder="Contoh: Pembayaran internet, Gaji teknisi..."
                     value={newDesc}
                     onChange={(e) => setNewDesc(e.target.value)}
-                    className="w-full p-2.5 rounded bg-[#081225] border border-[var(--app-border)] text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500"
+                    className="w-full p-2.5 rounded bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
@@ -722,7 +722,7 @@ export default function ArusKasDashboard() {
                       placeholder="Contoh: Pendapatan, Operasional"
                       value={newCategory}
                       onChange={(e) => setNewCategory(e.target.value)}
-                      className="w-full p-2.5 rounded bg-[#081225] border border-[var(--app-border)] text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500"
+                      className="w-full p-2.5 rounded bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500"
                     />
                   </div>
                   <div>
@@ -730,7 +730,7 @@ export default function ArusKasDashboard() {
                     <select
                       value={newMethod}
                       onChange={(e) => setNewMethod(e.target.value)}
-                      className="w-full p-2.5 rounded bg-[#081225] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
+                      className="w-full p-2.5 rounded bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
                     >
                       <option>Transfer Bank</option>
                       <option>E-Wallet</option>
@@ -746,7 +746,7 @@ export default function ArusKasDashboard() {
                     <select
                       value={newAccount}
                       onChange={(e) => setNewAccount(e.target.value)}
-                      className="w-full p-2.5 rounded bg-[#081225] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
+                      className="w-full p-2.5 rounded bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
                     >
                       {accounts.map(acc => (
                         <option key={acc.id} value={acc.name}>{acc.name}</option>
@@ -761,7 +761,7 @@ export default function ArusKasDashboard() {
                       placeholder="Contoh: 500000"
                       value={newAmount}
                       onChange={(e) => setNewAmount(e.target.value)}
-                      className="w-full p-2.5 rounded bg-[#081225] border border-[var(--app-border)] text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500"
+                      className="w-full p-2.5 rounded bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500"
                     />
                   </div>
                 </div>

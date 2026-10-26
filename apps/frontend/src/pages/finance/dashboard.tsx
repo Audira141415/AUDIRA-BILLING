@@ -178,7 +178,7 @@ export default function FinanceDashboard() {
               <span>/</span>
               <span className="text-emerald-500 font-semibold">Executive Summary</span>
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-white">Dashboard Finance</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-[var(--app-text)]">Dashboard Finance</h1>
             <p className="text-xs text-[var(--app-muted)] mt-1">Ringkasan keuangan WhatsApp Business API secara real-time</p>
           </div>
           <div className="flex items-center gap-3">
@@ -194,7 +194,7 @@ export default function FinanceDashboard() {
             </button>
             <button 
               onClick={handleExport}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white border border-[var(--app-border)] transition-colors"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--app-card)] hover:bg-[var(--app-card-subtle)] text-xs font-semibold text-[var(--app-text)] border border-[var(--app-border)] shadow-xs transition-colors"
             >
               <Download className="w-3.5 h-3.5" />
               <span>Ekspor</span>
@@ -206,11 +206,11 @@ export default function FinanceDashboard() {
         {/* Top Metric Cards with Sparklines */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
           {/* Card 1: Total Pendapatan */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 flex flex-col justify-between hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 flex flex-col justify-between hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-[11px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Total Pendapatan</p>
-                <h3 className="text-lg font-bold text-white mt-1">Rp 125.860.500</h3>
+                <h3 className="text-lg font-bold text-[var(--app-text)] mt-1">Rp 125.860.500</h3>
               </div>
               <div className="p-2 rounded-lg bg-blue-600/10 border border-blue-600/20 text-blue-400">
                 <DollarSign className="w-4 h-4" />
@@ -233,11 +233,11 @@ export default function FinanceDashboard() {
           </div>
 
           {/* Card 2: Total Biaya */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 flex flex-col justify-between hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 flex flex-col justify-between hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-[11px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Total Biaya</p>
-                <h3 className="text-lg font-bold text-white mt-1">Rp 45.230.000</h3>
+                <h3 className="text-lg font-bold text-[var(--app-text)] mt-1">Rp 45.230.000</h3>
               </div>
               <div className="p-2 rounded-lg bg-rose-600/10 border border-rose-600/20 text-rose-400">
                 <TrendingDown className="w-4 h-4" />
@@ -260,11 +260,11 @@ export default function FinanceDashboard() {
           </div>
 
           {/* Card 3: Laba Bersih */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 flex flex-col justify-between hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 flex flex-col justify-between hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-[11px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Laba Bersih</p>
-                <h3 className="text-lg font-bold text-white mt-1">Rp 80.630.500</h3>
+                <h3 className="text-lg font-bold text-[var(--app-text)] mt-1">Rp 80.630.500</h3>
               </div>
               <div className="p-2 rounded-lg bg-emerald-600/10 border border-emerald-600/20 text-emerald-400">
                 <TrendingUp className="w-4 h-4" />
@@ -287,11 +287,11 @@ export default function FinanceDashboard() {
           </div>
 
           {/* Card 4: Arus Kas */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 flex flex-col justify-between hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 flex flex-col justify-between hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-[11px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Arus Kas</p>
-                <h3 className="text-lg font-bold text-white mt-1">Rp 68.420.000</h3>
+                <h3 className="text-lg font-bold text-[var(--app-text)] mt-1">Rp 68.420.000</h3>
               </div>
               <div className="p-2 rounded-lg bg-amber-600/10 border border-amber-600/20 text-amber-400">
                 <DollarSign className="w-4 h-4" />
@@ -314,11 +314,11 @@ export default function FinanceDashboard() {
           </div>
 
           {/* Card 5: Transaksi */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 flex flex-col justify-between hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 flex flex-col justify-between hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-[11px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Transaksi</p>
-                <h3 className="text-lg font-bold text-white mt-1">2.548</h3>
+                <h3 className="text-lg font-bold text-[var(--app-text)] mt-1">2.548</h3>
               </div>
               <div className="p-2 rounded-lg bg-cyan-600/10 border border-cyan-600/20 text-cyan-400">
                 <Activity className="w-4 h-4" />
@@ -344,17 +344,17 @@ export default function FinanceDashboard() {
         {/* Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
           {/* Chart 1: Grafik Pendapatan & Biaya */}
-          <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4 lg:col-span-1">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 lg:col-span-1">
             <div className="flex justify-between items-center mb-4">
               <h4 className="text-xs font-bold text-[var(--app-text)] tracking-wide uppercase">Grafik Pendapatan & Biaya</h4>
-              <span className="text-[10px] text-[var(--app-muted)] bg-blue-950/60 px-2 py-0.5 rounded border border-blue-900/30">7 Hari Terakhir</span>
+              <span className="text-[10px] text-[var(--app-muted)] bg-[var(--app-card-subtle)] px-2 py-0.5 rounded border border-[var(--app-border)]">7 Hari Terakhir</span>
             </div>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={lineChartData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
                   <XAxis dataKey="name" stroke="#64748b" fontSize={10} tickLine={false} />
                   <YAxis stroke="#64748b" fontSize={10} tickLine={false} />
-                  <Tooltip contentStyle={{ backgroundColor: '#091526', borderColor: '#1E3A8A', color: '#FFF', fontSize: 11 }} />
+                  <Tooltip contentStyle={{ backgroundColor: 'var(--app-card)', borderColor: 'var(--app-border)', color: 'var(--app-text)', borderRadius: 8, fontSize: 11 }} />
                   <Legend iconSize={8} wrapperStyle={{ fontSize: 10, paddingTop: 10 }} />
                   <Line type="monotone" dataKey="Pendapatan" stroke="#3b82f6" strokeWidth={2.5} dot={{ r: 3 }} />
                   <Line type="monotone" dataKey="Biaya" stroke="#10b981" strokeWidth={2.5} dot={{ r: 3 }} />
@@ -364,7 +364,7 @@ export default function FinanceDashboard() {
           </div>
 
           {/* Chart 2: Distribusi Pendapatan */}
-          <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4 flex flex-col justify-between">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 flex flex-col justify-between">
             <div>
               <h4 className="text-xs font-bold text-[var(--app-text)] tracking-wide uppercase mb-4">Distribusi Pendapatan</h4>
               <div className="flex flex-col md:flex-row items-center gap-4">
@@ -388,7 +388,7 @@ export default function FinanceDashboard() {
                   </ResponsiveContainer>
                   <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
                     <p className="text-[10px] text-[var(--app-muted)]">Total</p>
-                    <p className="text-[10px] font-bold text-white mt-0.5">Rp 125M</p>
+                    <p className="text-[10px] font-bold text-[var(--app-text)] mt-0.5">Rp 125M</p>
                   </div>
                 </div>
 
@@ -413,17 +413,17 @@ export default function FinanceDashboard() {
           </div>
 
           {/* Chart 3: Arus Kas */}
-          <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4 lg:col-span-1">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 lg:col-span-1">
             <div className="flex justify-between items-center mb-4">
               <h4 className="text-xs font-bold text-[var(--app-text)] tracking-wide uppercase">Arus Kas (Masuk vs Keluar)</h4>
-              <span className="text-[10px] text-[var(--app-muted)] bg-blue-950/60 px-2 py-0.5 rounded border border-blue-900/30">7 Hari Terakhir</span>
+              <span className="text-[10px] text-[var(--app-muted)] bg-[var(--app-card-subtle)] px-2 py-0.5 rounded border border-[var(--app-border)]">7 Hari Terakhir</span>
             </div>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={barChartData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
                   <XAxis dataKey="name" stroke="#64748b" fontSize={10} tickLine={false} />
                   <YAxis stroke="#64748b" fontSize={10} tickLine={false} />
-                  <Tooltip contentStyle={{ backgroundColor: '#091526', borderColor: '#1E3A8A', color: '#FFF', fontSize: 11 }} />
+                  <Tooltip contentStyle={{ backgroundColor: 'var(--app-card)', borderColor: 'var(--app-border)', color: 'var(--app-text)', borderRadius: 8, fontSize: 11 }} />
                   <Legend iconSize={8} wrapperStyle={{ fontSize: 10, paddingTop: 10 }} />
                   <Bar dataKey="Masuk" fill="#10b981" radius={[3, 3, 0, 0]} />
                   <Bar dataKey="Keluar" fill="#f43f5e" radius={[3, 3, 0, 0]} />
@@ -436,7 +436,7 @@ export default function FinanceDashboard() {
         {/* Transactions & Balance Summary */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
           {/* Column 1 & 2: Recent Transactions */}
-          <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4 lg:col-span-2">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 lg:col-span-2">
             <div className="flex justify-between items-center mb-4">
               <h4 className="text-xs font-bold text-[var(--app-text)] tracking-wide uppercase">Transaksi Terbaru</h4>
               <button 
@@ -460,9 +460,9 @@ export default function FinanceDashboard() {
                     <th className="py-2.5 font-medium text-center">Aksi</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-blue-950/40 text-[var(--app-text)]/90">
+                <tbody className="divide-y divide-[var(--app-border)] text-[var(--app-text)]/90">
                   {transactions.filter(t => t.deskripsi.toLowerCase().includes(searchTerm.toLowerCase())).map((tx) => (
-                    <tr key={tx.id} className="hover:bg-blue-950/20">
+                    <tr key={tx.id} className="hover:bg-[var(--app-card-subtle)]/20">
                       <td className="py-3 whitespace-nowrap text-[11px] text-[var(--app-muted)]">{tx.waktu}</td>
                       <td className="py-3 whitespace-nowrap">
                         <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium ${tx.jenis === 'Pemasukan' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}`}>
@@ -471,7 +471,7 @@ export default function FinanceDashboard() {
                       </td>
                       <td className="py-3 whitespace-nowrap font-medium text-[11px]">{tx.kategori}</td>
                       <td className="py-3 max-w-[200px] truncate text-[11px]" title={tx.deskripsi}>{tx.deskripsi}</td>
-                      <td className="py-3 text-right font-bold text-[11px] text-white">{formatRupiah(tx.jumlah)}</td>
+                      <td className="py-3 text-right font-bold text-[11px] text-[var(--app-text)]">{formatRupiah(tx.jumlah)}</td>
                       <td className="py-3 text-center">
                         <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-semibold bg-emerald-500/25 text-emerald-300">
                           {tx.status}
@@ -507,7 +507,7 @@ export default function FinanceDashboard() {
           {/* Column 3: Ringkasan Saldo & Top 5 Pendapatan */}
           <div className="space-y-6">
             {/* Card: Ringkasan Saldo */}
-            <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4">
+            <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4">
               <h4 className="text-xs font-bold text-[var(--app-text)] tracking-wide uppercase mb-3.5">Ringkasan Saldo</h4>
               <div className="space-y-3.5">
                 <div className="flex justify-between items-center text-xs pb-2 border-b border-[var(--app-border)]/60">
@@ -515,21 +515,21 @@ export default function FinanceDashboard() {
                     <CreditCard className="w-3.5 h-3.5 text-cyan-400" />
                     <span className="text-[var(--app-text)]/90">Saldo Kas</span>
                   </div>
-                  <span className="font-bold text-white">{formatRupiah(68420000)}</span>
+                  <span className="font-bold text-[var(--app-text)]">{formatRupiah(68420000)}</span>
                 </div>
-                <div className="flex justify-between items-center text-xs pb-2 border-b border-b-blue-950/60">
+                <div className="flex justify-between items-center text-xs pb-2 border-b border-b-[var(--app-border)]">
                   <div className="flex items-center gap-2">
                     <Building className="w-3.5 h-3.5 text-blue-400" />
                     <span className="text-[var(--app-text)]/90">Saldo Bank</span>
                   </div>
-                  <span className="font-bold text-white">{formatRupiah(152840000)}</span>
+                  <span className="font-bold text-[var(--app-text)]">{formatRupiah(152840000)}</span>
                 </div>
-                <div className="flex justify-between items-center text-xs pb-2 border-b border-b-blue-950/60">
+                <div className="flex justify-between items-center text-xs pb-2 border-b border-b-[var(--app-border)]">
                   <div className="flex items-center gap-2">
                     <Layers className="w-3.5 h-3.5 text-amber-400" />
                     <span className="text-[var(--app-text)]/90">Saldo E-Wallet</span>
                   </div>
-                  <span className="font-bold text-white">{formatRupiah(32150000)}</span>
+                  <span className="font-bold text-[var(--app-text)]">{formatRupiah(32150000)}</span>
                 </div>
                 <div className="flex justify-between items-center text-xs pt-1">
                   <span className="font-bold text-cyan-400 text-xs">Total Saldo</span>
@@ -539,7 +539,7 @@ export default function FinanceDashboard() {
             </div>
 
             {/* Card: Top 5 Pendapatan */}
-            <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4">
+            <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4">
               <div className="flex justify-between items-center mb-3">
                 <h4 className="text-xs font-bold text-[var(--app-text)] tracking-wide uppercase">Top 5 Pendapatan</h4>
                 <button className="text-[10px] font-semibold text-cyan-400 hover:underline">Lihat Semua</button>
@@ -549,10 +549,10 @@ export default function FinanceDashboard() {
                   <div key={index} className="space-y-1">
                     <div className="flex justify-between items-center">
                       <span className="text-[11px] text-[var(--app-text)]/90 font-medium">{index + 1}. {d.name}</span>
-                      <span className="font-semibold text-white">{formatRupiah(d.value)}</span>
+                      <span className="font-semibold text-[var(--app-text)]">{formatRupiah(d.value)}</span>
                     </div>
                     {/* Progress bar */}
-                    <div className="w-full bg-blue-950/60 rounded-full h-1.5 border border-blue-900/20 overflow-hidden">
+                    <div className="w-full bg-[var(--app-card-subtle)] rounded-full h-1.5 border border-[var(--app-border)]/20 overflow-hidden">
                       <div 
                         className="bg-blue-600 h-full rounded-full" 
                         style={{ width: `${(d.value / 125860500) * 100}%` }}
@@ -568,27 +568,27 @@ export default function FinanceDashboard() {
         {/* Detailed financial breakdowns */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-6">
           {/* Laba Rugi */}
-          <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4">
             <div className="flex justify-between items-center mb-4">
               <h4 className="text-xs font-bold text-[var(--app-text)] tracking-wide uppercase">Laba Rugi (Ringkas)</h4>
-              <span className="text-[10px] text-[var(--app-muted)] bg-blue-950/60 px-2 py-0.5 rounded border border-blue-900/30">Bulan Ini</span>
+              <span className="text-[10px] text-[var(--app-muted)] bg-[var(--app-card-subtle)] px-2 py-0.5 rounded border border-[var(--app-border)]">Bulan Ini</span>
             </div>
             <div className="space-y-2.5 text-xs text-[var(--app-text)]/90">
               <div className="flex justify-between pb-1.5 border-b border-[var(--app-border)]/40">
                 <span>Total Pendapatan</span>
-                <span className="font-semibold text-white">Rp 125.860.500</span>
+                <span className="font-semibold text-[var(--app-text)]">Rp 125.860.500</span>
               </div>
               <div className="flex justify-between pb-1.5 border-b border-[var(--app-border)]/40">
                 <span>Total Biaya</span>
-                <span className="font-semibold text-white">Rp 45.230.000</span>
+                <span className="font-semibold text-[var(--app-text)]">Rp 45.230.000</span>
               </div>
               <div className="flex justify-between pb-1.5 border-b border-[var(--app-border)]/40">
                 <span className="font-bold text-[var(--app-text)]">Laba Kotor</span>
-                <span className="font-bold text-white">Rp 80.630.500</span>
+                <span className="font-bold text-[var(--app-text)]">Rp 80.630.500</span>
               </div>
               <div className="flex justify-between pb-1.5 border-b border-[var(--app-border)]/40">
                 <span>Biaya Operasional</span>
-                <span className="font-semibold text-white">Rp 7.000.000</span>
+                <span className="font-semibold text-[var(--app-text)]">Rp 7.000.000</span>
               </div>
               <div className="flex justify-between pt-1">
                 <span className="font-bold text-emerald-400">Laba Bersih</span>
@@ -598,14 +598,14 @@ export default function FinanceDashboard() {
           </div>
 
           {/* Neraca */}
-          <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4">
             <div className="flex justify-between items-center mb-4">
               <h4 className="text-xs font-bold text-[var(--app-text)] tracking-wide uppercase">Neraca (Ringkas)</h4>
-              <span className="text-[10px] text-[var(--app-muted)] bg-blue-950/60 px-2 py-0.5 rounded border border-blue-900/30">Per 22 Oktober 2026</span>
+              <span className="text-[10px] text-[var(--app-muted)] bg-[var(--app-card-subtle)] px-2 py-0.5 rounded border border-[var(--app-border)]">Per 22 Oktober 2026</span>
             </div>
             <div className="grid grid-cols-2 gap-3 text-[11px] text-[var(--app-text)]/90">
               <div className="space-y-2">
-                <p className="font-bold text-white uppercase text-[10px] tracking-wider">Aset</p>
+                <p className="font-bold text-[var(--app-text)] uppercase text-[10px] tracking-wider">Aset</p>
                 <div className="flex justify-between">
                   <span>Aset Lancar</span>
                   <span className="text-[var(--app-muted)]">Rp 210M</span>
@@ -616,11 +616,11 @@ export default function FinanceDashboard() {
                 </div>
                 <div className="flex justify-between pt-1 border-t border-[var(--app-border)]">
                   <span className="font-bold">Total Aset</span>
-                  <span className="font-bold text-white">Rp 395M</span>
+                  <span className="font-bold text-[var(--app-text)]">Rp 395M</span>
                 </div>
               </div>
               <div className="space-y-2">
-                <p className="font-bold text-white uppercase text-[10px] tracking-wider">Liabilitas & Ekuitas</p>
+                <p className="font-bold text-[var(--app-text)] uppercase text-[10px] tracking-wider">Liabilitas & Ekuitas</p>
                 <div className="flex justify-between">
                   <span>Liabilitas Lancar</span>
                   <span className="text-[var(--app-muted)]">Rp 85M</span>
@@ -635,7 +635,7 @@ export default function FinanceDashboard() {
                 </div>
                 <div className="flex justify-between pt-1 border-t border-[var(--app-border)]">
                   <span className="font-bold">Total L & E</span>
-                  <span className="font-bold text-white">Rp 395M</span>
+                  <span className="font-bold text-[var(--app-text)]">Rp 395M</span>
                 </div>
               </div>
             </div>
@@ -645,15 +645,15 @@ export default function FinanceDashboard() {
           </div>
 
           {/* Arus Kas Ringkas */}
-          <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4">
             <div className="flex justify-between items-center mb-4">
               <h4 className="text-xs font-bold text-[var(--app-text)] tracking-wide uppercase">Arus Kas (Ringkas)</h4>
-              <span className="text-[10px] text-[var(--app-muted)] bg-blue-950/60 px-2 py-0.5 rounded border border-blue-900/30">Bulan Ini</span>
+              <span className="text-[10px] text-[var(--app-muted)] bg-[var(--app-card-subtle)] px-2 py-0.5 rounded border border-[var(--app-border)]">Bulan Ini</span>
             </div>
             <div className="space-y-2.5 text-xs text-[var(--app-text)]/90">
               <div className="flex justify-between pb-1.5 border-b border-[var(--app-border)]/40">
                 <span>Arus Kas Operasional</span>
-                <span className="font-semibold text-white">Rp 68.420.000</span>
+                <span className="font-semibold text-[var(--app-text)]">Rp 68.420.000</span>
               </div>
               <div className="flex justify-between pb-1.5 border-b border-[var(--app-border)]/40">
                 <span>Arus Kas Investasi</span>
@@ -661,11 +661,11 @@ export default function FinanceDashboard() {
               </div>
               <div className="flex justify-between pb-1.5 border-b border-[var(--app-border)]/40">
                 <span>Arus Kas Pendanaan</span>
-                <span className="font-semibold text-white">Rp 0</span>
+                <span className="font-semibold text-[var(--app-text)]">Rp 0</span>
               </div>
               <div className="flex justify-between pb-1.5 border-b border-[var(--app-border)]/40">
                 <span className="font-bold text-[var(--app-text)]">Kenaikan (Penurunan) Kas</span>
-                <span className="font-bold text-white">Rp 53.120.000</span>
+                <span className="font-bold text-[var(--app-text)]">Rp 53.120.000</span>
               </div>
               <div className="flex justify-between pt-1">
                 <span className="font-bold text-emerald-400">Kas Akhir</span>
@@ -678,10 +678,10 @@ export default function FinanceDashboard() {
           </div>
 
           {/* Pengeluaran per Kategori Donut */}
-          <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4 flex flex-col justify-between">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 flex flex-col justify-between">
             <div className="flex justify-between items-center mb-2">
               <h4 className="text-xs font-bold text-[var(--app-text)] tracking-wide uppercase">Pengeluaran per Kategori</h4>
-              <span className="text-[10px] text-[var(--app-muted)] bg-blue-950/60 px-2 py-0.5 rounded border border-blue-900/30">Bulan Ini</span>
+              <span className="text-[10px] text-[var(--app-muted)] bg-[var(--app-card-subtle)] px-2 py-0.5 rounded border border-[var(--app-border)]">Bulan Ini</span>
             </div>
             <div className="flex items-center gap-3">
               <div className="relative w-24 h-24 flex-shrink-0">
@@ -704,7 +704,7 @@ export default function FinanceDashboard() {
                 </ResponsiveContainer>
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
                   <p className="text-[8px] text-[var(--app-muted)] font-semibold uppercase">Total</p>
-                  <p className="text-[9px] font-bold text-white">45.2M</p>
+                  <p className="text-[9px] font-bold text-[var(--app-text)]">45.2M</p>
                 </div>
               </div>
 
@@ -715,7 +715,7 @@ export default function FinanceDashboard() {
                       <span className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS_EXPENSE[index] }}></span>
                       <span className="text-[var(--app-text)]/90 max-w-[80px] truncate">{e.name}</span>
                     </div>
-                    <span className="font-bold text-white">{e.value}%</span>
+                    <span className="font-bold text-[var(--app-text)]">{e.value}%</span>
                   </div>
                 ))}
               </div>
@@ -730,89 +730,89 @@ export default function FinanceDashboard() {
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3 mt-6">
           <button 
             onClick={() => router.push('/finance/pendapatan')}
-            className="flex flex-col items-center justify-center p-3 rounded-xl bg-[#0A1629]/60 hover:bg-blue-600/10 border border-blue-900/30 hover:border-blue-500/50 transition-all text-center group"
+            className="flex flex-col items-center justify-center p-3 rounded-xl bg-[var(--app-card)] shadow-xs hover:bg-blue-600/10 border border-[var(--app-border)] hover:border-blue-500/50 transition-all text-center group"
           >
             <div className="w-8 h-8 rounded-lg bg-cyan-600/10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
               <DollarSign className="w-4 h-4 text-cyan-400" />
             </div>
-            <span className="text-[11px] font-bold text-white">Pendapatan</span>
+            <span className="text-[11px] font-bold text-[var(--app-text)]">Pendapatan</span>
             <span className="text-[9px] text-[var(--app-muted)] mt-0.5 line-clamp-2">Kelola semua sumber pendapatan & laporan</span>
           </button>
 
           <button 
             onClick={() => router.push('/finance/pengeluaran')}
-            className="flex flex-col items-center justify-center p-3 rounded-xl bg-[#0A1629]/60 hover:bg-blue-600/10 border border-blue-900/30 hover:border-blue-500/50 transition-all text-center group"
+            className="flex flex-col items-center justify-center p-3 rounded-xl bg-[var(--app-card)] shadow-xs hover:bg-blue-600/10 border border-[var(--app-border)] hover:border-blue-500/50 transition-all text-center group"
           >
             <div className="w-8 h-8 rounded-lg bg-pink-600/10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
               <TrendingDown className="w-4 h-4 text-pink-400" />
             </div>
-            <span className="text-[11px] font-bold text-white">Pengeluaran</span>
+            <span className="text-[11px] font-bold text-[var(--app-text)]">Pengeluaran</span>
             <span className="text-[9px] text-[var(--app-muted)] mt-0.5 line-clamp-2">Kelola biaya operasional & pengeluaran</span>
           </button>
 
           <button 
             onClick={() => router.push('/finance/anggaran')}
-            className="flex flex-col items-center justify-center p-3 rounded-xl bg-[#0A1629]/60 hover:bg-blue-600/10 border border-blue-900/30 hover:border-blue-500/50 transition-all text-center group"
+            className="flex flex-col items-center justify-center p-3 rounded-xl bg-[var(--app-card)] shadow-xs hover:bg-blue-600/10 border border-[var(--app-border)] hover:border-blue-500/50 transition-all text-center group"
           >
             <div className="w-8 h-8 rounded-lg bg-emerald-600/10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
               <Briefcase className="w-4 h-4 text-emerald-400" />
             </div>
-            <span className="text-[11px] font-bold text-white">Buat Anggaran</span>
+            <span className="text-[11px] font-bold text-[var(--app-text)]">Buat Anggaran</span>
             <span className="text-[9px] text-[var(--app-muted)] mt-0.5 line-clamp-2">Buat & kelola anggaran perusahaan</span>
           </button>
 
           <button 
             onClick={() => router.push('/finance/pajak')}
-            className="flex flex-col items-center justify-center p-3 rounded-xl bg-[#0A1629]/60 hover:bg-blue-600/10 border border-blue-900/30 hover:border-blue-500/50 transition-all text-center group"
+            className="flex flex-col items-center justify-center p-3 rounded-xl bg-[var(--app-card)] shadow-xs hover:bg-blue-600/10 border border-[var(--app-border)] hover:border-blue-500/50 transition-all text-center group"
           >
             <div className="w-8 h-8 rounded-lg bg-purple-600/10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
               <Layers className="w-4 h-4 text-purple-400" />
             </div>
-            <span className="text-[11px] font-bold text-white">Pajak</span>
+            <span className="text-[11px] font-bold text-[var(--app-text)]">Pajak</span>
             <span className="text-[9px] text-[var(--app-muted)] mt-0.5 line-clamp-2">Kelola pajak, PPN & pelaporan pajak</span>
           </button>
 
           <button 
             onClick={() => router.push('/finance/rekonsiliasi')}
-            className="flex flex-col items-center justify-center p-3 rounded-xl bg-[#0A1629]/60 hover:bg-blue-600/10 border border-blue-900/30 hover:border-blue-500/50 transition-all text-center group"
+            className="flex flex-col items-center justify-center p-3 rounded-xl bg-[var(--app-card)] shadow-xs hover:bg-blue-600/10 border border-[var(--app-border)] hover:border-blue-500/50 transition-all text-center group"
           >
             <div className="w-8 h-8 rounded-lg bg-blue-600/10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
               <RefreshCw className="w-4 h-4 text-blue-400" />
             </div>
-            <span className="text-[11px] font-bold text-white">Rekonsiliasi</span>
+            <span className="text-[11px] font-bold text-[var(--app-text)]">Rekonsiliasi</span>
             <span className="text-[9px] text-[var(--app-muted)] mt-0.5 line-clamp-2">Cocokkan transaksi dengan bank</span>
           </button>
 
           <button 
             onClick={() => router.push('/finance/settings')}
-            className="flex flex-col items-center justify-center p-3 rounded-xl bg-[#0A1629]/60 hover:bg-blue-600/10 border border-blue-900/30 hover:border-blue-500/50 transition-all text-center group"
+            className="flex flex-col items-center justify-center p-3 rounded-xl bg-[var(--app-card)] shadow-xs hover:bg-blue-600/10 border border-[var(--app-border)] hover:border-blue-500/50 transition-all text-center group"
           >
             <div className="w-8 h-8 rounded-lg bg-amber-600/10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
               <CreditCard className="w-4 h-4 text-amber-400" />
             </div>
-            <span className="text-[11px] font-bold text-white">Multi Metode Bayar</span>
+            <span className="text-[11px] font-bold text-[var(--app-text)]">Multi Metode Bayar</span>
             <span className="text-[9px] text-[var(--app-muted)] mt-0.5 line-clamp-2">Cash, Bank, E-Wallet & lainnya</span>
           </button>
 
           <button 
             onClick={() => router.push('/finance/laporan')}
-            className="flex flex-col items-center justify-center p-3 rounded-xl bg-[#0A1629]/60 hover:bg-blue-600/10 border border-blue-900/30 hover:border-blue-500/50 transition-all text-center group"
+            className="flex flex-col items-center justify-center p-3 rounded-xl bg-[var(--app-card)] shadow-xs hover:bg-blue-600/10 border border-[var(--app-border)] hover:border-blue-500/50 transition-all text-center group"
           >
             <div className="w-8 h-8 rounded-lg bg-indigo-600/10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
               <FileSpreadsheet className="w-4 h-4 text-indigo-400" />
             </div>
-            <span className="text-[11px] font-bold text-white">Laporan Otomatis</span>
+            <span className="text-[11px] font-bold text-[var(--app-text)]">Laporan Otomatis</span>
             <span className="text-[9px] text-[var(--app-muted)] mt-0.5 line-clamp-2">Laporan keuangan otomatis</span>
           </button>
 
           <button 
             onClick={handleExport}
-            className="flex flex-col items-center justify-center p-3 rounded-xl bg-[#0A1629]/60 hover:bg-blue-600/10 border border-blue-900/30 hover:border-blue-500/50 transition-all text-center group"
+            className="flex flex-col items-center justify-center p-3 rounded-xl bg-[var(--app-card)] shadow-xs hover:bg-blue-600/10 border border-[var(--app-border)] hover:border-blue-500/50 transition-all text-center group"
           >
             <div className="w-8 h-8 rounded-lg bg-emerald-600/10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
               <Download className="w-4 h-4 text-emerald-400" />
             </div>
-            <span className="text-[11px] font-bold text-white">Ekspor Data</span>
+            <span className="text-[11px] font-bold text-[var(--app-text)]">Ekspor Data</span>
             <span className="text-[9px] text-[var(--app-muted)] mt-0.5 line-clamp-2">Export ke Excel, PDF, CSV</span>
           </button>
         </div>
@@ -820,7 +820,7 @@ export default function FinanceDashboard() {
         {/* Filter Modal */}
         {showFilterModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-            <div className="bg-[#0A1629] border border-blue-900 rounded-xl max-w-sm w-full p-6 space-y-4">
+            <div className="bg-[var(--app-surface)] border border-[var(--app-border)] rounded-xl max-w-sm w-full p-6 space-y-4">
               <h3 className="text-sm font-bold text-white uppercase tracking-wider">Filter Periode Waktu</h3>
               <div className="space-y-2">
                 <label className="text-[10px] text-[var(--app-muted)] font-semibold uppercase">Pilih Periode</label>
@@ -829,7 +829,7 @@ export default function FinanceDashboard() {
                     setDateRange(e.target.value);
                     setShowFilterModal(false);
                   }}
-                  className="w-full p-2 rounded bg-blue-950 border border-[var(--app-border)] text-xs text-white"
+                  className="w-full p-2 rounded bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-xs text-white"
                 >
                   <option value="25 Juni 2026 - 22 Oktober 2026">25 Juni 2026 - 22 Oktober 2026 (7 Hari)</option>
                   <option value="01 Juni 2026 - 30 Juni 2026">01 Juni 2026 - 30 Juni 2026 (Bulan Ini)</option>
@@ -839,7 +839,7 @@ export default function FinanceDashboard() {
               <div className="flex justify-end gap-2 pt-2">
                 <button 
                   onClick={() => setShowFilterModal(false)}
-                  className="px-3 py-1.5 rounded bg-blue-950 text-xs font-semibold text-[var(--app-text)]/90 hover:text-white"
+                  className="px-3 py-1.5 rounded bg-[var(--app-card-subtle)] text-xs font-semibold text-[var(--app-text)]/90 hover:text-white"
                 >
                   Batal
                 </button>

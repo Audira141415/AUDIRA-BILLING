@@ -76,7 +76,7 @@ const StatusBadge = ({ s }: { s: string }) => {
     'Kurang Bayar': 'bg-rose-500/15 text-rose-400 border-rose-500/30',
     'Lebih Bayar': 'bg-amber-500/15 text-amber-400 border-amber-500/30',
   };
-  return <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold border ${map[s] ?? 'bg-[var(--app-bg)]0/10 text-[var(--app-muted)] border-slate-500/20'}`}>{s}</span>;
+  return <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold border ${map[s] ?? 'bg-slate-500/10 text-[var(--app-muted)] border-slate-500/20'}`}>{s}</span>;
 };
 
 interface MetricCardProps {
@@ -84,7 +84,7 @@ interface MetricCardProps {
   icon: React.ReactNode; iconBg: string; spark: number[]; sparkColor: string;
 }
 const MetricCard = ({ label, value, sub, trend, trendUp, icon, iconBg, spark, sparkColor }: MetricCardProps) => (
-  <div className="bg-[var(--app-bg)]/80 border border-blue-950 rounded-xl p-3.5 flex flex-col justify-between hover:border-blue-900/60 transition-all group">
+  <div className="bg-[var(--app-bg)]/80 border border-[var(--app-border)] rounded-xl p-3.5 flex flex-col justify-between hover:border-[var(--app-border)]/60 transition-all group">
     <div className="flex justify-between items-start mb-2">
       <div className={`p-2 rounded-lg ${iconBg}`}>{icon}</div>
       <div className={`flex items-center gap-0.5 text-[10px] font-semibold px-2 py-0.5 rounded-full ${trendUp ? 'bg-emerald-500/15 text-emerald-400' : 'bg-rose-500/15 text-rose-400'}`}>
@@ -112,7 +112,7 @@ export default function TaxReportPage() {
 
   return (
     <Layout>
-      <div className="bg-[var(--app-bg)] text-slate-200 min-h-screen p-5 font-sans antialiased">
+      <div className="bg-[var(--app-bg)] text-[var(--app-text)] min-h-screen p-5 font-sans antialiased">
         {/* ─── Swiss B2B Reports Header ────────────────────────────────────────────── */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-[var(--app-border)] pb-5 mb-5">
           <div className="space-y-1">
@@ -148,8 +148,8 @@ export default function TaxReportPage() {
           </div>
           <div className="flex items-center gap-2">
             <button className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-4 py-2 rounded-lg shadow-lg transition-all"><Download className="w-3.5 h-3.5"/>Export<ChevronDown className="w-3 h-3 ml-0.5"/></button>
-            <button className="flex items-center gap-1.5 bg-[var(--app-bg)] hover:bg-[var(--app-bg)] border border-blue-950 text-slate-200 text-xs font-semibold px-4 py-2 rounded-lg transition-colors"><Star className="w-3.5 h-3.5 text-[var(--app-muted)]"/>Jadwalkan Laporan</button>
-            <button className="p-2 rounded-lg bg-[var(--app-bg)] border border-blue-950 hover:bg-[var(--app-bg)] text-[var(--app-muted)] hover:text-white"><MoreVertical className="w-4 h-4"/></button>
+            <button className="flex items-center gap-1.5 bg-[var(--app-bg)] hover:bg-[var(--app-bg)] border border-[var(--app-border)] text-slate-200 text-xs font-semibold px-4 py-2 rounded-lg transition-colors"><Star className="w-3.5 h-3.5 text-[var(--app-muted)]"/>Jadwalkan Laporan</button>
+            <button className="p-2 rounded-lg bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-bg)] text-[var(--app-muted)] hover:text-white"><MoreVertical className="w-4 h-4"/></button>
           </div>
         </div>
 
@@ -199,7 +199,7 @@ export default function TaxReportPage() {
         {/* Charts Row */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 mb-5">
           {/* Trend Line Chart */}
-          <div className="lg:col-span-5 bg-[var(--app-border)]/20 border border-blue-950 rounded-xl p-4">
+          <div className="lg:col-span-5 bg-[var(--app-border)]/20 border border-[var(--app-border)] rounded-xl p-4">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-xs font-bold text-[var(--app-text)]">Trend Pajak Terutang <span className="text-[var(--app-muted)] font-normal">(6 Bulan Terakhir)</span></h3>
               <div className="flex items-center gap-3 text-[10px] text-[var(--app-muted)]">
@@ -214,7 +214,7 @@ export default function TaxReportPage() {
                   <CartesianGrid strokeDasharray="3 3" stroke="#0F1D38"/>
                   <XAxis dataKey="bulan" stroke="#64748B" fontSize={9}/>
                   <YAxis stroke="#64748B" fontSize={9} tickFormatter={fmtShort}/>
-                  <Tooltip contentStyle={{backgroundColor:'#0B1528',borderColor:'#1E293B',borderRadius:8,fontSize:11}} labelStyle={{color:'#F1F5F9',fontWeight:'bold'}} formatter={(v: any)=>[fmt(v),'']}/>
+                  <Tooltip contentStyle={{ backgroundColor: 'var(--app-card)', borderColor: 'var(--app-border)', color: 'var(--app-text)', borderRadius: 8, fontSize: 11 }} labelStyle={{color:'#F1F5F9',fontWeight:'bold'}} formatter={(v: any)=>[fmt(v),'']}/>
                   <Line type="monotone" dataKey="ppn" stroke="#3b82f6" strokeWidth={2} dot={{r:3}} activeDot={{r:5}} name="PPN (VAT)"/>
                   <Line type="monotone" dataKey="pph" stroke="#10b981" strokeWidth={2} dot={{r:3}} activeDot={{r:5}} name="PPh"/>
                   <Line type="monotone" dataKey="lain" stroke="#f59e0b" strokeWidth={2} dot={{r:3}} activeDot={{r:5}} name="Lainnya"/>
@@ -224,7 +224,7 @@ export default function TaxReportPage() {
           </div>
 
           {/* Donut Komposisi */}
-          <div className="lg:col-span-3 bg-[var(--app-border)]/20 border border-blue-950 rounded-xl p-4">
+          <div className="lg:col-span-3 bg-[var(--app-border)]/20 border border-[var(--app-border)] rounded-xl p-4">
             <h3 className="text-xs font-bold text-[var(--app-text)] mb-3">Komposisi Pajak</h3>
             <div className="flex items-center gap-3">
               <div className="relative flex-shrink-0" style={{width:120,height:120}}>
@@ -251,7 +251,7 @@ export default function TaxReportPage() {
           </div>
 
           {/* Bar+Line combo */}
-          <div className="lg:col-span-4 bg-[var(--app-border)]/20 border border-blue-950 rounded-xl p-4">
+          <div className="lg:col-span-4 bg-[var(--app-border)]/20 border border-[var(--app-border)] rounded-xl p-4">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-xs font-bold text-[var(--app-text)]">Pajak Terutang vs Dibayar</h3>
               <div className="flex items-center gap-2 text-[10px] text-[var(--app-muted)]">
@@ -266,7 +266,7 @@ export default function TaxReportPage() {
                   <CartesianGrid strokeDasharray="3 3" stroke="#0F1D38"/>
                   <XAxis dataKey="bulan" stroke="#64748B" fontSize={9}/>
                   <YAxis stroke="#64748B" fontSize={9} tickFormatter={fmtShort}/>
-                  <Tooltip contentStyle={{backgroundColor:'#0B1528',borderColor:'#1E293B',borderRadius:8,fontSize:11}} labelStyle={{color:'#F1F5F9',fontWeight:'bold'}} formatter={(v: any)=>[fmt(v),'']}/>
+                  <Tooltip contentStyle={{ backgroundColor: 'var(--app-card)', borderColor: 'var(--app-border)', color: 'var(--app-text)', borderRadius: 8, fontSize: 11 }} labelStyle={{color:'#F1F5F9',fontWeight:'bold'}} formatter={(v: any)=>[fmt(v),'']}/>
                   <Bar dataKey="terutang" fill="#3b82f6" radius={[3,3,0,0]} name="Terutang"/>
                   <Bar dataKey="dibayar" fill="#10b981" radius={[3,3,0,0]} name="Dibayar"/>
                   <Line type="monotone" dataKey="selisih" stroke="#f59e0b" strokeWidth={2} dot={{r:3}} name="Selisih"/>
@@ -279,15 +279,15 @@ export default function TaxReportPage() {
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 mb-5">
           <div className="xl:col-span-9 grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Per Jenis */}
-            <div className="bg-[var(--app-border)]/20 border border-blue-950 rounded-xl p-4">
+            <div className="bg-[var(--app-border)]/20 border border-[var(--app-border)] rounded-xl p-4">
               <h3 className="text-xs font-bold text-[var(--app-text)] mb-3">Pajak Terutang per Jenis</h3>
               <table className="w-full text-xs">
-                <thead><tr className="text-[var(--app-muted)] text-[10px] uppercase border-b border-slate-800">
+                <thead><tr className="text-[var(--app-muted)] text-[10px] uppercase border-b border-[var(--app-border)]">
                   <th className="py-1.5 text-left">Jenis Pajak</th><th className="py-1.5 text-right">Terutang (Rp)</th><th className="py-1.5 text-right">%</th><th className="py-1.5 text-right">vs Mei</th>
                 </tr></thead>
-                <tbody className="divide-y divide-slate-900/40">
+                <tbody className="divide-y divide-[var(--app-border)]">
                   {JENIS_TABLE.map((r,i)=>(
-                    <tr key={i} className={`hover:bg-slate-800/10 ${r.jenis==='TOTAL'?'border-t border-slate-700/60':''}`}>
+                    <tr key={i} className={`hover:bg-[var(--app-card-subtle)] ${r.jenis==='TOTAL'?'border-t border-slate-700/60':''}`}>
                       <td className={`py-2 pr-2 ${r.jenis==='TOTAL'?'font-bold text-[var(--app-text)]':'text-slate-300'}`}>{r.jenis}</td>
                       <td className={`py-2 text-right whitespace-nowrap ${r.jenis==='TOTAL'?'font-bold text-[var(--app-text)]':'text-slate-300'}`}>{fmt(r.terutang)}</td>
                       <td className="py-2 text-right text-[var(--app-muted)]">{r.pct}</td>
@@ -298,15 +298,15 @@ export default function TaxReportPage() {
               </table>
             </div>
             {/* Per Area */}
-            <div className="bg-[var(--app-border)]/20 border border-blue-950 rounded-xl p-4">
+            <div className="bg-[var(--app-border)]/20 border border-[var(--app-border)] rounded-xl p-4">
               <h3 className="text-xs font-bold text-[var(--app-text)] mb-3">Pajak Terutang per Area / Region</h3>
               <table className="w-full text-xs">
-                <thead><tr className="text-[var(--app-muted)] text-[10px] uppercase border-b border-slate-800">
+                <thead><tr className="text-[var(--app-muted)] text-[10px] uppercase border-b border-[var(--app-border)]">
                   <th className="py-1.5 text-left">Area</th><th className="py-1.5 text-right">Terutang (Rp)</th><th className="py-1.5 text-right">%</th>
                 </tr></thead>
-                <tbody className="divide-y divide-slate-900/40">
+                <tbody className="divide-y divide-[var(--app-border)]">
                   {AREA_TABLE.map((r,i)=>(
-                    <tr key={i} className={`hover:bg-slate-800/10 ${r.area==='TOTAL'?'border-t border-slate-700/60':''}`}>
+                    <tr key={i} className={`hover:bg-[var(--app-card-subtle)] ${r.area==='TOTAL'?'border-t border-slate-700/60':''}`}>
                       <td className={`py-2 pr-2 ${r.area==='TOTAL'?'font-bold text-[var(--app-text)]':'text-slate-300'}`}>{r.area}</td>
                       <td className={`py-2 text-right whitespace-nowrap ${r.area==='TOTAL'?'font-bold text-[var(--app-text)]':'text-slate-300'}`}>{fmt(r.terutang)}</td>
                       <td className="py-2 text-right text-[var(--app-muted)]">{r.pct}</td>
@@ -316,15 +316,15 @@ export default function TaxReportPage() {
               </table>
             </div>
             {/* Status */}
-            <div className="bg-[var(--app-border)]/20 border border-blue-950 rounded-xl p-4">
+            <div className="bg-[var(--app-border)]/20 border border-[var(--app-border)] rounded-xl p-4">
               <h3 className="text-xs font-bold text-[var(--app-text)] mb-3">Status Pembayaran Pajak</h3>
               <table className="w-full text-xs">
-                <thead><tr className="text-[var(--app-muted)] text-[10px] uppercase border-b border-slate-800">
+                <thead><tr className="text-[var(--app-muted)] text-[10px] uppercase border-b border-[var(--app-border)]">
                   <th className="py-1.5 text-left">Status</th><th className="py-1.5 text-right">Jumlah (Rp)</th><th className="py-1.5 text-right">%</th>
                 </tr></thead>
-                <tbody className="divide-y divide-slate-900/40">
+                <tbody className="divide-y divide-[var(--app-border)]">
                   {STATUS_TABLE.map((r,i)=>(
-                    <tr key={i} className={`hover:bg-slate-800/10 ${r.status==='TOTAL'?'border-t border-slate-700/60':''}`}>
+                    <tr key={i} className={`hover:bg-[var(--app-card-subtle)] ${r.status==='TOTAL'?'border-t border-slate-700/60':''}`}>
                       <td className="py-2 pr-2"><div className="flex items-center gap-1.5"><span className={`w-2 h-2 rounded-full flex-shrink-0 ${r.dot}`}/><span className={r.color}>{r.status}</span></div></td>
                       <td className={`py-2 text-right whitespace-nowrap ${r.status==='TOTAL'?'font-bold text-[var(--app-text)]':'text-slate-300'}`}>{fmt(r.jumlah)}</td>
                       <td className="py-2 text-right text-[var(--app-muted)]">{r.pct}</td>
@@ -338,29 +338,29 @@ export default function TaxReportPage() {
           {/* Right panel */}
           <div className="xl:col-span-3 flex flex-col gap-4">
             {/* Filter Cepat */}
-            <div className="bg-[var(--app-border)]/20 border border-blue-950 rounded-xl p-4">
+            <div className="bg-[var(--app-border)]/20 border border-[var(--app-border)] rounded-xl p-4">
               <h3 className="text-xs font-bold text-[var(--app-text)] mb-3">Filter Cepat</h3>
               <div className="grid grid-cols-3 gap-1.5 mb-3">
                 {QUICK_TIMES.map(t=>(
-                  <button key={t} onClick={()=>setQuickTime(t)} className={`text-[10px] font-semibold px-1.5 py-1.5 rounded-lg transition-all ${quickTime===t?'bg-blue-600 text-white':'bg-[var(--app-bg)] border border-blue-950 text-[var(--app-muted)] hover:text-slate-200'}`}>{t}</button>
+                  <button key={t} onClick={()=>setQuickTime(t)} className={`text-[10px] font-semibold px-1.5 py-1.5 rounded-lg transition-all ${quickTime===t?'bg-blue-600 text-white':'bg-[var(--app-bg)] border border-[var(--app-border)] text-[var(--app-muted)] hover:text-slate-200'}`}>{t}</button>
                 ))}
               </div>
               <div className="flex flex-col gap-2">
                 {['Jenis Pajak','Status','Sumber','Area / Region','Customer','PPN Type'].map(lbl=>(
                   <div key={lbl} className="flex flex-col gap-0.5">
                     <label className="text-[9px] uppercase tracking-wider font-semibold text-[var(--app-muted)]">{lbl}</label>
-                    <select className="bg-[var(--app-bg)] border border-blue-950 rounded-lg px-2.5 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-blue-500"><option>Semua {lbl}</option></select>
+                    <select className="bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg px-2.5 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-blue-500"><option>Semua {lbl}</option></select>
                   </div>
                 ))}
                 <button className="w-full bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold py-2 rounded-lg mt-1 transition-colors">Terapkan Filter</button>
               </div>
             </div>
             {/* Aksi Cepat */}
-            <div className="bg-[var(--app-border)]/20 border border-blue-950 rounded-xl p-4">
+            <div className="bg-[var(--app-border)]/20 border border-[var(--app-border)] rounded-xl p-4">
               <h3 className="text-xs font-bold text-[var(--app-text)] mb-3">Aksi Cepat</h3>
               <div className="flex flex-col gap-1.5">
                 {[{label:'Lihat Detail Pajak',icon:Eye},{label:'Export Tax Report (Excel)',icon:FileDown},{label:'Export Tax Report (PDF)',icon:FileText},{label:'e-Faktur Summary',icon:Database},{label:'Withholding Tax Report',icon:FileText},{label:'Download Tax History',icon:Download},{label:'Rekonsiliasi Pajak',icon:RefreshCw}].map(({label,icon:Icon})=>(
-                  <button key={label} className="flex items-center justify-between px-3 py-2 rounded-lg bg-[var(--app-bg)] hover:bg-blue-950/30 border border-blue-950/40 hover:border-blue-500/30 text-xs text-slate-300 hover:text-white transition-all group">
+                  <button key={label} className="flex items-center justify-between px-3 py-2 rounded-lg bg-[var(--app-bg)] hover:bg-[var(--app-card-subtle)]/30 border border-[var(--app-border)] hover:border-blue-500/30 text-xs text-slate-300 hover:text-white transition-all group">
                     <div className="flex items-center gap-2"><Icon className="w-3.5 h-3.5 text-[var(--app-muted)] group-hover:text-blue-400 transition-colors"/><span>{label}</span></div>
                     <ChevronRight className="w-3 h-3 text-[var(--app-text)]/80 group-hover:text-slate-300 transition-colors"/>
                   </button>
@@ -368,7 +368,7 @@ export default function TaxReportPage() {
               </div>
             </div>
             {/* Insight */}
-            <div className="bg-[var(--app-border)]/20 border border-blue-950 rounded-xl p-4">
+            <div className="bg-[var(--app-border)]/20 border border-[var(--app-border)] rounded-xl p-4">
               <h3 className="text-xs font-bold text-[var(--app-text)] flex items-center gap-1.5 mb-3"><Info className="w-3.5 h-3.5 text-blue-400"/>Insight &amp; Rekomendasi</h3>
               <ul className="text-xs text-slate-300 flex flex-col gap-2 pl-4 list-disc marker:text-blue-400">
                 <li>PPN terutang naik <span className="text-emerald-400 font-semibold">17.25%</span> dibanding periode sebelumnya.</li>
@@ -380,25 +380,25 @@ export default function TaxReportPage() {
           </div>
         </div>
         {/* Detail Tax Report Table */}
-        <div className="bg-[var(--app-border)]/20 border border-blue-950 rounded-xl p-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-800/60">
+        <div className="bg-[var(--app-border)]/20 border border-[var(--app-border)] rounded-xl p-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-[var(--app-border)]">
             <h3 className="text-xs font-bold text-[var(--app-text)]">Detail Tax Report</h3>
             <div className="flex items-center gap-2">
               <div className="relative">
                 <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-[var(--app-muted)]"/>
-                <input type="text" placeholder="Cari nomor faktur, dokumen..." value={taxSearch} onChange={e=>setTaxSearch(e.target.value)} className="bg-[var(--app-bg)] border border-blue-950 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-300 placeholder-slate-600 focus:outline-none focus:border-blue-500 w-52 transition-colors"/>
+                <input type="text" placeholder="Cari nomor faktur, dokumen..." value={taxSearch} onChange={e=>setTaxSearch(e.target.value)} className="bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-300 placeholder-slate-600 focus:outline-none focus:border-blue-500 w-52 transition-colors"/>
               </div>
               <button className="flex items-center gap-1.5 bg-blue-600/10 hover:bg-blue-600/20 text-blue-400 border border-blue-500/20 text-xs px-3 py-1.5 rounded-lg">
                 <Filter className="w-3 h-3"/>Filter
                 <span className="bg-blue-600 text-white text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center">88</span>
               </button>
-              <button className="p-1.5 rounded-lg bg-[var(--app-bg)] border border-blue-950 text-[var(--app-muted)] hover:text-white"><MoreVertical className="w-3.5 h-3.5"/></button>
+              <button className="p-1.5 rounded-lg bg-[var(--app-bg)] border border-[var(--app-border)] text-[var(--app-muted)] hover:text-white"><MoreVertical className="w-3.5 h-3.5"/></button>
             </div>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="text-[var(--app-muted)] text-[10px] uppercase tracking-wider border-b border-slate-800/60">
+                <tr className="text-[var(--app-muted)] text-[10px] uppercase tracking-wider border-b border-[var(--app-border)]">
                   <th className="py-2.5 px-2 text-center w-8">NO</th>
                   <th className="py-2.5 px-2">Tanggal</th><th className="py-2.5 px-2">Jenis Pajak</th><th className="py-2.5 px-2">Dokumen</th>
                   <th className="py-2.5 px-2">Nomor</th><th className="py-2.5 px-2 text-right">DPP (Rp)</th><th className="py-2.5 px-2 text-right">Pajak (Rp)</th>
@@ -406,7 +406,7 @@ export default function TaxReportPage() {
                   <th className="py-2.5 px-2">Area / Region</th><th className="py-2.5 px-2 text-center">Aksi</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-900/40">
+              <tbody className="divide-y divide-[var(--app-border)]">
                 {filtered.map(row=>(
                   <tr key={row.no} className="hover:bg-[var(--app-card-subtle)] transition-colors">
                     <td className="py-2.5 px-2 text-center text-[var(--app-text-muted)]">{row.no}</td>
@@ -436,15 +436,15 @@ export default function TaxReportPage() {
             <span className="text-xs text-[var(--app-muted)]">Menampilkan 1 - {Math.min(perPage,filtered.length)} dari 245 data</span>
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1">
-                <button onClick={()=>setPage(p=>Math.max(1,p-1))} className="h-7 w-7 flex items-center justify-center rounded-lg bg-[var(--app-bg)] border border-blue-950 text-[var(--app-muted)] hover:text-white"><ChevronLeft className="w-3.5 h-3.5"/></button>
+                <button onClick={()=>setPage(p=>Math.max(1,p-1))} className="h-7 w-7 flex items-center justify-center rounded-lg bg-[var(--app-bg)] border border-[var(--app-border)] text-[var(--app-muted)] hover:text-white"><ChevronLeft className="w-3.5 h-3.5"/></button>
                 {[1,2,3,4,5].map(n=>(
-                  <button key={n} onClick={()=>setPage(n)} className={`h-7 w-7 flex items-center justify-center rounded-lg text-xs font-semibold transition-colors ${page===n?'bg-blue-600 text-white':'bg-[var(--app-bg)] border border-blue-950 text-[var(--app-muted)] hover:text-white'}`}>{n}</button>
+                  <button key={n} onClick={()=>setPage(n)} className={`h-7 w-7 flex items-center justify-center rounded-lg text-xs font-semibold transition-colors ${page===n?'bg-blue-600 text-white':'bg-[var(--app-bg)] border border-[var(--app-border)] text-[var(--app-muted)] hover:text-white'}`}>{n}</button>
                 ))}
                 <span className="text-[var(--app-text)]/80 text-xs px-1">...</span>
-                <button className="h-7 px-2 flex items-center justify-center rounded-lg bg-[var(--app-bg)] border border-blue-950 text-[var(--app-muted)] hover:text-white text-xs">49</button>
-                <button onClick={()=>setPage(p=>p+1)} className="h-7 w-7 flex items-center justify-center rounded-lg bg-[var(--app-bg)] border border-blue-950 text-[var(--app-muted)] hover:text-white"><ChevronRight className="w-3.5 h-3.5"/></button>
+                <button className="h-7 px-2 flex items-center justify-center rounded-lg bg-[var(--app-bg)] border border-[var(--app-border)] text-[var(--app-muted)] hover:text-white text-xs">49</button>
+                <button onClick={()=>setPage(p=>p+1)} className="h-7 w-7 flex items-center justify-center rounded-lg bg-[var(--app-bg)] border border-[var(--app-border)] text-[var(--app-muted)] hover:text-white"><ChevronRight className="w-3.5 h-3.5"/></button>
               </div>
-              <select value={perPage} onChange={e=>setPerPage(Number(e.target.value))} className="bg-[var(--app-bg)] border border-blue-950 rounded-lg px-2.5 py-1 text-xs text-slate-300 focus:outline-none focus:border-blue-500">
+              <select value={perPage} onChange={e=>setPerPage(Number(e.target.value))} className="bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg px-2.5 py-1 text-xs text-slate-300 focus:outline-none focus:border-blue-500">
                 <option value={10}>10 / halaman</option><option value={20}>20 / halaman</option><option value={50}>50 / halaman</option>
               </select>
             </div>

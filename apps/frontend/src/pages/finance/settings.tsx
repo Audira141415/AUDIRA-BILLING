@@ -132,7 +132,7 @@ export default function FinanceSettings() {
 
   return (
     <Layout>
-      <div className="bg-[var(--app-bg)] text-slate-100 min-h-screen p-6 font-sans antialiased selection:bg-cyan-500 selection:text-white relative">
+      <div className="bg-[var(--app-bg)] text-[var(--app-text)] min-h-screen p-6 font-sans antialiased selection:bg-cyan-500 selection:text-white relative">
         
         {/* Toast Notification */}
         {showSavedToast && (
@@ -150,7 +150,7 @@ export default function FinanceSettings() {
               <span>&gt;</span>
               <span className="text-cyan-400 font-medium">Pengaturan</span>
             </div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">Pengaturan Finance</h1>
+            <h1 className="text-2xl font-bold text-[var(--app-text)] tracking-tight">Pengaturan Finance</h1>
             <p className="text-xs text-[var(--app-muted)] mt-0.5">Kelola konfigurasi sistem keuangan sesuai kebutuhan bisnis Anda.</p>
           </div>
           
@@ -166,14 +166,14 @@ export default function FinanceSettings() {
         </div>
 
         {/* TABS HEADER */}
-        <div className="flex items-center gap-1 border-b border-slate-800/80 mb-6 overflow-x-auto scrollbar-thin scrollbar-track-transparent">
+        <div className="flex items-center gap-1 border-b border-[var(--app-border)] mb-6 overflow-x-auto scrollbar-thin scrollbar-track-transparent">
           {tabsList.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`text-xs px-4 py-3 border-b-2 font-medium transition-all whitespace-nowrap cursor-pointer ${
                 activeTab === tab
-                  ? 'border-blue-500 text-blue-400 bg-blue-950/10'
+                  ? 'border-blue-500 text-blue-400 bg-[var(--app-card-subtle)]/10'
                   : 'border-transparent text-[var(--app-muted)] hover:text-slate-200'
               }`}
             >
@@ -199,7 +199,7 @@ export default function FinanceSettings() {
                   { title: 'Bahasa', desc: 'Atur bahasa yang digunakan di modul finance.', icon: Globe },
                   { title: 'Preferensi Tampilan', desc: 'Atur tampilan tabel, kolom default, dan preferensi visual.', icon: Monitor }
                 ].map((item, idx) => (
-                  <div key={idx} className="bg-[#0B1528]/50 border border-slate-900 rounded-xl p-4.5 flex flex-col justify-between hover:border-slate-800 transition-colors">
+                  <div key={idx} className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4.5 flex flex-col justify-between hover:border-[var(--app-border)] transition-colors">
                     <div>
                       <div className="bg-blue-600/10 w-9 h-9 flex items-center justify-center rounded-lg text-blue-500 mb-3">
                         <item.icon className="w-4.5 h-4.5" />
@@ -216,7 +216,7 @@ export default function FinanceSettings() {
                           openManageModal(item.title);
                         }
                       }}
-                      className="w-full text-center bg-[var(--app-bg)] hover:bg-[#081120] border border-slate-800 rounded-lg text-[10px] font-semibold text-slate-300 py-2 transition-colors cursor-pointer"
+                      className="w-full text-center bg-[var(--app-bg)] hover:bg-[#081120] border border-[var(--app-border)] rounded-lg text-[10px] font-semibold text-slate-300 py-2 transition-colors cursor-pointer"
                     >
                       Kelola
                     </button>
@@ -236,7 +236,7 @@ export default function FinanceSettings() {
                   { title: 'Saldo Awal', desc: 'Atur saldo awal untuk akun tertentu.', icon: Coins },
                   { title: 'Aturan Jurnal', desc: 'Atur aturan otomatis jurnal dan validasi.', icon: FileSpreadsheet }
                 ].map((item, idx) => (
-                  <div key={idx} className="bg-[#0B1528]/50 border border-slate-900 rounded-xl p-4.5 flex flex-col justify-between hover:border-slate-800 transition-colors">
+                  <div key={idx} className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4.5 flex flex-col justify-between hover:border-[var(--app-border)] transition-colors">
                     <div>
                       <div className="bg-blue-600/10 w-9 h-9 flex items-center justify-center rounded-lg text-blue-500 mb-3">
                         <item.icon className="w-4.5 h-4.5" />
@@ -246,7 +246,7 @@ export default function FinanceSettings() {
                     </div>
                     <button 
                       onClick={() => openManageModal(item.title)}
-                      className="w-full text-center bg-[var(--app-bg)] hover:bg-[#081120] border border-slate-800 rounded-lg text-[10px] font-semibold text-slate-300 py-2 transition-colors cursor-pointer"
+                      className="w-full text-center bg-[var(--app-bg)] hover:bg-[#081120] border border-[var(--app-border)] rounded-lg text-[10px] font-semibold text-slate-300 py-2 transition-colors cursor-pointer"
                     >
                       Kelola
                     </button>
@@ -266,7 +266,7 @@ export default function FinanceSettings() {
                   { title: 'Aturan Pajak', desc: 'Atur aturan pajak (inklusi, eksklusi, threshold).', icon: ShieldCheck },
                   { title: 'Klasifikasi NPWP', desc: 'Kelola jenis NPWP (Pribadi, Badan, Luar Negeri).', icon: Monitor }
                 ].map((item, idx) => (
-                  <div key={idx} className="bg-[#0B1528]/50 border border-slate-900 rounded-xl p-4.5 flex flex-col justify-between hover:border-slate-800 transition-colors">
+                  <div key={idx} className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4.5 flex flex-col justify-between hover:border-[var(--app-border)] transition-colors">
                     <div>
                       <div className="bg-blue-600/10 w-9 h-9 flex items-center justify-center rounded-lg text-blue-500 mb-3">
                         <item.icon className="w-4.5 h-4.5" />
@@ -276,7 +276,7 @@ export default function FinanceSettings() {
                     </div>
                     <button 
                       onClick={() => openManageModal(item.title)}
-                      className="w-full text-center bg-[var(--app-bg)] hover:bg-[#081120] border border-slate-800 rounded-lg text-[10px] font-semibold text-slate-300 py-2 transition-colors cursor-pointer"
+                      className="w-full text-center bg-[var(--app-bg)] hover:bg-[#081120] border border-[var(--app-border)] rounded-lg text-[10px] font-semibold text-slate-300 py-2 transition-colors cursor-pointer"
                     >
                       Kelola
                     </button>
@@ -296,7 +296,7 @@ export default function FinanceSettings() {
                   { title: 'Termin Pembayaran', desc: 'Atur syarat dan termin pembayaran.', icon: Clock },
                   { title: 'Biaya & Komisi', desc: 'Atur biaya admin, komisi, dan potongan.', icon: Coins }
                 ].map((item, idx) => (
-                  <div key={idx} className="bg-[#0B1528]/50 border border-slate-900 rounded-xl p-4.5 flex flex-col justify-between hover:border-slate-800 transition-colors">
+                  <div key={idx} className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4.5 flex flex-col justify-between hover:border-[var(--app-border)] transition-colors">
                     <div>
                       <div className="bg-blue-600/10 w-9 h-9 flex items-center justify-center rounded-lg text-blue-500 mb-3">
                         <item.icon className="w-4.5 h-4.5" />
@@ -306,7 +306,7 @@ export default function FinanceSettings() {
                     </div>
                     <button 
                       onClick={() => openManageModal(item.title)}
-                      className="w-full text-center bg-[var(--app-bg)] hover:bg-[#081120] border border-slate-800 rounded-lg text-[10px] font-semibold text-slate-300 py-2 transition-colors cursor-pointer"
+                      className="w-full text-center bg-[var(--app-bg)] hover:bg-[#081120] border border-[var(--app-border)] rounded-lg text-[10px] font-semibold text-slate-300 py-2 transition-colors cursor-pointer"
                     >
                       Kelola
                     </button>
@@ -326,7 +326,7 @@ export default function FinanceSettings() {
                   { title: 'Nomor Pajak', desc: 'Atur format nomor dokumen pajak.', icon: FileSpreadsheet },
                   { title: 'Reset Nomor', desc: 'Reset atau ubah urutan nomor dokumen.', icon: RefreshCw }
                 ].map((item, idx) => (
-                  <div key={idx} className="bg-[#0B1528]/50 border border-slate-900 rounded-xl p-4.5 flex flex-col justify-between hover:border-slate-800 transition-colors">
+                  <div key={idx} className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4.5 flex flex-col justify-between hover:border-[var(--app-border)] transition-colors">
                     <div>
                       <div className="bg-blue-600/10 w-9 h-9 flex items-center justify-center rounded-lg text-blue-500 mb-3">
                         <item.icon className="w-4.5 h-4.5" />
@@ -336,7 +336,7 @@ export default function FinanceSettings() {
                     </div>
                     <button 
                       onClick={() => openManageModal(item.title)}
-                      className="w-full text-center bg-[var(--app-bg)] hover:bg-[#081120] border border-slate-800 rounded-lg text-[10px] font-semibold text-slate-300 py-2 transition-colors cursor-pointer"
+                      className="w-full text-center bg-[var(--app-bg)] hover:bg-[#081120] border border-[var(--app-border)] rounded-lg text-[10px] font-semibold text-slate-300 py-2 transition-colors cursor-pointer"
                     >
                       Kelola
                     </button>
@@ -356,7 +356,7 @@ export default function FinanceSettings() {
                   { title: 'Audit Trail', desc: 'Lihat log perubahan data keuangan.', icon: Clock },
                   { title: 'Hapus Data', desc: 'Hapus data tidak terpakai dengan aman.', icon: Trash2 }
                 ].map((item, idx) => (
-                  <div key={idx} className="bg-[#0B1528]/50 border border-slate-900 rounded-xl p-4.5 flex flex-col justify-between hover:border-slate-800 transition-colors">
+                  <div key={idx} className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4.5 flex flex-col justify-between hover:border-[var(--app-border)] transition-colors">
                     <div>
                       <div className="bg-blue-600/10 w-9 h-9 flex items-center justify-center rounded-lg text-blue-500 mb-3">
                         <item.icon className="w-4.5 h-4.5" />
@@ -366,7 +366,7 @@ export default function FinanceSettings() {
                     </div>
                     <button 
                       onClick={() => openManageModal(item.title)}
-                      className="w-full text-center bg-[var(--app-bg)] hover:bg-[#081120] border border-slate-800 rounded-lg text-[10px] font-semibold text-slate-300 py-2 transition-colors cursor-pointer"
+                      className="w-full text-center bg-[var(--app-bg)] hover:bg-[#081120] border border-[var(--app-border)] rounded-lg text-[10px] font-semibold text-slate-300 py-2 transition-colors cursor-pointer"
                     >
                       Kelola
                     </button>
@@ -381,8 +381,8 @@ export default function FinanceSettings() {
           <div className="space-y-6">
             
             {/* Company Info Sidebar Block */}
-            <div className="bg-[#0B1528]/50 border border-slate-900 rounded-xl p-5 shadow-sm relative">
-              <div className="flex items-center justify-between mb-4 border-b border-slate-900/60 pb-2">
+            <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5 shadow-sm relative">
+              <div className="flex items-center justify-between mb-4 border-b border-[var(--app-border)] pb-2">
                 <h2 className="text-xs font-bold text-white uppercase tracking-wider">Informasi Perusahaan</h2>
                 <button 
                   onClick={() => {
@@ -433,7 +433,7 @@ export default function FinanceSettings() {
                     {companyInfo.website}
                   </a>
                 </div>
-                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-900">
+                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[var(--app-border)]">
                   <div>
                     <div className="text-[var(--app-muted)] font-semibold uppercase tracking-wider text-[9px]">Mata Uang</div>
                     <div className="text-slate-200 mt-0.5">{companyInfo.currency.split(' - ')[0]}</div>
@@ -447,8 +447,8 @@ export default function FinanceSettings() {
             </div>
 
             {/* Config Sections status check */}
-            <div className="bg-[#0B1528]/50 border border-slate-900 rounded-xl p-5 shadow-sm">
-              <h2 className="text-xs font-bold text-white uppercase tracking-wider mb-4 border-b border-slate-900/50 pb-2">Status Pengaturan</h2>
+            <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5 shadow-sm">
+              <h2 className="text-xs font-bold text-white uppercase tracking-wider mb-4 border-b border-[var(--app-border)]/50 pb-2">Status Pengaturan</h2>
               <div className="space-y-3.5 text-xs">
                 {[
                   'Pengaturan Umum', 'Akun & Kategori', 'Pajak', 'Pembayaran', 
@@ -466,15 +466,15 @@ export default function FinanceSettings() {
             </div>
 
             {/* Settings Activity Logs */}
-            <div className="bg-[#0B1528]/50 border border-slate-900 rounded-xl p-5 shadow-sm">
-              <div className="flex items-center justify-between mb-4 border-b border-slate-900/50 pb-2">
+            <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5 shadow-sm">
+              <div className="flex items-center justify-between mb-4 border-b border-[var(--app-border)]/50 pb-2">
                 <h2 className="text-xs font-bold text-white uppercase tracking-wider">Aktivitas Terakhir</h2>
                 <button className="text-[10px] text-blue-400 font-semibold hover:underline">Lihat Semua</button>
               </div>
 
               <div className="space-y-4">
                 {activityLogs.map((log) => (
-                  <div key={log.id} className="space-y-0.5 border-b border-slate-900/50 pb-2.5 last:border-0 last:pb-0">
+                  <div key={log.id} className="space-y-0.5 border-b border-[var(--app-border)]/50 pb-2.5 last:border-0 last:pb-0">
                     <div className="flex items-center justify-between text-xs">
                       <span className="text-[var(--app-text)] font-semibold">{log.user}</span>
                       <span className="text-[9px] text-[var(--app-muted)]">{log.time.split(' ')[0]}</span>
@@ -495,8 +495,8 @@ export default function FinanceSettings() {
       {/* EDIT COMPANY PROFILE MODAL */}
       {showEditCompanyModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="bg-[#0A1629] border border-slate-800 w-full max-w-lg rounded-xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-150">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-800">
+          <div className="bg-[var(--app-surface)] border border-[var(--app-border)] w-full max-w-lg rounded-xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-150">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--app-border)]">
               <h3 className="text-sm font-bold text-white uppercase tracking-wider">Edit Informasi Perusahaan</h3>
               <button 
                 onClick={() => setShowEditCompanyModal(false)}
@@ -513,7 +513,7 @@ export default function FinanceSettings() {
                   type="text" 
                   value={tempCompanyInfo.name}
                   onChange={(e) => setTempCompanyInfo({ ...tempCompanyInfo, name: e.target.value })}
-                  className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500 font-medium"
+                  className="bg-[var(--app-bg)] border border-[var(--app-border)] text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500 font-medium"
                   required
                 />
               </div>
@@ -524,7 +524,7 @@ export default function FinanceSettings() {
                   type="text" 
                   value={tempCompanyInfo.npwp}
                   onChange={(e) => setTempCompanyInfo({ ...tempCompanyInfo, npwp: e.target.value })}
-                  className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500 font-medium"
+                  className="bg-[var(--app-bg)] border border-[var(--app-border)] text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500 font-medium"
                   required
                 />
               </div>
@@ -535,7 +535,7 @@ export default function FinanceSettings() {
                   value={tempCompanyInfo.address}
                   onChange={(e) => setTempCompanyInfo({ ...tempCompanyInfo, address: e.target.value })}
                   rows={2}
-                  className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500 leading-relaxed font-medium"
+                  className="bg-[var(--app-bg)] border border-[var(--app-border)] text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500 leading-relaxed font-medium"
                   required
                 />
               </div>
@@ -547,7 +547,7 @@ export default function FinanceSettings() {
                     type="text" 
                     value={tempCompanyInfo.phone}
                     onChange={(e) => setTempCompanyInfo({ ...tempCompanyInfo, phone: e.target.value })}
-                    className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500 font-medium"
+                    className="bg-[var(--app-bg)] border border-[var(--app-border)] text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500 font-medium"
                     required
                   />
                 </div>
@@ -558,7 +558,7 @@ export default function FinanceSettings() {
                     type="email" 
                     value={tempCompanyInfo.email}
                     onChange={(e) => setTempCompanyInfo({ ...tempCompanyInfo, email: e.target.value })}
-                    className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500 font-medium"
+                    className="bg-[var(--app-bg)] border border-[var(--app-border)] text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500 font-medium"
                     required
                   />
                 </div>
@@ -570,7 +570,7 @@ export default function FinanceSettings() {
                   type="text" 
                   value={tempCompanyInfo.website}
                   onChange={(e) => setTempCompanyInfo({ ...tempCompanyInfo, website: e.target.value })}
-                  className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500 font-medium"
+                  className="bg-[var(--app-bg)] border border-[var(--app-border)] text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500 font-medium"
                   required
                 />
               </div>
@@ -581,7 +581,7 @@ export default function FinanceSettings() {
                   <select 
                     value={tempCompanyInfo.currency}
                     onChange={(e) => setTempCompanyInfo({ ...tempCompanyInfo, currency: e.target.value })}
-                    className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500"
+                    className="bg-[var(--app-bg)] border border-[var(--app-border)] text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500"
                   >
                     <option>IDR - Rupiah</option>
                     <option>USD - Dollar US</option>
@@ -595,7 +595,7 @@ export default function FinanceSettings() {
                     type="text" 
                     value={tempCompanyInfo.fiscalYear}
                     onChange={(e) => setTempCompanyInfo({ ...tempCompanyInfo, fiscalYear: e.target.value })}
-                    className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2 w-full focus:outline-none focus:border-blue-500"
+                    className="bg-[var(--app-bg)] border border-[var(--app-border)] text-white rounded-lg p-2 w-full focus:outline-none focus:border-blue-500"
                     required
                   />
                 </div>
@@ -605,7 +605,7 @@ export default function FinanceSettings() {
                   <select
                     value={tempCompanyInfo.accountingPeriod}
                     onChange={(e) => setTempCompanyInfo({ ...tempCompanyInfo, accountingPeriod: e.target.value })}
-                    className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500"
+                    className="bg-[var(--app-bg)] border border-[var(--app-border)] text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500"
                   >
                     <option>Bulanan</option>
                     <option>Triwulanan</option>
@@ -614,7 +614,7 @@ export default function FinanceSettings() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-800">
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-[var(--app-border)]">
                 <button 
                   type="button"
                   onClick={() => setShowEditCompanyModal(false)}
@@ -637,8 +637,8 @@ export default function FinanceSettings() {
       {/* GENERIC MANAGE PARAMETERS MODAL */}
       {showManageModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="bg-[#0A1629] border border-slate-800 w-full max-w-md rounded-xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-150">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-800">
+          <div className="bg-[var(--app-surface)] border border-[var(--app-border)] w-full max-w-md rounded-xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-150">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--app-border)]">
               <h3 className="text-sm font-bold text-white uppercase tracking-wider">Kelola Parameter: {activeManageSection}</h3>
               <button 
                 onClick={() => setShowManageModal(false)}
@@ -649,10 +649,10 @@ export default function FinanceSettings() {
             </div>
             
             <div className="p-5 space-y-4 text-xs text-slate-300">
-              <div className="bg-[var(--app-bg)] border border-slate-900 rounded-lg p-4 space-y-2">
+              <div className="bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg p-4 space-y-2">
                 <p className="text-[10px] text-[var(--app-muted)]">Parameter saat ini untuk {activeManageSection} terkonfigurasi dengan standar bawaan (default) sistem keuangan AudiraNET.</p>
                 <div className="pt-2">
-                  <div className="flex justify-between items-center text-xs border-b border-slate-900/60 pb-1.5 mb-1.5">
+                  <div className="flex justify-between items-center text-xs border-b border-[var(--app-border)] pb-1.5 mb-1.5">
                     <span className="text-[var(--app-muted)]">Status Integrasi:</span>
                     <span className="text-emerald-400 font-bold">Terhubung</span>
                   </div>
@@ -668,11 +668,11 @@ export default function FinanceSettings() {
                 <input 
                   type="text" 
                   placeholder="Masukkan konfigurasi baru..."
-                  className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500"
+                  className="bg-[var(--app-bg)] border border-[var(--app-border)] text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-800">
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-[var(--app-border)]">
                 <button 
                   onClick={() => setShowManageModal(false)}
                   className="bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold px-4 py-2 rounded-lg cursor-pointer"

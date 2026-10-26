@@ -343,7 +343,7 @@ export default function BoosterPage() {
                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>Turbo Running
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[var(--app-bg)]0/10 text-[var(--app-muted)] border border-slate-500/20">
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-slate-500/10 text-[var(--app-muted)] border border-slate-500/20">
                             Selesai
                           </span>
                         )}

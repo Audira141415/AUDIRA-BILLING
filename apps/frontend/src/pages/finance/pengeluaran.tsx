@@ -221,7 +221,7 @@ export default function PengeluaranDashboard() {
               <span>/</span>
               <span className="text-emerald-500 font-semibold">Pengeluaran</span>
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-white">Pengeluaran</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-[var(--app-text)]">Pengeluaran</h1>
             <p className="text-xs text-[var(--app-muted)] mt-1">Kelola semua pengeluaran dan analisis performa biaya operasional.</p>
           </div>
           <div className="flex items-center gap-3">
@@ -234,7 +234,7 @@ export default function PengeluaranDashboard() {
             </button>
             <button 
               onClick={handleExport}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white border border-[var(--app-border)] transition-colors"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--app-card)] hover:bg-[var(--app-card-subtle)] text-xs font-semibold text-[var(--app-text)] border border-[var(--app-border)] shadow-xs transition-colors"
             >
               <Download className="w-3.5 h-3.5" />
               <span>Ekspor</span>
@@ -246,9 +246,9 @@ export default function PengeluaranDashboard() {
         {/* Top Metric Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 mb-6">
           {/* Total Pengeluaran */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <p className="text-[11px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Total Pengeluaran</p>
-            <h3 className="text-base font-bold text-white mt-1">Rp 82.730.500</h3>
+            <h3 className="text-base font-bold text-[var(--app-text)] mt-1">Rp 82.730.500</h3>
             <span className="text-[10px] text-emerald-400 flex items-center font-semibold mt-1">
               ▲ 8.4% <span className="text-[var(--app-muted)] font-normal ml-1">vs lalu</span>
             </span>
@@ -262,9 +262,9 @@ export default function PengeluaranDashboard() {
           </div>
 
           {/* Pengeluaran Operasional */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <p className="text-[11px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Pengeluaran Operasional</p>
-            <h3 className="text-base font-bold text-white mt-1">Rp 48.650.000</h3>
+            <h3 className="text-base font-bold text-[var(--app-text)] mt-1">Rp 48.650.000</h3>
             <span className="text-[10px] text-emerald-400 flex items-center font-semibold mt-1">
               ▲ 6.2% <span className="text-[var(--app-muted)] font-normal ml-1">vs lalu</span>
             </span>
@@ -278,9 +278,9 @@ export default function PengeluaranDashboard() {
           </div>
 
           {/* Pengeluaran Non Operasional */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <p className="text-[11px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Pengeluaran Non Operasional</p>
-            <h3 className="text-base font-bold text-white mt-1">Rp 12.830.000</h3>
+            <h3 className="text-base font-bold text-[var(--app-text)] mt-1">Rp 12.830.000</h3>
             <span className="text-[10px] text-rose-400 flex items-center font-semibold mt-1">
               ▼ 3.6% <span className="text-[var(--app-muted)] font-normal ml-1">vs lalu</span>
             </span>
@@ -294,9 +294,9 @@ export default function PengeluaranDashboard() {
           </div>
 
           {/* Pengeluaran Tetap */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <p className="text-[11px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Pengeluaran Tetap</p>
-            <h3 className="text-base font-bold text-white mt-1">Rp 21.250.000</h3>
+            <h3 className="text-base font-bold text-[var(--app-text)] mt-1">Rp 21.250.000</h3>
             <span className="text-[10px] text-emerald-400 flex items-center font-semibold mt-1">
               ▲ 9.1% <span className="text-[var(--app-muted)] font-normal ml-1">vs lalu</span>
             </span>
@@ -310,9 +310,9 @@ export default function PengeluaranDashboard() {
           </div>
 
           {/* Rata-rata per Hari */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <p className="text-[11px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Rata-rata per Hari</p>
-            <h3 className="text-base font-bold text-white mt-1">Rp 2.669.371</h3>
+            <h3 className="text-base font-bold text-[var(--app-text)] mt-1">Rp 2.669.371</h3>
             <span className="text-[10px] text-emerald-400 flex items-center font-semibold mt-1">
               ▲ 8.4% <span className="text-[var(--app-muted)] font-normal ml-1">vs lalu</span>
             </span>
@@ -326,9 +326,9 @@ export default function PengeluaranDashboard() {
           </div>
 
           {/* Transaksi Pengeluaran */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <p className="text-[11px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Transaksi Pengeluaran</p>
-            <h3 className="text-base font-bold text-white mt-1">342</h3>
+            <h3 className="text-base font-bold text-[var(--app-text)] mt-1">342</h3>
             <span className="text-[10px] text-emerald-400 flex items-center font-semibold mt-1">
               ▲ 11.2% <span className="text-[var(--app-muted)] font-normal ml-1">vs lalu</span>
             </span>
@@ -365,17 +365,17 @@ export default function PengeluaranDashboard() {
             {/* Charts Row */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
               {/* Tren Pengeluaran */}
-              <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4">
+              <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4">
                 <div className="flex justify-between items-center mb-4">
                   <h4 className="text-xs font-bold text-[var(--app-text)] tracking-wide uppercase">Tren Pengeluaran</h4>
-                  <span className="text-[10px] text-[var(--app-muted)] bg-blue-950/60 px-2 py-0.5 rounded border border-blue-900/30">7 Hari Terakhir</span>
+                  <span className="text-[10px] text-[var(--app-muted)] bg-[var(--app-card-subtle)] px-2 py-0.5 rounded border border-[var(--app-border)]">7 Hari Terakhir</span>
                 </div>
                 <div className="h-52">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={dailyTrendData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
                       <XAxis dataKey="name" stroke="#64748b" fontSize={10} tickLine={false} />
                       <YAxis stroke="#64748b" fontSize={10} tickLine={false} />
-                      <Tooltip contentStyle={{ backgroundColor: '#091526', borderColor: '#1E3A8A', color: '#FFF', fontSize: 11 }} />
+                      <Tooltip contentStyle={{ backgroundColor: 'var(--app-card)', borderColor: 'var(--app-border)', color: 'var(--app-text)', borderRadius: 8, fontSize: 11 }} />
                       <Area type="monotone" dataKey="Tren" stroke="#8b5cf6" strokeWidth={2.5} fill="rgba(139, 92, 246, 0.08)" dot={{ r: 3 }} />
                     </AreaChart>
                   </ResponsiveContainer>
@@ -383,7 +383,7 @@ export default function PengeluaranDashboard() {
               </div>
 
               {/* Pengeluaran per Kategori */}
-              <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4 flex flex-col justify-between">
+              <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 flex flex-col justify-between">
                 <h4 className="text-xs font-bold text-[var(--app-text)] tracking-wide uppercase mb-3">Pengeluaran per Kategori</h4>
                 <div className="flex items-center gap-4">
                   <div className="relative w-28 h-28 flex-shrink-0">
@@ -406,7 +406,7 @@ export default function PengeluaranDashboard() {
                     </ResponsiveContainer>
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
                       <p className="text-[8px] text-[var(--app-muted)] font-semibold uppercase">Total</p>
-                      <p className="text-[9px] font-bold text-white">82.7M</p>
+                      <p className="text-[9px] font-bold text-[var(--app-text)]">82.7M</p>
                     </div>
                   </div>
 
@@ -428,7 +428,7 @@ export default function PengeluaranDashboard() {
               </div>
 
               {/* Pengeluaran per Metode Pembayaran */}
-              <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4 flex flex-col justify-between">
+              <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 flex flex-col justify-between">
                 <h4 className="text-xs font-bold text-[var(--app-text)] tracking-wide uppercase mb-3">Pengeluaran per Metode Pembayaran</h4>
                 <div className="flex items-center gap-4">
                   <div className="relative w-28 h-28 flex-shrink-0">
@@ -451,7 +451,7 @@ export default function PengeluaranDashboard() {
                     </ResponsiveContainer>
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
                       <p className="text-[8px] text-[var(--app-muted)] font-semibold uppercase">Total</p>
-                      <p className="text-[9px] font-bold text-white">82.7M</p>
+                      <p className="text-[9px] font-bold text-[var(--app-text)]">82.7M</p>
                     </div>
                   </div>
 
@@ -476,7 +476,7 @@ export default function PengeluaranDashboard() {
             {/* Bottom Row: Filter, Table, Summaries */}
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
               {/* Filter Sidebar (1/4 column) */}
-              <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4 space-y-4">
+              <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 space-y-4">
                 <h3 className="text-xs font-bold text-[var(--app-text)] tracking-wide uppercase border-b border-[var(--app-border)]/60 pb-2">Filter Pengeluaran</h3>
 
                 <div className="space-y-3.5 text-xs">
@@ -487,7 +487,7 @@ export default function PengeluaranDashboard() {
                       type="text" 
                       value={filterPeriod}
                       onChange={(e) => setFilterPeriod(e.target.value)}
-                      className="w-full bg-[#081225] border border-blue-900/50 p-2 rounded text-white text-[11px]" 
+                      className="w-full bg-[var(--app-card-subtle)] border border-[var(--app-border)] p-2 rounded text-white text-[11px]" 
                     />
                   </div>
 
@@ -497,7 +497,7 @@ export default function PengeluaranDashboard() {
                     <select 
                       value={filterStatus}
                       onChange={(e) => setFilterStatus(e.target.value)}
-                      className="w-full bg-[#081225] border border-blue-900/50 p-2 rounded text-white text-[11px]"
+                      className="w-full bg-[var(--app-card-subtle)] border border-[var(--app-border)] p-2 rounded text-white text-[11px]"
                     >
                       <option>Semua Status</option>
                       <option>Lunas</option>
@@ -513,7 +513,7 @@ export default function PengeluaranDashboard() {
                     <select 
                       value={filterKategori}
                       onChange={(e) => setFilterKategori(e.target.value)}
-                      className="w-full bg-[#081225] border border-blue-900/50 p-2 rounded text-white text-[11px]"
+                      className="w-full bg-[var(--app-card-subtle)] border border-[var(--app-border)] p-2 rounded text-white text-[11px]"
                     >
                       <option>Semua Kategori</option>
                       <option>Server & Hosting</option>
@@ -531,7 +531,7 @@ export default function PengeluaranDashboard() {
                     <select 
                       value={filterVendor}
                       onChange={(e) => setFilterVendor(e.target.value)}
-                      className="w-full bg-[#081225] border border-blue-900/50 p-2 rounded text-white text-[11px]"
+                      className="w-full bg-[var(--app-card-subtle)] border border-[var(--app-border)] p-2 rounded text-white text-[11px]"
                     >
                       <option>Semua Vendor</option>
                     </select>
@@ -543,7 +543,7 @@ export default function PengeluaranDashboard() {
                     <select 
                       value={filterMetode}
                       onChange={(e) => setFilterMetode(e.target.value)}
-                      className="w-full bg-[#081225] border border-blue-900/50 p-2 rounded text-white text-[11px]"
+                      className="w-full bg-[var(--app-card-subtle)] border border-[var(--app-border)] p-2 rounded text-white text-[11px]"
                     >
                       <option>Semua Metode</option>
                       <option>Transfer Bank</option>
@@ -559,7 +559,7 @@ export default function PengeluaranDashboard() {
                     <select 
                       value={filterProyek}
                       onChange={(e) => setFilterProyek(e.target.value)}
-                      className="w-full bg-[#081225] border border-blue-900/50 p-2 rounded text-white text-[11px]"
+                      className="w-full bg-[var(--app-card-subtle)] border border-[var(--app-border)] p-2 rounded text-white text-[11px]"
                     >
                       <option>Semua Proyek</option>
                     </select>
@@ -574,7 +574,7 @@ export default function PengeluaranDashboard() {
                         placeholder="Rp 0" 
                         value={filterMinNominal}
                         onChange={(e) => setFilterMinNominal(e.target.value)}
-                        className="w-full bg-[#081225] border border-blue-900/50 p-2 rounded text-white text-[11px]" 
+                        className="w-full bg-[var(--app-card-subtle)] border border-[var(--app-border)] p-2 rounded text-white text-[11px]" 
                       />
                     </div>
                     <div className="space-y-1">
@@ -584,7 +584,7 @@ export default function PengeluaranDashboard() {
                         placeholder="Rp 0" 
                         value={filterMaxNominal}
                         onChange={(e) => setFilterMaxNominal(e.target.value)}
-                        className="w-full bg-[#081225] border border-blue-900/50 p-2 rounded text-white text-[11px]" 
+                        className="w-full bg-[var(--app-card-subtle)] border border-[var(--app-border)] p-2 rounded text-white text-[11px]" 
                       />
                     </div>
                   </div>
@@ -599,7 +599,7 @@ export default function PengeluaranDashboard() {
                     </button>
                     <button 
                       onClick={resetFilters}
-                      className="w-full py-2 bg-blue-950 hover:bg-blue-900 rounded text-xs font-semibold text-[var(--app-text)]/90 hover:text-white transition-colors border border-blue-900/30"
+                      className="w-full py-2 bg-[var(--app-card-subtle)] hover:bg-[var(--app-card-hover)] rounded text-xs font-semibold text-[var(--app-text)]/90 hover:text-white transition-colors border border-[var(--app-border)]"
                     >
                       Reset
                     </button>
@@ -617,32 +617,32 @@ export default function PengeluaranDashboard() {
                       <span className="text-[var(--app-text)]/90 flex items-center gap-1.5">
                         <span className="w-2 h-2 rounded bg-emerald-500"></span> Lunas
                       </span>
-                      <span className="font-semibold text-white">267 <span className="text-[10px] font-normal text-[var(--app-muted)]">(78.1%)</span></span>
+                      <span className="font-semibold text-[var(--app-text)]">267 <span className="text-[10px] font-normal text-[var(--app-muted)]">(78.1%)</span></span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-[var(--app-text)]/90 flex items-center gap-1.5">
                         <span className="w-2 h-2 rounded bg-amber-500"></span> Sebagian
                       </span>
-                      <span className="font-semibold text-white">36 <span className="text-[10px] font-normal text-[var(--app-muted)]">(10.5%)</span></span>
+                      <span className="font-semibold text-[var(--app-text)]">36 <span className="text-[10px] font-normal text-[var(--app-muted)]">(10.5%)</span></span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-[var(--app-text)]/90 flex items-center gap-1.5">
                         <span className="w-2 h-2 rounded bg-orange-500"></span> Belum Lunas
                       </span>
-                      <span className="font-semibold text-white">28 <span className="text-[10px] font-normal text-[var(--app-muted)]">(8.2%)</span></span>
+                      <span className="font-semibold text-[var(--app-text)]">28 <span className="text-[10px] font-normal text-[var(--app-muted)]">(8.2%)</span></span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-[var(--app-text)]/90 flex items-center gap-1.5">
                         <span className="w-2 h-2 rounded bg-red-600"></span> Dibatalkan
                       </span>
-                      <span className="font-semibold text-white">11 <span className="text-[10px] font-normal text-[var(--app-muted)]">(3.2%)</span></span>
+                      <span className="font-semibold text-[var(--app-text)]">11 <span className="text-[10px] font-normal text-[var(--app-muted)]">(3.2%)</span></span>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Table (2/4 columns) */}
-              <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4 lg:col-span-2 space-y-4">
+              <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 lg:col-span-2 space-y-4">
                 <div className="flex justify-between items-center gap-4">
                   <h3 className="text-xs font-bold text-[var(--app-text)] tracking-wide uppercase">Transaksi Pengeluaran Terbaru</h3>
                   <button 
@@ -669,16 +669,16 @@ export default function PengeluaranDashboard() {
                         <th className="py-2.5 font-medium text-center">AKSI</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-blue-950/40 text-[var(--app-text)]/90">
+                    <tbody className="divide-y divide-[var(--app-border)] text-[var(--app-text)]/90">
                       {filteredTransactions.map((tx, idx) => (
-                        <tr key={idx} className="hover:bg-blue-950/20">
+                        <tr key={idx} className="hover:bg-[var(--app-card-subtle)]/20">
                           <td className="py-3 text-[var(--app-muted)]">{tx.no}</td>
                           <td className="py-3 text-[var(--app-muted)] whitespace-nowrap">{tx.tanggal}</td>
                           <td className="py-3 font-semibold text-cyan-400 whitespace-nowrap">{tx.invoice}</td>
                           <td className="py-3 font-medium text-white">{tx.vendor}</td>
                           <td className="py-3 text-[var(--app-muted)]">{tx.kategori}</td>
                           <td className="py-3 text-[var(--app-text)]/90">{tx.metode}</td>
-                          <td className="py-3 text-right font-bold text-white whitespace-nowrap">{formatRupiah(tx.total)}</td>
+                          <td className="py-3 text-right font-bold text-[var(--app-text)] whitespace-nowrap">{formatRupiah(tx.total)}</td>
                           <td className="py-3 text-center">
                             <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-semibold ${
                               tx.status === 'Lunas' ? 'bg-emerald-500/15 text-emerald-400' :
@@ -729,7 +729,7 @@ export default function PengeluaranDashboard() {
                     <button className="px-2 py-1 rounded bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)]/90 font-semibold hover:border-cyan-500">&gt;</button>
                   </div>
                   <div>
-                    <select className="bg-[#081225] border border-[var(--app-border)] rounded p-1 text-[11px] text-white">
+                    <select className="bg-[var(--app-card-subtle)] border border-[var(--app-border)] rounded p-1 text-[11px] text-white">
                       <option>10 / halaman</option>
                     </select>
                   </div>
@@ -739,28 +739,28 @@ export default function PengeluaranDashboard() {
               {/* Summaries (1/4 column) */}
               <div className="space-y-6">
                 {/* Ringkasan Pengeluaran */}
-                <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4 space-y-3.5">
+                <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 space-y-3.5">
                   <h4 className="text-xs font-bold text-[var(--app-text)] tracking-wide uppercase border-b border-[var(--app-border)]/60 pb-2">Ringkasan Pengeluaran</h4>
                   <div className="space-y-2 text-xs text-[var(--app-text)]/90">
                     <div className="flex justify-between pb-1 border-b border-[var(--app-border)]/40">
                       <span>Total Pengeluaran</span>
-                      <span className="font-semibold text-white">Rp 82.730.500</span>
+                      <span className="font-semibold text-[var(--app-text)]">Rp 82.730.500</span>
                     </div>
                     <div className="flex justify-between pb-1 border-b border-[var(--app-border)]/40">
                       <span>Pengeluaran Operasional</span>
-                      <span className="font-semibold text-white">Rp 48.650.000</span>
+                      <span className="font-semibold text-[var(--app-text)]">Rp 48.650.000</span>
                     </div>
                     <div className="flex justify-between pb-1 border-b border-[var(--app-border)]/40">
                       <span>Pengeluaran Non Operasional</span>
-                      <span className="font-semibold text-white">Rp 12.830.000</span>
+                      <span className="font-semibold text-[var(--app-text)]">Rp 12.830.000</span>
                     </div>
                     <div className="flex justify-between pb-1 border-b border-[var(--app-border)]/40">
                       <span>Pengeluaran Tetap</span>
-                      <span className="font-semibold text-white">Rp 21.250.000</span>
+                      <span className="font-semibold text-[var(--app-text)]">Rp 21.250.000</span>
                     </div>
                     <div className="flex justify-between pb-1 border-b border-[var(--app-border)]/40">
                       <span>Pengeluaran Variabel</span>
-                      <span className="font-semibold text-white">Rp 27.400.000</span>
+                      <span className="font-semibold text-[var(--app-text)]">Rp 27.400.000</span>
                     </div>
                     <div className="flex justify-between pb-1 border-b border-[var(--app-border)]/40">
                       <span>Penghematan (Budget)</span>
@@ -774,7 +774,7 @@ export default function PengeluaranDashboard() {
                 </div>
 
                 {/* Top 5 Vendor */}
-                <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-4 space-y-3.5">
+                <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 space-y-3.5">
                   <div className="flex justify-between items-center border-b border-[var(--app-border)]/60 pb-2">
                     <h4 className="text-xs font-bold text-[var(--app-text)] tracking-wide uppercase">Top 5 Vendor</h4>
                     <button className="text-[10px] font-semibold text-cyan-400 hover:underline">Lihat Semua</button>
@@ -784,10 +784,10 @@ export default function PengeluaranDashboard() {
                       <div key={index} className="space-y-1">
                         <div className="flex justify-between items-center">
                           <span className="text-[11px] text-[var(--app-text)]/90 font-medium">{index + 1}. {d.name}</span>
-                          <span className="font-semibold text-white">{formatRupiah(d.value)}</span>
+                          <span className="font-semibold text-[var(--app-text)]">{formatRupiah(d.value)}</span>
                         </div>
                         {/* Progress bar */}
-                        <div className="w-full bg-blue-950/60 rounded-full h-1 border border-blue-900/20 overflow-hidden">
+                        <div className="w-full bg-[var(--app-card-subtle)] rounded-full h-1 border border-[var(--app-border)]/20 overflow-hidden">
                           <div 
                             className="bg-blue-600 h-full rounded-full" 
                             style={{ width: d.percent }}
@@ -806,7 +806,7 @@ export default function PengeluaranDashboard() {
         {/* Add Modal */}
         {showAddModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-            <form onSubmit={handleAddTransaction} className="bg-[#0A1629] border border-blue-900 rounded-xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+            <form onSubmit={handleAddTransaction} className="bg-[var(--app-surface)] border border-[var(--app-border)] rounded-xl max-w-md w-full p-6 space-y-4 shadow-2xl">
               <h3 className="text-sm font-bold text-white uppercase tracking-wider border-b border-[var(--app-border)] pb-2">Tambah Pengeluaran Baru</h3>
 
               <div className="grid grid-cols-2 gap-3 text-xs">
@@ -816,7 +816,7 @@ export default function PengeluaranDashboard() {
                     type="text" 
                     value={newDate} 
                     onChange={(e) => setNewDate(e.target.value)}
-                    className="w-full bg-[#081225] border border-[var(--app-border)] p-2 rounded text-white" 
+                    className="w-full bg-[var(--app-card-subtle)] border border-[var(--app-border)] p-2 rounded text-white" 
                   />
                 </div>
                 <div className="space-y-1">
@@ -825,7 +825,7 @@ export default function PengeluaranDashboard() {
                     type="text" 
                     value={newInvoice} 
                     onChange={(e) => setNewInvoice(e.target.value)}
-                    className="w-full bg-[#081225] border border-[var(--app-border)] p-2 rounded text-white" 
+                    className="w-full bg-[var(--app-card-subtle)] border border-[var(--app-border)] p-2 rounded text-white" 
                   />
                 </div>
               </div>
@@ -838,7 +838,7 @@ export default function PengeluaranDashboard() {
                   placeholder="Nama vendor..."
                   value={newVendor} 
                   onChange={(e) => setNewVendor(e.target.value)}
-                  className="w-full bg-[#081225] border border-[var(--app-border)] p-2 rounded text-white" 
+                  className="w-full bg-[var(--app-card-subtle)] border border-[var(--app-border)] p-2 rounded text-white" 
                 />
               </div>
 
@@ -848,7 +848,7 @@ export default function PengeluaranDashboard() {
                   <select 
                     value={newKategori} 
                     onChange={(e) => setNewKategori(e.target.value)}
-                    className="w-full bg-[#081225] border border-[var(--app-border)] p-2 rounded text-white"
+                    className="w-full bg-[var(--app-card-subtle)] border border-[var(--app-border)] p-2 rounded text-white"
                   >
                     <option>Server & Hosting</option>
                     <option>Bandwidth & Internet</option>
@@ -863,7 +863,7 @@ export default function PengeluaranDashboard() {
                   <select 
                     value={newMetode} 
                     onChange={(e) => setNewMetode(e.target.value)}
-                    className="w-full bg-[#081225] border border-[var(--app-border)] p-2 rounded text-white"
+                    className="w-full bg-[var(--app-card-subtle)] border border-[var(--app-border)] p-2 rounded text-white"
                   >
                     <option>Transfer Bank</option>
                     <option>Virtual Account</option>
@@ -882,7 +882,7 @@ export default function PengeluaranDashboard() {
                     placeholder="Contoh: 150000"
                     value={newTotal} 
                     onChange={(e) => setNewTotal(e.target.value)}
-                    className="w-full bg-[#081225] border border-[var(--app-border)] p-2 rounded text-white" 
+                    className="w-full bg-[var(--app-card-subtle)] border border-[var(--app-border)] p-2 rounded text-white" 
                   />
                 </div>
                 <div className="space-y-1">
@@ -890,7 +890,7 @@ export default function PengeluaranDashboard() {
                   <select 
                     value={newStatus} 
                     onChange={(e) => setNewStatus(e.target.value)}
-                    className="w-full bg-[#081225] border border-[var(--app-border)] p-2 rounded text-white"
+                    className="w-full bg-[var(--app-card-subtle)] border border-[var(--app-border)] p-2 rounded text-white"
                   >
                     <option>Lunas</option>
                     <option>Sebagian</option>
@@ -904,7 +904,7 @@ export default function PengeluaranDashboard() {
                 <button 
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 rounded bg-blue-950 hover:bg-blue-900 text-xs font-semibold text-[var(--app-text)]/90"
+                  className="px-4 py-2 rounded bg-[var(--app-card-subtle)] hover:bg-[var(--app-card-hover)] text-xs font-semibold text-[var(--app-text)]/90"
                 >
                   Batal
                 </button>

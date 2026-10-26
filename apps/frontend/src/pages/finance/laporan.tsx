@@ -180,7 +180,7 @@ export default function LaporanKeuangan() {
 
   return (
     <Layout>
-      <div className="bg-[var(--app-bg)] text-slate-100 min-h-screen p-6 font-sans antialiased selection:bg-cyan-500 selection:text-white">
+      <div className="bg-[var(--app-bg)] text-[var(--app-text)] min-h-screen p-6 font-sans antialiased selection:bg-cyan-500 selection:text-white">
         
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
@@ -196,7 +196,7 @@ export default function LaporanKeuangan() {
                 </>
               )}
             </div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">{activeTab === 'Ringkasan' ? 'Laporan Keuangan' : activeTab}</h1>
+            <h1 className="text-2xl font-bold text-[var(--app-text)] tracking-tight">{activeTab === 'Ringkasan' ? 'Laporan Keuangan' : activeTab}</h1>
             <p className="text-xs text-[var(--app-muted)] mt-0.5">
               {activeTab === 'Arsip Laporan' ? 'Kelola, cari, unduh dan kelola arsip semua laporan keuangan perusahaan dengan aman.' : 'Kelola dan analisis laporan keuangan perusahaan secara komprehensif.'}
             </p>
@@ -230,7 +230,7 @@ export default function LaporanKeuangan() {
         </div>
 
         {/* Tab Switcher Headers */}
-        <div className="flex items-center gap-1 border-b border-slate-800/80 mb-6 overflow-x-auto scrollbar-thin">
+        <div className="flex items-center gap-1 border-b border-[var(--app-border)] mb-6 overflow-x-auto scrollbar-thin">
           {['Ringkasan', 'Laporan Standar', 'Laporan Manajerial', 'Laporan Pajak', 'Laporan Kostum', 'Laporan Konsolidasi', 'Arsip Laporan', 'Pengaturan'].map((t) => {
             const isNew = ['Laporan Pajak', 'Laporan Kostum', 'Laporan Konsolidasi'].includes(t);
             return (
@@ -238,7 +238,7 @@ export default function LaporanKeuangan() {
                 key={t}
                 onClick={() => setActiveTab(t)}
                 className={`text-xs px-4 py-3 border-b-2 font-medium whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
-                  activeTab === t ? 'border-blue-500 text-blue-400 bg-blue-950/10' : 'border-transparent text-[var(--app-muted)] hover:text-slate-200'
+                  activeTab === t ? 'border-blue-500 text-blue-400 bg-[var(--app-card-subtle)]/10' : 'border-transparent text-[var(--app-muted)] hover:text-slate-200'
                 }`}
               >
                 <span>{t}</span>
@@ -257,7 +257,7 @@ export default function LaporanKeuangan() {
           <div className="space-y-6 animate-in fade-in duration-200">
             
             {/* Filter Parameter Query Form (12 filters exactly matching the image) */}
-            <div className="bg-[#0B1528]/50 border border-slate-900 rounded-xl p-4.5 shadow-sm text-xs space-y-3.5">
+            <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4.5 shadow-sm text-xs space-y-3.5">
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-3">
                 <div className="space-y-1">
                   <label className="block text-[var(--app-muted)] font-semibold">Cari Laporan</label>
@@ -268,13 +268,13 @@ export default function LaporanKeuangan() {
                       placeholder="Cari nama laporan, deskripsi..." 
                       value={archiveSearch}
                       onChange={e => setArchiveSearch(e.target.value)}
-                      className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2 pl-9 w-full focus:outline-none"
+                      className="bg-[var(--app-bg)] border border-[var(--app-border)] text-white rounded-lg p-2 pl-9 w-full focus:outline-none"
                     />
                   </div>
                 </div>
                 <div className="space-y-1">
                   <label className="block text-[var(--app-muted)] font-semibold">Jenis Laporan</label>
-                  <select value={archiveJenis} onChange={e => setArchiveJenis(e.target.value)} className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2 w-full">
+                  <select value={archiveJenis} onChange={e => setArchiveJenis(e.target.value)} className="bg-[var(--app-bg)] border border-[var(--app-border)] text-white rounded-lg p-2 w-full">
                     <option>Semua Jenis</option>
                     <option>Laporan Standar</option>
                     <option>Laporan Manajerial</option>
@@ -285,48 +285,48 @@ export default function LaporanKeuangan() {
                 </div>
                 <div className="space-y-1">
                   <label className="block text-[var(--app-muted)] font-semibold">Kategori</label>
-                  <select value={archiveKategori} onChange={e => setArchiveKategori(e.target.value)} className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2 w-full">
+                  <select value={archiveKategori} onChange={e => setArchiveKategori(e.target.value)} className="bg-[var(--app-bg)] border border-[var(--app-border)] text-white rounded-lg p-2 w-full">
                     <option>Semua Kategori</option>
                   </select>
                 </div>
                 <div className="space-y-1">
                   <label className="block text-[var(--app-muted)] font-semibold">Periode</label>
-                  <select value={archivePeriod} onChange={e => setArchivePeriod(e.target.value)} className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2 w-full">
+                  <select value={archivePeriod} onChange={e => setArchivePeriod(e.target.value)} className="bg-[var(--app-bg)] border border-[var(--app-border)] text-white rounded-lg p-2 w-full">
                     <option>Juni 2026</option>
                   </select>
                 </div>
                 <div className="space-y-1">
                   <label className="block text-[var(--app-muted)] font-semibold">Dari Tanggal</label>
-                  <input type="date" value={dariTanggal} onChange={e => setDariTanggal(e.target.value)} className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2 w-full" />
+                  <input type="date" value={dariTanggal} onChange={e => setDariTanggal(e.target.value)} className="bg-[var(--app-bg)] border border-[var(--app-border)] text-white rounded-lg p-2 w-full" />
                 </div>
                 <div className="space-y-1">
                   <label className="block text-[var(--app-muted)] font-semibold">Sampai Tanggal</label>
-                  <input type="date" value={sampaiTanggal} onChange={e => setSampaiTanggal(e.target.value)} className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2 w-full" />
+                  <input type="date" value={sampaiTanggal} onChange={e => setSampaiTanggal(e.target.value)} className="bg-[var(--app-bg)] border border-[var(--app-border)] text-white rounded-lg p-2 w-full" />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-7 gap-3 pt-1 border-t border-slate-900/60">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-7 gap-3 pt-1 border-t border-[var(--app-border)]">
                 <div className="space-y-1">
                   <label className="block text-[var(--app-muted)] font-semibold">Grup / Entitas</label>
-                  <select value={archiveGrup} onChange={e => setArchiveGrup(e.target.value)} className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2 w-full">
+                  <select value={archiveGrup} onChange={e => setArchiveGrup(e.target.value)} className="bg-[var(--app-bg)] border border-[var(--app-border)] text-white rounded-lg p-2 w-full">
                     <option>Semua Grup</option>
                   </select>
                 </div>
                 <div className="space-y-1">
                   <label className="block text-[var(--app-muted)] font-semibold">Entitas</label>
-                  <select value={archiveEntitas} onChange={e => setArchiveEntitas(e.target.value)} className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2 w-full">
+                  <select value={archiveEntitas} onChange={e => setArchiveEntitas(e.target.value)} className="bg-[var(--app-bg)] border border-[var(--app-border)] text-white rounded-lg p-2 w-full">
                     <option>Semua Entitas</option>
                   </select>
                 </div>
                 <div className="space-y-1">
                   <label className="block text-[var(--app-muted)] font-semibold">Dibuat Oleh</label>
-                  <select value={archiveUser} onChange={e => setArchiveUser(e.target.value)} className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2 w-full">
+                  <select value={archiveUser} onChange={e => setArchiveUser(e.target.value)} className="bg-[var(--app-bg)] border border-[var(--app-border)] text-white rounded-lg p-2 w-full">
                     <option>Semua User</option>
                   </select>
                 </div>
                 <div className="space-y-1">
                   <label className="block text-[var(--app-muted)] font-semibold">Status</label>
-                  <select value={archiveStatus} onChange={e => setArchiveStatus(e.target.value)} className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2 w-full">
+                  <select value={archiveStatus} onChange={e => setArchiveStatus(e.target.value)} className="bg-[var(--app-bg)] border border-[var(--app-border)] text-white rounded-lg p-2 w-full">
                     <option>Semua Status</option>
                     <option>Tersimpan</option>
                     <option>Dalam Retensi</option>
@@ -335,13 +335,13 @@ export default function LaporanKeuangan() {
                 </div>
                 <div className="space-y-1">
                   <label className="block text-[var(--app-muted)] font-semibold">Tag / Label</label>
-                  <select value={archiveTag} onChange={e => setArchiveTag(e.target.value)} className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2 w-full">
+                  <select value={archiveTag} onChange={e => setArchiveTag(e.target.value)} className="bg-[var(--app-bg)] border border-[var(--app-border)] text-white rounded-lg p-2 w-full">
                     <option>Semua Tag</option>
                   </select>
                 </div>
                 <div className="space-y-1">
                   <label className="block text-[var(--app-muted)] font-semibold">Urutkan</label>
-                  <select value={archiveOrder} onChange={e => setArchiveOrder(e.target.value)} className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2 w-full">
+                  <select value={archiveOrder} onChange={e => setArchiveOrder(e.target.value)} className="bg-[var(--app-bg)] border border-[var(--app-border)] text-white rounded-lg p-2 w-full">
                     <option>Terbaru</option>
                   </select>
                 </div>
@@ -360,16 +360,16 @@ export default function LaporanKeuangan() {
                 { label: 'Dalam Retensi', val: '48', change: '-2 dari bulan lalu' },
                 { label: 'Akan Dihapus', val: '10', change: 'dalam 30 hari' }
               ].map((it, idx) => (
-                <div key={idx} className="bg-[#0B1528]/80 border border-[var(--app-border)] rounded-xl p-4.5">
+                <div key={idx} className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4.5">
                   <div className="text-[var(--app-muted)] text-[10px] font-semibold uppercase tracking-wider">{it.label}</div>
                   <div className="text-2xl font-bold text-white mt-1.5">{it.val}</div>
                   <div className="text-[9px] text-[var(--app-muted)] mt-1">{it.change}</div>
                 </div>
               ))}
-              <div className="bg-[#0B1528]/80 border border-[var(--app-border)] rounded-xl p-4.5 flex flex-col justify-between">
+              <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4.5 flex flex-col justify-between">
                 <div>
                   <div className="text-[var(--app-muted)] text-[10px] font-semibold uppercase tracking-wider">Total Ukuran</div>
-                  <div className="text-lg font-bold text-white mt-1">12.45 GB <span className="text-[10px] text-[var(--app-muted)] font-normal">/ 25 GB</span></div>
+                  <div className="text-lg font-bold text-[var(--app-text)] mt-1">12.45 GB <span className="text-[10px] text-[var(--app-muted)] font-normal">/ 25 GB</span></div>
                 </div>
                 <div className="w-full bg-[var(--app-bg)] h-1.5 rounded-full overflow-hidden mt-1">
                   <div className="bg-blue-600 h-full rounded-full" style={{ width: '49.8%' }} />
@@ -382,8 +382,8 @@ export default function LaporanKeuangan() {
             <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
               
               {/* TABLE LIST */}
-              <div className="xl:col-span-3 bg-[#0B1528]/50 border border-slate-900 rounded-xl p-5 space-y-6">
-                <div className="flex items-center justify-between border-b border-slate-900 pb-3">
+              <div className="xl:col-span-3 bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5 space-y-6">
+                <div className="flex items-center justify-between border-b border-[var(--app-border)] pb-3">
                   <h3 className="text-xs font-bold text-white uppercase tracking-wider">Daftar Arsip Laporan</h3>
                   <div className="flex items-center gap-2">
                     <button className="text-xs bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded border border-slate-700/80 cursor-pointer">Aksi Massal</button>
@@ -393,7 +393,7 @@ export default function LaporanKeuangan() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse text-xs">
                     <thead>
-                      <tr className="border-b border-slate-800 text-[var(--app-muted)] font-semibold uppercase tracking-wider">
+                      <tr className="border-b border-[var(--app-border)] text-[var(--app-muted)] font-semibold uppercase tracking-wider">
                         <th className="py-2.5 px-3 w-8 text-center"><input type="checkbox" /></th>
                         <th className="py-2.5 px-3 w-10 text-center">NO</th>
                         <th className="py-2.5 px-3">NAMA LAPORAN</th>
@@ -412,7 +412,7 @@ export default function LaporanKeuangan() {
                         <tr 
                           key={item.id} 
                           onClick={() => setSelectedArchiveItem(item)}
-                          className={`border-b border-slate-900 hover:bg-slate-950/40 transition-colors cursor-pointer ${selectedArchiveItem.id === item.id ? 'bg-[#0E1B35]/30' : ''}`}
+                          className={`border-b border-[var(--app-border)] hover:bg-[var(--app-card-subtle)] transition-colors cursor-pointer ${selectedArchiveItem.id === item.id ? 'bg-[#0E1B35]/30' : ''}`}
                         >
                           <td className="py-3.5 px-3 text-center"><input type="checkbox" onClick={e => e.stopPropagation()} /></td>
                           <td className="py-3.5 px-3 text-center text-[var(--app-muted)]">{idx + 1}</td>
@@ -453,8 +453,8 @@ export default function LaporanKeuangan() {
               {/* DETAILS SIDEBAR */}
               <div className="space-y-6">
                 
-                <div className="bg-[#0B1528]/50 border border-slate-900 rounded-xl p-5 space-y-4 text-xs">
-                  <div className="flex justify-between items-center border-b border-slate-900 pb-2">
+                <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5 space-y-4 text-xs">
+                  <div className="flex justify-between items-center border-b border-[var(--app-border)] pb-2">
                     <h3 className="text-xs font-bold text-white uppercase tracking-wider">Detail Laporan</h3>
                     <span className="bg-emerald-500/10 text-emerald-400 font-bold px-2 py-0.5 rounded text-[9px]">{selectedArchiveItem.status}</span>
                   </div>
@@ -462,7 +462,7 @@ export default function LaporanKeuangan() {
                   <div className="space-y-3.5 text-slate-300">
                     <div>
                       <span className="text-[10px] text-[var(--app-muted)] block uppercase font-bold">Nama Laporan</span>
-                      <span className="font-semibold text-white mt-1 block">{selectedArchiveItem.nama}</span>
+                      <span className="font-semibold text-[var(--app-text)] mt-1 block">{selectedArchiveItem.nama}</span>
                     </div>
                     <div className="grid grid-cols-2 gap-2">
                       <div>
@@ -511,8 +511,8 @@ export default function LaporanKeuangan() {
                   </div>
                 </div>
 
-                <div className="bg-[#0B1528]/50 border border-slate-900 rounded-xl p-5 space-y-2.5 text-xs">
-                  <h3 className="text-xs font-bold text-white uppercase tracking-wider border-b border-slate-900 pb-2 mb-1">Aksi Cepat</h3>
+                <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5 space-y-2.5 text-xs">
+                  <h3 className="text-xs font-bold text-white uppercase tracking-wider border-b border-[var(--app-border)] pb-2 mb-1">Aksi Cepat</h3>
                   <button className="w-full flex items-center justify-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-[var(--app-text)] font-bold py-2.5 rounded-lg cursor-pointer">
                     <Eye className="w-4 h-4" />
                     <span>Lihat Laporan</span>
@@ -543,8 +543,8 @@ export default function LaporanKeuangan() {
                   </button>
                 </div>
 
-                <div className="bg-[#0B1528]/50 border border-slate-900 rounded-xl p-5 space-y-4 text-xs">
-                  <h3 className="text-xs font-bold text-white uppercase tracking-wider border-b border-slate-900 pb-2">Riwayat Aktivitas</h3>
+                <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5 space-y-4 text-xs">
+                  <h3 className="text-xs font-bold text-white uppercase tracking-wider border-b border-[var(--app-border)] pb-2">Riwayat Aktivitas</h3>
                   <div className="space-y-3.5">
                     {[
                       { type: 'dibuat', user: 'Agus Dwi Rianto', time: '22/10/2026 08:30' },
@@ -574,8 +574,8 @@ export default function LaporanKeuangan() {
         {activeTab === 'Pengaturan' && (
           <div className="space-y-6 animate-in fade-in duration-200">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <div className="bg-[#0B1528]/50 border border-slate-900 rounded-xl p-5 space-y-4 text-xs">
-                <h3 className="font-bold text-white uppercase tracking-wider text-[10px] border-b border-slate-900 pb-2 flex items-center gap-1.5"><Sliders className="w-3.5 h-3.5 text-blue-500" /><span>Pengaturan Umum</span></h3>
+              <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5 space-y-4 text-xs">
+                <h3 className="font-bold text-white uppercase tracking-wider text-[10px] border-b border-[var(--app-border)] pb-2 flex items-center gap-1.5"><Sliders className="w-3.5 h-3.5 text-blue-500" /><span>Pengaturan Umum</span></h3>
                 <div className="space-y-3 text-slate-300">
                   <div className="flex justify-between items-center py-1"><span>Aktifkan Multi Entitas</span><button onClick={() => setMultiEntity(!multiEntity)}>{multiEntity ? <ToggleRight className="w-8 h-8 text-blue-500" /> : <ToggleLeft className="w-8 h-8 text-[var(--app-text)]/80" />}</button></div>
                 </div>

@@ -234,7 +234,7 @@ export default function TransaksiDashboard() {
               <span>/</span>
               <span className="text-emerald-500 font-semibold">Jurnal Umum Transaksi</span>
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-white">Transaksi</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-[var(--app-text)]">Transaksi</h1>
             <p className="text-xs text-[var(--app-muted)] mt-1">Kelola semua transaksi keuangan perusahaan secara realtime.</p>
           </div>
           <div className="flex items-center gap-3">
@@ -247,7 +247,7 @@ export default function TransaksiDashboard() {
             </button>
             <button 
               onClick={() => alert('Mengekspor daftar transaksi...')}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white border border-[var(--app-border)] transition-colors"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--app-card)] hover:bg-[var(--app-card-subtle)] text-xs font-semibold text-[var(--app-text)] border border-[var(--app-border)] shadow-xs transition-colors"
             >
               <Download className="w-3.5 h-3.5" />
               <span>Ekspor</span>
@@ -259,14 +259,14 @@ export default function TransaksiDashboard() {
         {/* Top Metric Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
           {/* Total Transaksi */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
               <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Total Transaksi</p>
               <div className="p-1.5 rounded-lg bg-blue-600/10 border border-blue-600/20 text-blue-400">
                 <Wallet className="w-3.5 h-3.5" />
               </div>
             </div>
-            <h3 className="text-base font-bold text-white">{totalTrxCount}</h3>
+            <h3 className="text-base font-bold text-[var(--app-text)]">{totalTrxCount}</h3>
             <span className="text-[9px] text-emerald-400 flex items-center font-semibold mt-1">
               <TrendingUp className="w-3.5 h-3.5 mr-0.5" />
               ▲ 12.5% dari periode lalu
@@ -274,14 +274,14 @@ export default function TransaksiDashboard() {
           </div>
 
           {/* Debit */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
               <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Debit</p>
               <div className="p-1.5 rounded-lg bg-rose-600/10 border border-rose-600/20 text-rose-400">
                 <Scale className="w-3.5 h-3.5" />
               </div>
             </div>
-            <h3 className="text-base font-bold text-white">{formatRupiah(debitTotal)}</h3>
+            <h3 className="text-base font-bold text-[var(--app-text)]">{formatRupiah(debitTotal)}</h3>
             <span className="text-[9px] text-rose-400 flex items-center font-semibold mt-1">
               <TrendingUp className="w-3.5 h-3.5 mr-0.5" />
               ▲ 8.6% dari periode lalu
@@ -289,14 +289,14 @@ export default function TransaksiDashboard() {
           </div>
 
           {/* Kredit */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
               <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Kredit</p>
               <div className="p-1.5 rounded-lg bg-emerald-600/10 border border-emerald-600/20 text-emerald-400">
                 <CheckSquare className="w-3.5 h-3.5" />
               </div>
             </div>
-            <h3 className="text-base font-bold text-white">{formatRupiah(kreditTotal)}</h3>
+            <h3 className="text-base font-bold text-[var(--app-text)]">{formatRupiah(kreditTotal)}</h3>
             <span className="text-[9px] text-emerald-400 flex items-center font-semibold mt-1">
               <TrendingUp className="w-3.5 h-3.5 mr-0.5" />
               ▲ 15.3% dari periode lalu
@@ -304,38 +304,38 @@ export default function TransaksiDashboard() {
           </div>
 
           {/* Saldo Akhir */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
               <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Saldo Akhir</p>
               <div className="p-1.5 rounded-lg bg-blue-600/10 border border-blue-600/20 text-blue-400">
                 <Calculator className="w-3.5 h-3.5" />
               </div>
             </div>
-            <h3 className="text-base font-bold text-white">{formatRupiah(saldoAkhir)}</h3>
+            <h3 className="text-base font-bold text-[var(--app-text)]">{formatRupiah(saldoAkhir)}</h3>
             <span className="text-[9px] text-emerald-400 font-semibold mt-1">▲ 21.8% dari periode lalu</span>
           </div>
 
           {/* Rata-rata per Hari */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
               <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Rata-rata per Hari</p>
               <div className="p-1.5 rounded-lg bg-purple-600/10 border border-purple-600/20 text-purple-400">
                 <Percent className="w-3.5 h-3.5" />
               </div>
             </div>
-            <h3 className="text-base font-bold text-white">{averagePerDay}</h3>
+            <h3 className="text-base font-bold text-[var(--app-text)]">{averagePerDay}</h3>
             <span className="text-[9px] text-emerald-400 font-semibold mt-1">▲ 9.7% dari periode lalu</span>
           </div>
 
           {/* Transaksi Tertunda */}
-          <div className="bg-[#0A1629]/70 border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 hover:border-cyan-500/40 transition-all duration-300">
             <div className="flex justify-between items-start mb-2">
               <p className="text-[10px] font-semibold text-[var(--app-muted)] uppercase tracking-wider">Transaksi Tertunda</p>
               <div className="p-1.5 rounded-lg bg-orange-600/10 border border-orange-600/20 text-orange-400">
                 <Calculator className="w-3.5 h-3.5" />
               </div>
             </div>
-            <h3 className="text-base font-bold text-white">{pendingTrx}</h3>
+            <h3 className="text-base font-bold text-[var(--app-text)]">{pendingTrx}</h3>
             <span className="text-[9px] text-rose-400 font-semibold mt-1">▲ 5.2% dari periode lalu</span>
           </div>
         </div>
@@ -362,7 +362,7 @@ export default function TransaksiDashboard() {
           
           {/* Left Column: Filter Sidebar (3 Columns) */}
           <div className="lg:col-span-3 space-y-6">
-            <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
+            <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5">
               <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-4 pb-2 border-b border-[var(--app-border)]/60">Filter Transaksi</h3>
               
               <div className="space-y-4 text-xs">
@@ -372,7 +372,7 @@ export default function TransaksiDashboard() {
                     type="text"
                     value={filterPeriod}
                     onChange={(e) => setFilterPeriod(e.target.value)}
-                    className="w-full bg-[#081225] border border-blue-900/50 p-2.5 rounded text-white text-[11px] focus:outline-none focus:border-cyan-500"
+                    className="w-full bg-[var(--app-card-subtle)] border border-[var(--app-border)] p-2.5 rounded text-white text-[11px] focus:outline-none focus:border-cyan-500"
                   />
                 </div>
                 <div>
@@ -380,7 +380,7 @@ export default function TransaksiDashboard() {
                   <select
                     value={filterType}
                     onChange={(e) => setFilterType(e.target.value)}
-                    className="w-full bg-[#081225] border border-blue-900/50 p-2.5 rounded text-white text-[11px] focus:outline-none focus:border-cyan-500"
+                    className="w-full bg-[var(--app-card-subtle)] border border-[var(--app-border)] p-2.5 rounded text-white text-[11px] focus:outline-none focus:border-cyan-500"
                   >
                     <option>Semua Tipe</option>
                     <option>Pemasukan</option>
@@ -393,7 +393,7 @@ export default function TransaksiDashboard() {
                   <select
                     value={filterCategory}
                     onChange={(e) => setFilterCategory(e.target.value)}
-                    className="w-full bg-[#081225] border border-blue-900/50 p-2.5 rounded text-white text-[11px] focus:outline-none focus:border-cyan-500"
+                    className="w-full bg-[var(--app-card-subtle)] border border-[var(--app-border)] p-2.5 rounded text-white text-[11px] focus:outline-none focus:border-cyan-500"
                   >
                     <option>Semua Kategori</option>
                     <option>Pendapatan</option>
@@ -407,7 +407,7 @@ export default function TransaksiDashboard() {
                   <select
                     value={filterAccount}
                     onChange={(e) => setFilterAccount(e.target.value)}
-                    className="w-full bg-[#081225] border border-blue-900/50 p-2.5 rounded text-white text-[11px] focus:outline-none focus:border-cyan-500"
+                    className="w-full bg-[var(--app-card-subtle)] border border-[var(--app-border)] p-2.5 rounded text-white text-[11px] focus:outline-none focus:border-cyan-500"
                   >
                     <option>Semua Akun</option>
                     <option>Kas & Bank</option>
@@ -421,7 +421,7 @@ export default function TransaksiDashboard() {
                   <select
                     value={filterMethod}
                     onChange={(e) => setFilterMethod(e.target.value)}
-                    className="w-full bg-[#081225] border border-blue-900/50 p-2.5 rounded text-white text-[11px] focus:outline-none focus:border-cyan-500"
+                    className="w-full bg-[var(--app-card-subtle)] border border-[var(--app-border)] p-2.5 rounded text-white text-[11px] focus:outline-none focus:border-cyan-500"
                   >
                     <option>Semua Metode</option>
                     <option>Transfer Bank</option>
@@ -434,7 +434,7 @@ export default function TransaksiDashboard() {
                   <select
                     value={filterStatus}
                     onChange={(e) => setFilterStatus(e.target.value)}
-                    className="w-full bg-[#081225] border border-blue-900/50 p-2.5 rounded text-white text-[11px] focus:outline-none focus:border-cyan-500"
+                    className="w-full bg-[var(--app-card-subtle)] border border-[var(--app-border)] p-2.5 rounded text-white text-[11px] focus:outline-none focus:border-cyan-500"
                   >
                     <option>Semua Status</option>
                     <option>Selesai</option>
@@ -450,14 +450,14 @@ export default function TransaksiDashboard() {
                       placeholder="Min"
                       value={filterMinAmount}
                       onChange={(e) => setFilterMinAmount(e.target.value)}
-                      className="w-full bg-[#081225] border border-blue-900/50 p-2 rounded text-white"
+                      className="w-full bg-[var(--app-card-subtle)] border border-[var(--app-border)] p-2 rounded text-white"
                     />
                     <input
                       type="number"
                       placeholder="Max"
                       value={filterMaxAmount}
                       onChange={(e) => setFilterMaxAmount(e.target.value)}
-                      className="w-full bg-[#081225] border border-blue-900/50 p-2 rounded text-white"
+                      className="w-full bg-[var(--app-card-subtle)] border border-[var(--app-border)] p-2 rounded text-white"
                     />
                   </div>
                 </div>
@@ -474,7 +474,7 @@ export default function TransaksiDashboard() {
             </div>
 
             {/* Ringkasan Transaksi Persentase Card */}
-            <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
+            <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5">
               <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-4 border-b border-[var(--app-border)] pb-2">Ringkasan Transaksi</h3>
               <div className="space-y-3.5 text-xs text-[var(--app-text)]/90">
                 <div className="flex justify-between items-center">
@@ -515,7 +515,7 @@ export default function TransaksiDashboard() {
 
           {/* Right Column: Main List Table (9 Columns) */}
           <div className="lg:col-span-9 space-y-6">
-            <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
+            <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5">
               <div className="flex justify-between items-center mb-4 pb-2 border-b border-[var(--app-border)]/60">
                 <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider">Daftar Transaksi</h3>
                 <div className="flex gap-2">
@@ -551,9 +551,9 @@ export default function TransaksiDashboard() {
                       <th className="py-2.5">STATUS</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-blue-950/40 text-[var(--app-text)]/90">
+                  <tbody className="divide-y divide-[var(--app-border)] text-[var(--app-text)]/90">
                     {filteredList.map((t, idx) => (
-                      <tr key={t.id} className="hover:bg-blue-950/20 transition-colors">
+                      <tr key={t.id} className="hover:bg-[var(--app-card-subtle)]/20 transition-colors">
                         <td className="py-3 text-[var(--app-muted)]">{idx + 1}</td>
                         <td className="py-3 text-[11px] text-[var(--app-muted)]">{t.tanggal}</td>
                         <td className="py-3 font-semibold text-cyan-400">{t.trxNo}</td>
@@ -611,7 +611,7 @@ export default function TransaksiDashboard() {
         {/* Bottom Section: 4 Charts */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
           {/* Chart 1: Tren Transaksi */}
-          <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5">
             <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-4">Tren Transaksi</h3>
             <div className="h-44">
               <ResponsiveContainer width="100%" height="100%">
@@ -619,7 +619,7 @@ export default function TransaksiDashboard() {
                   <XAxis dataKey="name" stroke="#64748b" fontSize={9} />
                   <YAxis stroke="#64748b" fontSize={9} tickFormatter={(v) => `${v / 1000000}M`} />
                   <Tooltip 
-                    contentStyle={{ backgroundColor: '#091526', borderColor: '#1e3a8a', fontSize: '10px' }}
+                    contentStyle={{ backgroundColor: 'var(--app-card)', borderColor: 'var(--app-border)', color: 'var(--app-text)', borderRadius: 8 }}
                     formatter={(value: any) => formatRupiah(value)}
                   />
                   <Line type="monotone" dataKey="Pemasukan" stroke="#10b981" strokeWidth={1.5} dot={false} />
@@ -631,7 +631,7 @@ export default function TransaksiDashboard() {
           </div>
 
           {/* Chart 2: Transaksi per Tipe */}
-          <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5">
             <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-4">Transaksi per Tipe</h3>
             <div className="flex flex-col items-center justify-center relative mb-4">
               <div className="h-28 w-full">
@@ -655,7 +655,7 @@ export default function TransaksiDashboard() {
                 </ResponsiveContainer>
               </div>
               <div className="absolute text-center mt-1">
-                <p className="text-[12px] font-bold text-white">{totalTrxCount}</p>
+                <p className="text-[12px] font-bold text-[var(--app-text)]">{totalTrxCount}</p>
                 <p className="text-[8px] text-[var(--app-muted)]">Total</p>
               </div>
             </div>
@@ -671,7 +671,7 @@ export default function TransaksiDashboard() {
           </div>
 
           {/* Chart 3: Transaksi per Kategori */}
-          <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5">
             <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-4">Transaksi per Kategori (Top 5)</h3>
             <div className="h-44">
               <ResponsiveContainer width="100%" height="100%">
@@ -679,7 +679,7 @@ export default function TransaksiDashboard() {
                   <XAxis type="number" stroke="#64748b" fontSize={8} tickFormatter={(v) => `${v / 1000000}M`} />
                   <YAxis dataKey="name" type="category" stroke="#64748b" fontSize={7} width={64} />
                   <Tooltip 
-                    contentStyle={{ backgroundColor: '#091526', borderColor: '#1e3a8a', fontSize: '10px' }}
+                    contentStyle={{ backgroundColor: 'var(--app-card)', borderColor: 'var(--app-border)', color: 'var(--app-text)', borderRadius: 8 }}
                     formatter={(value: any) => formatRupiah(value)}
                   />
                   <Bar dataKey="value" fill="#3B82F6" radius={[0, 2, 2, 0]} barSize={10} />
@@ -689,7 +689,7 @@ export default function TransaksiDashboard() {
           </div>
 
           {/* Chart 4: Metode Pembayaran */}
-          <div className="bg-[#0A1629]/60 border border-blue-900/30 rounded-xl p-5">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5">
             <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-4">Metode Pembayaran</h3>
             <div className="flex flex-col items-center justify-center relative mb-4">
               <div className="h-28 w-full">
@@ -713,7 +713,7 @@ export default function TransaksiDashboard() {
                 </ResponsiveContainer>
               </div>
               <div className="absolute text-center mt-1">
-                <p className="text-[12px] font-bold text-white">{formatRupiah(kreditTotal + debitTotal)}</p>
+                <p className="text-[12px] font-bold text-[var(--app-text)]">{formatRupiah(kreditTotal + debitTotal)}</p>
                 <p className="text-[8px] text-[var(--app-muted)]">Total</p>
               </div>
             </div>
@@ -732,7 +732,7 @@ export default function TransaksiDashboard() {
         {/* Modal: Tambah Transaksi Baru */}
         {showAddModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-            <div className="w-full max-w-md bg-[#0A1629] border border-[var(--app-border)] rounded-xl p-6 shadow-2xl">
+            <div className="w-full max-w-md bg-[var(--app-surface)] border border-[var(--app-border)] rounded-xl p-6 shadow-2xl">
               <div className="flex justify-between items-center mb-4 pb-3 border-b border-[var(--app-border)]">
                 <h3 className="text-sm font-bold text-white">Catat Transaksi Baru</h3>
                 <button 
@@ -748,7 +748,7 @@ export default function TransaksiDashboard() {
                   <select
                     value={newType}
                     onChange={(e) => setNewType(e.target.value)}
-                    className="w-full p-2.5 rounded bg-[#081225] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
+                    className="w-full p-2.5 rounded bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
                   >
                     <option>Pemasukan</option>
                     <option>Pengeluaran</option>
@@ -763,7 +763,7 @@ export default function TransaksiDashboard() {
                     placeholder="Contoh: Pembayaran internet, Pembelian kabel..."
                     value={newDesc}
                     onChange={(e) => setNewDesc(e.target.value)}
-                    className="w-full p-2.5 rounded bg-[#081225] border border-[var(--app-border)] text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500"
+                    className="w-full p-2.5 rounded bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
@@ -774,7 +774,7 @@ export default function TransaksiDashboard() {
                       placeholder="Contoh: Pendapatan, Operasional"
                       value={newCategory}
                       onChange={(e) => setNewCategory(e.target.value)}
-                      className="w-full p-2.5 rounded bg-[#081225] border border-[var(--app-border)] text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500"
+                      className="w-full p-2.5 rounded bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500"
                     />
                   </div>
                   <div>
@@ -782,7 +782,7 @@ export default function TransaksiDashboard() {
                     <select
                       value={newMethod}
                       onChange={(e) => setNewMethod(e.target.value)}
-                      className="w-full p-2.5 rounded bg-[#081225] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
+                      className="w-full p-2.5 rounded bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
                     >
                       <option>Transfer Bank</option>
                       <option>E-Wallet</option>
@@ -799,7 +799,7 @@ export default function TransaksiDashboard() {
                       placeholder="Kas & Bank, Kas Kecil..."
                       value={newAccount}
                       onChange={(e) => setNewAccount(e.target.value)}
-                      className="w-full p-2.5 rounded bg-[#081225] border border-[var(--app-border)] text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500"
+                      className="w-full p-2.5 rounded bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500"
                     />
                   </div>
                   <div>
@@ -810,7 +810,7 @@ export default function TransaksiDashboard() {
                       placeholder="Contoh: 500000"
                       value={newAmount}
                       onChange={(e) => setNewAmount(e.target.value)}
-                      className="w-full p-2.5 rounded bg-[#081225] border border-[var(--app-border)] text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500"
+                      className="w-full p-2.5 rounded bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500"
                     />
                   </div>
                 </div>

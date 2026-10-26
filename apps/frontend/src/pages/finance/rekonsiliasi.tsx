@@ -279,7 +279,7 @@ export default function Rekonsiliasi() {
 
   return (
     <Layout>
-      <div className="bg-[var(--app-bg)] text-slate-100 min-h-screen p-6 font-sans antialiased selection:bg-cyan-500 selection:text-white">
+      <div className="bg-[var(--app-bg)] text-[var(--app-text)] min-h-screen p-6 font-sans antialiased selection:bg-cyan-500 selection:text-white">
         
         {/* Header Title Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
@@ -289,7 +289,7 @@ export default function Rekonsiliasi() {
               <span>&gt;</span>
               <span className="text-cyan-400 font-medium">Rekonsiliasi</span>
             </div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">Rekonsiliasi</h1>
+            <h1 className="text-2xl font-bold text-[var(--app-text)] tracking-tight">Rekonsiliasi</h1>
             <p className="text-xs text-[var(--app-muted)] mt-0.5">Cocokkan transaksi internal dengan mutasi bank, e-wallet, atau gateway pembayaran.</p>
           </div>
           
@@ -301,13 +301,13 @@ export default function Rekonsiliasi() {
               <Plus className="w-4 h-4" />
               <span>Rekonsiliasi Baru</span>
             </button>
-            <button className="flex items-center gap-1.5 bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200 text-xs font-medium px-4.5 py-2.5 rounded-lg transition-colors cursor-pointer">
+            <button className="flex items-center gap-1.5 bg-[var(--app-card)] hover:bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-[var(--app-text)] text-xs font-medium px-4.5 py-2.5 rounded-lg transition-colors cursor-pointer shadow-xs">
               <RefreshCw className="w-3.5 h-3.5" />
               <span>Import Mutasi</span>
             </button>
             <button 
               onClick={handleExportCSV}
-              className="flex items-center gap-1.5 bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200 text-xs font-medium px-4.5 py-2.5 rounded-lg transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 bg-[var(--app-card)] hover:bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-[var(--app-text)] text-xs font-medium px-4.5 py-2.5 rounded-lg transition-colors cursor-pointer shadow-xs"
             >
               <Download className="w-3.5 h-3.5" />
               <span>Ekspor</span>
@@ -322,7 +322,7 @@ export default function Rekonsiliasi() {
         {/* METRICS CARDS GRID */}
         <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 gap-4 mb-6">
           {/* Card 1 */}
-          <div className="bg-[#0B1528]/80 border border-[var(--app-border)] rounded-xl p-4.5 shadow-sm hover:border-[var(--app-border)] transition-colors">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4.5 shadow-sm hover:border-[var(--app-border)] transition-colors">
             <div className="flex justify-between items-start mb-2.5">
               <div className="bg-blue-600/10 p-2 rounded-lg text-blue-500">
                 <FileText className="w-4 h-4" />
@@ -332,12 +332,12 @@ export default function Rekonsiliasi() {
               </span>
             </div>
             <div className="text-[var(--app-muted)] text-[10px] font-semibold uppercase tracking-wider">Total Rekonsiliasi</div>
-            <div className="text-lg font-bold text-white mt-1">{formatRupiah(metrics.total)}</div>
+            <div className="text-lg font-bold text-[var(--app-text)] mt-1">{formatRupiah(metrics.total)}</div>
             <div className="text-[10px] text-[var(--app-muted)] mt-0.5">dari periode lalu</div>
           </div>
 
           {/* Card 2 */}
-          <div className="bg-[#0B1528]/80 border border-[var(--app-border)] rounded-xl p-4.5 shadow-sm hover:border-[var(--app-border)] transition-colors">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4.5 shadow-sm hover:border-[var(--app-border)] transition-colors">
             <div className="flex justify-between items-start mb-2.5">
               <div className="bg-emerald-600/10 p-2 rounded-lg text-emerald-500">
                 <CheckCircle2 className="w-4 h-4" />
@@ -347,12 +347,12 @@ export default function Rekonsiliasi() {
               </span>
             </div>
             <div className="text-[var(--app-muted)] text-[10px] font-semibold uppercase tracking-wider">Sudah Cocok</div>
-            <div className="text-lg font-bold text-white mt-1">{formatRupiah(metrics.cocok)}</div>
+            <div className="text-lg font-bold text-[var(--app-text)] mt-1">{formatRupiah(metrics.cocok)}</div>
             <div className="text-[10px] text-[var(--app-muted)] mt-0.5">dari total transaksi</div>
           </div>
 
           {/* Card 3 */}
-          <div className="bg-[#0B1528]/80 border border-[var(--app-border)] rounded-xl p-4.5 shadow-sm hover:border-[var(--app-border)] transition-colors">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4.5 shadow-sm hover:border-[var(--app-border)] transition-colors">
             <div className="flex justify-between items-start mb-2.5">
               <div className="bg-amber-600/10 p-2 rounded-lg text-amber-500">
                 <Clock className="w-4 h-4" />
@@ -362,12 +362,12 @@ export default function Rekonsiliasi() {
               </span>
             </div>
             <div className="text-[var(--app-muted)] text-[10px] font-semibold uppercase tracking-wider">Belum Cocok</div>
-            <div className="text-lg font-bold text-white mt-1">{formatRupiah(metrics.belum)}</div>
+            <div className="text-lg font-bold text-[var(--app-text)] mt-1">{formatRupiah(metrics.belum)}</div>
             <div className="text-[10px] text-[var(--app-muted)] mt-0.5">dari total transaksi</div>
           </div>
 
           {/* Card 4 */}
-          <div className="bg-[#0B1528]/80 border border-[var(--app-border)] rounded-xl p-4.5 shadow-sm hover:border-[var(--app-border)] transition-colors">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4.5 shadow-sm hover:border-[var(--app-border)] transition-colors">
             <div className="flex justify-between items-start mb-2.5">
               <div className="bg-rose-600/10 p-2 rounded-lg text-rose-500">
                 <AlertTriangle className="w-4 h-4" />
@@ -377,24 +377,24 @@ export default function Rekonsiliasi() {
               </span>
             </div>
             <div className="text-[var(--app-muted)] text-[10px] font-semibold uppercase tracking-wider">Selisih</div>
-            <div className="text-lg font-bold text-white mt-1">{formatRupiah(metrics.selisih)}</div>
+            <div className="text-lg font-bold text-[var(--app-text)] mt-1">{formatRupiah(metrics.selisih)}</div>
             <div className="text-[10px] text-rose-400 mt-0.5">Memerlukan penyesuaian manual</div>
           </div>
 
           {/* Card 5 */}
-          <div className="bg-[#0B1528]/80 border border-[var(--app-border)] rounded-xl p-4.5 shadow-sm hover:border-[var(--app-border)] transition-colors">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4.5 shadow-sm hover:border-[var(--app-border)] transition-colors">
             <div className="flex justify-between items-start mb-2.5">
               <div className="bg-purple-600/10 p-2 rounded-lg text-purple-500">
                 <Clock className="w-4 h-4" />
               </div>
             </div>
             <div className="text-[var(--app-muted)] text-[10px] font-semibold uppercase tracking-wider">Dalam Proses</div>
-            <div className="text-lg font-bold text-white mt-1">{metrics.inProgress}</div>
+            <div className="text-lg font-bold text-[var(--app-text)] mt-1">{metrics.inProgress}</div>
             <div className="text-[10px] text-[var(--app-muted)] mt-0.5">transaksi sedang dicocokkan</div>
           </div>
 
           {/* Card 6 */}
-          <div className="bg-[#0B1528]/80 border border-[var(--app-border)] rounded-xl p-4.5 shadow-sm hover:border-[var(--app-border)] transition-colors">
+          <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4.5 shadow-sm hover:border-[var(--app-border)] transition-colors">
             <div className="flex justify-between items-start mb-2.5">
               <div className="bg-cyan-600/10 p-2 rounded-lg text-cyan-500">
                 <CheckCircle2 className="w-4 h-4" />
@@ -404,20 +404,20 @@ export default function Rekonsiliasi() {
               </span>
             </div>
             <div className="text-[var(--app-muted)] text-[10px] font-semibold uppercase tracking-wider">Tingkat Kecocokan</div>
-            <div className="text-lg font-bold text-white mt-1">{metrics.rate}%</div>
+            <div className="text-lg font-bold text-[var(--app-text)] mt-1">{metrics.rate}%</div>
             <div className="text-[10px] text-[var(--app-muted)] mt-0.5">Akurasi data kecocokan</div>
           </div>
         </div>
 
         {/* TABS HEADER */}
-        <div className="flex items-center gap-1 border-b border-slate-800/80 mb-6 overflow-x-auto scrollbar-thin scrollbar-track-transparent">
+        <div className="flex items-center gap-1 border-b border-[var(--app-border)] mb-6 overflow-x-auto scrollbar-thin scrollbar-track-transparent">
           {['Ringkasan', 'Rekonsiliasi Transaksi', 'Mutasi Bank', 'Aturan Rekonsiliasi', 'Log Aktivitas', 'Laporan Rekonsiliasi'].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`text-xs px-4 py-3 border-b-2 font-medium transition-all whitespace-nowrap cursor-pointer ${
                 activeTab === tab
-                  ? 'border-blue-500 text-blue-400 bg-blue-950/10'
+                  ? 'border-blue-500 text-blue-400 bg-[var(--app-card-subtle)]/10'
                   : 'border-transparent text-[var(--app-muted)] hover:text-slate-200'
               }`}
             >
@@ -436,11 +436,11 @@ export default function Rekonsiliasi() {
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
               
               {/* Trend Chart (3/5 width) */}
-              <div className="lg:col-span-3 bg-[#0B1528]/50 border border-slate-900 rounded-xl p-5 shadow-sm">
+              <div className="lg:col-span-3 bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5 shadow-sm">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-xs font-bold text-white uppercase tracking-wider">Tren Rekonsiliasi</h2>
                   <select 
-                    className="bg-[var(--app-bg)] border border-slate-800 text-[10px] px-2 py-1 rounded text-[var(--app-muted)] font-medium"
+                    className="bg-[var(--app-bg)] border border-[var(--app-border)] text-[10px] px-2 py-1 rounded text-[var(--app-muted)] font-medium"
                   >
                     <option>7 Hari Terakhir</option>
                     <option>30 Hari Terakhir</option>
@@ -466,7 +466,7 @@ export default function Rekonsiliasi() {
                         tickFormatter={(v) => `${v}%`} 
                       />
                       <Tooltip 
-                        contentStyle={{ backgroundColor: '#0A1629', borderColor: '#1E293B', borderRadius: 8 }} 
+                        contentStyle={{ backgroundColor: 'var(--app-card)', borderColor: 'var(--app-border)', color: 'var(--app-text)', borderRadius: 8 }} 
                         labelStyle={{ color: '#fff', fontSize: 10 }}
                         itemStyle={{ fontSize: 10 }}
                       />
@@ -481,7 +481,7 @@ export default function Rekonsiliasi() {
               </div>
 
               {/* Composition Donut Chart (2/5 width) */}
-              <div className="lg:col-span-2 bg-[#0B1528]/50 border border-slate-900 rounded-xl p-5 shadow-sm flex flex-col">
+              <div className="lg:col-span-2 bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5 shadow-sm flex flex-col">
                 <h2 className="text-xs font-bold text-white uppercase tracking-wider mb-4">Distribusi Status</h2>
                 
                 <div className="flex-1 flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -525,7 +525,7 @@ export default function Rekonsiliasi() {
             </div>
 
             {/* Rekonsiliasi Per Sumber Progress bars */}
-            <div className="bg-[#0B1528]/50 border border-slate-900 rounded-xl p-5 shadow-sm">
+            <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5 shadow-sm">
               <h2 className="text-xs font-bold text-white uppercase tracking-wider mb-4">Rekonsiliasi per Sumber (Top 5)</h2>
               <div className="space-y-4">
                 {sourcesData.map((item) => {
@@ -552,7 +552,7 @@ export default function Rekonsiliasi() {
             </div>
 
             {/* TRANSACTIONS TABLE */}
-            <div className="bg-[#0B1528]/50 border border-slate-900 rounded-xl p-5 shadow-sm">
+            <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5 shadow-sm">
               <div className="flex flex-col gap-4 mb-4">
                 <h2 className="text-xs font-bold text-white uppercase tracking-wider">Daftar Rekonsiliasi Transaksi</h2>
                 
@@ -567,7 +567,7 @@ export default function Rekonsiliasi() {
                       placeholder="Cari invoice, referensi, atau jumlah..."
                       value={searchTerm}
                       onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                      className="bg-[var(--app-bg)] border border-slate-800 text-xs px-3 py-2 pl-9 rounded-lg text-slate-200 w-full focus:outline-none focus:border-blue-500"
+                      className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs px-3 py-2 pl-9 rounded-lg text-slate-200 w-full focus:outline-none focus:border-blue-500"
                     />
                   </div>
 
@@ -576,7 +576,7 @@ export default function Rekonsiliasi() {
                     <select
                       value={selectedSumber}
                       onChange={(e) => { setSelectedSumber(e.target.value); setCurrentPage(1); }}
-                      className="bg-[var(--app-bg)] border border-slate-800 text-xs px-3 py-2 rounded-lg text-slate-200 w-full focus:outline-none focus:border-blue-500 font-medium"
+                      className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs px-3 py-2 rounded-lg text-slate-200 w-full focus:outline-none focus:border-blue-500 font-medium"
                     >
                       <option>Semua Sumber</option>
                       <option>Bank BCA</option>
@@ -592,7 +592,7 @@ export default function Rekonsiliasi() {
                     <select
                       value={selectedStatus}
                       onChange={(e) => { setSelectedStatus(e.target.value); setCurrentPage(1); }}
-                      className="bg-[var(--app-bg)] border border-slate-800 text-xs px-3 py-2 rounded-lg text-slate-200 w-full focus:outline-none focus:border-blue-500 font-medium"
+                      className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs px-3 py-2 rounded-lg text-slate-200 w-full focus:outline-none focus:border-blue-500 font-medium"
                     >
                       <option>Semua Status</option>
                       <option>Cocok</option>
@@ -607,7 +607,7 @@ export default function Rekonsiliasi() {
                     <select
                       value={selectedMetode}
                       onChange={(e) => { setSelectedMetode(e.target.value); setCurrentPage(1); }}
-                      className="bg-[var(--app-bg)] border border-slate-800 text-xs px-3 py-2 rounded-lg text-slate-200 w-full focus:outline-none focus:border-blue-500 font-medium"
+                      className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs px-3 py-2 rounded-lg text-slate-200 w-full focus:outline-none focus:border-blue-500 font-medium"
                     >
                       <option>Semua Metode</option>
                       <option>Transfer Bank</option>
@@ -631,7 +631,7 @@ export default function Rekonsiliasi() {
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse text-xs">
                   <thead>
-                    <tr className="border-b border-slate-800 text-[var(--app-muted)] font-semibold uppercase tracking-wider">
+                    <tr className="border-b border-[var(--app-border)] text-[var(--app-muted)] font-semibold uppercase tracking-wider">
                       <th className="py-3 px-3 w-10 text-center">NO</th>
                       <th className="py-3 px-3">TANGGAL</th>
                       <th className="py-3 px-3">REFERENSI</th>
@@ -651,14 +651,14 @@ export default function Rekonsiliasi() {
                       paginatedTransactions.map((item, idx) => {
                         const calculatedNo = (currentPage - 1) * rowsPerPage + idx + 1;
                         return (
-                          <tr key={item.id} className="border-b border-slate-900 hover:bg-slate-950/40 transition-colors">
+                          <tr key={item.id} className="border-b border-[var(--app-border)] hover:bg-[var(--app-card-subtle)] transition-colors">
                             <td className="py-3.5 px-3 text-center text-[var(--app-muted)]">{calculatedNo}</td>
                             <td className="py-3.5 px-3 text-[var(--app-muted)] whitespace-nowrap">{item.tanggal}</td>
                             <td className="py-3.5 px-3 font-semibold text-white">{item.referensi}</td>
                             <td className="py-3.5 px-3 text-slate-300">{item.sumber}</td>
                             <td className="py-3.5 px-3 text-slate-300 max-w-xs truncate">{item.deskripsi}</td>
                             <td className="py-3.5 px-3 text-[var(--app-muted)]">{item.metode}</td>
-                            <td className="py-3.5 px-3 text-right font-bold text-white">{formatRupiah(item.debit)}</td>
+                            <td className="py-3.5 px-3 text-right font-bold text-[var(--app-text)]">{formatRupiah(item.debit)}</td>
                             <td className="py-3.5 px-3 text-right font-medium text-slate-300">
                               {item.kredit > 0 ? formatRupiah(item.kredit) : 'Rp 0'}
                             </td>
@@ -714,9 +714,9 @@ export default function Rekonsiliasi() {
               {/* Table Pagination Controller */}
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-4 text-[var(--app-muted)] text-xs">
                 <div>
-                  Menampilkan <span className="font-semibold text-white">{Math.min(filteredTransactions.length, (currentPage - 1) * rowsPerPage + 1)}</span> sampai{' '}
-                  <span className="font-semibold text-white">{Math.min(filteredTransactions.length, currentPage * rowsPerPage)}</span> dari{' '}
-                  <span className="font-semibold text-white">{filteredTransactions.length}</span> data
+                  Menampilkan <span className="font-semibold text-[var(--app-text)]">{Math.min(filteredTransactions.length, (currentPage - 1) * rowsPerPage + 1)}</span> sampai{' '}
+                  <span className="font-semibold text-[var(--app-text)]">{Math.min(filteredTransactions.length, currentPage * rowsPerPage)}</span> dari{' '}
+                  <span className="font-semibold text-[var(--app-text)]">{filteredTransactions.length}</span> data
                 </div>
 
                 <div className="flex items-center gap-4">
@@ -725,7 +725,7 @@ export default function Rekonsiliasi() {
                     <select
                       value={rowsPerPage}
                       onChange={(e) => { setRowsPerPage(parseInt(e.target.value)); setCurrentPage(1); }}
-                      className="bg-[var(--app-bg)] border border-slate-800 rounded px-1.5 py-0.5 text-white"
+                      className="bg-[var(--app-bg)] border border-[var(--app-border)] rounded px-1.5 py-0.5 text-white"
                     >
                       <option value={5}>5</option>
                       <option value={10}>10</option>
@@ -773,7 +773,7 @@ export default function Rekonsiliasi() {
           <div className="space-y-6">
             
             {/* Period Summary Table */}
-            <div className="bg-[#0B1528]/50 border border-slate-900 rounded-xl p-5 shadow-sm">
+            <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5 shadow-sm">
               <h2 className="text-xs font-bold text-white uppercase tracking-wider mb-4">Ringkasan Periode</h2>
               <div className="space-y-3.5 text-xs">
                 {[
@@ -784,7 +784,7 @@ export default function Rekonsiliasi() {
                   { name: 'Dalam Proses', value: 0 },
                   { name: 'Tingkat Kecocokan', value: `${metrics.rate}%`, rate: true }
                 ].map((item, index) => (
-                  <div key={index} className="flex items-center justify-between border-b border-slate-900/60 pb-2 last:border-0 last:pb-0">
+                  <div key={index} className="flex items-center justify-between border-b border-[var(--app-border)] pb-2 last:border-0 last:pb-0">
                     <span className="text-[var(--app-muted)]">{item.name}</span>
                     <span className={`font-bold ${
                       item.success
@@ -795,7 +795,7 @@ export default function Rekonsiliasi() {
                         ? 'text-rose-400'
                         : item.rate
                         ? 'text-cyan-400'
-                        : 'text-white'
+                        : 'text-[var(--app-text)]'
                     }`}>
                       {typeof item.value === 'number' ? formatRupiah(item.value) : item.value}
                     </span>
@@ -805,11 +805,11 @@ export default function Rekonsiliasi() {
             </div>
 
             {/* Sumber Data List */}
-            <div className="bg-[#0B1528]/50 border border-slate-900 rounded-xl p-5 shadow-sm">
+            <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5 shadow-sm">
               <h2 className="text-xs font-bold text-white uppercase tracking-wider mb-3">Sumber Data</h2>
               <div className="space-y-3 text-xs">
                 {sourcesData.map((item, idx) => (
-                  <div key={idx} className="flex items-center justify-between border-b border-slate-900/40 pb-2.5 last:border-b-0 last:pb-0">
+                  <div key={idx} className="flex items-center justify-between border-b border-[var(--app-border)] pb-2.5 last:border-b-0 last:pb-0">
                     <div className="flex items-center gap-2">
                       <div className="w-2 h-2 rounded-full bg-blue-500" />
                       <span className="text-slate-300 font-medium">{item.name}</span>
@@ -817,7 +817,7 @@ export default function Rekonsiliasi() {
                     <span className="text-[var(--app-text)] font-bold">{formatRupiah(item.total)}</span>
                   </div>
                 ))}
-                <div className="flex items-center justify-between border-t border-slate-900 pt-3 text-xs font-bold">
+                <div className="flex items-center justify-between border-t border-[var(--app-border)] pt-3 text-xs font-bold">
                   <span className="text-white">Total</span>
                   <span className="text-blue-400">Rp 4.025.800.000</span>
                 </div>
@@ -825,13 +825,13 @@ export default function Rekonsiliasi() {
             </div>
 
             {/* Quick Actions */}
-            <div className="bg-[#0B1528]/50 border border-slate-900 rounded-xl p-5 shadow-sm">
+            <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5 shadow-sm">
               <h2 className="text-xs font-bold text-white uppercase tracking-wider mb-4">Aksi Cepat</h2>
               <div className="space-y-2.5">
                 <button 
                   onClick={triggerAutoMatch}
                   disabled={isProcessingAutoMatch}
-                  className="w-full flex items-center justify-between p-3 bg-[var(--app-bg)]/85 hover:bg-[var(--app-bg)] border border-slate-800/80 rounded-lg text-left gap-1.5 transition-colors cursor-pointer group disabled:opacity-50"
+                  className="w-full flex items-center justify-between p-3 bg-[var(--app-bg)]/85 hover:bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-left gap-1.5 transition-colors cursor-pointer group disabled:opacity-50"
                 >
                   <div className="flex items-center gap-2">
                     <Sparkles className="w-4 h-4 text-amber-500" />
@@ -842,7 +842,7 @@ export default function Rekonsiliasi() {
 
                 <button 
                   onClick={() => setShowAddModal(true)}
-                  className="w-full flex items-center justify-between p-3 bg-[var(--app-bg)]/85 hover:bg-[var(--app-bg)] border border-slate-800/80 rounded-lg text-left gap-1.5 transition-colors cursor-pointer group"
+                  className="w-full flex items-center justify-between p-3 bg-[var(--app-bg)]/85 hover:bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-left gap-1.5 transition-colors cursor-pointer group"
                 >
                   <div className="flex items-center gap-2">
                     <CheckSquare className="w-4 h-4 text-emerald-500" />
@@ -855,7 +855,7 @@ export default function Rekonsiliasi() {
                     setNewStatus('Tidak Cocok');
                     setShowAddModal(true);
                   }}
-                  className="w-full flex items-center justify-between p-3 bg-[var(--app-bg)]/85 hover:bg-[var(--app-bg)] border border-slate-800/80 rounded-lg text-left gap-1.5 transition-colors cursor-pointer group"
+                  className="w-full flex items-center justify-between p-3 bg-[var(--app-bg)]/85 hover:bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-left gap-1.5 transition-colors cursor-pointer group"
                 >
                   <div className="flex items-center gap-2">
                     <PlusCircle className="w-4 h-4 text-blue-500" />
@@ -868,7 +868,7 @@ export default function Rekonsiliasi() {
                     setSelectedStatus('Tidak Cocok');
                     setCurrentPage(1);
                   }}
-                  className="w-full flex items-center justify-between p-3 bg-[var(--app-bg)]/85 hover:bg-[var(--app-bg)] border border-slate-800/80 rounded-lg text-left gap-1.5 transition-colors cursor-pointer group"
+                  className="w-full flex items-center justify-between p-3 bg-[var(--app-bg)]/85 hover:bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-left gap-1.5 transition-colors cursor-pointer group"
                 >
                   <div className="flex items-center gap-2">
                     <AlertTriangle className="w-4 h-4 text-rose-500" />
@@ -878,7 +878,7 @@ export default function Rekonsiliasi() {
 
                 <button 
                   onClick={handleExportCSV}
-                  className="w-full flex items-center justify-between p-3 bg-[var(--app-bg)]/85 hover:bg-[var(--app-bg)] border border-slate-800/80 rounded-lg text-left gap-1.5 transition-colors cursor-pointer group"
+                  className="w-full flex items-center justify-between p-3 bg-[var(--app-bg)]/85 hover:bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-left gap-1.5 transition-colors cursor-pointer group"
                 >
                   <div className="flex items-center gap-2">
                     <Download className="w-4 h-4 text-[var(--app-muted)]" />
@@ -897,8 +897,8 @@ export default function Rekonsiliasi() {
       {/* CREATE NEW RECONCILIATION MODAL */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="bg-[#0A1629] border border-slate-800 w-full max-w-lg rounded-xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-150">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-800">
+          <div className="bg-[var(--app-surface)] border border-[var(--app-border)] w-full max-w-lg rounded-xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-150">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--app-border)]">
               <h3 className="text-sm font-bold text-white uppercase tracking-wider">Rekonsiliasi / Penyesuaian Transaksi</h3>
               <button 
                 onClick={() => setShowAddModal(false)}
@@ -917,7 +917,7 @@ export default function Rekonsiliasi() {
                     value={newRef}
                     onChange={(e) => setNewRef(e.target.value)}
                     placeholder="Contoh: BCA-010726-0005"
-                    className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500"
+                    className="bg-[var(--app-bg)] border border-[var(--app-border)] text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500"
                     required
                   />
                 </div>
@@ -927,7 +927,7 @@ export default function Rekonsiliasi() {
                   <select 
                     value={newSumber}
                     onChange={(e) => setNewSumber(e.target.value)}
-                    className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500"
+                    className="bg-[var(--app-bg)] border border-[var(--app-border)] text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500"
                   >
                     <option>Bank BCA</option>
                     <option>Bank Mandiri</option>
@@ -945,7 +945,7 @@ export default function Rekonsiliasi() {
                   value={newDeskripsi}
                   onChange={(e) => setNewDeskripsi(e.target.value)}
                   placeholder="Contoh: Pembayaran Invoice INV/2026/07/001254 - Andi"
-                  className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500"
+                  className="bg-[var(--app-bg)] border border-[var(--app-border)] text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500"
                   required
                 />
               </div>
@@ -956,7 +956,7 @@ export default function Rekonsiliasi() {
                   <select 
                     value={newMetode}
                     onChange={(e) => setNewMetode(e.target.value)}
-                    className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500"
+                    className="bg-[var(--app-bg)] border border-[var(--app-border)] text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500"
                   >
                     <option>Transfer Bank</option>
                     <option>E-Wallet</option>
@@ -968,7 +968,7 @@ export default function Rekonsiliasi() {
                   <select 
                     value={newStatus}
                     onChange={(e) => setNewStatus(e.target.value as any)}
-                    className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500"
+                    className="bg-[var(--app-bg)] border border-[var(--app-border)] text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500"
                   >
                     <option value="Cocok">Cocok</option>
                     <option value="Tidak Cocok">Tidak Cocok</option>
@@ -986,7 +986,7 @@ export default function Rekonsiliasi() {
                     value={newDebit}
                     onChange={(e) => setNewDebit(e.target.value)}
                     placeholder="Contoh: 500000"
-                    className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500"
+                    className="bg-[var(--app-bg)] border border-[var(--app-border)] text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500"
                     required
                   />
                 </div>
@@ -998,12 +998,12 @@ export default function Rekonsiliasi() {
                     value={newKredit}
                     onChange={(e) => setNewKredit(e.target.value)}
                     placeholder="Contoh: 500000"
-                    className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500"
+                    className="bg-[var(--app-bg)] border border-[var(--app-border)] text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500"
                   />
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-800">
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-[var(--app-border)]">
                 <button 
                   type="button"
                   onClick={() => setShowAddModal(false)}
@@ -1026,8 +1026,8 @@ export default function Rekonsiliasi() {
       {/* VIEW DETAILS MODAL */}
       {showDetailModal && selectedItemDetails && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="bg-[#0A1629] border border-slate-800 w-full max-w-md rounded-xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-150">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-800">
+          <div className="bg-[var(--app-surface)] border border-[var(--app-border)] w-full max-w-md rounded-xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-150">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--app-border)]">
               <h3 className="text-sm font-bold text-white uppercase tracking-wider">Detail Pencocokan Rekonsiliasi</h3>
               <button 
                 onClick={() => setShowDetailModal(false)}
@@ -1038,7 +1038,7 @@ export default function Rekonsiliasi() {
             </div>
             
             <div className="p-5 space-y-4 text-xs">
-              <div className="grid grid-cols-2 gap-y-3.5 border-b border-slate-900 pb-4">
+              <div className="grid grid-cols-2 gap-y-3.5 border-b border-[var(--app-border)] pb-4">
                 <div>
                   <div className="text-[var(--app-muted)] font-semibold uppercase tracking-wider text-[10px]">Referensi</div>
                   <div className="text-sm font-bold text-white mt-0.5">{selectedItemDetails.referensi}</div>
@@ -1062,16 +1062,16 @@ export default function Rekonsiliasi() {
                 <div className="text-xs font-semibold text-slate-200 leading-relaxed mt-0.5">{selectedItemDetails.deskripsi}</div>
               </div>
 
-              <div className="space-y-3.5 border-t border-slate-900 pt-3">
+              <div className="space-y-3.5 border-t border-[var(--app-border)] pt-3">
                 <div className="flex justify-between items-center">
                   <span className="text-[var(--app-muted)]">Nilai Mutasi Bank (Debit):</span>
-                  <span className="font-semibold text-white">{formatRupiah(selectedItemDetails.debit)}</span>
+                  <span className="font-semibold text-[var(--app-text)]">{formatRupiah(selectedItemDetails.debit)}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-[var(--app-muted)]">Nilai Catatan Internal (Kredit):</span>
-                  <span className="font-semibold text-white">{formatRupiah(selectedItemDetails.kredit)}</span>
+                  <span className="font-semibold text-[var(--app-text)]">{formatRupiah(selectedItemDetails.kredit)}</span>
                 </div>
-                <div className="flex justify-between items-center border-t border-slate-900 pt-3">
+                <div className="flex justify-between items-center border-t border-[var(--app-border)] pt-3">
                   <span className="text-[var(--app-muted)] font-semibold">Selisih Pajak/Biaya:</span>
                   <span className={`font-bold ${selectedItemDetails.selisih > 0 ? 'text-rose-400' : 'text-slate-200'}`}>
                     {formatRupiah(selectedItemDetails.selisih)}
@@ -1095,7 +1095,7 @@ export default function Rekonsiliasi() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-end pt-4 border-t border-slate-800">
+              <div className="flex items-center justify-end pt-4 border-t border-[var(--app-border)]">
                 <button 
                   onClick={() => setShowDetailModal(false)}
                   className="bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold px-5 py-2 rounded-lg cursor-pointer"
