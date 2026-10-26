@@ -46,17 +46,17 @@ export class WhatsAppBotService {
       }
 
       // 2. State & Keyword Routing for Registered Customer
-      if (upperText === '1' || upperText.includes('TAGIHAN') || upperText.includes('BAYAR') || upperText.includes('INVOICE')) {
+      if (upperText === '1' || upperText.includes('TAGIHAN') || upperText.includes('BAYAR') || upperText.includes('INVOICE') || upperText.includes('!TAGIHAN')) {
         await this.handleCheckInvoice(cleanSender, customer);
         return { success: true, match: 'MENU_INVOICE' };
       }
 
-      if (upperText === '2' || upperText.includes('STATUS') || upperText.includes('REDAMAN') || upperText.includes('SIGNAL') || upperText.includes('KONEKSI')) {
+      if (upperText === '2' || upperText.includes('STATUS') || upperText.includes('REDAMAN') || upperText.includes('SIGNAL') || upperText.includes('KONEKSI') || upperText.includes('!CEK') || upperText.includes('!CEKSINYAL') || upperText.includes('!CEKMODEM') || upperText.includes('!SINYAL')) {
         await this.handleCheckStatusAndOptical(cleanSender, customer);
         return { success: true, match: 'MENU_STATUS_OPTICAL' };
       }
 
-      if (upperText === '3' || upperText.includes('RESTART') || upperText.includes('REBOOT')) {
+      if (upperText === '3' || upperText.includes('RESTART') || upperText.includes('REBOOT') || upperText.includes('!REBOOT')) {
         await this.handleRebootONT(cleanSender, customer);
         return { success: true, match: 'MENU_REBOOT_ONT' };
       }
@@ -282,13 +282,13 @@ export class WhatsAppBotService {
       `🤖 *AUDIRA VIRTUAL ASSISTANT (24/7)*\n\n` +
       `Halo *${customer.name}*! 👋\n` +
       `Selamat datang di layanan mandiri otomatis *AUDIRA Digital Network*.\n\n` +
-      `Silakan ketik nomor pilihan Anda:\n\n` +
-      `1️⃣ *Cek Tagihan & Bayar QRIS Instan*\n` +
-      `2️⃣ *Cek Status Internet & Redaman (dBm)*\n` +
-      `3️⃣ *Restart / Reboot Modem Jarak Jauh*\n` +
-      `4️⃣ *Ganti Nama & Kata Sandi WiFi Sendiri*\n` +
-      `0️⃣ *Hubungkan ke CS Manusia*\n\n` +
-      `_Balas dengan angka *1*, *2*, *3*, *4*, atau *0*_`;
+      `Silakan ketik nomor pilihan Anda atau gunakan perintah cepat:\n\n` +
+      `1️⃣ *Cek Tagihan & Bayar QRIS* (Ketik: *1* atau *!tagihan*)\n` +
+      `2️⃣ *Cek Status Internet & Redaman dBm* (Ketik: *2* atau *!ceksinyal*)\n` +
+      `3️⃣ *Restart / Reboot Modem TR-069* (Ketik: *3* atau *!reboot*)\n` +
+      `4️⃣ *Ganti Nama & Kata Sandi WiFi* (Ketik: *4* atau *wifi*)\n` +
+      `0️⃣ *Hubungkan ke Petugas CS / NOC* (Ketik: *0* atau *cs*)\n\n` +
+      `_Balas dengan angka *1* - *4*, *0*, atau ketik perintah *!ceksinyal* / *!reboot*_`;
 
     await this.whatsappService.sendMessage({ phone, message: menuMsg });
   }

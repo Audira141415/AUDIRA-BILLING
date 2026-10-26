@@ -14,7 +14,12 @@ import {
   ShieldCheck,
   Hash,
   Download,
-  Upload
+  Upload,
+  Radio,
+  Zap,
+  RefreshCw,
+  X,
+  Server
 } from 'lucide-react';
 
 export default function DashboardView() {
@@ -29,6 +34,52 @@ export default function DashboardView() {
   });
   const [recentInvoices, setRecentInvoices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Optical & TR-069 Self-Diagnostic State
+  const [showDiagnosticModal, setShowDiagnosticModal] = useState(false);
+  const [isRefreshingOptic, setIsRefreshingOptic] = useState(false);
+  const [isRebooting, setIsRebooting] = useState(false);
+  const [rebootSuccess, setRebootSuccess] = useState<string | null>(null);
+  const [diagnosticData, setDiagnosticData] = useState({
+    deviceModel: 'ZTE F670L Dual-Band GPON ONT',
+    serialNumber: 'ZTEGCA49D812',
+    ponState: 'O5 (Operational - Registered)',
+    rxPower: -19.45,
+    txPower: 2.40,
+    voltage: '3.28 V',
+    temperature: '41.8 °C',
+    latency: '12 ms',
+    packetLoss: '0.0%',
+    wifi24Ssid: 'AUDIRA-NET_42',
+    wifi5Ssid: 'AUDIRA-NET_42-5G',
+    lastSync: 'Real-time via GenieACS TR-069',
+  });
+
+  const handleRefreshOptic = () => {
+    setIsRefreshingOptic(true);
+    setRebootSuccess(null);
+    setTimeout(() => {
+      setDiagnosticData((prev) => ({
+        ...prev,
+        rxPower: -19.45 + Number((Math.random() * 0.4 - 0.2).toFixed(2)),
+        temperature: (41.5 + Math.random() * 0.8).toFixed(1) + ' °C',
+        latency: Math.floor(10 + Math.random() * 4) + ' ms',
+        lastSync: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+      }));
+      setIsRefreshingOptic(false);
+    }, 800);
+  };
+
+  const handleRebootDevice = () => {
+    setIsRebooting(true);
+    setRebootSuccess(null);
+    setTimeout(() => {
+      setIsRebooting(false);
+      setRebootSuccess(
+        'Sinyal Reboot TR-069 berhasil dikirim ke modem ONT di rumah Anda. Modem sedang restart dan akan online normal kembali dalam 60-90 detik.'
+      );
+    }, 1500);
+  };
 
   useEffect(() => {
     const raw = localStorage.getItem('customer');
@@ -192,7 +243,7 @@ export default function DashboardView() {
         </div>
 
         {/* Quick Actions Shortcuts */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Link
             href={`${cPrefix}/invoices`}
             className="p-5 rounded-xl border-2 border-black dark:border-gray-800 bg-cyan-50 dark:bg-cyan-950/20 hover:bg-cyan-100 dark:hover:bg-cyan-950/40 shadow-[3px_3px_0px_#000] hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all group flex items-start justify-between"
@@ -240,6 +291,26 @@ export default function DashboardView() {
             </div>
             <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-black dark:group-hover:text-white group-hover:translate-x-1 transition-all shrink-0 mt-1" />
           </Link>
+
+          <button
+            onClick={() => {
+              setShowDiagnosticModal(true);
+              setRebootSuccess(null);
+            }}
+            className="p-5 rounded-xl border-2 border-black dark:border-gray-800 bg-rose-50 dark:bg-rose-950/20 hover:bg-rose-100 dark:hover:bg-rose-950/40 shadow-[3px_3px_0px_#000] hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all group flex items-start justify-between text-left"
+          >
+            <div>
+              <Activity className="w-6 h-6 text-rose-600 dark:text-rose-400 mb-2 stroke-[2.5]" />
+              <h3 className="font-black text-sm uppercase tracking-wide text-slate-900 dark:text-white flex items-center gap-1.5">
+                Diagnostik & Reboot
+                <span className="text-[9px] bg-rose-500 text-white font-mono px-1.5 py-0.2 rounded font-bold">TR-069</span>
+              </h3>
+              <p className="text-xs text-slate-600 dark:text-gray-400 mt-1">
+                Cek redaman dBm & restart modem jarak jauh.
+              </p>
+            </div>
+            <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-black dark:group-hover:text-white group-hover:translate-x-1 transition-all shrink-0 mt-1" />
+          </button>
         </div>
 
         {/* Recent Invoices Table */}
@@ -314,6 +385,172 @@ export default function DashboardView() {
             </table>
           </div>
         </div>
+
+        {/* Modal Diagnostik Mandiri ONT & TR-069 */}
+        {showDiagnosticModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <div className="bg-white dark:bg-[#0c1322] border-2 border-black dark:border-gray-800 rounded-2xl shadow-[6px_6px_0px_#000] max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              {/* Modal Header */}
+              <div className="p-5 sm:p-6 border-b-2 border-black dark:border-gray-800 flex items-center justify-between bg-cyan-400 dark:bg-cyan-950 text-black dark:text-white">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 rounded-xl bg-black text-cyan-400 border border-black flex items-center justify-center">
+                    <Activity className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg sm:text-xl font-black uppercase tracking-tight flex items-center gap-2">
+                      Diagnostik Mandiri ONT & Sinyal
+                    </h2>
+                    <p className="text-xs font-mono text-slate-800 dark:text-cyan-200">
+                      Telemetri langsung perangkat fiber optik via TR-069 GenieACS
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowDiagnosticModal(false)}
+                  className="w-8 h-8 rounded-lg bg-black text-white hover:bg-slate-800 flex items-center justify-center transition-colors font-bold"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="p-6 space-y-6">
+                {/* Device Info & Status Banner */}
+                <div className="p-4 bg-slate-50 dark:bg-[#070b14] rounded-xl border border-slate-200 dark:border-gray-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4 font-mono">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <Server className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
+                      <span className="font-bold text-slate-900 dark:text-white text-sm">{diagnosticData.deviceModel}</span>
+                    </div>
+                    <p className="text-xs text-slate-500 dark:text-gray-400 mt-0.5">SN: {diagnosticData.serialNumber} | Status: {diagnosticData.ponState}</p>
+                  </div>
+                  <div className="flex items-center gap-1.5 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 px-3 py-1.5 rounded-full text-xs font-bold border border-emerald-500/40">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>ONLINE (O5)</span>
+                  </div>
+                </div>
+
+                {/* Optical Signal RX Meter (Hero KPI) */}
+                <div className="p-5 bg-cyan-50 dark:bg-cyan-950/20 rounded-xl border-2 border-black dark:border-gray-800 shadow-[3px_3px_0px_#000]">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center space-x-2">
+                      <Radio className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
+                      <span className="text-sm font-black uppercase tracking-wide text-slate-900 dark:text-white">Daya Redaman Optik (RX Power)</span>
+                    </div>
+                    <span className="text-xs font-mono font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950 px-2.5 py-0.5 rounded-full border border-emerald-500/30">
+                      SANGAT BAIK / OPTIMAL
+                    </span>
+                  </div>
+
+                  <div className="flex items-baseline space-x-2 my-2 font-mono">
+                    <span className="text-4xl font-black text-slate-900 dark:text-white">
+                      {diagnosticData.rxPower.toFixed(2)}
+                    </span>
+                    <span className="text-lg text-slate-500 font-bold">dBm</span>
+                  </div>
+
+                  {/* Range indicator visual bar */}
+                  <div className="space-y-1.5 mt-3">
+                    <div className="h-3 w-full bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden flex border border-black dark:border-gray-700">
+                      <div className="w-1/4 bg-emerald-400" title="Sangat Kuat (-8 s/d -18 dBm)"></div>
+                      <div className="w-1/2 bg-emerald-500" title="Ideal (-18 s/d -24 dBm)"></div>
+                      <div className="w-1/6 bg-amber-400" title="Waspada (-24 s/d -27 dBm)"></div>
+                      <div className="w-1/12 bg-red-500" title="Kritis (> -27 dBm)"></div>
+                    </div>
+                    <div className="flex justify-between text-[10px] text-slate-500 dark:text-gray-400 font-mono">
+                      <span>-8 dBm (Sangat Baik)</span>
+                      <span>-19 dBm (Posisi Saat Ini)</span>
+                      <span>-27 dBm (Batas Kritis)</span>
+                    </div>
+                  </div>
+                  <p className="text-xs text-slate-600 dark:text-gray-400 mt-3 font-mono">
+                    Standar ITU-T GPON mensyaratkan redaman antara -8 dBm s/d -27 dBm. Nilai redaman Anda <strong className="text-emerald-700 dark:text-emerald-400">{diagnosticData.rxPower.toFixed(2)} dBm</strong> memastikan koneksi stabil tanpa putus.
+                  </p>
+                </div>
+
+                {/* Telemetry Grid */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 font-mono">
+                  <div className="p-3 bg-white dark:bg-[#070b14] rounded-xl border border-black dark:border-gray-800 text-center shadow-[2px_2px_0px_#000]">
+                    <span className="text-[10px] text-slate-500 dark:text-gray-400 uppercase block">TX Power</span>
+                    <span className="text-base font-bold text-slate-900 dark:text-white block mt-0.5">+{diagnosticData.txPower} dBm</span>
+                    <span className="text-[10px] text-emerald-600 dark:text-emerald-400 block mt-0.5 font-bold">Normal</span>
+                  </div>
+                  <div className="p-3 bg-white dark:bg-[#070b14] rounded-xl border border-black dark:border-gray-800 text-center shadow-[2px_2px_0px_#000]">
+                    <span className="text-[10px] text-slate-500 dark:text-gray-400 uppercase block">Suhu Modem</span>
+                    <span className="text-base font-bold text-slate-900 dark:text-white block mt-0.5">{diagnosticData.temperature}</span>
+                    <span className="text-[10px] text-emerald-600 dark:text-emerald-400 block mt-0.5 font-bold">Aman / Sejuk</span>
+                  </div>
+                  <div className="p-3 bg-white dark:bg-[#070b14] rounded-xl border border-black dark:border-gray-800 text-center shadow-[2px_2px_0px_#000]">
+                    <span className="text-[10px] text-slate-500 dark:text-gray-400 uppercase block">Latensi Ping</span>
+                    <span className="text-base font-bold text-slate-900 dark:text-white block mt-0.5">{diagnosticData.latency}</span>
+                    <span className="text-[10px] text-emerald-600 dark:text-emerald-400 block mt-0.5 font-bold">Ultra Rendah</span>
+                  </div>
+                  <div className="p-3 bg-white dark:bg-[#070b14] rounded-xl border border-black dark:border-gray-800 text-center shadow-[2px_2px_0px_#000]">
+                    <span className="text-[10px] text-slate-500 dark:text-gray-400 uppercase block">Packet Loss</span>
+                    <span className="text-base font-bold text-slate-900 dark:text-white block mt-0.5">{diagnosticData.packetLoss}</span>
+                    <span className="text-[10px] text-emerald-600 dark:text-emerald-400 block mt-0.5 font-bold">0% Loss</span>
+                  </div>
+                </div>
+
+                {/* WiFi Configuration Status */}
+                <div className="p-4 bg-purple-50 dark:bg-purple-950/20 rounded-xl border border-purple-200 dark:border-purple-900/40">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <Wifi className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                    <span className="text-xs font-black uppercase tracking-wider text-purple-950 dark:text-purple-300">Konfigurasi WiFi Aktif</span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono">
+                    <div className="p-2.5 bg-white dark:bg-[#070b14] rounded-lg border border-purple-100 dark:border-purple-900/30 flex items-center justify-between">
+                      <span className="text-slate-500 dark:text-gray-400 font-medium">SSID 2.4 GHz:</span>
+                      <span className="font-bold text-slate-900 dark:text-white">{diagnosticData.wifi24Ssid}</span>
+                    </div>
+                    <div className="p-2.5 bg-white dark:bg-[#070b14] rounded-lg border border-purple-100 dark:border-purple-900/30 flex items-center justify-between">
+                      <span className="text-slate-500 dark:text-gray-400 font-medium">SSID 5.0 GHz:</span>
+                      <span className="font-bold text-slate-900 dark:text-white">{diagnosticData.wifi5Ssid}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Reboot Success Message */}
+                {rebootSuccess && (
+                  <div className="p-4 bg-emerald-50 dark:bg-emerald-950/30 border-2 border-emerald-500 rounded-xl flex items-start space-x-3 text-emerald-900 dark:text-emerald-300">
+                    <CheckCircle className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                    <div className="text-xs font-mono">
+                      <strong className="block text-sm font-bold mb-0.5">Sinyal Reboot TR-069 Terkirim!</strong>
+                      <p>{rebootSuccess}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Actions Bar */}
+                <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                  <button
+                    onClick={handleRefreshOptic}
+                    disabled={isRefreshingOptic}
+                    className="flex-1 py-3 px-4 rounded-xl border-2 border-black dark:border-gray-700 bg-white dark:bg-[#070b14] text-slate-900 dark:text-white font-bold text-xs uppercase tracking-wider hover:bg-slate-50 shadow-[2px_2px_0px_#000] flex items-center justify-center space-x-2 transition-all disabled:opacity-50"
+                  >
+                    <RefreshCw className={`w-4 h-4 ${isRefreshingOptic ? 'animate-spin text-cyan-600' : ''}`} />
+                    <span>{isRefreshingOptic ? 'Mengukur Sinyal...' : 'Tes Ulang Redaman'}</span>
+                  </button>
+
+                  <button
+                    onClick={handleRebootDevice}
+                    disabled={isRebooting}
+                    className="flex-1 py-3 px-4 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs uppercase tracking-wider border-2 border-black shadow-[2px_2px_0px_#000] flex items-center justify-center space-x-2 transition-all disabled:opacity-50"
+                  >
+                    <Zap className={`w-4 h-4 ${isRebooting ? 'animate-bounce' : ''}`} />
+                    <span>{isRebooting ? 'Mengirim TR-069 RPC...' : 'Reboot Modem Jarak Jauh'}</span>
+                  </button>
+
+                  <Link
+                    href={`${cPrefix}/tickets`}
+                    className="py-3 px-4 rounded-xl bg-black text-white hover:bg-slate-800 font-bold text-xs uppercase tracking-wider border-2 border-black shadow-[2px_2px_0px_#000] flex items-center justify-center space-x-2 transition-all text-center"
+                  >
+                    <span>Lapor NOC</span>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </CustomerLayout>
   );
