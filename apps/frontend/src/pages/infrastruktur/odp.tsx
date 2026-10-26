@@ -455,11 +455,11 @@ export default function ODPManagement() {
               </div>
 
               {/* Hardware Splitter Visualizer */}
-              <div className="mt-4 bg-slate-950 p-4 rounded-xl border border-slate-800 text-white">
+              <div className="mt-4 bg-[var(--app-card-subtle)] p-4 rounded-xl border border-[var(--app-border)] text-[var(--app-text)]">
                 <div className="flex items-center justify-between mb-3 text-xs font-mono">
                   <div className="flex items-center space-x-2">
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span className="text-slate-300 font-bold uppercase">{selectedOdp.name} SPLITTER</span>
+                    <span className="text-[var(--app-text)] font-bold uppercase">{selectedOdp.name} SPLITTER</span>
                   </div>
                   <div className="flex items-center gap-3 text-[11px]">
                     <span className="flex items-center gap-1 text-emerald-400">

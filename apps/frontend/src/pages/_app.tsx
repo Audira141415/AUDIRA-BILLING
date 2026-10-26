@@ -13,9 +13,9 @@ import Layout from '@/components/Layout'
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter()
 
-  // Standalone routes that do not use the Admin Sidebar layout
   const isStandalone =
     router.pathname.startsWith('/customer') ||
+    router.pathname.startsWith('/invoice/public') ||
     router.pathname === '/login' ||
     router.pathname === '/forgot-password' ||
     router.pathname === '/register' ||

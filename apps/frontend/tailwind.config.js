@@ -36,6 +36,7 @@ module.exports = {
           bg: 'var(--app-bg)',
           surface: 'var(--app-surface)',
           card: 'var(--app-card)',
+          'card-subtle': 'var(--app-card-subtle)',
           border: 'var(--app-border)',
           primary: 'var(--app-primary)',
           accent: 'var(--app-accent)',

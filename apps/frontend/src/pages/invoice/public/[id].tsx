@@ -235,7 +235,7 @@ export default function PublicInvoicePage() {
   const isPaid = invoice?.status === 'PAID';
 
   return (
-    <div className="min-h-screen bg-[#0B0F19] text-slate-100 py-8 px-4 sm:px-6">
+    <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] py-8 px-4 sm:px-6">
       <Head>
         <title>{invoice ? `Tagihan #${invoice.invoiceNumber} - AUDIRA-NET` : 'Tagihan Internet - AUDIRA-NET'}</title>
         <meta name="robots" content="noindex,nofollow" />
@@ -268,15 +268,15 @@ export default function PublicInvoicePage() {
         {/* Top Floating Action Bar */}
         <div className="flex items-center justify-between no-print">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#00F5FF] to-[#7928CA] flex items-center justify-center text-black font-black text-base">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-600 dark:from-[#00F5FF] dark:to-[#7928CA] flex items-center justify-center text-white dark:text-black font-black text-base shadow-sm">
               A
             </div>
-            <span className="font-black tracking-wide text-white text-lg">AUDIRA<span className="text-[#00F5FF]">.NET</span></span>
+            <span className="font-black tracking-wide text-[var(--app-text)] text-lg">AUDIRA<span className="text-blue-600 dark:text-[#00F5FF]">.NET</span></span>
           </div>
 
           <button
             onClick={handlePrint}
-            className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-xl border border-slate-700 shadow-md transition-all"
+            className="flex items-center gap-2 px-4 py-2 bg-[var(--app-card)] hover:bg-[var(--app-card-subtle)] text-[var(--app-text)] text-xs font-bold rounded-xl border border-[var(--app-border)] shadow-xs transition-all"
           >
             <Printer size={14} />
             <span>Cetak Kwitansi</span>
@@ -286,69 +286,69 @@ export default function PublicInvoicePage() {
         {/* Invoice Card */}
         {loading ? (
           <div className="min-h-[50vh] flex flex-col items-center justify-center space-y-3">
-            <div className="w-10 h-10 border-4 border-[#00F5FF]/20 border-t-[#00F5FF] rounded-full animate-spin"></div>
-            <p className="text-xs text-slate-400">Memuat data invoice...</p>
+            <div className="w-10 h-10 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin"></div>
+            <p className="text-xs text-[var(--app-text-muted)]">Memuat data invoice...</p>
           </div>
         ) : invoice ? (
-          <div id="public-invoice-card" className="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-2xl">
+          <div id="public-invoice-card" className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
             {/* Header Status & Logo */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800 pb-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-[var(--app-border)] pb-6">
               <div>
-                <span className="text-[11px] font-mono font-bold tracking-widest text-[#00F5FF] uppercase">FAKTUR TAGIHAN PELANGGAN</span>
-                <h1 className="text-2xl font-black text-white">{invoice.invoiceNumber}</h1>
-                <p className="text-xs text-slate-400 mt-0.5">Bulan Pemakaian: <span className="text-slate-200 font-semibold">{invoice.month}</span></p>
+                <span className="text-[11px] font-mono font-bold tracking-widest text-blue-600 dark:text-[#00F5FF] uppercase">FAKTUR TAGIHAN PELANGGAN</span>
+                <h1 className="text-2xl font-black text-[var(--app-text)]">{invoice.invoiceNumber}</h1>
+                <p className="text-xs text-[var(--app-text-muted)] mt-0.5">Bulan Pemakaian: <span className="text-[var(--app-text)] font-semibold">{invoice.month}</span></p>
               </div>
 
               <div className="text-left sm:text-right">
                 <span
                   className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider border ${
                     isPaid
-                      ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
-                      : 'bg-rose-500/10 text-rose-400 border-rose-500/30'
+                      ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
+                      : 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30'
                   }`}
                 >
-                  <span className={`w-2 h-2 rounded-full ${isPaid ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400'}`}></span>
+                  <span className={`w-2 h-2 rounded-full ${isPaid ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`}></span>
                   {isPaid ? 'LUNAS (PAID)' : 'MENUNGGU PEMBAYARAN'}
                 </span>
-                <p className="text-xs text-slate-400 mt-1">Jatuh Tempo: <span className="text-rose-300 font-semibold">{dueDateFormatted}</span></p>
+                <p className="text-xs text-[var(--app-text-muted)] mt-1">Jatuh Tempo: <span className="text-rose-600 dark:text-rose-400 font-semibold">{dueDateFormatted}</span></p>
               </div>
             </div>
 
             {/* Customer Details */}
-            <div className="bg-slate-950/70 border border-slate-800/80 rounded-xl p-4.5 space-y-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Informasi Pelanggan</span>
+            <div className="bg-[var(--app-card-subtle)] border border-[var(--app-border)] rounded-xl p-4.5 space-y-3">
+              <span className="text-xs font-bold uppercase tracking-wider text-[var(--app-text-muted)]">Informasi Pelanggan</span>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div>
-                  <span className="text-slate-500">Nama Pelanggan:</span>
-                  <p className="text-white font-bold text-sm mt-0.5">{invoice.customer.name}</p>
-                  <p className="text-slate-400">{invoice.customer.phone}</p>
+                  <span className="text-[var(--app-text-muted)]">Nama Pelanggan:</span>
+                  <p className="text-[var(--app-text)] font-bold text-sm mt-0.5">{invoice.customer.name}</p>
+                  <p className="text-[var(--app-text-muted)]">{invoice.customer.phone}</p>
                 </div>
                 <div>
-                  <span className="text-slate-500">ID Pelanggan / Paket:</span>
-                  <p className="font-mono font-bold text-[#00F5FF] mt-0.5">{invoice.customer.internetNumber || invoice.customer.id}</p>
-                  <p className="text-slate-300">{invoice.customer.packageName} ({invoice.customer.speed})</p>
+                  <span className="text-[var(--app-text-muted)]">ID Pelanggan / Paket:</span>
+                  <p className="font-mono font-bold text-blue-600 dark:text-[#00F5FF] mt-0.5">{invoice.customer.internetNumber || invoice.customer.id}</p>
+                  <p className="text-[var(--app-text)] font-medium">{invoice.customer.packageName} ({invoice.customer.speed})</p>
                 </div>
               </div>
             </div>
 
             {/* Items */}
             <div className="space-y-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Rincian Tagihan</span>
-              <div className="border border-slate-800 rounded-xl overflow-hidden text-xs">
+              <span className="text-xs font-bold uppercase tracking-wider text-[var(--app-text-muted)]">Rincian Tagihan</span>
+              <div className="border border-[var(--app-border)] rounded-xl overflow-hidden text-xs">
                 <table className="w-full text-left">
-                  <thead className="bg-slate-950 text-slate-400 uppercase font-semibold border-b border-slate-800">
+                  <thead className="bg-[var(--app-card-subtle)] text-[var(--app-text-muted)] uppercase font-semibold border-b border-[var(--app-border)]">
                     <tr>
                       <th className="py-2.5 px-4">Layanan</th>
                       <th className="py-2.5 px-4 text-right">Nominal</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800/60 font-medium">
+                  <tbody className="divide-y divide-[var(--app-border)] font-medium">
                     {invoice.items?.map((item, idx) => (
-                      <tr key={idx}>
-                        <td className="py-3 px-4 text-white">
+                      <tr key={idx} className="hover:bg-[var(--app-card-subtle)] transition-colors">
+                        <td className="py-3 px-4 text-[var(--app-text)]">
                           <p className="font-semibold">{item.description}</p>
                         </td>
-                        <td className="py-3 px-4 text-right font-mono text-slate-200">
+                        <td className="py-3 px-4 text-right font-mono font-bold text-[var(--app-text)]">
                           Rp {item.total.toLocaleString('id-ID')}
                         </td>
                       </tr>
@@ -359,56 +359,56 @@ export default function PublicInvoicePage() {
             </div>
 
             {/* Total Highlight */}
-            <div className="bg-slate-950 border border-slate-800 rounded-xl p-5 flex justify-between items-center">
+            <div className="bg-[var(--app-card-subtle)] border border-[var(--app-border)] rounded-xl p-5 flex justify-between items-center">
               <div>
-                <span className="text-xs text-slate-400">Total Yang Harus Dibayar</span>
-                <p className="text-2xl sm:text-3xl font-black text-[#00F5FF] font-mono">{formattedAmount}</p>
+                <span className="text-xs text-[var(--app-text-muted)]">Total Yang Harus Dibayar</span>
+                <p className="text-2xl sm:text-3xl font-black text-blue-600 dark:text-[#00F5FF] font-mono">{formattedAmount}</p>
               </div>
               <div className="text-right">
-                <span className="text-[11px] text-slate-500 block">Metode Pembayaran</span>
-                <span className="text-xs font-bold text-white">BCA / Mandiri / QRIS</span>
+                <span className="text-[11px] text-[var(--app-text-muted)] block">Metode Pembayaran</span>
+                <span className="text-xs font-bold text-[var(--app-text)]">BCA / Mandiri / QRIS</span>
               </div>
             </div>
 
             {/* Payment Options (When unpaid) */}
             {!isPaid && (
-              <div className="border-t border-slate-800 pt-5 space-y-4 no-print">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Saluran Pembayaran Resmi</span>
+              <div className="border-t border-[var(--app-border)] pt-5 space-y-4 no-print">
+                <span className="text-xs font-bold uppercase tracking-wider text-[var(--app-text-muted)]">Saluran Pembayaran Resmi</span>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                   {/* BCA */}
-                  <div className="bg-slate-950 border border-slate-800 rounded-xl p-3.5 space-y-1.5">
-                    <span className="font-bold text-white block">Bank BCA</span>
-                    <p className="text-[11px] text-slate-400">a.n. PT AUDIRA MULTIMEDIA DIGITAL</p>
-                    <div className="flex items-center justify-between bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-800">
-                      <span className="font-mono font-bold text-[#00F5FF]">8271-992-019</span>
+                  <div className="bg-[var(--app-card-subtle)] border border-[var(--app-border)] rounded-xl p-3.5 space-y-1.5">
+                    <span className="font-bold text-[var(--app-text)] block">Bank BCA</span>
+                    <p className="text-[11px] text-[var(--app-text-muted)]">a.n. PT AUDIRA MULTIMEDIA DIGITAL</p>
+                    <div className="flex items-center justify-between bg-[var(--app-card)] px-3 py-1.5 rounded-lg border border-[var(--app-border)]">
+                      <span className="font-mono font-bold text-blue-600 dark:text-[#00F5FF]">8271-992-019</span>
                       <button
                         onClick={() => copyToClipboard('8271992019', 'BCA')}
-                        className="text-slate-400 hover:text-white"
+                        className="text-[var(--app-text-muted)] hover:text-blue-500 transition-colors"
                       >
-                        {copiedField === 'BCA' ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
+                        {copiedField === 'BCA' ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
                       </button>
                     </div>
                   </div>
 
                   {/* Mandiri */}
-                  <div className="bg-slate-950 border border-slate-800 rounded-xl p-3.5 space-y-1.5">
-                    <span className="font-bold text-white block">Bank Mandiri</span>
-                    <p className="text-[11px] text-slate-400">a.n. AUDIRA SUKSES MANDIRI</p>
-                    <div className="flex items-center justify-between bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-800">
-                      <span className="font-mono font-bold text-[#7928CA]">137-00-1928371-2</span>
+                  <div className="bg-[var(--app-card-subtle)] border border-[var(--app-border)] rounded-xl p-3.5 space-y-1.5">
+                    <span className="font-bold text-[var(--app-text)] block">Bank Mandiri</span>
+                    <p className="text-[11px] text-[var(--app-text-muted)]">a.n. AUDIRA SUKSES MANDIRI</p>
+                    <div className="flex items-center justify-between bg-[var(--app-card)] px-3 py-1.5 rounded-lg border border-[var(--app-border)]">
+                      <span className="font-mono font-bold text-purple-600 dark:text-[#7928CA]">137-00-1928371-2</span>
                       <button
                         onClick={() => copyToClipboard('1370019283712', 'Mandiri')}
-                        className="text-slate-400 hover:text-white"
+                        className="text-[var(--app-text-muted)] hover:text-purple-500 transition-colors"
                       >
-                        {copiedField === 'Mandiri' ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
+                        {copiedField === 'Mandiri' ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
                       </button>
                     </div>
                   </div>
                 </div>
 
-                <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl text-xs text-blue-300">
+                <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl text-xs text-blue-700 dark:text-blue-300">
                   <p className="font-semibold">Konfirmasi Otomatis:</p>
-                  <p className="text-[11px] text-blue-200/80 mt-0.5">
+                  <p className="text-[11px] text-blue-700/80 dark:text-blue-200/80 mt-0.5">
                     Sistem mendeteksi transfer otomatis dalam waktu 1-5 menit setelah pembayaran berhasil dilakukan.
                   </p>
                 </div>
@@ -416,7 +416,7 @@ export default function PublicInvoicePage() {
             )}
 
             {/* Footer */}
-            <div className="border-t border-slate-800 pt-4 text-center text-[11px] text-slate-500">
+            <div className="border-t border-[var(--app-border)] pt-4 text-center text-[11px] text-[var(--app-text-muted)]">
               <p>PT AUDIRA MULTIMEDIA DIGITAL • Layanan Pelanggan 24/7 Hotline: +62 821-1200-1600</p>
             </div>
           </div>

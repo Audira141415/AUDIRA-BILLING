@@ -364,58 +364,58 @@ export default function AdminSalesPage() {
         {/* 4 KPI Summary Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Card 1: Menunggu Konfirmasi */}
-          <div className="bg-slate-900 border border-amber-500/30 rounded-xl p-5 relative overflow-hidden shadow-sm">
+          <div className="bg-[var(--app-card)] border border-amber-500/30 rounded-xl p-5 relative overflow-hidden shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-amber-400 uppercase tracking-wide">Menunggu Konfirmasi</p>
+                <p className="text-xs font-medium text-amber-500 dark:text-amber-400 uppercase tracking-wide">Menunggu Konfirmasi</p>
                 <p className="text-2xl font-bold text-[var(--app-text)] mt-1">{stats.pendingPartners}</p>
                 <p className="text-[11px] text-[var(--app-muted)] mt-1">Calon mitra perlu persetujuan</p>
               </div>
-              <div className="p-3 bg-amber-500/10 text-amber-400 rounded-xl border border-amber-500/20">
+              <div className="p-3 bg-amber-500/10 text-amber-500 dark:text-amber-400 rounded-xl border border-amber-500/20">
                 <Clock className="w-6 h-6" />
               </div>
             </div>
           </div>
 
           {/* Card 2: Penarikan Menunggu */}
-          <div className="bg-slate-900 border border-rose-500/30 rounded-xl p-5 relative overflow-hidden shadow-sm">
+          <div className="bg-[var(--app-card)] border border-rose-500/30 rounded-xl p-5 relative overflow-hidden shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-rose-400 uppercase tracking-wide">Penarikan Menunggu</p>
+                <p className="text-xs font-medium text-rose-500 dark:text-rose-400 uppercase tracking-wide">Penarikan Menunggu</p>
                 <p className="text-2xl font-bold text-[var(--app-text)] mt-1">{stats.pendingWithdrawals}</p>
                 <p className="text-[11px] text-[var(--app-muted)] mt-1">Permintaan payout saldo</p>
               </div>
-              <div className="p-3 bg-rose-500/10 text-rose-400 rounded-xl border border-rose-500/20">
+              <div className="p-3 bg-rose-500/10 text-rose-500 dark:text-rose-400 rounded-xl border border-rose-500/20">
                 <Wallet className="w-6 h-6" />
               </div>
             </div>
           </div>
 
           {/* Card 3: Sales Aktif */}
-          <div className="bg-slate-900 border border-emerald-500/30 rounded-xl p-5 relative overflow-hidden shadow-sm">
+          <div className="bg-[var(--app-card)] border border-emerald-500/30 rounded-xl p-5 relative overflow-hidden shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-emerald-400 uppercase tracking-wide">Sales Aktif</p>
+                <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400 uppercase tracking-wide">Sales Aktif</p>
                 <p className="text-2xl font-bold text-[var(--app-text)] mt-1">{stats.activePartners}</p>
                 <p className="text-[11px] text-[var(--app-muted)] mt-1">Mitra aktif mencari pelanggan</p>
               </div>
-              <div className="p-3 bg-emerald-500/10 text-emerald-400 rounded-xl border border-emerald-500/20">
+              <div className="p-3 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl border border-emerald-500/20">
                 <ShieldCheck className="w-6 h-6" />
               </div>
             </div>
           </div>
 
           {/* Card 4: Total Saldo Tertahan */}
-          <div className="bg-slate-900 border border-blue-500/30 rounded-xl p-5 relative overflow-hidden shadow-sm">
+          <div className="bg-[var(--app-card)] border border-blue-500/30 rounded-xl p-5 relative overflow-hidden shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-blue-400 uppercase tracking-wide">Total Saldo Dompet</p>
+                <p className="text-xs font-medium text-blue-600 dark:text-blue-400 uppercase tracking-wide">Total Saldo Dompet</p>
                 <p className="text-2xl font-bold text-[var(--app-text)] mt-1">
                   Rp {stats.totalBalanceHeld.toLocaleString('id-ID')}
                 </p>
                 <p className="text-[11px] text-[var(--app-muted)] mt-1">Akumulasi komisi mitra di dompet</p>
               </div>
-              <div className="p-3 bg-blue-500/10 text-blue-400 rounded-xl border border-blue-500/20">
+              <div className="p-3 bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-xl border border-blue-500/20">
                 <DollarSign className="w-6 h-6" />
               </div>
             </div>
@@ -495,7 +495,7 @@ export default function AdminSalesPage() {
                   placeholder="Cari nama, kode referral, telepon..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 text-xs bg-slate-900 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                  className="w-full pl-9 pr-4 py-2 text-xs bg-[var(--app-card-subtle)] border border-[var(--app-border)] rounded-lg text-[var(--app-text)] placeholder-[var(--app-muted)] focus:outline-none focus:border-emerald-500"
                 />
               </form>
 
@@ -504,7 +504,7 @@ export default function AdminSalesPage() {
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="text-xs bg-slate-900 border border-slate-700 rounded-lg text-slate-200 px-3 py-2 focus:outline-none focus:border-emerald-500"
+                  className="text-xs bg-[var(--app-card-subtle)] border border-[var(--app-border)] rounded-lg text-[var(--app-text)] px-3 py-2 focus:outline-none focus:border-emerald-500"
                 >
                   <option value="ALL">Semua Status</option>
                   <option value="ACTIVE">Aktif (ACTIVE)</option>
@@ -515,10 +515,10 @@ export default function AdminSalesPage() {
             </div>
 
             {/* Table */}
-            <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-sm">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl overflow-hidden shadow-sm">
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs text-slate-300">
-                  <thead className="bg-slate-800/60 text-[var(--app-muted)] uppercase font-semibold text-[11px] border-b border-slate-800">
+                <table className="w-full text-left text-xs text-[var(--app-text)]">
+                  <thead className="bg-[var(--app-card-subtle)] text-[var(--app-muted)] uppercase font-semibold text-[11px] border-b border-[var(--app-border)]">
                     <tr>
                       <th className="px-4 py-3">Mitra & Kontak</th>
                       <th className="px-4 py-3">Kode Referral</th>
@@ -529,7 +529,7 @@ export default function AdminSalesPage() {
                       <th className="px-4 py-3 text-right">Aksi</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800">
+                  <tbody className="divide-y divide-[var(--app-border)]">
                     {partners.length === 0 ? (
                       <tr>
                         <td colSpan={7} className="px-4 py-8 text-center text-[var(--app-muted)]">
@@ -608,10 +608,10 @@ export default function AdminSalesPage() {
         {/* Tab 2: Persetujuan Pendaftaran */}
         {activeTab === 'approval' && (
           <div className="space-y-4">
-            <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-sm">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl overflow-hidden shadow-sm">
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs text-slate-300">
-                  <thead className="bg-slate-800/60 text-[var(--app-muted)] uppercase font-semibold text-[11px] border-b border-slate-800">
+                <table className="w-full text-left text-xs text-[var(--app-text)]">
+                  <thead className="bg-[var(--app-card-subtle)] text-[var(--app-muted)] uppercase font-semibold text-[11px] border-b border-[var(--app-border)]">
                     <tr>
                       <th className="px-4 py-3">Calon Mitra</th>
                       <th className="px-4 py-3">WhatsApp & Email</th>
@@ -621,7 +621,7 @@ export default function AdminSalesPage() {
                       <th className="px-4 py-3 text-right">Keputusan</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800">
+                  <tbody className="divide-y divide-[var(--app-border)]">
                     {partners.filter((p) => p.status === 'PENDING').length === 0 ? (
                       <tr>
                         <td colSpan={6} className="px-4 py-8 text-center text-[var(--app-muted)]">
@@ -686,10 +686,10 @@ export default function AdminSalesPage() {
         {/* Tab 3: Pencairan Saldo (Payout) */}
         {activeTab === 'payout' && (
           <div className="space-y-4">
-            <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-sm">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl overflow-hidden shadow-sm">
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs text-slate-300">
-                  <thead className="bg-slate-800/60 text-[var(--app-muted)] uppercase font-semibold text-[11px] border-b border-slate-800">
+                <table className="w-full text-left text-xs text-[var(--app-text)]">
+                  <thead className="bg-[var(--app-card-subtle)] text-[var(--app-muted)] uppercase font-semibold text-[11px] border-b border-[var(--app-border)]">
                     <tr>
                       <th className="px-4 py-3">Nama Mitra</th>
                       <th className="px-4 py-3">Nominal Penarikan</th>
@@ -699,7 +699,7 @@ export default function AdminSalesPage() {
                       <th className="px-4 py-3 text-right">Aksi</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800">
+                  <tbody className="divide-y divide-[var(--app-border)]">
                     {withdrawals.length === 0 ? (
                       <tr>
                         <td colSpan={6} className="px-4 py-8 text-center text-[var(--app-muted)]">
@@ -708,9 +708,9 @@ export default function AdminSalesPage() {
                       </tr>
                     ) : (
                       withdrawals.map((w) => (
-                        <tr key={w.id} className="hover:bg-slate-800/40 transition">
+                        <tr key={w.id} className="hover:bg-[var(--app-card-subtle)] transition">
                           <td className="px-4 py-3.5">
-                            <div className="font-semibold text-white">{w.salesPartner?.name}</div>
+                            <div className="font-semibold text-[var(--app-text)]">{w.salesPartner?.name}</div>
                             <div className="text-[11px] text-[var(--app-muted)] font-mono">
                               {w.salesPartner?.code} ({w.salesPartner?.phone})
                             </div>
@@ -719,7 +719,7 @@ export default function AdminSalesPage() {
                             Rp {w.amount.toLocaleString('id-ID')}
                           </td>
                           <td className="px-4 py-3.5">
-                            <div className="font-semibold text-slate-200">
+                            <div className="font-semibold text-[var(--app-text)]">
                               {w.bankName} — {w.bankAccount}
                             </div>
                             <div className="text-[11px] text-[var(--app-muted)]">a.n {w.bankAccountName}</div>
@@ -769,10 +769,10 @@ export default function AdminSalesPage() {
         {/* Tab 4: Riwayat Mutasi (Ledger) */}
         {activeTab === 'ledger' && (
           <div className="space-y-4">
-            <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-sm">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl overflow-hidden shadow-sm">
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs text-slate-300">
-                  <thead className="bg-slate-800/60 text-[var(--app-muted)] uppercase font-semibold text-[11px] border-b border-slate-800">
+                <table className="w-full text-left text-xs text-[var(--app-text)]">
+                  <thead className="bg-[var(--app-card-subtle)] text-[var(--app-muted)] uppercase font-semibold text-[11px] border-b border-[var(--app-border)]">
                     <tr>
                       <th className="px-4 py-3">Waktu</th>
                       <th className="px-4 py-3">Mitra Sales</th>
@@ -782,7 +782,7 @@ export default function AdminSalesPage() {
                       <th className="px-4 py-3 text-center">Status</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800">
+                  <tbody className="divide-y divide-[var(--app-border)]">
                     {ledgers.length === 0 ? (
                       <tr>
                         <td colSpan={6} className="px-4 py-8 text-center text-[var(--app-muted)]">
@@ -791,14 +791,14 @@ export default function AdminSalesPage() {
                       </tr>
                     ) : (
                       ledgers.map((l) => (
-                        <tr key={l.id} className="hover:bg-slate-800/40 transition">
+                        <tr key={l.id} className="hover:bg-[var(--app-card-subtle)] transition">
                           <td className="px-4 py-3.5 text-[var(--app-muted)] whitespace-nowrap">
                             {new Date(l.createdAt).toLocaleString('id-ID', {
                               dateStyle: 'short',
                               timeStyle: 'short',
                             })}
                           </td>
-                          <td className="px-4 py-3.5 font-medium text-white">
+                          <td className="px-4 py-3.5 font-medium text-[var(--app-text)]">
                             {l.salesPartner?.name} ({l.salesPartner?.code})
                           </td>
                           <td className="px-4 py-3.5">
@@ -839,44 +839,44 @@ export default function AdminSalesPage() {
       {/* Payout Modal Dialog */}
       {selectedWithdrawal && (
         <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-slate-900 border border-slate-800 rounded-xl w-full max-w-lg p-6 space-y-4 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl w-full max-w-lg p-6 space-y-4 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-[var(--app-border)] pb-3">
               <h3 className="text-lg font-bold text-[var(--app-text)] flex items-center gap-2">
-                <Wallet className="w-5 h-5 text-emerald-400" />
+                <Wallet className="w-5 h-5 text-emerald-500" />
                 Proses Pencairan Komisi Mitra
               </h3>
               <button
                 onClick={() => setSelectedWithdrawal(null)}
-                className="text-[var(--app-muted)] hover:text-white"
+                className="text-[var(--app-muted)] hover:text-[var(--app-text)]"
               >
                 ✕
               </button>
             </div>
 
-            <div className="bg-slate-800/60 rounded-lg p-4 space-y-2 border border-slate-700 text-xs">
+            <div className="bg-[var(--app-card-subtle)] rounded-lg p-4 space-y-2 border border-[var(--app-border)] text-xs">
               <div className="flex justify-between">
                 <span className="text-[var(--app-muted)]">Nama Mitra:</span>
-                <span className="font-semibold text-white">{selectedWithdrawal.salesPartner?.name}</span>
+                <span className="font-semibold text-[var(--app-text)]">{selectedWithdrawal.salesPartner?.name}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-[var(--app-muted)]">Kode Referral:</span>
-                <span className="font-mono text-emerald-400">{selectedWithdrawal.salesPartner?.code}</span>
+                <span className="font-mono text-emerald-500">{selectedWithdrawal.salesPartner?.code}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-[var(--app-muted)]">Bank / E-Wallet:</span>
-                <span className="font-semibold text-white">{selectedWithdrawal.bankName}</span>
+                <span className="font-semibold text-[var(--app-text)]">{selectedWithdrawal.bankName}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-[var(--app-muted)]">Nomor Rekening:</span>
-                <span className="font-mono text-white select-all">{selectedWithdrawal.bankAccount}</span>
+                <span className="font-mono text-[var(--app-text)] select-all">{selectedWithdrawal.bankAccount}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-[var(--app-muted)]">Nama Penerima:</span>
-                <span className="font-semibold text-white">{selectedWithdrawal.bankAccountName}</span>
+                <span className="font-semibold text-[var(--app-text)]">{selectedWithdrawal.bankAccountName}</span>
               </div>
-              <div className="flex justify-between border-t border-slate-700 pt-2 text-sm">
-                <span className="text-slate-300 font-bold">Nominal Transfer:</span>
-                <span className="text-emerald-400 font-extrabold text-base">
+              <div className="flex justify-between border-t border-[var(--app-border)] pt-2 text-sm">
+                <span className="text-[var(--app-text)] font-bold">Nominal Transfer:</span>
+                <span className="text-emerald-500 font-extrabold text-base">
                   Rp {selectedWithdrawal.amount.toLocaleString('id-ID')}
                 </span>
               </div>
