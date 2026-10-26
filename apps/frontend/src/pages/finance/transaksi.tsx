@@ -30,6 +30,7 @@ import {
   PlusSquare,
   MinusSquare,
   Trash2,
+  Edit,
   Share2,
   FileText,
   UploadCloud,
@@ -105,13 +106,78 @@ export default function TransaksiDashboard() {
     { id: 10, tanggal: '30/06/2026 09:21', trxNo: 'TRX/2026/06/002536', tipe: 'Pengeluaran', deskripsi: 'Pembayaran Sewa Server Bulan Juli 2026', akun: 'Beban Sewa', kategori: 'Beban Operasional', debit: 1750000, kredit: 0, saldo: 45060500, metode: 'Transfer Bank', status: 'Selesai' }
   ]);
 
-  // Dynamic statistics calculations
-  const totalTrxCount = transactions.length + 1238; // base on screenshot
-  const debitTotal = transactions.reduce((acc, t) => acc + t.debit, 88450000 - 30450000) + transactions.filter(t => t.id > 10 && t.tipe === 'Pengeluaran').reduce((acc, t) => acc + t.debit, 0);
-  const kreditTotal = transactions.reduce((acc, t) => acc + t.kredit, 125860500 - 1050000) + transactions.filter(t => t.id > 10 && t.tipe === 'Pemasukan').reduce((acc, t) => acc + t.kredit, 0);
+  // Real dynamic statistics calculations from active transactions
+  const totalTrxCount = transactions.length;
+  const debitTotal = transactions.reduce((acc, t) => acc + (t.debit || 0), 0);
+  const kreditTotal = transactions.reduce((acc, t) => acc + (t.kredit || 0), 0);
   const saldoAkhir = kreditTotal - debitTotal;
-  const averagePerDay = 41;
-  const pendingTrx = 18;
+  const averagePerDay = Math.max(1, Math.round(transactions.length / 30));
+  const pendingTrx = transactions.filter(t => t.status !== 'Selesai').length;
+
+  // Edit and Delete Modals State
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [trxToEdit, setTrxToEdit] = useState<any | null>(null);
+  const [editDesc, setEditDesc] = useState('');
+  const [editTipe, setEditTipe] = useState('Pemasukan');
+  const [editKategori, setEditKategori] = useState('Pendapatan');
+  const [editAkun, setEditAkun] = useState('Kas & Bank');
+  const [editMetode, setEditMetode] = useState('Transfer Bank');
+  const [editNominal, setEditNominal] = useState('');
+  const [editStatus, setEditStatus] = useState('Selesai');
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [trxToDelete, setTrxToDelete] = useState<any | null>(null);
+
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [trxDetail, setTrxDetail] = useState<any | null>(null);
+
+  const handleOpenEdit = (t: any) => {
+    setTrxToEdit(t);
+    setEditDesc(t.deskripsi);
+    setEditTipe(t.tipe);
+    setEditKategori(t.kategori);
+    setEditAkun(t.akun);
+    setEditMetode(t.metode);
+    setEditNominal(String(t.tipe === 'Pengeluaran' ? t.debit : t.kredit));
+    setEditStatus(t.status);
+    setShowEditModal(true);
+  };
+
+  const handleSaveEdit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!trxToEdit) return;
+    const num = parseFloat(editNominal) || 0;
+    setTransactions(transactions.map(t => {
+      if (t.id === trxToEdit.id) {
+        return {
+          ...t,
+          deskripsi: editDesc,
+          tipe: editTipe,
+          kategori: editKategori,
+          akun: editAkun,
+          metode: editMetode,
+          debit: editTipe === 'Pengeluaran' ? num : 0,
+          kredit: editTipe === 'Pemasukan' ? num : 0,
+          status: editStatus
+        };
+      }
+      return t;
+    }));
+    setShowEditModal(false);
+    setTrxToEdit(null);
+  };
+
+  const handleOpenDelete = (t: any) => {
+    setTrxToDelete(t);
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!trxToDelete) return;
+    setTransactions(transactions.filter(t => t.id !== trxToDelete.id));
+    setShowDeleteModal(false);
+    setTrxToDelete(null);
+  };
 
   // Chart data
   const weeklyTrendData = [
@@ -549,6 +615,7 @@ export default function TransaksiDashboard() {
                       <th className="py-2.5 text-right">SALDO</th>
                       <th className="py-2.5">METODE</th>
                       <th className="py-2.5">STATUS</th>
+                      <th className="py-2.5 text-right pr-2">AKSI</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[var(--app-border)] text-[var(--app-text)]/90">
@@ -577,9 +644,37 @@ export default function TransaksiDashboard() {
                         <td className="py-3 text-right font-semibold">{formatRupiah(saldoAkhir)}</td>
                         <td className="py-3 text-[var(--app-muted)]">{t.metode}</td>
                         <td className="py-3">
-                          <span className="px-2 py-0.5 rounded text-[10px] bg-emerald-500/10 text-emerald-400">
+                          <span className={`px-2 py-0.5 rounded text-[10px] ${t.status === 'Selesai' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'}`}>
                             {t.status}
                           </span>
+                        </td>
+                        <td className="py-3 text-right pr-2">
+                          <div className="flex items-center justify-end gap-1">
+                            <button
+                              onClick={() => {
+                                setTrxDetail(t);
+                                setShowDetailModal(true);
+                              }}
+                              className="p-1 hover:bg-slate-700 rounded text-slate-400 hover:text-blue-400 transition"
+                              title="Lihat Detail Transaksi"
+                            >
+                              <Eye size={13} />
+                            </button>
+                            <button
+                              onClick={() => handleOpenEdit(t)}
+                              className="p-1 hover:bg-slate-700 rounded text-slate-400 hover:text-blue-400 transition"
+                              title="Edit Transaksi"
+                            >
+                              <Edit size={13} />
+                            </button>
+                            <button
+                              onClick={() => handleOpenDelete(t)}
+                              className="p-1 hover:bg-rose-950/40 rounded text-slate-400 hover:text-rose-400 transition"
+                              title="Hapus Transaksi"
+                            >
+                              <Trash2 size={13} />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -589,7 +684,7 @@ export default function TransaksiDashboard() {
 
               {/* Pagination */}
               <div className="flex justify-between items-center mt-4 pt-4 border-t border-[var(--app-border)]/60 text-xs text-[var(--app-muted)]">
-                <span>Menampilkan 1 - {filteredList.length} dari {totalTrxCount} transaksi</span>
+                <span>Menampilkan {filteredList.length} dari {totalTrxCount} transaksi</span>
                 <div className="flex items-center gap-2">
                   <button className="p-1 rounded bg-[#071225] border border-[var(--app-border)] hover:text-white">
                     <ChevronLeft className="w-4 h-4" />
@@ -825,6 +920,225 @@ export default function TransaksiDashboard() {
           </div>
         )}
       </div>
+      {/* Modal: Detail Transaksi */}
+      {showDetailModal && trxDetail && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="w-full max-w-md bg-[var(--app-surface)] border border-[var(--app-border)] rounded-xl p-6 shadow-2xl space-y-4">
+            <div className="flex justify-between items-center border-b border-[var(--app-border)] pb-3">
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded bg-blue-500/15 text-blue-400">
+                  <Eye size={16} />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-white">Detail Transaksi Kas</h3>
+                  <p className="text-[10px] text-[var(--app-muted)] font-mono">{trxDetail.trxNo}</p>
+                </div>
+              </div>
+              <button onClick={() => setShowDetailModal(false)} className="text-[var(--app-muted)] hover:text-white text-xs">
+                Tutup
+              </button>
+            </div>
+
+            <div className="space-y-2.5 text-xs">
+              <div className="flex justify-between py-1 border-b border-[var(--app-border)]/50">
+                <span className="text-[var(--app-muted)]">Tanggal</span>
+                <span className="font-semibold text-white">{trxDetail.tanggal}</span>
+              </div>
+              <div className="flex justify-between py-1 border-b border-[var(--app-border)]/50">
+                <span className="text-[var(--app-muted)]">Tipe Transaksi</span>
+                <span className="font-bold text-cyan-400">{trxDetail.tipe}</span>
+              </div>
+              <div className="flex justify-between py-1 border-b border-[var(--app-border)]/50">
+                <span className="text-[var(--app-muted)]">Kategori</span>
+                <span className="text-white">{trxDetail.kategori}</span>
+              </div>
+              <div className="flex justify-between py-1 border-b border-[var(--app-border)]/50">
+                <span className="text-[var(--app-muted)]">Akun Kas</span>
+                <span className="text-white">{trxDetail.akun}</span>
+              </div>
+              <div className="flex justify-between py-1 border-b border-[var(--app-border)]/50">
+                <span className="text-[var(--app-muted)]">Metode Pembayaran</span>
+                <span className="text-white">{trxDetail.metode}</span>
+              </div>
+              <div className="flex justify-between py-1 border-b border-[var(--app-border)]/50">
+                <span className="text-[var(--app-muted)]">Nominal Debit</span>
+                <span className="font-mono text-rose-400 font-bold">{formatRupiah(trxDetail.debit)}</span>
+              </div>
+              <div className="flex justify-between py-1 border-b border-[var(--app-border)]/50">
+                <span className="text-[var(--app-muted)]">Nominal Kredit</span>
+                <span className="font-mono text-emerald-400 font-bold">{formatRupiah(trxDetail.kredit)}</span>
+              </div>
+              <div className="flex justify-between py-1 border-b border-[var(--app-border)]/50">
+                <span className="text-[var(--app-muted)]">Status</span>
+                <span className="font-bold uppercase text-emerald-400">{trxDetail.status}</span>
+              </div>
+              <div className="pt-2">
+                <span className="text-[var(--app-muted)] block mb-1">Keterangan:</span>
+                <p className="p-2.5 rounded bg-[var(--app-card-subtle)] text-white text-[11px] font-mono">{trxDetail.deskripsi}</p>
+              </div>
+            </div>
+
+            <div className="flex justify-end pt-3 border-t border-[var(--app-border)]">
+              <button
+                onClick={() => setShowDetailModal(false)}
+                className="px-4 py-2 rounded bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white"
+              >
+                Tutup
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Edit Transaksi */}
+      {showEditModal && trxToEdit && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="w-full max-w-md bg-[var(--app-surface)] border border-[var(--app-border)] rounded-xl p-6 shadow-2xl">
+            <div className="flex justify-between items-center mb-4 pb-3 border-b border-[var(--app-border)]">
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded bg-blue-500/15 text-blue-400">
+                  <Edit size={16} />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-white">Edit Transaksi</h3>
+                  <p className="text-[10px] text-[var(--app-muted)] font-mono">{trxToEdit.trxNo}</p>
+                </div>
+              </div>
+              <button onClick={() => setShowEditModal(false)} className="text-[var(--app-muted)] hover:text-white text-xs">
+                Batal
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveEdit} className="space-y-3.5 text-xs">
+              <div>
+                <label className="block text-[var(--app-muted)] mb-1">Deskripsi Transaksi</label>
+                <input
+                  type="text"
+                  required
+                  value={editDesc}
+                  onChange={e => setEditDesc(e.target.value)}
+                  className="w-full p-2.5 rounded bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[var(--app-muted)] mb-1">Tipe</label>
+                  <select
+                    value={editTipe}
+                    onChange={e => setEditTipe(e.target.value)}
+                    className="w-full p-2.5 rounded bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
+                  >
+                    <option value="Pemasukan">Pemasukan (Kredit)</option>
+                    <option value="Pengeluaran">Pengeluaran (Debit)</option>
+                    <option value="Transfer">Transfer</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[var(--app-muted)] mb-1">Nominal (Rp)</label>
+                  <input
+                    type="number"
+                    required
+                    value={editNominal}
+                    onChange={e => setEditNominal(e.target.value)}
+                    className="w-full p-2.5 rounded bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-white font-mono focus:outline-none focus:border-cyan-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[var(--app-muted)] mb-1">Akun</label>
+                  <select
+                    value={editAkun}
+                    onChange={e => setEditAkun(e.target.value)}
+                    className="w-full p-2.5 rounded bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
+                  >
+                    <option value="Kas & Bank">Kas & Bank</option>
+                    <option value="Kas Kecil">Kas Kecil</option>
+                    <option value="Beban Gaji">Beban Gaji</option>
+                    <option value="Beban Utilitas">Beban Utilitas</option>
+                    <option value="Beban Peralatan">Beban Peralatan</option>
+                    <option value="Beban Sewa">Beban Sewa</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[var(--app-muted)] mb-1">Metode</label>
+                  <select
+                    value={editMetode}
+                    onChange={e => setEditMetode(e.target.value)}
+                    className="w-full p-2.5 rounded bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
+                  >
+                    <option value="Transfer Bank">Transfer Bank</option>
+                    <option value="E-Wallet">E-Wallet</option>
+                    <option value="QRIS">QRIS</option>
+                    <option value="Tunai">Tunai</option>
+                    <option value="Transfer Internal">Transfer Internal</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[var(--app-muted)] mb-1">Status</label>
+                <select
+                  value={editStatus}
+                  onChange={e => setEditStatus(e.target.value)}
+                  className="w-full p-2.5 rounded bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
+                >
+                  <option value="Selesai">Selesai</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Dibatalkan">Dibatalkan</option>
+                </select>
+              </div>
+
+              <div className="flex justify-end gap-3 pt-4 border-t border-[var(--app-border)]">
+                <button
+                  type="button"
+                  onClick={() => setShowEditModal(false)}
+                  className="px-4 py-2 rounded border border-[var(--app-border)] text-[var(--app-muted)] hover:text-white"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded bg-blue-600 hover:bg-blue-500 text-white font-semibold"
+                >
+                  Simpan Perubahan
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Hapus Transaksi */}
+      {showDeleteModal && trxToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="w-full max-w-sm bg-[var(--app-surface)] border border-[var(--app-border)] rounded-xl p-6 shadow-2xl space-y-4">
+            <div className="flex items-center gap-2 text-rose-500 border-b border-[var(--app-border)] pb-3">
+              <Trash2 size={18} />
+              <h3 className="text-sm font-bold">Hapus Transaksi</h3>
+            </div>
+            <p className="text-xs text-[var(--app-text)]">
+              Yakin ingin menghapus transaksi <strong className="text-white">{trxToDelete.trxNo}</strong> ({trxToDelete.deskripsi})?
+            </p>
+            <div className="flex justify-end gap-2.5 pt-3 border-t border-[var(--app-border)]">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="px-3 py-1.5 rounded border border-[var(--app-border)] text-xs text-[var(--app-muted)] hover:text-white"
+              >
+                Batal
+              </button>
+              <button
+                onClick={handleConfirmDelete}
+                className="px-3 py-1.5 rounded bg-rose-600 hover:bg-rose-500 text-xs text-white font-semibold"
+              >
+                Ya, Hapus
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 }

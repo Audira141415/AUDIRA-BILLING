@@ -33,7 +33,9 @@ import {
   CreditCard,
   Send,
   Building2,
-  Percent
+  Percent,
+  Edit,
+  Trash2
 } from 'lucide-react';
 
 interface Invoice {
@@ -81,6 +83,15 @@ export default function InvoicePage() {
   const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
   const [showMarkPaidModal, setShowMarkPaidModal] = useState(false);
   const [showGenerateModal, setShowGenerateModal] = useState(false);
+  const [showEditInvoiceModal, setShowEditInvoiceModal] = useState(false);
+  const [showDeleteInvoiceModal, setShowDeleteInvoiceModal] = useState(false);
+  const [invoiceToEdit, setInvoiceToEdit] = useState<Invoice | null>(null);
+  const [editAmount, setEditAmount] = useState('');
+  const [editDueDate, setEditDueDate] = useState('');
+  const [editStatus, setEditStatus] = useState<'PENDING' | 'PAID' | 'OVERDUE'>('PENDING');
+  const [editMonth, setEditMonth] = useState('');
+  const [editDescription, setEditDescription] = useState('');
+  const [invoiceToDelete, setInvoiceToDelete] = useState<Invoice | null>(null);
   
   // Form and Selection state
   const [whatsappMessage, setWhatsappMessage] = useState('');
@@ -140,6 +151,70 @@ export default function InvoicePage() {
       await fetchInvoices();
     } catch (error: any) {
       showToast(`Gagal generate invoice: ${error.message}`, 'error');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  // Edit Invoice Handlers
+  const handleOpenEditModal = (inv: Invoice) => {
+    setInvoiceToEdit(inv);
+    setEditAmount(String(inv.amount || ''));
+    try {
+      const d = new Date(inv.dueDate);
+      setEditDueDate(isNaN(d.getTime()) ? '' : d.toISOString().slice(0, 10));
+    } catch {
+      setEditDueDate('');
+    }
+    setEditStatus(inv.status || 'PENDING');
+    setEditMonth(inv.month || '');
+    setEditDescription(inv.description || '');
+    setShowEditInvoiceModal(true);
+  };
+
+  const handleSaveEditInvoice = async () => {
+    if (!invoiceToEdit) return;
+    const num = parseInt(editAmount);
+    if (isNaN(num) || num <= 0) {
+      showToast('Nominal tagihan harus berupa angka positif', 'error');
+      return;
+    }
+    try {
+      setActionLoading('save-edit');
+      await api.keuangan.updateInvoice(invoiceToEdit.id, {
+        amount: num,
+        dueDate: editDueDate ? new Date(editDueDate).toISOString() : invoiceToEdit.dueDate,
+        status: editStatus,
+        month: editMonth || invoiceToEdit.month,
+        description: editDescription
+      });
+      showToast(`Tagihan ${invoiceToEdit.invoiceNumber} berhasil diperbarui`, 'success');
+      setShowEditInvoiceModal(false);
+      setInvoiceToEdit(null);
+      await fetchInvoices();
+    } catch (err: any) {
+      showToast(`Gagal update tagihan: ${err.message || 'Error server'}`, 'error');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleOpenDeleteModal = (inv: Invoice) => {
+    setInvoiceToDelete(inv);
+    setShowDeleteInvoiceModal(true);
+  };
+
+  const handleConfirmDeleteInvoice = async () => {
+    if (!invoiceToDelete) return;
+    try {
+      setActionLoading('delete-invoice');
+      await api.keuangan.deleteInvoice(invoiceToDelete.id);
+      showToast(`Invoice ${invoiceToDelete.invoiceNumber} berhasil dihapus dari sistem`, 'success');
+      setShowDeleteInvoiceModal(false);
+      setInvoiceToDelete(null);
+      await fetchInvoices();
+    } catch (err: any) {
+      showToast(`Gagal menghapus tagihan: ${err.message || 'Error server'}`, 'error');
     } finally {
       setActionLoading(null);
     }
@@ -686,6 +761,24 @@ export default function InvoicePage() {
                             >
                               <Eye size={15} />
                             </button>
+
+                            {/* Edit Invoice Button */}
+                            <button
+                              onClick={() => handleOpenEditModal(inv)}
+                              className="p-1.5 rounded-lg text-theme-muted hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition"
+                              title="Edit Tagihan & Nominal"
+                            >
+                              <Edit size={15} />
+                            </button>
+
+                            {/* Delete Invoice Button */}
+                            <button
+                              onClick={() => handleOpenDeleteModal(inv)}
+                              className="p-1.5 rounded-lg text-theme-muted hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition"
+                              title="Hapus Tagihan"
+                            >
+                              <Trash2 size={15} />
+                            </button>
                           </div>
                         </td>
                       </tr>
@@ -935,6 +1028,181 @@ export default function InvoicePage() {
                   className="px-4 py-2 bg-theme-primary hover:opacity-90 text-white rounded-xl text-xs font-bold transition"
                 >
                   Tutup
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ─── MODAL: Edit Tagihan (Invoice) ─────────────────────────── */}
+        {showEditInvoiceModal && invoiceToEdit && (
+          <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-xs">
+            <div className="bg-theme-card border border-theme-border rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
+              <div className="flex items-center justify-between p-5 border-b border-theme-border bg-slate-50/50 dark:bg-slate-900/50">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 rounded-lg bg-blue-500/10 text-blue-600 border border-blue-500/20">
+                    <Edit size={16} />
+                  </div>
+                  <div>
+                    <h2 className="text-sm font-bold text-theme-text">Edit Tagihan Pelanggan</h2>
+                    <p className="text-[10px] text-theme-muted font-mono">{invoiceToEdit.invoiceNumber}</p>
+                  </div>
+                </div>
+                <button onClick={() => setShowEditInvoiceModal(false)} className="p-1.5 text-theme-muted hover:text-theme-text">
+                  <X size={16} />
+                </button>
+              </div>
+
+              <div className="p-5 space-y-4">
+                <div className="bg-theme-bg border border-theme-border rounded-xl p-3 text-xs space-y-1">
+                  <div className="flex justify-between">
+                    <span className="text-theme-muted">Pelanggan:</span>
+                    <span className="font-bold text-theme-text">{invoiceToEdit.customer?.name}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-theme-muted">No. Telepon:</span>
+                    <span className="font-mono text-theme-text">{invoiceToEdit.customer?.phone || '-'}</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-theme-muted mb-1">Nominal Tagihan (Rp)</label>
+                    <input
+                      type="number"
+                      value={editAmount}
+                      onChange={e => setEditAmount(e.target.value)}
+                      className="w-full bg-theme-bg border border-theme-border rounded-xl px-3 py-2 text-xs font-mono font-bold text-theme-text focus:outline-none focus:border-blue-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-theme-muted mb-1">Status Pembayaran</label>
+                    <select
+                      value={editStatus}
+                      onChange={e => setEditStatus(e.target.value as any)}
+                      className="w-full bg-theme-bg border border-theme-border rounded-xl px-3 py-2 text-xs text-theme-text focus:outline-none focus:border-blue-500"
+                    >
+                      <option value="PENDING">PENDING (Menunggu)</option>
+                      <option value="PAID">PAID (Lunas)</option>
+                      <option value="OVERDUE">OVERDUE (Terlambat)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-theme-muted mb-1">Tanggal Jatuh Tempo</label>
+                    <input
+                      type="date"
+                      value={editDueDate}
+                      onChange={e => setEditDueDate(e.target.value)}
+                      className="w-full bg-theme-bg border border-theme-border rounded-xl px-3 py-2 text-xs font-mono text-theme-text focus:outline-none focus:border-blue-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-theme-muted mb-1">Periode Bulan</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. 2026-07 atau Juli 2026"
+                      value={editMonth}
+                      onChange={e => setEditMonth(e.target.value)}
+                      className="w-full bg-theme-bg border border-theme-border rounded-xl px-3 py-2 text-xs text-theme-text focus:outline-none focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-theme-muted mb-1">Catatan / Deskripsi Tambahan</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Diskon promo / Penyesuaian paket"
+                    value={editDescription}
+                    onChange={e => setEditDescription(e.target.value)}
+                    className="w-full bg-theme-bg border border-theme-border rounded-xl px-3 py-2 text-xs text-theme-text focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+              </div>
+
+              <div className="p-4 border-t border-theme-border flex gap-2.5 justify-end bg-slate-50/50 dark:bg-slate-900/50">
+                <button
+                  onClick={() => setShowEditInvoiceModal(false)}
+                  className="px-4 py-2 border border-theme-border text-theme-muted hover:text-theme-text rounded-xl text-xs font-semibold transition"
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={handleSaveEditInvoice}
+                  disabled={actionLoading === 'save-edit'}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5"
+                >
+                  {actionLoading === 'save-edit' ? <RefreshCw size={14} className="animate-spin" /> : <Check size={14} />}
+                  <span>{actionLoading === 'save-edit' ? 'Menyimpan...' : 'Simpan Perubahan'}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ─── MODAL: Hapus Tagihan (Delete Confirmation) ──────────────── */}
+        {showDeleteInvoiceModal && invoiceToDelete && (
+          <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-xs">
+            <div className="bg-theme-card border border-theme-border rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
+              <div className="flex items-center justify-between p-5 border-b border-theme-border bg-rose-50/50 dark:bg-rose-950/30">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 rounded-lg bg-rose-500/10 text-rose-600 border border-rose-500/20">
+                    <Trash2 size={16} />
+                  </div>
+                  <div>
+                    <h2 className="text-sm font-bold text-rose-600 dark:text-rose-400">Konfirmasi Hapus Tagihan</h2>
+                    <p className="text-[10px] text-theme-muted">Tindakan ini tidak dapat dibatalkan</p>
+                  </div>
+                </div>
+                <button onClick={() => setShowDeleteInvoiceModal(false)} className="p-1.5 text-theme-muted hover:text-theme-text">
+                  <X size={16} />
+                </button>
+              </div>
+
+              <div className="p-5 space-y-4">
+                <p className="text-xs text-theme-text">
+                  Apakah Anda yakin ingin menghapus tagihan ini secara permanen dari basis data?
+                </p>
+
+                <div className="bg-theme-bg border border-theme-border rounded-xl p-3.5 space-y-2 text-xs font-mono">
+                  <div className="flex justify-between">
+                    <span className="text-theme-muted">Nomor Tagihan:</span>
+                    <span className="font-bold text-theme-text">{invoiceToDelete.invoiceNumber}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-theme-muted">Pelanggan:</span>
+                    <span className="font-bold text-theme-text">{invoiceToDelete.customer?.name}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-theme-muted">Nominal:</span>
+                    <span className="font-bold text-rose-500">{formatCurrency(invoiceToDelete.amount)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-theme-muted">Status:</span>
+                    <span className="font-bold uppercase text-theme-text">{invoiceToDelete.status}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-4 border-t border-theme-border flex gap-2.5 justify-end bg-slate-50/50 dark:bg-slate-900/50">
+                <button
+                  onClick={() => setShowDeleteInvoiceModal(false)}
+                  className="px-4 py-2 border border-theme-border text-theme-muted hover:text-theme-text rounded-xl text-xs font-semibold transition"
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={handleConfirmDeleteInvoice}
+                  disabled={actionLoading === 'delete-invoice'}
+                  className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs"
+                >
+                  {actionLoading === 'delete-invoice' ? <RefreshCw size={14} className="animate-spin" /> : <Trash2 size={14} />}
+                  <span>{actionLoading === 'delete-invoice' ? 'Menghapus...' : 'Ya, Hapus Tagihan'}</span>
                 </button>
               </div>
             </div>

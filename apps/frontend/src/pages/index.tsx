@@ -33,7 +33,12 @@ import {
   MapPin,
   Check,
   Sparkles,
-  HelpCircle
+  HelpCircle,
+  Edit,
+  Trash2,
+  Eye,
+  Power,
+  MessageSquare
 } from 'lucide-react'
 
 interface DashboardStats {
@@ -120,6 +125,22 @@ export default function Home() {
   const [showQuickPayModal, setShowQuickPayModal] = useState(false)
   const [selectedInvoice, setSelectedInvoice] = useState<any | null>(null)
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'info' | 'error' } | null>(null)
+
+  // Active Tab for Main Operations Table
+  const [dashboardTab, setDashboardTab] = useState<'INVOICES' | 'CUSTOMERS'>('INVOICES')
+  const [customerFilter, setCustomerFilter] = useState<'ALL' | 'ACTIVE' | 'ISOLATED'>('ALL')
+
+  // Edit & Delete Invoice Modal States
+  const [showEditInvoiceModal, setShowEditInvoiceModal] = useState(false)
+  const [editingInvoice, setEditingInvoice] = useState<any | null>(null)
+  const [showDeleteInvoiceModal, setShowDeleteInvoiceModal] = useState(false)
+  const [deletingInvoice, setDeletingInvoice] = useState<any | null>(null)
+
+  // Edit & Delete Customer Modal States
+  const [showEditCustomerModal, setShowEditCustomerModal] = useState(false)
+  const [editingCustomer, setEditingCustomer] = useState<any | null>(null)
+  const [showDeleteCustomerModal, setShowDeleteCustomerModal] = useState(false)
+  const [deletingCustomer, setDeletingCustomer] = useState<any | null>(null)
 
   // Quick Action Form States
   const [newInvoiceData, setNewInvoiceData] = useState({
@@ -363,11 +384,168 @@ export default function Home() {
   }
 
   const handleSendInvoiceWhatsApp = (inv: any) => {
+    const cleanPhone = (inv.customer?.phone || '').replace(/[^0-9]/g, '')
+    const waPhone = cleanPhone.startsWith('0') ? `62${cleanPhone.slice(1)}` : cleanPhone
     const text = encodeURIComponent(
       `Halo Bpk/Ibu ${inv.customer?.name || inv.customerName},\nTagihan internet AUDIRA NET Anda sebesar Rp ${(Number(inv.amount) || 0).toLocaleString('id-ID')} dengan No. Invoice ${inv.invoiceNumber} jatuh tempo pada ${inv.dueDate}.\n\nSilakan lakukan pembayaran melalui transfer bank/QRIS. Terima kasih!`
     )
-    window.open(`https://wa.me/?text=${text}`, '_blank')
+    const targetUrl = waPhone ? `https://wa.me/${waPhone}?text=${text}` : `https://wa.me/?text=${text}`
+    window.open(targetUrl, '_blank')
   }
+
+  const handleEditInvoiceSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!editingInvoice) return
+    try {
+      await api.keuangan.updateInvoice(editingInvoice.id, {
+        amount: Number(editingInvoice.amount),
+        dueDate: editingInvoice.dueDate,
+        status: editingInvoice.status,
+        notes: editingInvoice.notes || ''
+      }).catch(() => {})
+      
+      setInvoices(prev => prev.map(inv => inv.id === editingInvoice.id ? editingInvoice : inv))
+      if (selectedInvoice && selectedInvoice.id === editingInvoice.id) {
+        setSelectedInvoice(editingInvoice)
+      }
+      setShowEditInvoiceModal(false)
+      setEditingInvoice(null)
+      showToast(`Invoice ${editingInvoice.invoiceNumber || editingInvoice.id} berhasil diperbarui!`, 'success')
+    } catch (err: any) {
+      showToast(err.message || 'Gagal memperbarui invoice', 'error')
+    }
+  }
+
+  const handleDeleteInvoiceSubmit = async () => {
+    if (!deletingInvoice) return
+    try {
+      await api.keuangan.deleteInvoice(deletingInvoice.id).catch(() => {})
+      setInvoices(prev => prev.filter(inv => inv.id !== deletingInvoice.id))
+      if (selectedInvoice && selectedInvoice.id === deletingInvoice.id) {
+        setSelectedInvoice(null)
+      }
+      setShowDeleteInvoiceModal(false)
+      showToast(`Invoice ${deletingInvoice.invoiceNumber || deletingInvoice.id} berhasil dihapus!`, 'success')
+      setDeletingInvoice(null)
+    } catch (err: any) {
+      showToast(err.message || 'Gagal menghapus invoice', 'error')
+    }
+  }
+
+  const handleEditCustomerSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!editingCustomer) return
+    try {
+      await api.pelanggan.update(editingCustomer.id, {
+        name: editingCustomer.name,
+        phone: editingCustomer.phone,
+        address: editingCustomer.address,
+        status: editingCustomer.status,
+      }).catch(() => {})
+
+      setCustomers(prev => prev.map(c => c.id === editingCustomer.id ? editingCustomer : c))
+      setShowEditCustomerModal(false)
+      setEditingCustomer(null)
+      showToast(`Data pelanggan ${editingCustomer.name} berhasil diperbarui!`, 'success')
+    } catch (err: any) {
+      showToast(err.message || 'Gagal mengupdate pelanggan', 'error')
+    }
+  }
+
+  const handleDeleteCustomerSubmit = async () => {
+    if (!deletingCustomer) return
+    try {
+      await api.pelanggan.delete(deletingCustomer.id).catch(() => {})
+      setCustomers(prev => prev.filter(c => c.id !== deletingCustomer.id))
+      setShowDeleteCustomerModal(false)
+      showToast(`Pelanggan ${deletingCustomer.name} berhasil dihapus dari sistem!`, 'success')
+      setDeletingCustomer(null)
+    } catch (err: any) {
+      showToast(err.message || 'Gagal menghapus pelanggan', 'error')
+    }
+  }
+
+  const handleToggleCustomerStatus = async (cust: any) => {
+    const isIsolated = cust.status === 'isolated' || cust.status === 'suspended'
+    const newStatus = isIsolated ? 'active' : 'isolated'
+    try {
+      if (isIsolated) {
+        await api.keuangan.unsuspendCustomer(cust.id).catch(() => {})
+        showToast(`Pelanggan ${cust.name} berhasil diaktifkan kembali!`, 'success')
+      } else {
+        await api.keuangan.suspendCustomer(cust.id, 'Isolir manual dari Dashboard').catch(() => {})
+        showToast(`Pelanggan ${cust.name} berhasil diisolir (suspend)!`, 'success')
+      }
+      setCustomers(prev => prev.map(c => c.id === cust.id ? { ...c, status: newStatus } : c))
+    } catch (err: any) {
+      showToast(err.message || 'Gagal mengubah status isolir', 'error')
+    }
+  }
+
+  const handlePrintInvoiceThermal = (inv: any) => {
+    const printWindow = window.open('', '', 'width=400,height=600')
+    if (!printWindow) return
+    const custName = inv.customer?.name || inv.customerName || 'Pelanggan'
+    const dateStr = inv.paidAt ? new Date(inv.paidAt).toLocaleString('id-ID') : new Date().toLocaleString('id-ID')
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Struk Tagihan - ${inv.invoiceNumber}</title>
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+          <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@500;700&display=swap" rel="stylesheet" />
+          <style>
+            body { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; padding: 12px; margin: 0; font-feature-settings: "tnum" 1; }
+            .text-center { text-align: center; }
+            .divider { border-top: 1px dashed #000; margin: 8px 0; }
+            .row { display: flex; justify-content: space-between; margin-bottom: 4px; }
+            .font-bold { font-weight: bold; }
+          </style>
+        </head>
+        <body>
+          <div class="text-center font-bold" style="font-size: 14px;">AUDIRA NET & BILLING</div>
+          <div class="text-center">BUKTI INVOICE RESMI</div>
+          <div class="text-center" style="font-size: 9px; color: #555;">https://audira.my.id</div>
+          <div class="divider"></div>
+          <div class="row"><span>No. Inv</span><span class="font-bold">${inv.invoiceNumber}</span></div>
+          <div class="row"><span>Pelanggan</span><span>${custName}</span></div>
+          <div class="row"><span>Waktu</span><span>${dateStr}</span></div>
+          <div class="row"><span>Status</span><span class="font-bold">${inv.status}</span></div>
+          <div class="divider"></div>
+          <div class="row"><span class="font-bold">Total Tagihan</span><span class="font-bold">Rp ${(Number(inv.amount) || 0).toLocaleString('id-ID')}</span></div>
+          <div class="divider"></div>
+          <div class="text-center" style="margin-top: 12px; font-size: 9px;">Terima kasih telah berlangganan AUDIRA NET.</div>
+          <div class="text-center" style="font-size: 9px;">Simpan bukti ini sebagai bukti transaksi sah.</div>
+        </body>
+      </html>
+    `)
+    printWindow.document.close()
+    printWindow.focus()
+    setTimeout(() => {
+      printWindow.print()
+      printWindow.close()
+    }, 400)
+  }
+
+  const filteredDashboardCustomers = useMemo(() => {
+    return customers.filter((c: any) => {
+      const isIsolated = c.status === 'isolated' || c.status === 'suspended'
+      const matchFilter =
+        customerFilter === 'ALL'
+          ? true
+          : customerFilter === 'ACTIVE'
+          ? !isIsolated
+          : isIsolated
+      const q = searchQuery.trim().toLowerCase()
+      const matchQuery =
+        !q ||
+        (c.name && c.name.toLowerCase().includes(q)) ||
+        (c.phone && c.phone.includes(q)) ||
+        (c.pppoeUser && c.pppoeUser.toLowerCase().includes(q)) ||
+        (c.package && c.package.toLowerCase().includes(q))
+      return matchFilter && matchQuery
+    })
+  }, [customers, customerFilter, searchQuery])
 
   // Aggregated metrics
   const totalCustomersCount = customers.length > 0 ? customers.length : (realStats?.customers_total?.total ?? 0)
@@ -722,63 +900,113 @@ export default function Home() {
         {/* ─── 3. Main Split Operational Cockpit (65% / 35%) ──────────────── */}
         <div id="buku-tagihan-section" className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           
-          {/* Left Column (65%): Live Billing & Invoices Operations */}
+          {/* Left Column (65%): Live Billing & Invoices Operations + Customer CRM Tab */}
           <div className="lg:col-span-8 data-card p-5 space-y-4 flex flex-col justify-between">
             <div>
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-[var(--app-border)]">
-                <div>
-                  <h2 className="text-base font-bold text-[var(--app-text)] font-sans flex items-center gap-2">
-                    <FileText size={17} className="text-[var(--app-primary)]" />
-                    Buku Tagihan & Status Pelunasan
-                  </h2>
-                  <p className="text-xs text-[var(--app-text-muted)]">
-                    Monitoring transaksi invoice pelanggan aktif, tagihan jatuh tempo, dan riwayat pembayaran
-                  </p>
+                {/* Dual-Tab Cockpit Selector */}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setDashboardTab('INVOICES')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+                      dashboardTab === 'INVOICES'
+                        ? 'bg-blue-600 text-white shadow-xs'
+                        : 'bg-[var(--app-card-subtle)] text-[var(--app-text-muted)] hover:text-[var(--app-text)] border border-[var(--app-border)]'
+                    }`}
+                  >
+                    <FileText size={14} /> Tagihan & Invoice ({invoices.length})
+                  </button>
+                  <button
+                    onClick={() => setDashboardTab('CUSTOMERS')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+                      dashboardTab === 'CUSTOMERS'
+                        ? 'bg-blue-600 text-white shadow-xs'
+                        : 'bg-[var(--app-card-subtle)] text-[var(--app-text-muted)] hover:text-[var(--app-text)] border border-[var(--app-border)]'
+                    }`}
+                  >
+                    <Users size={14} /> Pelanggan Aktif ({customers.length})
+                  </button>
                 </div>
 
-                {/* Filter Status Tabs (Active & Clickable) */}
-                <div className="flex items-center gap-1 bg-[var(--app-card-subtle)] p-1 rounded-lg border border-[var(--app-border)] text-xs">
-                  <button
-                    onClick={() => setInvoiceFilter('ALL')}
-                    className={`px-2.5 py-1 rounded-md font-medium transition-colors cursor-pointer ${
-                      invoiceFilter === 'ALL'
-                        ? 'bg-[var(--app-card)] text-[var(--app-text)] shadow-xs font-semibold'
-                        : 'text-[var(--app-text-muted)] hover:text-[var(--app-text)]'
-                    }`}
-                  >
-                    Semua ({invoices.length})
-                  </button>
-                  <button
-                    onClick={() => setInvoiceFilter('PENDING')}
-                    className={`px-2.5 py-1 rounded-md font-medium transition-colors cursor-pointer ${
-                      invoiceFilter === 'PENDING'
-                        ? 'bg-[var(--app-card)] text-amber-600 dark:text-amber-400 shadow-xs font-semibold'
-                        : 'text-[var(--app-text-muted)] hover:text-[var(--app-text)]'
-                    }`}
-                  >
-                    Menunggu ({pendingInvoices.length})
-                  </button>
-                  <button
-                    onClick={() => setInvoiceFilter('OVERDUE')}
-                    className={`px-2.5 py-1 rounded-md font-medium transition-colors cursor-pointer ${
-                      invoiceFilter === 'OVERDUE'
-                        ? 'bg-[var(--app-card)] text-rose-600 dark:text-rose-400 shadow-xs font-semibold'
-                        : 'text-[var(--app-text-muted)] hover:text-[var(--app-text)]'
-                    }`}
-                  >
-                    Overdue ({overdueInvoices.length})
-                  </button>
-                  <button
-                    onClick={() => setInvoiceFilter('PAID')}
-                    className={`px-2.5 py-1 rounded-md font-medium transition-colors cursor-pointer ${
-                      invoiceFilter === 'PAID'
-                        ? 'bg-[var(--app-card)] text-emerald-600 dark:text-emerald-400 shadow-xs font-semibold'
-                        : 'text-[var(--app-text-muted)] hover:text-[var(--app-text)]'
-                    }`}
-                  >
-                    Lunas ({paidInvoices.length})
-                  </button>
-                </div>
+                {/* Filter Tabs for Invoices */}
+                {dashboardTab === 'INVOICES' ? (
+                  <div className="flex items-center gap-1 bg-[var(--app-card-subtle)] p-1 rounded-lg border border-[var(--app-border)] text-xs">
+                    <button
+                      onClick={() => setInvoiceFilter('ALL')}
+                      className={`px-2.5 py-1 rounded-md font-medium transition-colors cursor-pointer ${
+                        invoiceFilter === 'ALL'
+                          ? 'bg-[var(--app-card)] text-[var(--app-text)] shadow-xs font-semibold'
+                          : 'text-[var(--app-text-muted)] hover:text-[var(--app-text)]'
+                      }`}
+                    >
+                      Semua ({invoices.length})
+                    </button>
+                    <button
+                      onClick={() => setInvoiceFilter('PENDING')}
+                      className={`px-2.5 py-1 rounded-md font-medium transition-colors cursor-pointer ${
+                        invoiceFilter === 'PENDING'
+                          ? 'bg-[var(--app-card)] text-amber-600 dark:text-amber-400 shadow-xs font-semibold'
+                          : 'text-[var(--app-text-muted)] hover:text-[var(--app-text)]'
+                      }`}
+                    >
+                      Menunggu ({pendingInvoices.length})
+                    </button>
+                    <button
+                      onClick={() => setInvoiceFilter('OVERDUE')}
+                      className={`px-2.5 py-1 rounded-md font-medium transition-colors cursor-pointer ${
+                        invoiceFilter === 'OVERDUE'
+                          ? 'bg-[var(--app-card)] text-rose-600 dark:text-rose-400 shadow-xs font-semibold'
+                          : 'text-[var(--app-text-muted)] hover:text-[var(--app-text)]'
+                      }`}
+                    >
+                      Overdue ({overdueInvoices.length})
+                    </button>
+                    <button
+                      onClick={() => setInvoiceFilter('PAID')}
+                      className={`px-2.5 py-1 rounded-md font-medium transition-colors cursor-pointer ${
+                        invoiceFilter === 'PAID'
+                          ? 'bg-[var(--app-card)] text-emerald-600 dark:text-emerald-400 shadow-xs font-semibold'
+                          : 'text-[var(--app-text-muted)] hover:text-[var(--app-text)]'
+                      }`}
+                    >
+                      Lunas ({paidInvoices.length})
+                    </button>
+                  </div>
+                ) : (
+                  /* Filter Tabs for Customers */
+                  <div className="flex items-center gap-1 bg-[var(--app-card-subtle)] p-1 rounded-lg border border-[var(--app-border)] text-xs">
+                    <button
+                      onClick={() => setCustomerFilter('ALL')}
+                      className={`px-2.5 py-1 rounded-md font-medium transition-colors cursor-pointer ${
+                        customerFilter === 'ALL'
+                          ? 'bg-[var(--app-card)] text-[var(--app-text)] shadow-xs font-semibold'
+                          : 'text-[var(--app-text-muted)] hover:text-[var(--app-text)]'
+                      }`}
+                    >
+                      Semua ({customers.length})
+                    </button>
+                    <button
+                      onClick={() => setCustomerFilter('ACTIVE')}
+                      className={`px-2.5 py-1 rounded-md font-medium transition-colors cursor-pointer ${
+                        customerFilter === 'ACTIVE'
+                          ? 'bg-[var(--app-card)] text-emerald-600 dark:text-emerald-400 shadow-xs font-semibold'
+                          : 'text-[var(--app-text-muted)] hover:text-[var(--app-text)]'
+                      }`}
+                    >
+                      Aktif ({customers.filter((c: any) => c.status === 'active' || !c.status).length})
+                    </button>
+                    <button
+                      onClick={() => setCustomerFilter('ISOLATED')}
+                      className={`px-2.5 py-1 rounded-md font-medium transition-colors cursor-pointer ${
+                        customerFilter === 'ISOLATED'
+                          ? 'bg-[var(--app-card)] text-rose-600 dark:text-rose-400 shadow-xs font-semibold'
+                          : 'text-[var(--app-text-muted)] hover:text-[var(--app-text)]'
+                      }`}
+                    >
+                      Isolir ({customers.filter((c: any) => c.status === 'isolated' || c.status === 'suspended').length})
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Search & Action Bar */}
@@ -789,135 +1017,309 @@ export default function Home() {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Cari nomor invoice atau nama pelanggan..."
+                    placeholder={
+                      dashboardTab === 'INVOICES'
+                        ? 'Cari nomor invoice atau nama pelanggan...'
+                        : 'Cari nama pelanggan, no WA, atau user PPPoE...'
+                    }
                     className="w-full pl-8 pr-3 py-1.5 text-xs bg-[var(--app-card-subtle)] border border-[var(--app-border)] rounded-lg text-[var(--app-text)] placeholder-[var(--app-text-dim)] focus:outline-none focus:border-[var(--app-primary)]"
                   />
                 </div>
-                <button
-                  onClick={() => setShowCreateInvoiceModal(true)}
-                  className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-xs whitespace-nowrap cursor-pointer"
-                >
-                  <Plus size={13} />
-                  Buat Tagihan Baru
-                </button>
-                <button
-                  onClick={() => router.push('/invoice')}
-                  className="px-3 py-1.5 bg-[var(--app-card-subtle)] hover:bg-[var(--app-card)] text-[var(--app-text)] border border-[var(--app-border)] rounded-lg text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-xs whitespace-nowrap cursor-pointer"
-                >
-                  <FileText size={13} />
-                  Kelola Semua Tagihan
-                </button>
+                {dashboardTab === 'INVOICES' ? (
+                  <>
+                    <button
+                      onClick={() => setShowCreateInvoiceModal(true)}
+                      className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-xs whitespace-nowrap cursor-pointer active:scale-95"
+                    >
+                      <Plus size={13} /> Buat Tagihan
+                    </button>
+                    <button
+                      onClick={() => router.push('/invoice')}
+                      className="px-3 py-1.5 bg-[var(--app-card-subtle)] hover:bg-[var(--app-card)] text-[var(--app-text)] border border-[var(--app-border)] rounded-lg text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-xs whitespace-nowrap cursor-pointer"
+                    >
+                      <FileText size={13} /> Kelola Tagihan
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => setShowQuickCustomerModal(true)}
+                      className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-xs whitespace-nowrap cursor-pointer active:scale-95"
+                    >
+                      <Plus size={13} /> Tambah Pelanggan
+                    </button>
+                    <button
+                      onClick={() => router.push('/pelanggan')}
+                      className="px-3 py-1.5 bg-[var(--app-card-subtle)] hover:bg-[var(--app-card)] text-[var(--app-text)] border border-[var(--app-border)] rounded-lg text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-xs whitespace-nowrap cursor-pointer"
+                    >
+                      <Users size={13} /> Buka CRM Penuh
+                    </button>
+                  </>
+                )}
               </div>
 
-              {/* Data Table / Authentic Empty State */}
+              {/* Data Table */}
               <div className="mt-3 overflow-x-auto border border-[var(--app-border)] rounded-lg">
-                {filteredInvoices.length === 0 ? (
-                  <div className="py-12 px-4 text-center space-y-3 bg-[var(--app-card-subtle)]/40">
-                    <div className="w-12 h-12 mx-auto rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                      <FileCheck size={22} />
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-[var(--app-text)]">
-                        {invoices.length === 0 
-                          ? 'Belum Ada Tagihan Terbit di Periode Ini'
-                          : 'Tidak Ada Tagihan yang Cocok dengan Filter'}
-                      </p>
-                      <p className="text-xs text-[var(--app-text-muted)] max-w-md mx-auto mt-1">
-                        {invoices.length === 0
-                          ? 'Sistem billing siap beroperasi. Anda dapat membuat tagihan manual per pelanggan atau klik tombol di bawah untuk membuat tagihan pertama.'
-                          : 'Coba ubah kata kunci pencarian atau ganti filter status di atas.'}
-                      </p>
-                    </div>
-                    {invoices.length === 0 && (
-                      <div className="pt-2 flex flex-wrap justify-center gap-2.5">
-                        <button
-                          onClick={() => setShowCreateInvoiceModal(true)}
-                          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5 shadow-xs cursor-pointer active:scale-95"
-                        >
-                          <Plus size={14} /> Terbitkan Tagihan Pertama
-                        </button>
-                        <button
-                          onClick={handleActivateDemoData}
-                          className="px-4 py-2 bg-[var(--app-card)] hover:bg-[var(--app-card-subtle)] text-[var(--app-text)] border border-[var(--app-border)] rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5 shadow-xs cursor-pointer"
-                        >
-                          <Sparkles size={14} className="text-blue-500" /> Aktifkan Data Contoh
-                        </button>
+                {dashboardTab === 'INVOICES' ? (
+                  filteredInvoices.length === 0 ? (
+                    <div className="py-12 px-4 text-center space-y-3 bg-[var(--app-card-subtle)]/40">
+                      <div className="w-12 h-12 mx-auto rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                        <FileCheck size={22} />
                       </div>
-                    )}
-                  </div>
-                ) : (
-                  <table className="w-full text-left text-xs border-collapse">
-                    <thead>
-                      <tr className="bg-[var(--app-card-subtle)] border-b border-[var(--app-border)] text-[var(--app-text-muted)] font-semibold uppercase text-[10px] tracking-wider">
-                        <th className="py-2.5 px-3">No. Invoice</th>
-                        <th className="py-2.5 px-3">Pelanggan</th>
-                        <th className="py-2.5 px-3">Nominal</th>
-                        <th className="py-2.5 px-3">Jatuh Tempo</th>
-                        <th className="py-2.5 px-3">Status</th>
-                        <th className="py-2.5 px-3 text-right">Aksi</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-[var(--app-border)]">
-                      {filteredInvoices.slice(0, 7).map((inv: any) => (
-                        <tr key={inv.id} className="hover:bg-[var(--app-card-subtle)] transition-colors">
-                          <td className="py-2.5 px-3 font-mono font-semibold text-blue-600 dark:text-blue-400">
-                            {inv.invoiceNumber || inv.id}
-                          </td>
-                          <td className="py-2.5 px-3 font-medium text-[var(--app-text)]">
-                            {inv.customer?.name || inv.customerName || 'Pelanggan'}
-                          </td>
-                          <td className="py-2.5 px-3 font-mono font-bold text-[var(--app-text)]">
-                            Rp {(Number(inv.amount) || 0).toLocaleString('id-ID')}
-                          </td>
-                          <td className="py-2.5 px-3 text-[var(--app-text-muted)] font-mono text-[11px]">
-                            {inv.dueDate ? new Date(inv.dueDate).toLocaleDateString('id-ID') : '-'}
-                          </td>
-                          <td className="py-2.5 px-3">
-                            <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border ${
-                              inv.status === 'PAID'
-                                ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
-                                : inv.status === 'OVERDUE'
-                                ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20'
-                                : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20'
-                            }`}>
-                              {inv.status || 'PENDING'}
-                            </span>
-                          </td>
-                          <td className="py-2.5 px-3 text-right">
-                            <div className="flex items-center justify-end gap-1.5">
-                              {inv.status !== 'PAID' && (
-                                <button
-                                  onClick={() => handleMarkInvoicePaid(inv.id)}
-                                  className="px-2 py-1 bg-emerald-600/10 hover:bg-emerald-600 text-emerald-600 hover:text-white border border-emerald-500/30 rounded text-[10px] font-medium transition cursor-pointer"
-                                  title="Tandai Lunas"
-                                >
-                                  Bayar
-                                </button>
-                              )}
-                              <button
-                                onClick={() => setSelectedInvoice(inv)}
-                                className="px-2 py-1 bg-[var(--app-card-subtle)] hover:bg-[var(--app-card)] text-[var(--app-text)] border border-[var(--app-border)] rounded text-[10px] font-medium transition cursor-pointer"
-                              >
-                                Detail
-                              </button>
-                            </div>
-                          </td>
+                      <div>
+                        <p className="text-sm font-semibold text-[var(--app-text)]">
+                          {invoices.length === 0 
+                            ? 'Belum Ada Tagihan Terbit di Periode Ini'
+                            : 'Tidak Ada Tagihan yang Cocok dengan Filter'}
+                        </p>
+                        <p className="text-xs text-[var(--app-text-muted)] max-w-md mx-auto mt-1">
+                          {invoices.length === 0
+                            ? 'Sistem billing siap beroperasi. Anda dapat membuat tagihan manual per pelanggan.'
+                            : 'Coba ubah kata kunci pencarian atau ganti filter status di atas.'}
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <table className="w-full text-left text-xs border-collapse">
+                      <thead>
+                        <tr className="bg-[var(--app-card-subtle)] border-b border-[var(--app-border)] text-[var(--app-text-muted)] font-semibold uppercase text-[10px] tracking-wider">
+                          <th className="py-2.5 px-3">No. Invoice</th>
+                          <th className="py-2.5 px-3">Pelanggan</th>
+                          <th className="py-2.5 px-3">Nominal</th>
+                          <th className="py-2.5 px-3">Jatuh Tempo</th>
+                          <th className="py-2.5 px-3">Status</th>
+                          <th className="py-2.5 px-3 text-right">Aksi</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody className="divide-y divide-[var(--app-border)]">
+                        {filteredInvoices.slice(0, 8).map((inv: any) => (
+                          <tr key={inv.id} className="hover:bg-[var(--app-card-subtle)] transition-colors">
+                            <td className="py-2 px-3 font-mono font-semibold text-blue-600 dark:text-blue-400">
+                              {inv.invoiceNumber || inv.id}
+                            </td>
+                            <td className="py-2 px-3 font-medium text-[var(--app-text)]">
+                              {inv.customer?.name || inv.customerName || 'Pelanggan'}
+                            </td>
+                            <td className="py-2 px-3 font-mono font-bold text-[var(--app-text)]">
+                              Rp {(Number(inv.amount) || 0).toLocaleString('id-ID')}
+                            </td>
+                            <td className="py-2 px-3 text-[var(--app-text-muted)] font-mono text-[11px]">
+                              {inv.dueDate ? new Date(inv.dueDate).toLocaleDateString('id-ID') : '-'}
+                            </td>
+                            <td className="py-2 px-3">
+                              <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border ${
+                                inv.status === 'PAID'
+                                  ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
+                                  : inv.status === 'OVERDUE'
+                                  ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20'
+                                  : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20'
+                              }`}>
+                                {inv.status || 'PENDING'}
+                              </span>
+                            </td>
+                            <td className="py-2 px-3 text-right">
+                              <div className="flex items-center justify-end gap-1">
+                                {inv.status !== 'PAID' ? (
+                                  <button
+                                    onClick={() => handleMarkInvoicePaid(inv.id)}
+                                    className="px-2 py-0.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-[10px] font-bold transition cursor-pointer shadow-xs"
+                                    title="Tandai Lunas"
+                                  >
+                                    Bayar
+                                  </button>
+                                ) : (
+                                  <button
+                                    onClick={() => handlePrintInvoiceThermal(inv)}
+                                    className="p-1 rounded text-[var(--app-text-muted)] hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition cursor-pointer"
+                                    title="Cetak Struk Thermal"
+                                  >
+                                    <Printer size={13} />
+                                  </button>
+                                )}
+                                <button
+                                  onClick={() => handleSendInvoiceWhatsApp(inv)}
+                                  className="p-1 rounded text-[var(--app-text-muted)] hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition cursor-pointer"
+                                  title="Kirim Pesan WhatsApp"
+                                >
+                                  <MessageSquare size={13} />
+                                </button>
+                                <button
+                                  onClick={() => setSelectedInvoice(inv)}
+                                  className="p-1 rounded text-[var(--app-text-muted)] hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition cursor-pointer"
+                                  title="Lihat Detail Tagihan"
+                                >
+                                  <Eye size={13} />
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    setEditingInvoice({ ...inv })
+                                    setShowEditInvoiceModal(true)
+                                  }}
+                                  className="p-1 rounded text-[var(--app-text-muted)] hover:text-[var(--app-text)] hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+                                  title="Edit Tagihan"
+                                >
+                                  <Edit size={13} />
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    setDeletingInvoice(inv)
+                                    setShowDeleteInvoiceModal(true)
+                                  }}
+                                  className="p-1 rounded text-[var(--app-text-muted)] hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer"
+                                  title="Hapus Tagihan"
+                                >
+                                  <Trash2 size={13} />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )
+                ) : (
+                  /* Customers Table */
+                  filteredDashboardCustomers.length === 0 ? (
+                    <div className="py-12 px-4 text-center space-y-3 bg-[var(--app-card-subtle)]/40">
+                      <div className="w-12 h-12 mx-auto rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                        <Users size={22} />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-[var(--app-text)]">Tidak Ada Pelanggan Ditemukan</p>
+                        <p className="text-xs text-[var(--app-text-muted)] max-w-md mx-auto mt-1">
+                          Coba sesuaikan kata kunci pencarian atau filter status.
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <table className="w-full text-left text-xs border-collapse">
+                      <thead>
+                        <tr className="bg-[var(--app-card-subtle)] border-b border-[var(--app-border)] text-[var(--app-text-muted)] font-semibold uppercase text-[10px] tracking-wider">
+                          <th className="py-2.5 px-3">ID / User PPPoE</th>
+                          <th className="py-2.5 px-3">Nama & Telepon</th>
+                          <th className="py-2.5 px-3">Paket</th>
+                          <th className="py-2.5 px-3">Status</th>
+                          <th className="py-2.5 px-3 text-right">Aksi</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-[var(--app-border)]">
+                        {filteredDashboardCustomers.slice(0, 8).map((c: any) => {
+                          const isIsolated = c.status === 'isolated' || c.status === 'suspended'
+                          const cleanPhone = (c.phone || '').replace(/[^0-9]/g, '')
+                          const waPhone = cleanPhone.startsWith('0') ? `62${cleanPhone.slice(1)}` : cleanPhone
+                          return (
+                            <tr key={c.id} className="hover:bg-[var(--app-card-subtle)] transition-colors">
+                              <td className="py-2 px-3 font-mono">
+                                <span className="font-semibold text-blue-600 dark:text-blue-400">{c.pppoeUser || c.id.slice(0, 8)}</span>
+                              </td>
+                              <td className="py-2 px-3">
+                                <div className="font-bold text-[var(--app-text)]">{c.name}</div>
+                                <div className="text-[10px] text-[var(--app-text-muted)] font-mono">{c.phone || '-'}</div>
+                              </td>
+                              <td className="py-2 px-3 font-medium text-[var(--app-text)]">
+                                {c.package || 'Fiber 50 Mbps'}
+                              </td>
+                              <td className="py-2 px-3">
+                                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border ${
+                                  !isIsolated
+                                    ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
+                                    : 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20'
+                                }`}>
+                                  {!isIsolated ? 'Aktif' : 'Isolir'}
+                                </span>
+                              </td>
+                              <td className="py-2 px-3 text-right">
+                                <div className="flex items-center justify-end gap-1">
+                                  {/* View Full Profile */}
+                                  <button
+                                    onClick={() => router.push(`/pelanggan/${c.id}`)}
+                                    className="p-1 rounded text-[var(--app-text-muted)] hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition cursor-pointer"
+                                    title="Lihat Profil Lengkap"
+                                  >
+                                    <Eye size={13} />
+                                  </button>
+
+                                  {/* WhatsApp */}
+                                  <a
+                                    href={`https://wa.me/${waPhone}?text=${encodeURIComponent(`Halo ${c.name}, ini dari Tim Layanan AUDIRA NET.`)}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="p-1 rounded text-[var(--app-text-muted)] hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition cursor-pointer"
+                                    title="Kirim WhatsApp"
+                                  >
+                                    <MessageSquare size={13} />
+                                  </a>
+
+                                  {/* Suspend / Unsuspend */}
+                                  <button
+                                    onClick={() => handleToggleCustomerStatus(c)}
+                                    className={`p-1 rounded transition cursor-pointer ${
+                                      isIsolated
+                                        ? 'text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/40'
+                                        : 'text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/40'
+                                    }`}
+                                    title={isIsolated ? 'Buka Isolir (Aktifkan)' : 'Isolir Koneksi'}
+                                  >
+                                    <Power size={13} />
+                                  </button>
+
+                                  {/* Edit Customer */}
+                                  <button
+                                    onClick={() => {
+                                      setEditingCustomer({ ...c })
+                                      setShowEditCustomerModal(true)
+                                    }}
+                                    className="p-1 rounded text-[var(--app-text-muted)] hover:text-[var(--app-text)] hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+                                    title="Edit Pelanggan"
+                                  >
+                                    <Edit size={13} />
+                                  </button>
+
+                                  {/* Delete Customer */}
+                                  <button
+                                    onClick={() => {
+                                      setDeletingCustomer(c)
+                                      setShowDeleteCustomerModal(true)
+                                    }}
+                                    className="p-1 rounded text-[var(--app-text-muted)] hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer"
+                                    title="Hapus Pelanggan"
+                                  >
+                                    <Trash2 size={13} />
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          )
+                        })}
+                      </tbody>
+                    </table>
+                  )
                 )}
               </div>
             </div>
 
             <div className="pt-3 border-t border-[var(--app-border)] flex items-center justify-between text-xs text-[var(--app-text-muted)]">
-              <span>Menampilkan {filteredInvoices.slice(0, 7).length} dari {filteredInvoices.length} tagihan</span>
-              <button
-                onClick={() => router.push('/invoice')}
-                className="text-blue-600 dark:text-blue-400 font-semibold hover:underline flex items-center gap-1 cursor-pointer"
-              >
-                Buka Seluruh Daftar Invoice <ChevronRight size={13} />
-              </button>
+              {dashboardTab === 'INVOICES' ? (
+                <>
+                  <span>Menampilkan {filteredInvoices.slice(0, 8).length} dari {filteredInvoices.length} tagihan</span>
+                  <button
+                    onClick={() => router.push('/invoice')}
+                    className="text-blue-600 dark:text-blue-400 font-semibold hover:underline flex items-center gap-1 cursor-pointer"
+                  >
+                    Buka Seluruh Daftar Invoice <ChevronRight size={13} />
+                  </button>
+                </>
+              ) : (
+                <>
+                  <span>Menampilkan {filteredDashboardCustomers.slice(0, 8).length} dari {filteredDashboardCustomers.length} pelanggan</span>
+                  <button
+                    onClick={() => router.push('/pelanggan')}
+                    className="text-blue-600 dark:text-blue-400 font-semibold hover:underline flex items-center gap-1 cursor-pointer"
+                  >
+                    Buka Seluruh CRM Pelanggan <ChevronRight size={13} />
+                  </button>
+                </>
+              )}
             </div>
           </div>
 

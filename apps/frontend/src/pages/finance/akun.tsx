@@ -34,7 +34,9 @@ import {
   CheckSquare,
   Scale,
   Percent,
-  Wallet
+  Wallet,
+  Edit,
+  Trash2
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -102,13 +104,72 @@ export default function AkunDashboard() {
     { code: '1.2', name: 'Aset Tidak Lancar', category: 'Aset', level: 2, type: 'Header', status: 'Aktif', debit: 128560000, kredit: 0, desc: 'Aset Tidak Lancar / Inventaris Tetap', creator: 'System', dateCreated: '01/01/2026 00:00', changer: 'System', dateChanged: '01/01/2026 00:00', parent: '1' }
   ]);
 
-  // Statistics
-  const totalAkun = accounts.length + 276;
-  const akunAktif = 274 + (accounts.length - 10);
-  const akunNonAktif = 12;
-  const accountsHeader = 45;
-  const accountsDetail = 241 + (accounts.length - 10);
-  const deepestLevel = 5;
+  // Real dynamic statistics computed from active chart of accounts
+  const totalAkun = accounts.length;
+  const akunAktif = accounts.filter(a => a.status === 'Aktif').length;
+  const akunNonAktif = accounts.filter(a => a.status === 'Non-Aktif').length;
+  const accountsHeader = accounts.filter(a => a.type === 'Header').length;
+  const accountsDetail = accounts.filter(a => a.type === 'Detail').length;
+  const deepestLevel = Math.max(...accounts.map(a => a.level), 1);
+
+  // Edit and Delete Modals State
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [accountToEdit, setAccountToEdit] = useState<any | null>(null);
+  const [editName, setEditName] = useState('');
+  const [editCategory, setEditCategory] = useState('Aset');
+  const [editDebit, setEditDebit] = useState('');
+  const [editKredit, setEditKredit] = useState('');
+  const [editDesc, setEditDesc] = useState('');
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [accountToDelete, setAccountToDelete] = useState<any | null>(null);
+
+  const handleOpenEditModal = (acc: any) => {
+    setAccountToEdit(acc);
+    setEditName(acc.name);
+    setEditCategory(acc.category);
+    setEditDebit(String(acc.debit || 0));
+    setEditKredit(String(acc.kredit || 0));
+    setEditDesc(acc.desc || '');
+    setShowEditModal(true);
+  };
+
+  const handleSaveEdit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!accountToEdit) return;
+    setAccounts(accounts.map(acc => {
+      if (acc.code === accountToEdit.code) {
+        return {
+          ...acc,
+          name: editName,
+          category: editCategory,
+          debit: parseFloat(editDebit) || 0,
+          kredit: parseFloat(editKredit) || 0,
+          desc: editDesc,
+          changer: 'Super Admin',
+          dateChanged: new Date().toLocaleString('id-ID')
+        };
+      }
+      return acc;
+    }));
+    setShowEditModal(false);
+    setAccountToEdit(null);
+  };
+
+  const handleOpenDeleteModal = (acc: any) => {
+    setAccountToDelete(acc);
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!accountToDelete) return;
+    setAccounts(accounts.filter(a => a.code !== accountToDelete.code));
+    if (selectedAccCode === accountToDelete.code) {
+      setSelectedAccCode(accounts[0]?.code || '');
+    }
+    setShowDeleteModal(false);
+    setAccountToDelete(null);
+  };
 
   // Chart data
   const donutChartData = [
@@ -518,6 +579,7 @@ export default function AkunDashboard() {
                     <th className="py-2.5">STATUS</th>
                     <th className="py-2.5 text-right">SALDO (DEBIT)</th>
                     <th className="py-2.5 text-right">SALDO (KREDIT)</th>
+                    <th className="py-2.5 text-right pr-2">AKSI</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[var(--app-border)] text-[var(--app-text)]/90">
@@ -570,6 +632,31 @@ export default function AkunDashboard() {
                         </td>
                         <td className="py-2.5 text-right font-mono">{formatRupiah(acc.debit)}</td>
                         <td className="py-2.5 text-right font-mono">{formatRupiah(acc.kredit)}</td>
+                        <td className="py-2.5 text-right pr-2" onClick={(e) => e.stopPropagation()}>
+                          <div className="flex items-center justify-end gap-1">
+                            <button
+                              onClick={() => setSelectedAccCode(acc.code)}
+                              className="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded text-slate-500 hover:text-blue-500 transition"
+                              title="Lihat Detail"
+                            >
+                              <Eye size={13} />
+                            </button>
+                            <button
+                              onClick={() => handleOpenEditModal(acc)}
+                              className="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded text-slate-500 hover:text-blue-600 transition"
+                              title="Edit Akun"
+                            >
+                              <Edit size={13} />
+                            </button>
+                            <button
+                              onClick={() => handleOpenDeleteModal(acc)}
+                              className="p-1 hover:bg-rose-100 dark:hover:bg-rose-950/40 rounded text-slate-500 hover:text-rose-600 transition"
+                              title="Hapus Akun"
+                            >
+                              <Trash2 size={13} />
+                            </button>
+                          </div>
+                        </td>
                       </tr>
                     );
                   })}
@@ -579,13 +666,9 @@ export default function AkunDashboard() {
 
             {/* Table Pagination */}
             <div className="flex justify-between items-center mt-4 pt-4 border-t border-[var(--app-border)]/60 text-[11px] text-[var(--app-muted)]">
-              <span>Menampilkan 1 - {filteredAccounts.length} dari {totalAkun} akun</span>
+              <span>Menampilkan {filteredAccounts.length} dari {totalAkun} akun</span>
               <div className="flex items-center gap-1.5">
-                <button className="px-2 py-0.5 rounded bg-blue-600 text-white">1</button>
-                <button className="px-2 py-0.5 rounded bg-[var(--app-card-subtle)] hover:text-white">2</button>
-                <button className="px-2 py-0.5 rounded bg-[var(--app-card-subtle)] hover:text-white">3</button>
-                <span>...</span>
-                <button className="px-2 py-0.5 rounded bg-[var(--app-card-subtle)] hover:text-white">29</button>
+                <button className="px-2.5 py-1 rounded bg-blue-600 text-white text-xs font-semibold">1</button>
               </div>
             </div>
           </div>
@@ -656,18 +739,26 @@ export default function AkunDashboard() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 pt-4 border-t border-[var(--app-border)]">
+            <div className="grid grid-cols-3 gap-2 pt-4 border-t border-[var(--app-border)]">
               <button 
-                onClick={() => alert(`Mengedit akun ${selectedAcc.name}...`)}
-                className="bg-blue-600 hover:bg-blue-500 py-2 rounded text-[var(--app-text)] font-semibold text-center text-xs"
+                onClick={() => handleOpenEditModal(selectedAcc)}
+                className="bg-blue-600 hover:bg-blue-500 py-2 rounded text-[var(--app-text)] font-semibold text-center text-xs flex items-center justify-center gap-1.5"
               >
-                Edit Akun
+                <Edit size={13} />
+                <span>Edit</span>
               </button>
               <button 
                 onClick={() => handleToggleStatus(selectedAcc.code)}
                 className="border border-orange-500/50 hover:bg-orange-500/10 text-orange-400 py-2 rounded font-semibold text-center text-xs"
               >
-                {selectedAcc.status === 'Aktif' ? 'Non Aktifkan' : 'Aktifkan'}
+                {selectedAcc.status === 'Aktif' ? 'Non-Aktif' : 'Aktifkan'}
+              </button>
+              <button 
+                onClick={() => handleOpenDeleteModal(selectedAcc)}
+                className="border border-rose-500/50 hover:bg-rose-500/10 text-rose-400 py-2 rounded font-semibold text-center text-xs flex items-center justify-center gap-1"
+              >
+                <Trash2 size={13} />
+                <span>Hapus</span>
               </button>
             </div>
           </div>
@@ -799,6 +890,130 @@ export default function AkunDashboard() {
           </div>
         )}
       </div>
+        {/* Modal: Edit Akun */}
+        {showEditModal && accountToEdit && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+            <div className="w-full max-w-md bg-[var(--app-surface)] border border-[var(--app-border)] rounded-xl p-6 shadow-2xl">
+              <div className="flex justify-between items-center mb-4 pb-3 border-b border-[var(--app-border)]">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 rounded bg-blue-500/15 text-blue-400">
+                    <Edit size={16} />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-white">Edit Akun COA</h3>
+                    <p className="text-[10px] text-[var(--app-muted)] font-mono">{accountToEdit.code}</p>
+                  </div>
+                </div>
+                <button onClick={() => setShowEditModal(false)} className="text-[var(--app-muted)] hover:text-white text-xs">
+                  Batal
+                </button>
+              </div>
+              <form onSubmit={handleSaveEdit} className="space-y-4 text-xs">
+                <div>
+                  <label className="block text-[var(--app-muted)] mb-1">Nama Akun</label>
+                  <input
+                    type="text"
+                    required
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    className="w-full p-2.5 rounded bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[var(--app-muted)] mb-1">Kategori Akun</label>
+                  <select
+                    value={editCategory}
+                    onChange={(e) => setEditCategory(e.target.value)}
+                    className="w-full p-2.5 rounded bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
+                  >
+                    <option value="Aset">Aset</option>
+                    <option value="Liabilitas">Liabilitas</option>
+                    <option value="Ekuitas">Ekuitas</option>
+                    <option value="Pendapatan">Pendapatan</option>
+                    <option value="Beban">Beban</option>
+                  </select>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[var(--app-muted)] mb-1">Saldo Debit (Rp)</label>
+                    <input
+                      type="number"
+                      value={editDebit}
+                      onChange={(e) => setEditDebit(e.target.value)}
+                      className="w-full p-2.5 rounded bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[var(--app-muted)] mb-1">Saldo Kredit (Rp)</label>
+                    <input
+                      type="number"
+                      value={editKredit}
+                      onChange={(e) => setEditKredit(e.target.value)}
+                      className="w-full p-2.5 rounded bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[var(--app-muted)] mb-1">Deskripsi Akun</label>
+                  <textarea
+                    rows={2}
+                    value={editDesc}
+                    onChange={(e) => setEditDesc(e.target.value)}
+                    className="w-full p-2.5 rounded bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
+                  />
+                </div>
+
+                <div className="flex justify-end gap-3 pt-4 border-t border-[var(--app-border)]">
+                  <button
+                    type="button"
+                    onClick={() => setShowEditModal(false)}
+                    className="px-4 py-2 rounded border border-[var(--app-border)] text-[var(--app-muted)] hover:text-white"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 rounded bg-blue-600 hover:bg-blue-500 text-white font-semibold"
+                  >
+                    Simpan Perubahan
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Modal: Hapus Akun */}
+        {showDeleteModal && accountToDelete && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+            <div className="w-full max-w-sm bg-[var(--app-surface)] border border-[var(--app-border)] rounded-xl p-6 shadow-2xl space-y-4">
+              <div className="flex items-center gap-2 text-rose-500 border-b border-[var(--app-border)] pb-3">
+                <Trash2 size={18} />
+                <h3 className="text-sm font-bold">Hapus Akun</h3>
+              </div>
+              <p className="text-xs text-[var(--app-text)]">
+                Yakin ingin menghapus akun <strong className="text-white">{accountToDelete.name}</strong> ({accountToDelete.code})?
+              </p>
+              <div className="flex justify-end gap-2.5 pt-3 border-t border-[var(--app-border)]">
+                <button
+                  onClick={() => setShowDeleteModal(false)}
+                  className="px-3 py-1.5 rounded border border-[var(--app-border)] text-xs text-[var(--app-muted)] hover:text-white"
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={handleConfirmDelete}
+                  className="px-3 py-1.5 rounded bg-rose-600 hover:bg-rose-500 text-xs text-white font-semibold"
+                >
+                  Ya, Hapus
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
     </Layout>
   );
 }

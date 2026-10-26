@@ -117,21 +117,24 @@ export default function Rekonsiliasi() {
     { id: 12, tanggal: '30/06/2026 17:15', referensi: 'BCA-300626-0089', sumber: 'Bank BCA', deskripsi: 'Pembayaran Invoice INV/2026/06/001197 - Maria Utami', metode: 'Transfer Bank', debit: 1200000, kredit: 1200000, selisih: 0, status: 'Cocok', dicocokkanDengan: 'INV/2026/06/001197' }
   ]);
 
-  // Calculations
+  // Real Calculations computed from transactions
   const metrics = useMemo(() => {
-    const totalCount = transactions.length + 32; // Simulating 44 items
-    const cocok = transactions.filter(t => t.status === 'Cocok').reduce((acc, t) => acc + t.debit, 0) + 2985000000;
-    const belum = transactions.filter(t => t.status === 'Belum Cocok').reduce((acc, t) => acc + t.debit, 0) + 212000000;
-    const selisih = transactions.filter(t => t.status === 'Tidak Cocok').reduce((acc, t) => acc + t.selisih, 0) + 44600000;
+    const totalCount = transactions.length;
+    const cocok = transactions.filter(t => t.status === 'Cocok').reduce((acc, t) => acc + t.debit, 0);
+    const belum = transactions.filter(t => t.status === 'Belum Cocok').reduce((acc, t) => acc + t.debit, 0);
+    const selisih = transactions.filter(t => t.status === 'Tidak Cocok').reduce((acc, t) => acc + t.selisih, 0);
+    const inProgress = transactions.filter(t => t.status === 'Dalam Proses').length;
+    const total = cocok + belum + selisih;
+    const rate = total > 0 ? parseFloat(((cocok / total) * 100).toFixed(1)) : 100;
     
     return {
-      total: cocok + belum + selisih,
+      total,
       cocok,
       belum,
       selisih,
-      inProgress: transactions.filter(t => t.status === 'Dalam Proses').length,
+      inProgress,
       totalCount,
-      rate: 91.95
+      rate
     };
   }, [transactions]);
 

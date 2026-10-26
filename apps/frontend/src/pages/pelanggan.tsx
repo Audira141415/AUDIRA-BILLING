@@ -90,6 +90,7 @@ export default function Pelanggan() {
   const [showAddModal, setShowAddModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
   const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null)
+  const [customerToDelete, setCustomerToDelete] = useState<{ id: string; name: string; internetNumber?: string | null; phone?: string } | null>(null)
 
   // Forms inputs
   const [newName, setNewName] = useState('')
@@ -136,13 +137,18 @@ export default function Pelanggan() {
     fetchPackages()
   }, [fetchCustomers, fetchPackages])
 
-  const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Konfirmasi: Yakin ingin menghapus data pelanggan "${name}"?`)) return
+  const handleDelete = (id: string, name: string, internetNumber?: string | null, phone?: string) => {
+    setCustomerToDelete({ id, name, internetNumber, phone })
+  }
+
+  const confirmDeleteCustomer = async () => {
+    if (!customerToDelete) return
     try {
-      setActionLoading(`delete-${id}`)
-      await api.pelanggan.delete(id)
+      setActionLoading(`delete-${customerToDelete.id}`)
+      await api.pelanggan.delete(customerToDelete.id)
       await fetchCustomers()
-      showNotification(`Pelanggan "${name}" berhasil dihapus`, 'success')
+      showNotification(`Pelanggan "${customerToDelete.name}" berhasil dihapus dari database.`, 'success')
+      setCustomerToDelete(null)
     } catch (err: any) {
       showNotification(err.message || 'Gagal menghapus pelanggan', 'error')
     } finally {
@@ -795,7 +801,10 @@ export default function Pelanggan() {
                         </td>
 
                         <td className="p-3.5">
-                          <div className="font-bold text-theme-text">{customer.name}</div>
+                          <Link href={`/pelanggan/${customer.id}`} className="font-bold text-theme-text hover:text-blue-600 transition flex items-center gap-1 group">
+                            <span>{customer.name}</span>
+                            <ArrowUpRight size={12} className="opacity-0 group-hover:opacity-100 transition-opacity text-blue-500" />
+                          </Link>
                           <div className="flex items-center gap-2 text-[11px] text-theme-muted mt-0.5">
                             <span className="font-mono">{customer.phone}</span>
                             {customer.email && (
@@ -848,6 +857,15 @@ export default function Pelanggan() {
 
                         <td className="p-3.5 text-right">
                           <div className="flex items-center justify-end gap-1">
+                            {/* View Full Profile */}
+                            <Link
+                              href={`/pelanggan/${customer.id}`}
+                              className="p-1.5 rounded-lg text-theme-muted hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition"
+                              title="Lihat Profil Lengkap"
+                            >
+                              <Eye size={15} />
+                            </Link>
+
                             {/* WhatsApp Quick Message */}
                             <a
                               href={`https://wa.me/${waPhone}?text=${encodeURIComponent(`Halo ${customer.name}, ini dari Tim Administrasi AUDIRA NET.`)}`}
@@ -897,9 +915,9 @@ export default function Pelanggan() {
 
                             {/* Delete */}
                             <button
-                              onClick={() => handleDelete(customer.id, customer.name)}
+                              onClick={() => handleDelete(customer.id, customer.name, customer.internetNumber, customer.phone)}
                               disabled={actionLoading === `delete-${customer.id}`}
-                              className="p-1.5 rounded-lg text-theme-muted hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition"
+                              className="p-1.5 rounded-lg text-theme-muted hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer"
                               title="Hapus Pelanggan"
                             >
                               <Trash2 size={15} />
@@ -975,7 +993,14 @@ export default function Pelanggan() {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between gap-2 pt-3 border-t border-theme-border/50">
+                  <div className="flex items-center justify-between gap-1.5 pt-3 border-t border-theme-border/50">
+                    <Link
+                      href={`/pelanggan/${customer.id}`}
+                      className="p-1.5 rounded-lg border border-theme-border text-theme-muted hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition"
+                      title="Lihat Profil"
+                    >
+                      <Eye size={14} />
+                    </Link>
                     <a
                       href={`https://wa.me/${waPhone}?text=${encodeURIComponent(`Halo ${customer.name}, ini dari Layanan Pelanggan AUDIRA NET.`)}`}
                       target="_blank"
@@ -999,9 +1024,17 @@ export default function Pelanggan() {
                         setEditingCustomer(customer)
                         setShowEditModal(true)
                       }}
-                      className="p-1.5 rounded-lg border border-theme-border text-theme-muted hover:text-theme-text"
+                      className="p-1.5 rounded-lg border border-theme-border text-theme-muted hover:text-theme-text transition cursor-pointer"
+                      title="Edit Profil"
                     >
                       <Edit size={14} />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(customer.id, customer.name, customer.internetNumber, customer.phone)}
+                      className="p-1.5 rounded-lg border border-theme-border text-theme-muted hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer"
+                      title="Hapus Pelanggan"
+                    >
+                      <Trash2 size={14} />
                     </button>
                   </div>
                 </div>

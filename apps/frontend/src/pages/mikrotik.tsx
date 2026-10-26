@@ -3,7 +3,7 @@ import Layout from '@/components/Layout'
 import { 
   Server, Plus, Search, Edit, Trash2, Power, RefreshCw, Wifi, AlertCircle,
   Cpu, HardDrive, Network, ArrowLeft, X, Loader2, CheckCircle, AlertTriangle,
-  Activity, ShieldCheck, Zap, Radio
+  Activity, ShieldCheck, Eye, Zap, Radio
 } from 'lucide-react'
 import api from '@/lib/api'
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
@@ -158,6 +158,18 @@ export default function Mikrotik() {
   const [selectedDevice, setSelectedDevice] = useState<MikrotikDevice | null>(null)
   const [activeTab, setActiveTab] = useState<'overview' | 'port-details' | 'bgp-sessions'>('overview')
   const [showAddModal, setShowAddModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [routerToEdit, setRouterToEdit] = useState<MikrotikDevice | null>(null)
+  const [editFormData, setEditFormData] = useState({
+    name: '',
+    ipAddress: '',
+    username: 'admin',
+    password: '',
+    port: 8728,
+    apiPort: 8729,
+    location: '',
+    description: ''
+  })
   const [loading, setLoading] = useState(true)
   const [loadingInterfaces, setLoadingInterfaces] = useState(false)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
@@ -278,6 +290,50 @@ export default function Mikrotik() {
       await fetchDevices()
     } catch (err: any) {
       showNotification(err.message || 'Gagal menghapus router', 'error')
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
+  const handleOpenEdit = (device: MikrotikDevice) => {
+    setRouterToEdit(device)
+    setEditFormData({
+      name: device.name || '',
+      ipAddress: device.ipAddress || '',
+      username: device.username || 'admin',
+      password: '',
+      port: device.port || 8728,
+      apiPort: device.apiPort || 8729,
+      location: device.location || '',
+      description: device.description || ''
+    })
+    setShowEditModal(true)
+  }
+
+  const handleSaveEditRouter = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!routerToEdit) return
+    try {
+      setActionLoading('update')
+      const payload: any = {
+        name: editFormData.name,
+        ipAddress: editFormData.ipAddress,
+        username: editFormData.username,
+        port: Number(editFormData.port),
+        apiPort: Number(editFormData.apiPort),
+        location: editFormData.location,
+        description: editFormData.description
+      }
+      if (editFormData.password) {
+        payload.password = editFormData.password
+      }
+      await api.mikrotik.update(routerToEdit.id, payload)
+      showNotification(`Konfigurasi Router "${editFormData.name}" berhasil diperbarui`, 'success')
+      setShowEditModal(false)
+      setRouterToEdit(null)
+      await fetchDevices()
+    } catch (err: any) {
+      showNotification(err.message || 'Gagal mengupdate konfigurasi router', 'error')
     } finally {
       setActionLoading(null)
     }
@@ -768,6 +824,13 @@ export default function Mikrotik() {
                           <Zap size={15} className={actionLoading === `test-${device.id}` ? 'animate-spin text-blue-500' : ''} />
                         </button>
                         <button
+                          onClick={() => handleOpenEdit(device)}
+                          className="p-1.5 rounded-lg text-theme-muted hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition"
+                          title="Edit Konfigurasi Router"
+                        >
+                          <Edit size={15} />
+                        </button>
+                        <button
                           onClick={() => handleDelete(device.id, device.name)}
                           disabled={actionLoading === `delete-${device.id}`}
                           className="p-1.5 rounded-lg text-theme-muted hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition"
@@ -902,6 +965,132 @@ export default function Mikrotik() {
           </div>
         )}
 
+        {/* Modal: Edit Router */}
+        {showEditModal && routerToEdit && (
+          <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-xs">
+            <div className="bg-theme-card border border-theme-border rounded-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-2xl">
+              <div className="p-5 border-b border-theme-border flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/50 sticky top-0 z-10 backdrop-blur-md">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 rounded-lg bg-blue-500/10 text-blue-600 border border-blue-500/20">
+                    <Edit size={16} />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-sm text-theme-text">Edit Konfigurasi Router</h3>
+                    <p className="text-[10px] text-theme-muted font-mono">{routerToEdit.name}</p>
+                  </div>
+                </div>
+                <button onClick={() => setShowEditModal(false)} className="text-theme-muted hover:text-theme-text">✕</button>
+              </div>
+
+              <form onSubmit={handleSaveEditRouter} className="p-5 space-y-4 text-xs">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs text-theme-muted font-semibold block mb-1">Nama Perangkat / Router</label>
+                    <input
+                      type="text"
+                      required
+                      value={editFormData.name}
+                      onChange={e => setEditFormData({ ...editFormData, name: e.target.value })}
+                      className="w-full bg-theme-bg border border-theme-border rounded-xl px-3 py-2 text-theme-text focus:outline-none focus:border-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-theme-muted font-semibold block mb-1">IP Address Router</label>
+                    <input
+                      type="text"
+                      required
+                      value={editFormData.ipAddress}
+                      onChange={e => setEditFormData({ ...editFormData, ipAddress: e.target.value })}
+                      className="w-full bg-theme-bg border border-theme-border rounded-xl px-3 py-2 font-mono text-theme-text focus:outline-none focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs text-theme-muted font-semibold block mb-1">Username API</label>
+                    <input
+                      type="text"
+                      required
+                      value={editFormData.username}
+                      onChange={e => setEditFormData({ ...editFormData, username: e.target.value })}
+                      className="w-full bg-theme-bg border border-theme-border rounded-xl px-3 py-2 text-theme-text focus:outline-none focus:border-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-theme-muted font-semibold block mb-1">Password Baru (Opsional)</label>
+                    <input
+                      type="password"
+                      placeholder="Kosongkan jika tidak diubah"
+                      value={editFormData.password}
+                      onChange={e => setEditFormData({ ...editFormData, password: e.target.value })}
+                      className="w-full bg-theme-bg border border-theme-border rounded-xl px-3 py-2 text-theme-text focus:outline-none focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs text-theme-muted font-semibold block mb-1">Port Winbox / SSH</label>
+                    <input
+                      type="number"
+                      value={editFormData.port}
+                      onChange={e => setEditFormData({ ...editFormData, port: Number(e.target.value) })}
+                      className="w-full bg-theme-bg border border-theme-border rounded-xl px-3 py-2 font-mono text-theme-text focus:outline-none focus:border-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-theme-muted font-semibold block mb-1">Port API RouterOS</label>
+                    <input
+                      type="number"
+                      value={editFormData.apiPort}
+                      onChange={e => setEditFormData({ ...editFormData, apiPort: Number(e.target.value) })}
+                      className="w-full bg-theme-bg border border-theme-border rounded-xl px-3 py-2 font-mono text-theme-text focus:outline-none focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-xs text-theme-muted font-semibold block mb-1">Lokasi Penempatan / POP</label>
+                  <input
+                    type="text"
+                    value={editFormData.location}
+                    onChange={e => setEditFormData({ ...editFormData, location: e.target.value })}
+                    className="w-full bg-theme-bg border border-theme-border rounded-xl px-3 py-2 text-theme-text focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs text-theme-muted font-semibold block mb-1">Deskripsi Tambahan</label>
+                  <input
+                    type="text"
+                    value={editFormData.description}
+                    onChange={e => setEditFormData({ ...editFormData, description: e.target.value })}
+                    className="w-full bg-theme-bg border border-theme-border rounded-xl px-3 py-2 text-theme-text focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+
+                <div className="pt-4 border-t border-theme-border flex items-center justify-end gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => setShowEditModal(false)}
+                    className="px-4 py-2 border border-theme-border text-theme-muted hover:text-theme-text rounded-xl font-semibold"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={actionLoading === 'update'}
+                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold flex items-center gap-1.5"
+                  >
+                    {actionLoading === 'update' ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle size={14} />}
+                    <span>{actionLoading === 'update' ? 'Menyimpan...' : 'Simpan Perubahan'}</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </div>
     </Layout>
   )

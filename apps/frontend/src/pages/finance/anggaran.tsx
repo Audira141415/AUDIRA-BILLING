@@ -41,7 +41,9 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   TrendingUp as TrendUpIcon,
-  Wallet
+  Wallet,
+  Edit,
+  Trash2
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -82,6 +84,63 @@ export default function AnggaranDashboard() {
 
   // Modal State
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [budgetToEdit, setBudgetToEdit] = useState<any | null>(null);
+  const [editName, setEditName] = useState('');
+  const [editDept, setEditDept] = useState('IT & Jaringan');
+  const [editCategory, setEditCategory] = useState('Beban Operasional');
+  const [editLimit, setEditLimit] = useState('');
+  const [editSpent, setEditSpent] = useState('');
+  const [editStatus, setEditStatus] = useState('Disetujui');
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [budgetToDelete, setBudgetToDelete] = useState<any | null>(null);
+
+  const handleOpenEdit = (b: any) => {
+    setBudgetToEdit(b);
+    setEditName(b.name);
+    setEditDept(b.dept);
+    setEditCategory(b.category);
+    setEditLimit(String(b.limit));
+    setEditSpent(String(b.spent));
+    setEditStatus(b.status);
+    setShowEditModal(true);
+  };
+
+  const handleSaveEdit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!budgetToEdit) return;
+    const limitNum = parseFloat(editLimit) || 0;
+    const spentNum = parseFloat(editSpent) || 0;
+    setBudgets(budgets.map(b => {
+      if (b.code === budgetToEdit.code) {
+        return {
+          ...b,
+          name: editName,
+          dept: editDept,
+          category: editCategory,
+          limit: limitNum,
+          spent: spentNum,
+          status: editStatus
+        };
+      }
+      return b;
+    }));
+    setShowEditModal(false);
+    setBudgetToEdit(null);
+  };
+
+  const handleOpenDelete = (b: any) => {
+    setBudgetToDelete(b);
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!budgetToDelete) return;
+    setBudgets(budgets.filter(b => b.code !== budgetToDelete.code));
+    setShowDeleteModal(false);
+    setBudgetToDelete(null);
+  };
   const [newCode, setNewCode] = useState('');
   const [newName, setNewName] = useState('');
   const [newDept, setNewDept] = useState('Operasional');
@@ -489,6 +548,7 @@ export default function AnggaranDashboard() {
                     <th className="py-2.5 text-right">SISA ANGGARAN (Rp)</th>
                     <th className="py-2.5 text-right">REALISASI (%)</th>
                     <th className="py-2.5">STATUS PERSETUJUAN</th>
+                    <th className="py-2.5 text-right pr-2">AKSI</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[var(--app-border)] text-[var(--app-text)]/90">
@@ -513,6 +573,24 @@ export default function AnggaranDashboard() {
                             {b.status}
                           </span>
                         </td>
+                        <td className="py-3 text-right pr-2">
+                          <div className="flex items-center justify-end gap-1">
+                            <button
+                              onClick={() => handleOpenEdit(b)}
+                              className="p-1 hover:bg-slate-700 rounded text-slate-400 hover:text-blue-400 transition"
+                              title="Edit Anggaran"
+                            >
+                              <Edit size={13} />
+                            </button>
+                            <button
+                              onClick={() => handleOpenDelete(b)}
+                              className="p-1 hover:bg-rose-950/40 rounded text-slate-400 hover:text-rose-400 transition"
+                              title="Hapus Anggaran"
+                            >
+                              <Trash2 size={13} />
+                            </button>
+                          </div>
+                        </td>
                       </tr>
                     );
                   })}
@@ -522,7 +600,7 @@ export default function AnggaranDashboard() {
 
             {/* Pagination */}
             <div className="flex justify-between items-center mt-4 pt-4 border-t border-[var(--app-border)]/60 text-[11px] text-[var(--app-muted)]">
-              <span>Menampilkan 1 - {filteredBudgets.length} dari {budgets.length + 17} anggaran</span>
+              <span>Menampilkan 1 - {filteredBudgets.length} dari {budgets.length} anggaran</span>
               <div className="flex items-center gap-1.5">
                 <button className="px-2 py-0.5 rounded bg-[var(--app-card-subtle)] hover:text-white">&lt;</button>
                 <button className="px-2 py-0.5 rounded bg-blue-600 text-[var(--app-text)] font-semibold">1</button>
@@ -563,7 +641,7 @@ export default function AnggaranDashboard() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-[var(--app-muted)]">Jumlah Anggaran:</span>
-                  <span className="font-semibold text-[var(--app-text)]">{budgets.length + 17}</span>
+                  <span className="font-semibold text-[var(--app-text)]">{budgets.length}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-[var(--app-muted)]">Persetujuan Disetujui:</span>
@@ -727,6 +805,150 @@ export default function AnggaranDashboard() {
           </div>
         )}
       </div>
+      {/* Modal: Edit Anggaran */}
+      {showEditModal && budgetToEdit && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="w-full max-w-md bg-[var(--app-surface)] border border-[var(--app-border)] rounded-xl p-6 shadow-2xl space-y-4">
+            <div className="flex justify-between items-center border-b border-[var(--app-border)] pb-3">
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded bg-blue-500/15 text-blue-400">
+                  <Edit size={16} />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-white">Edit Anggaran Departemen</h3>
+                  <p className="text-[10px] text-[var(--app-muted)] font-mono">{budgetToEdit.code}</p>
+                </div>
+              </div>
+              <button onClick={() => setShowEditModal(false)} className="text-[var(--app-muted)] hover:text-white text-xs">
+                Batal
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveEdit} className="space-y-3.5 text-xs">
+              <div>
+                <label className="block text-[var(--app-muted)] mb-1">Nama Anggaran</label>
+                <input
+                  type="text"
+                  required
+                  value={editName}
+                  onChange={e => setEditName(e.target.value)}
+                  className="w-full p-2.5 rounded bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[var(--app-muted)] mb-1">Departemen</label>
+                  <select
+                    value={editDept}
+                    onChange={e => setEditDept(e.target.value)}
+                    className="w-full p-2.5 rounded bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
+                  >
+                    <option value="IT & Jaringan">IT & Jaringan</option>
+                    <option value="Operasional">Operasional</option>
+                    <option value="SDM & Legal">SDM & Legal</option>
+                    <option value="Pemasaran">Pemasaran</option>
+                    <option value="Infrastruktur">Infrastruktur</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[var(--app-muted)] mb-1">Kategori</label>
+                  <select
+                    value={editCategory}
+                    onChange={e => setEditCategory(e.target.value)}
+                    className="w-full p-2.5 rounded bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
+                  >
+                    <option value="Beban Operasional">Beban Operasional</option>
+                    <option value="Beban Non Operasional">Beban Non Operasional</option>
+                    <option value="Investasi Modal">Investasi Modal</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[var(--app-muted)] mb-1">Pagu Limit (Rp)</label>
+                  <input
+                    type="number"
+                    required
+                    value={editLimit}
+                    onChange={e => setEditLimit(e.target.value)}
+                    className="w-full p-2.5 rounded bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-white font-mono focus:outline-none focus:border-cyan-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[var(--app-muted)] mb-1">Realisasi (Rp)</label>
+                  <input
+                    type="number"
+                    required
+                    value={editSpent}
+                    onChange={e => setEditSpent(e.target.value)}
+                    className="w-full p-2.5 rounded bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-white font-mono focus:outline-none focus:border-cyan-500"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[var(--app-muted)] mb-1">Status Persetujuan</label>
+                <select
+                  value={editStatus}
+                  onChange={e => setEditStatus(e.target.value)}
+                  className="w-full p-2.5 rounded bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-white focus:outline-none focus:border-cyan-500"
+                >
+                  <option value="Disetujui">Disetujui</option>
+                  <option value="Menunggu">Menunggu</option>
+                  <option value="Ditolak">Ditolak</option>
+                </select>
+              </div>
+
+              <div className="flex justify-end gap-3 pt-4 border-t border-[var(--app-border)]">
+                <button
+                  type="button"
+                  onClick={() => setShowEditModal(false)}
+                  className="px-4 py-2 rounded border border-[var(--app-border)] text-[var(--app-muted)] hover:text-white"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded bg-blue-600 hover:bg-blue-500 text-white font-semibold"
+                >
+                  Simpan Perubahan
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Hapus Anggaran */}
+      {showDeleteModal && budgetToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="w-full max-w-sm bg-[var(--app-surface)] border border-[var(--app-border)] rounded-xl p-6 shadow-2xl space-y-4">
+            <div className="flex items-center gap-2 text-rose-500 border-b border-[var(--app-border)] pb-3">
+              <Trash2 size={18} />
+              <h3 className="text-sm font-bold">Hapus Anggaran</h3>
+            </div>
+            <p className="text-xs text-[var(--app-text)]">
+              Yakin ingin menghapus pagu anggaran <strong className="text-white">{budgetToDelete.name}</strong> ({budgetToDelete.code})?
+            </p>
+            <div className="flex justify-end gap-2.5 pt-3 border-t border-[var(--app-border)]">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="px-3 py-1.5 rounded border border-[var(--app-border)] text-xs text-[var(--app-muted)] hover:text-white"
+              >
+                Batal
+              </button>
+              <button
+                onClick={handleConfirmDelete}
+                className="px-3 py-1.5 rounded bg-rose-600 hover:bg-rose-500 text-xs text-white font-semibold"
+              >
+                Ya, Hapus
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 }
