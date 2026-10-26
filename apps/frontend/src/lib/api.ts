@@ -1151,7 +1151,18 @@ export const api = {
       if (!res.ok) throw new Error('Failed to fetch field service jobs');
       return res.json();
     },
+    getAll: async (filters?: any) => {
+      const query = filters ? `?${new URLSearchParams(filters)}` : '';
+      const res = await fetchWithAuth(`${API_BASE_URL}/field-service/jobs${query}`);
+      if (!res.ok) throw new Error('Failed to fetch field service jobs');
+      return res.json();
+    },
     getJob: async (id: string) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/field-service/jobs/${id}`);
+      if (!res.ok) throw new Error('Failed to fetch work order');
+      return res.json();
+    },
+    getOne: async (id: string) => {
       const res = await fetchWithAuth(`${API_BASE_URL}/field-service/jobs/${id}`);
       if (!res.ok) throw new Error('Failed to fetch work order');
       return res.json();
@@ -1165,7 +1176,25 @@ export const api = {
       if (!res.ok) throw new Error('Failed to create work order');
       return res.json();
     },
+    create: async (data: any) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/field-service/jobs`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error('Failed to create work order');
+      return res.json();
+    },
     updateJob: async (id: string, data: any) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/field-service/jobs/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error('Failed to update work order');
+      return res.json();
+    },
+    update: async (id: string, data: any) => {
       const res = await fetchWithAuth(`${API_BASE_URL}/field-service/jobs/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -1208,6 +1237,81 @@ export const api = {
         body: JSON.stringify(data),
       });
       if (!res.ok) throw new Error('Failed to complete job');
+      return res.json();
+    },
+    cancelJob: async (id: string, reason: string) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/field-service/jobs/${id}/cancel`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason }),
+      });
+      if (!res.ok) throw new Error('Failed to cancel work order');
+      return res.json();
+    },
+    uploadPhotos: async (id: string, photoUrls: string[]) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/field-service/jobs/${id}/photos`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ photoUrls }),
+      });
+      if (!res.ok) throw new Error('Failed to upload photos');
+      return res.json();
+    },
+    addSignature: async (id: string, signature: string) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/field-service/jobs/${id}/signature`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ signature }),
+      });
+      if (!res.ok) throw new Error('Failed to submit signature');
+      return res.json();
+    },
+    updateQC: async (id: string, qcStatus: string, qcNotes?: string) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/field-service/jobs/${id}/qc`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ qcStatus, qcNotes }),
+      });
+      if (!res.ok) throw new Error('Failed to update QC status');
+      return res.json();
+    },
+    testOpticalPower: async (id: string) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/field-service/jobs/${id}/optical-test`, {
+        method: 'POST',
+      });
+      if (!res.ok) throw new Error('Failed to test optical power');
+      return res.json();
+    },
+    getTechnicianJobs: async (technicianId: string, status?: string) => {
+      const query = status ? `?status=${status}` : '';
+      const res = await fetchWithAuth(`${API_BASE_URL}/field-service/technician/${technicianId}/jobs${query}`);
+      if (!res.ok) throw new Error('Failed to fetch technician jobs');
+      return res.json();
+    },
+    getTodayJobs: async (technicianId: string) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/field-service/technician/${technicianId}/today`);
+      if (!res.ok) throw new Error('Failed to fetch today jobs');
+      return res.json();
+    },
+    getStats: async (technicianId?: string) => {
+      const query = technicianId ? `?technicianId=${technicianId}` : '';
+      const res = await fetchWithAuth(`${API_BASE_URL}/field-service/stats${query}`);
+      if (!res.ok) throw new Error('Failed to fetch field service stats');
+      return res.json();
+    },
+    getCheckInHistory: async (date?: string) => {
+      const query = date ? `?date=${date}` : '';
+      const res = await fetchWithAuth(`${API_BASE_URL}/field-service/check-in-history${query}`);
+      if (!res.ok) throw new Error('Failed to fetch check-in history');
+      return res.json();
+    },
+    optimizeRoute: async (workOrderIds: string[]) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/field-service/optimize-route`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ workOrderIds }),
+      });
+      if (!res.ok) throw new Error('Failed to optimize route');
       return res.json();
     },
   },

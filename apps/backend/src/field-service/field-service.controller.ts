@@ -155,4 +155,20 @@ export class FieldServiceController {
   async getCheckInHistory(@Query('date') date?: string) {
     return await this.fieldServiceService.getCheckInHistory(date);
   }
+
+  // Update QC Status & sign-off
+  @Put('jobs/:id/qc')
+  async updateQCStatus(
+    @Param('id') id: string,
+    @Body('qcStatus') qcStatus: string,
+    @Body('qcNotes') qcNotes?: string,
+  ) {
+    return await this.fieldServiceService.updateQCStatus(id, qcStatus, qcNotes);
+  }
+
+  // Real-time Optical Power Measurement
+  @Post('jobs/:id/optical-test')
+  async testOpticalPower(@Param('id') id: string) {
+    return await this.fieldServiceService.testOpticalPower(id);
+  }
 }

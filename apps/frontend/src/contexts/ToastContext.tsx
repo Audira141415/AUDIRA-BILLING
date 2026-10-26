@@ -192,26 +192,26 @@ export const useToast = () => {
   return context;
 };
 
-// Standalone global trigger helper
-export const showAudiraToast = {
-  success: (msg: string, title?: string) => {
-    if (typeof window !== 'undefined' && (window as any).audiraToast) {
-      (window as any).audiraToast.success(msg, title);
-    }
-  },
-  error: (msg: string, title?: string) => {
-    if (typeof window !== 'undefined' && (window as any).audiraToast) {
-      (window as any).audiraToast.error(msg, title);
-    }
-  },
-  info: (msg: string, title?: string) => {
-    if (typeof window !== 'undefined' && (window as any).audiraToast) {
-      (window as any).audiraToast.info(msg, title);
-    }
-  },
-  warning: (msg: string, title?: string) => {
-    if (typeof window !== 'undefined' && (window as any).audiraToast) {
-      (window as any).audiraToast.warning(msg, title);
-    }
-  },
+// Standalone global trigger helper (callable directly or via .success / .error)
+type ToastTrigger = {
+  (type: ToastType, msg: string, title?: string): void;
+  success: (msg: string, title?: string) => void;
+  error: (msg: string, title?: string) => void;
+  info: (msg: string, title?: string) => void;
+  warning: (msg: string, title?: string) => void;
 };
+
+const trigger: any = (type: ToastType, msg: string, title?: string) => {
+  if (typeof window !== 'undefined' && (window as any).audiraToast) {
+    if (type === 'success') (window as any).audiraToast.success(msg, title);
+    else if (type === 'error') (window as any).audiraToast.error(msg, title);
+    else if (type === 'warning') (window as any).audiraToast.warning(msg, title);
+    else (window as any).audiraToast.info(msg, title);
+  }
+};
+trigger.success = (msg: string, title?: string) => trigger('success', msg, title);
+trigger.error = (msg: string, title?: string) => trigger('error', msg, title);
+trigger.info = (msg: string, title?: string) => trigger('info', msg, title);
+trigger.warning = (msg: string, title?: string) => trigger('warning', msg, title);
+
+export const showAudiraToast: ToastTrigger = trigger;
