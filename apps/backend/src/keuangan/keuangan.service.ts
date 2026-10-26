@@ -52,8 +52,13 @@ export class KeuanganService {
   }
 
   async findInvoice(id: string) {
-    const invoice = await this.prisma.invoice.findUnique({
-      where: { id },
+    const invoice = await this.prisma.invoice.findFirst({
+      where: {
+        OR: [
+          { id },
+          { invoiceNumber: id }
+        ]
+      },
       include: {
         customer: true,
         payments: true

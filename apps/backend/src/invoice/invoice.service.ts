@@ -131,14 +131,20 @@ export class InvoiceService {
   }
 
   async getInvoiceDetail(id: string) {
-    const invoice = await this.prisma.invoice.findUnique({
-      where: { id },
+    const invoice = await this.prisma.invoice.findFirst({
+      where: {
+        OR: [
+          { id },
+          { invoiceNumber: id }
+        ]
+      },
       include: {
         customer: {
           select: {
             id: true,
             name: true,
             email: true,
+            phone: true,
             address: true,
             status: true,
           },

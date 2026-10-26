@@ -1,9 +1,15 @@
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { Home, ArrowLeft } from 'lucide-react'
 
 export default function Custom404() {
   const router = useRouter()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 flex items-center justify-center p-4">
@@ -30,8 +36,8 @@ export default function Custom404() {
           <p className="text-lg text-gray-600 mb-2">
             Maaf, halaman yang Anda cari tidak ada atau telah dipindahkan.
           </p>
-          <p className="text-sm text-slate-400">
-            URL: <code className="bg-gray-100 px-2 py-1 rounded">{router.asPath}</code>
+          <p className="text-sm text-slate-400" suppressHydrationWarning>
+            URL: <code className="bg-gray-100 px-2 py-1 rounded" suppressHydrationWarning>{mounted ? router.asPath : ''}</code>
           </p>
         </div>
 
