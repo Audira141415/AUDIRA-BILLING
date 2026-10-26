@@ -235,37 +235,37 @@ export default function PajakDashboard() {
 
   return (
     <Layout>
-      <div className="bg-[var(--app-bg)] text-slate-100 min-h-screen p-6 font-sans antialiased selection:bg-cyan-500 selection:text-white">
+      <div className="bg-[var(--app-bg)] text-[var(--app-text)] min-h-screen p-4 sm:p-6 font-sans antialiased max-w-full">
         
         {/* Header Title Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <div>
-            <div className="flex items-center gap-2 text-xs text-[var(--app-muted)] mb-1">
+            <div className="flex items-center gap-2 text-xs text-[var(--app-text-muted)] mb-1">
               <span>Finance</span>
               <span>&gt;</span>
-              <span className="text-cyan-400 font-medium">Pajak</span>
+              <span className="text-blue-600 dark:text-blue-400 font-medium">Pajak</span>
             </div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">Pajak</h1>
-            <p className="text-xs text-[var(--app-muted)] mt-0.5">Kelola dan pantau seluruh kewajiban pajak perusahaan.</p>
+            <h1 className="text-2xl font-bold text-[var(--app-text)] tracking-tight">Pajak</h1>
+            <p className="text-xs text-[var(--app-text-muted)] mt-0.5">Kelola dan pantau seluruh kewajiban pajak perusahaan.</p>
           </div>
           
           <div className="flex flex-wrap items-center gap-2.5">
             <button 
               onClick={() => setShowAddModal(true)}
-              className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-4 py-2.5 rounded-lg shadow-lg hover:shadow-blue-600/10 transition-all cursor-pointer"
+              className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-4 py-2.5 rounded-lg shadow-sm hover:shadow-md transition-all cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>Pajak Baru</span>
             </button>
-            <button className="flex items-center gap-1.5 bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200 text-xs font-medium px-4.5 py-2.5 rounded-lg transition-colors cursor-pointer">
-              <Upload className="w-3.5 h-3.5" />
+            <button className="flex items-center gap-1.5 bg-[var(--app-card)] hover:bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-[var(--app-text)] text-xs font-medium px-4 py-2.5 rounded-lg transition-colors cursor-pointer shadow-xs">
+              <Upload className="w-3.5 h-3.5 text-[var(--app-text-muted)]" />
               <span>Import Data Pajak</span>
             </button>
             <button 
               onClick={handleExportCSV}
-              className="flex items-center gap-1.5 bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200 text-xs font-medium px-4.5 py-2.5 rounded-lg transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 bg-[var(--app-card)] hover:bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-[var(--app-text)] text-xs font-medium px-4 py-2.5 rounded-lg transition-colors cursor-pointer shadow-xs"
             >
-              <Download className="w-3.5 h-3.5" />
+              <Download className="w-3.5 h-3.5 text-[var(--app-text-muted)]" />
               <span>Ekspor</span>
             </button>
           </div>
@@ -274,103 +274,103 @@ export default function PajakDashboard() {
         {/* METRICS CARDS GRID */}
         <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 gap-4 mb-6">
           {/* Card 1 */}
-          <div className="bg-[#0B1528]/80 border border-[var(--app-border)] rounded-xl p-4.5 shadow-sm hover:border-[var(--app-border)] transition-colors">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4.5 shadow-xs hover:border-[var(--app-border-strong)] transition-all">
             <div className="flex justify-between items-start mb-2.5">
-              <div className="bg-blue-600/10 p-2 rounded-lg text-blue-500">
+              <div className="bg-blue-600/10 p-2 rounded-lg text-blue-600 dark:text-blue-400">
                 <FileText className="w-4 h-4" />
               </div>
-              <span className="text-[10px] bg-emerald-500/10 text-emerald-400 font-semibold px-2 py-0.5 rounded-full">
+              <span className="text-[10px] bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-semibold px-2 py-0.5 rounded-full">
                 +12.5%
               </span>
             </div>
-            <div className="text-[var(--app-muted)] text-[10px] font-semibold uppercase tracking-wider">Total Pajak Terutang</div>
-            <div className="text-lg font-bold text-white mt-1">{formatRupiah(metrics.totalTerutang)}</div>
-            <div className="text-[10px] text-[var(--app-muted)] mt-0.5">dari periode lalu</div>
+            <div className="text-[var(--app-text-muted)] text-[10px] font-semibold uppercase tracking-wider">Total Pajak Terutang</div>
+            <div className="text-lg font-bold text-[var(--app-text)] mt-1">{formatRupiah(metrics.totalTerutang)}</div>
+            <div className="text-[10px] text-[var(--app-text-muted)] mt-0.5">dari periode lalu</div>
           </div>
 
           {/* Card 2 */}
-          <div className="bg-[#0B1528]/80 border border-[var(--app-border)] rounded-xl p-4.5 shadow-sm hover:border-[var(--app-border)] transition-colors">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4.5 shadow-xs hover:border-[var(--app-border-strong)] transition-all">
             <div className="flex justify-between items-start mb-2.5">
-              <div className="bg-emerald-600/10 p-2 rounded-lg text-emerald-500">
+              <div className="bg-emerald-600/10 p-2 rounded-lg text-emerald-600 dark:text-emerald-400">
                 <CheckCircle2 className="w-4 h-4" />
               </div>
-              <span className="text-[10px] bg-emerald-500/10 text-emerald-400 font-semibold px-2 py-0.5 rounded-full">
+              <span className="text-[10px] bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-semibold px-2 py-0.5 rounded-full">
                 +9.8%
               </span>
             </div>
-            <div className="text-[var(--app-muted)] text-[10px] font-semibold uppercase tracking-wider">Pajak Dibayar</div>
-            <div className="text-lg font-bold text-white mt-1">{formatRupiah(metrics.totalDibayar)}</div>
-            <div className="text-[10px] text-[var(--app-muted)] mt-0.5">dari periode lalu</div>
+            <div className="text-[var(--app-text-muted)] text-[10px] font-semibold uppercase tracking-wider">Pajak Dibayar</div>
+            <div className="text-lg font-bold text-[var(--app-text)] mt-1">{formatRupiah(metrics.totalDibayar)}</div>
+            <div className="text-[10px] text-[var(--app-text-muted)] mt-0.5">dari periode lalu</div>
           </div>
 
           {/* Card 3 */}
-          <div className="bg-[#0B1528]/80 border border-[var(--app-border)] rounded-xl p-4.5 shadow-sm hover:border-[var(--app-border)] transition-colors">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4.5 shadow-xs hover:border-[var(--app-border-strong)] transition-all">
             <div className="flex justify-between items-start mb-2.5">
-              <div className="bg-amber-600/10 p-2 rounded-lg text-amber-500">
+              <div className="bg-amber-600/10 p-2 rounded-lg text-amber-600 dark:text-amber-400">
                 <AlertCircle className="w-4 h-4" />
               </div>
-              <span className="text-[10px] bg-emerald-500/10 text-emerald-400 font-semibold px-2 py-0.5 rounded-full">
+              <span className="text-[10px] bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-semibold px-2 py-0.5 rounded-full">
                 +2.7%
               </span>
             </div>
-            <div className="text-[var(--app-muted)] text-[10px] font-semibold uppercase tracking-wider">Pajak Kurang / (Lebih) Bayar</div>
-            <div className="text-lg font-bold text-white mt-1">{formatRupiah(metrics.totalSelisih)}</div>
-            <div className="text-[10px] text-[var(--app-muted)] mt-0.5">dari periode lalu</div>
+            <div className="text-[var(--app-text-muted)] text-[10px] font-semibold uppercase tracking-wider">Pajak Kurang / (Lebih) Bayar</div>
+            <div className="text-lg font-bold text-[var(--app-text)] mt-1">{formatRupiah(metrics.totalSelisih)}</div>
+            <div className="text-[10px] text-[var(--app-text-muted)] mt-0.5">dari periode lalu</div>
           </div>
 
           {/* Card 4 */}
-          <div className="bg-[#0B1528]/80 border border-[var(--app-border)] rounded-xl p-4.5 shadow-sm hover:border-[var(--app-border)] transition-colors">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4.5 shadow-xs hover:border-[var(--app-border-strong)] transition-all">
             <div className="flex justify-between items-start mb-2.5">
-              <div className="bg-purple-600/10 p-2 rounded-lg text-purple-500">
+              <div className="bg-purple-600/10 p-2 rounded-lg text-purple-600 dark:text-purple-400">
                 <Calendar className="w-4 h-4" />
               </div>
-              <span className="text-[10px] bg-rose-500/10 text-rose-400 font-semibold px-2 py-0.5 rounded-full">
+              <span className="text-[10px] bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 font-semibold px-2 py-0.5 rounded-full">
                 3 Kewajiban
               </span>
             </div>
-            <div className="text-[var(--app-muted)] text-[10px] font-semibold uppercase tracking-wider">Pajak Jatuh Tempo (30 Hari)</div>
-            <div className="text-lg font-bold text-white mt-1">{formatRupiah(metrics.totalJatuhTempo)}</div>
-            <div className="text-[10px] text-rose-400 mt-0.5">Memerlukan pembayaran segera</div>
+            <div className="text-[var(--app-text-muted)] text-[10px] font-semibold uppercase tracking-wider">Pajak Jatuh Tempo (30 Hari)</div>
+            <div className="text-lg font-bold text-[var(--app-text)] mt-1">{formatRupiah(metrics.totalJatuhTempo)}</div>
+            <div className="text-[10px] text-rose-600 dark:text-rose-400 font-medium mt-0.5">Memerlukan pembayaran segera</div>
           </div>
 
           {/* Card 5 */}
-          <div className="bg-[#0B1528]/80 border border-[var(--app-border)] rounded-xl p-4.5 shadow-sm hover:border-[var(--app-border)] transition-colors">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4.5 shadow-xs hover:border-[var(--app-border-strong)] transition-all">
             <div className="flex justify-between items-start mb-2.5">
-              <div className="bg-cyan-600/10 p-2 rounded-lg text-cyan-500">
+              <div className="bg-blue-600/10 p-2 rounded-lg text-blue-600 dark:text-blue-400">
                 <FileText className="w-4 h-4" />
               </div>
             </div>
-            <div className="text-[var(--app-muted)] text-[10px] font-semibold uppercase tracking-wider">Kewajiban Pajak</div>
-            <div className="text-lg font-bold text-white mt-1">{metrics.kewajibanAktif}</div>
-            <div className="text-[10px] text-[var(--app-muted)] mt-0.5">Jenis pajak aktif terdaftar</div>
+            <div className="text-[var(--app-text-muted)] text-[10px] font-semibold uppercase tracking-wider">Kewajiban Pajak</div>
+            <div className="text-lg font-bold text-[var(--app-text)] mt-1">{metrics.kewajibanAktif}</div>
+            <div className="text-[10px] text-[var(--app-text-muted)] mt-0.5">Jenis pajak aktif terdaftar</div>
           </div>
 
           {/* Card 6 */}
-          <div className="bg-[#0B1528]/80 border border-[var(--app-border)] rounded-xl p-4.5 shadow-sm hover:border-[var(--app-border)] transition-colors">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4.5 shadow-xs hover:border-[var(--app-border-strong)] transition-all">
             <div className="flex justify-between items-start mb-2.5">
-              <div className="bg-rose-600/10 p-2 rounded-lg text-rose-500">
+              <div className="bg-rose-600/10 p-2 rounded-lg text-rose-600 dark:text-rose-400">
                 <CheckCircle2 className="w-4 h-4" />
               </div>
-              <span className="text-[10px] bg-emerald-500/10 text-emerald-400 font-semibold px-2 py-0.5 rounded-full">
+              <span className="text-[10px] bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-semibold px-2 py-0.5 rounded-full">
                 Sangat Baik
               </span>
             </div>
-            <div className="text-[var(--app-muted)] text-[10px] font-semibold uppercase tracking-wider">Tingkat Kepatuhan</div>
-            <div className="text-lg font-bold text-white mt-1">{metrics.complianceRate}%</div>
-            <div className="text-[10px] text-[var(--app-muted)] mt-0.5">Tingkat kepatuhan pelaporan</div>
+            <div className="text-[var(--app-text-muted)] text-[10px] font-semibold uppercase tracking-wider">Tingkat Kepatuhan</div>
+            <div className="text-lg font-bold text-[var(--app-text)] mt-1">{metrics.complianceRate}%</div>
+            <div className="text-[10px] text-[var(--app-text-muted)] mt-0.5">Tingkat kepatuhan pelaporan</div>
           </div>
         </div>
 
         {/* TABS HEADER */}
-        <div className="flex items-center gap-1 border-b border-slate-800/80 mb-6 overflow-x-auto scrollbar-thin scrollbar-track-transparent">
+        <div className="flex items-center gap-1 border-b border-[var(--app-border)] mb-6 overflow-x-auto scrollbar-thin">
           {['Ringkasan', 'Pajak Terutang', 'Pembayaran Pajak', 'SPT', 'Faktur Pajak', 'Rekonsiliasi', 'Laporan', 'Pengaturan'].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`text-xs px-4 py-3 border-b-2 font-medium transition-all whitespace-nowrap cursor-pointer ${
                 activeTab === tab
-                  ? 'border-blue-500 text-blue-400 bg-blue-950/10'
-                  : 'border-transparent text-[var(--app-muted)] hover:text-slate-200'
+                  ? 'border-blue-600 text-blue-600 dark:text-blue-400 bg-blue-50/60 dark:bg-blue-950/30 font-semibold'
+                  : 'border-transparent text-[var(--app-text-muted)] hover:text-[var(--app-text)] hover:border-[var(--app-border)]'
               }`}
             >
               {tab}
@@ -382,19 +382,19 @@ export default function PajakDashboard() {
         <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
           
           {/* LEFT 3 COLS FOR MAIN CONTENT */}
-          <div className="xl:col-span-3 space-y-6">
+          <div className="xl:col-span-3 space-y-6 min-w-0">
             
             {/* CHARTS CONTAINER ROW */}
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
               
               {/* Trend Chart (3/5 width) */}
-              <div className="lg:col-span-3 bg-[#0B1528]/50 border border-slate-900 rounded-xl p-5 shadow-sm">
+              <div className="lg:col-span-3 bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-5 shadow-xs">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xs font-bold text-white uppercase tracking-wider">Tren Pajak Terutang vs Dibayar</h2>
+                  <h2 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider">Tren Pajak Terutang vs Dibayar</h2>
                   <select 
                     value={selectedTahun}
                     onChange={(e) => setSelectedTahun(e.target.value)}
-                    className="bg-[var(--app-bg)] border border-slate-800 text-[10px] px-2 py-1 rounded text-[var(--app-muted)] font-medium"
+                    className="bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-xs px-2.5 py-1 rounded-lg text-[var(--app-text)] font-medium focus:outline-hidden focus:border-blue-500"
                   >
                     <option>Tahun 2026</option>
                     <option>Tahun 2025</option>
@@ -403,16 +403,16 @@ export default function PajakDashboard() {
                 <div className="h-64">
                   <ResponsiveContainer width="100%" height="100%">
                     <ComposedChart data={trendData} margin={{ top: 10, right: 5, left: -20, bottom: 0 }}>
-                      <XAxis dataKey="name" stroke="#64748b" fontSize={9} tickLine={false} />
+                      <XAxis dataKey="name" stroke="#94a3b8" fontSize={9} tickLine={false} />
                       <YAxis 
-                        stroke="#64748b" 
+                        stroke="#94a3b8" 
                         fontSize={9} 
                         tickLine={false} 
                         tickFormatter={(v) => `${v > 0 ? (v / 1000).toFixed(1) + 'M' : '0'}`} 
                       />
                       <Tooltip 
-                        contentStyle={{ backgroundColor: '#0A1629', borderColor: '#1E293B', borderRadius: 8 }} 
-                        labelStyle={{ color: '#fff', fontSize: 10 }}
+                        contentStyle={{ backgroundColor: 'var(--app-card)', borderColor: 'var(--app-border)', borderRadius: 8, color: 'var(--app-text)', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} 
+                        labelStyle={{ color: 'var(--app-text)', fontSize: 10, fontWeight: 600 }}
                         itemStyle={{ fontSize: 10 }}
                       />
                       <Legend wrapperStyle={{ fontSize: 9, paddingTop: 10 }} />
@@ -425,8 +425,8 @@ export default function PajakDashboard() {
               </div>
 
               {/* Composition Donut Chart (2/5 width) */}
-              <div className="lg:col-span-2 bg-[#0B1528]/50 border border-slate-900 rounded-xl p-5 shadow-sm flex flex-col">
-                <h2 className="text-xs font-bold text-white uppercase tracking-wider mb-4">Komposisi Pajak Terutang</h2>
+              <div className="lg:col-span-2 bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-5 shadow-xs flex flex-col">
+                <h2 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-4">Komposisi Pajak Terutang</h2>
                 
                 <div className="flex-1 flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div className="relative w-32 h-32 flex-shrink-0">
@@ -446,8 +446,8 @@ export default function PajakDashboard() {
                       </PieChart>
                     </ResponsiveContainer>
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                      <div className="text-[10px] text-[var(--app-muted)] font-medium leading-none">Total Terutang</div>
-                      <div className="text-xs font-bold text-white mt-1 leading-none">Rp 2.45B</div>
+                      <div className="text-[10px] text-[var(--app-text-muted)] font-medium leading-none">Total Terutang</div>
+                      <div className="text-xs font-bold text-[var(--app-text)] mt-1 leading-none">Rp 2.45B</div>
                     </div>
                   </div>
 
@@ -455,12 +455,12 @@ export default function PajakDashboard() {
                     {pieData.map((item, idx) => (
                       <div key={item.name} className="flex items-center justify-between text-xs">
                         <div className="flex items-center gap-2">
-                          <div className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: COLORS_TAX[idx % COLORS_TAX.length] }} />
-                          <span className="text-[var(--app-muted)]">{item.name}</span>
+                          <div className="w-2.5 h-2.5 rounded-xs" style={{ backgroundColor: COLORS_TAX[idx % COLORS_TAX.length] }} />
+                          <span className="text-[var(--app-text-muted)]">{item.name}</span>
                         </div>
                         <div className="text-right">
-                          <span className="text-white font-medium">{formatRupiah(item.value)}</span>
-                          <span className="text-[10px] text-[var(--app-muted)] font-semibold ml-1">({item.percent})</span>
+                          <span className="text-[var(--app-text)] font-semibold">{formatRupiah(item.value)}</span>
+                          <span className="text-[10px] text-[var(--app-text-muted)] font-medium ml-1">({item.percent})</span>
                         </div>
                       </div>
                     ))}
@@ -470,22 +470,22 @@ export default function PajakDashboard() {
             </div>
 
             {/* TAX OBLIGATION DATATABLE */}
-            <div className="bg-[#0B1528]/50 border border-slate-900 rounded-xl p-5 shadow-sm">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-5 shadow-xs">
               <div className="flex flex-col gap-4 mb-4">
-                <h2 className="text-xs font-bold text-white uppercase tracking-wider">Daftar Kewajiban Pajak</h2>
+                <h2 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider">Daftar Kewajiban Pajak</h2>
                 
                 {/* Advanced Filter Row */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-2">
                   
                   {/* Search Input */}
                   <div className="md:col-span-2 relative">
-                    <Search className="absolute left-3 top-2.5 w-3.5 h-3.5 text-[var(--app-muted)]" />
+                    <Search className="absolute left-3 top-2.5 w-3.5 h-3.5 text-[var(--app-text-muted)]" />
                     <input 
                       type="text"
                       placeholder="Cari pajak..."
                       value={searchTerm}
                       onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                      className="bg-[var(--app-bg)] border border-slate-800 text-xs px-3 py-2 pl-9 rounded-lg text-slate-200 w-full focus:outline-none focus:border-blue-500"
+                      className="bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-xs px-3 py-2 pl-9 rounded-lg text-[var(--app-text)] placeholder-[var(--app-text-dim)] w-full focus:outline-hidden focus:border-blue-500"
                     />
                   </div>
 
@@ -494,7 +494,7 @@ export default function PajakDashboard() {
                     <select
                       value={selectedJenis}
                       onChange={(e) => { setSelectedJenis(e.target.value); setCurrentPage(1); }}
-                      className="bg-[var(--app-bg)] border border-slate-800 text-xs px-3 py-2 rounded-lg text-slate-200 w-full focus:outline-none focus:border-blue-500 font-medium"
+                      className="bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-xs px-3 py-2 rounded-lg text-[var(--app-text)] w-full focus:outline-hidden focus:border-blue-500 font-medium"
                     >
                       <option>Semua Jenis Pajak</option>
                       <option>PPN</option>
@@ -510,7 +510,7 @@ export default function PajakDashboard() {
                     <select
                       value={selectedStatus}
                       onChange={(e) => { setSelectedStatus(e.target.value); setCurrentPage(1); }}
-                      className="bg-[var(--app-bg)] border border-slate-800 text-xs px-3 py-2 rounded-lg text-slate-200 w-full focus:outline-none focus:border-blue-500 font-medium"
+                      className="bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-xs px-3 py-2 rounded-lg text-[var(--app-text)] w-full focus:outline-hidden focus:border-blue-500 font-medium"
                     >
                       <option>Semua Status</option>
                       <option>Belum Lunas</option>
@@ -524,7 +524,7 @@ export default function PajakDashboard() {
                     <select
                       value={selectedMasa}
                       onChange={(e) => { setSelectedMasa(e.target.value); setCurrentPage(1); }}
-                      className="bg-[var(--app-bg)] border border-slate-800 text-xs px-3 py-2 rounded-lg text-slate-200 w-full focus:outline-none focus:border-blue-500 font-medium"
+                      className="bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-xs px-3 py-2 rounded-lg text-[var(--app-text)] w-full focus:outline-hidden focus:border-blue-500 font-medium"
                     >
                       <option>Semua Masa Pajak</option>
                       <option>Juni 2026</option>
@@ -537,7 +537,7 @@ export default function PajakDashboard() {
                   <div className="flex gap-2">
                     <button 
                       onClick={resetFilters}
-                      className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-4 py-2 rounded-lg w-full transition-colors cursor-pointer"
+                      className="bg-[var(--app-card-subtle)] hover:bg-[var(--app-card-hover)] border border-[var(--app-border)] text-[var(--app-text)] text-xs font-semibold px-4 py-2 rounded-lg w-full transition-colors cursor-pointer shadow-xs"
                     >
                       Reset
                     </button>
@@ -546,10 +546,10 @@ export default function PajakDashboard() {
               </div>
 
               {/* Data Table */}
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse text-xs">
+              <div className="overflow-x-auto w-full">
+                <table className="w-full text-left border-collapse text-xs min-w-[760px]">
                   <thead>
-                    <tr className="border-b border-slate-800 text-[var(--app-muted)] font-semibold uppercase tracking-wider">
+                    <tr className="border-b border-[var(--app-border)] bg-[var(--app-card-subtle)] text-[var(--app-text-muted)] font-semibold uppercase tracking-wider text-[11px]">
                       <th className="py-3 px-4 w-12 text-center">NO</th>
                       <th className="py-3 px-4">JENIS PAJAK</th>
                       <th className="py-3 px-4">MASA PAJAK</th>
@@ -567,24 +567,24 @@ export default function PajakDashboard() {
                       paginatedData.map((item, idx) => {
                         const calculatedNo = (currentPage - 1) * rowsPerPage + idx + 1;
                         return (
-                          <tr key={item.id} className="border-b border-slate-900 hover:bg-slate-950/40 transition-colors">
-                            <td className="py-3.5 px-4 text-center text-[var(--app-muted)]">{calculatedNo}</td>
-                            <td className="py-3.5 px-4 font-bold text-white">{item.jenisPajak}</td>
-                            <td className="py-3.5 px-4 text-slate-300">{item.masaPajak}</td>
-                            <td className="py-3.5 px-4 text-[var(--app-muted)]">{item.tglJatuhTempo}</td>
-                            <td className="py-3.5 px-4 text-right font-medium text-slate-300">
+                          <tr key={item.id} className="border-b border-[var(--app-border)] hover:bg-[var(--app-card-subtle)]/70 transition-colors">
+                            <td className="py-3.5 px-4 text-center text-[var(--app-text-muted)]">{calculatedNo}</td>
+                            <td className="py-3.5 px-4 font-bold text-[var(--app-text)]">{item.jenisPajak}</td>
+                            <td className="py-3.5 px-4 text-[var(--app-text-muted)]">{item.masaPajak}</td>
+                            <td className="py-3.5 px-4 text-[var(--app-text-muted)]">{item.tglJatuhTempo}</td>
+                            <td className="py-3.5 px-4 text-right font-medium text-[var(--app-text)]">
                               {item.dpp > 0 ? formatRupiah(item.dpp) : '-'}
                             </td>
-                            <td className="py-3.5 px-4 text-center text-[var(--app-muted)]">{item.tarif}</td>
-                            <td className="py-3.5 px-4 text-right font-bold text-blue-400">{formatRupiah(item.pajakTerutang)}</td>
-                            <td className="py-3.5 px-4 text-right font-bold text-emerald-400">{formatRupiah(item.pajakDibayar)}</td>
+                            <td className="py-3.5 px-4 text-center text-[var(--app-text-muted)]">{item.tarif}</td>
+                            <td className="py-3.5 px-4 text-right font-bold text-blue-600 dark:text-blue-400">{formatRupiah(item.pajakTerutang)}</td>
+                            <td className="py-3.5 px-4 text-right font-bold text-emerald-600 dark:text-emerald-400">{formatRupiah(item.pajakDibayar)}</td>
                             <td className="py-3.5 px-4 text-center">
-                              <span className={`inline-block px-2.5 py-0.5 rounded text-[10px] font-bold ${
+                              <span className={`inline-block px-2.5 py-0.5 rounded text-[10px] font-bold border ${
                                 item.status === 'Lunas' 
-                                  ? 'bg-emerald-500/10 text-emerald-400' 
+                                  ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20' 
                                   : item.status === 'Sebagian'
-                                  ? 'bg-amber-500/10 text-amber-400'
-                                  : 'bg-rose-500/10 text-rose-400'
+                                  ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20'
+                                  : 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20'
                               }`}>
                                 {item.status}
                               </span>
@@ -593,20 +593,20 @@ export default function PajakDashboard() {
                               <div className="flex items-center justify-center gap-1.5">
                                 <button 
                                   onClick={() => { setSelectedTaxDetails(item); setShowDetailModal(true); }}
-                                  className="p-1 text-[var(--app-muted)] hover:text-white transition-colors cursor-pointer"
+                                  className="p-1.5 text-[var(--app-text-muted)] hover:text-blue-600 dark:hover:text-blue-400 hover:bg-[var(--app-card-subtle)] rounded-md transition-colors cursor-pointer"
                                   title="Detail"
                                 >
                                   <Eye className="w-3.5 h-3.5" />
                                 </button>
                                 <button 
-                                  className="p-1 text-[var(--app-muted)] hover:text-white transition-colors cursor-pointer"
+                                  className="p-1.5 text-[var(--app-text-muted)] hover:text-amber-600 dark:hover:text-amber-400 hover:bg-[var(--app-card-subtle)] rounded-md transition-colors cursor-pointer"
                                   title="Edit"
                                 >
                                   <Edit2 className="w-3.5 h-3.5" />
                                 </button>
                                 <button 
                                   onClick={() => handleDeleteTax(item.id)}
-                                  className="p-1 text-[var(--app-muted)] hover:text-rose-500 transition-colors cursor-pointer"
+                                  className="p-1.5 text-[var(--app-text-muted)] hover:text-rose-600 dark:hover:text-rose-400 hover:bg-[var(--app-card-subtle)] rounded-md transition-colors cursor-pointer"
                                   title="Hapus"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
@@ -618,7 +618,7 @@ export default function PajakDashboard() {
                       })
                     ) : (
                       <tr>
-                        <td colSpan={10} className="py-8 text-center text-[var(--app-muted)]">
+                        <td colSpan={10} className="py-8 text-center text-[var(--app-text-muted)]">
                           Tidak ada data kewajiban pajak yang ditemukan.
                         </td>
                       </tr>
@@ -628,11 +628,11 @@ export default function PajakDashboard() {
               </div>
 
               {/* Table Pagination Controller */}
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-4 text-[var(--app-muted)] text-xs">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-4 text-[var(--app-text-muted)] text-xs">
                 <div>
-                  Menampilkan <span className="font-semibold text-white">{Math.min(filteredData.length, (currentPage - 1) * rowsPerPage + 1)}</span> sampai{' '}
-                  <span className="font-semibold text-white">{Math.min(filteredData.length, currentPage * rowsPerPage)}</span> dari{' '}
-                  <span className="font-semibold text-white">{filteredData.length}</span> data
+                  Menampilkan <span className="font-semibold text-[var(--app-text)]">{filteredData.length > 0 ? (currentPage - 1) * rowsPerPage + 1 : 0}</span> sampai{' '}
+                  <span className="font-semibold text-[var(--app-text)]">{Math.min(filteredData.length, currentPage * rowsPerPage)}</span> dari{' '}
+                  <span className="font-semibold text-[var(--app-text)]">{filteredData.length}</span> data
                 </div>
 
                 <div className="flex items-center gap-4">
@@ -641,7 +641,7 @@ export default function PajakDashboard() {
                     <select
                       value={rowsPerPage}
                       onChange={(e) => { setRowsPerPage(parseInt(e.target.value)); setCurrentPage(1); }}
-                      className="bg-[var(--app-bg)] border border-slate-800 rounded px-1.5 py-0.5 text-white"
+                      className="bg-[var(--app-card-subtle)] border border-[var(--app-border)] rounded-md px-2 py-1 text-[var(--app-text)] focus:outline-hidden"
                     >
                       <option value={5}>5</option>
                       <option value={7}>7</option>
@@ -654,7 +654,7 @@ export default function PajakDashboard() {
                     <button
                       disabled={currentPage === 1}
                       onClick={() => setCurrentPage(currentPage - 1)}
-                      className="p-1.5 rounded-md hover:bg-slate-800 text-[var(--app-muted)] hover:text-white disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                      className="p-1.5 rounded-md hover:bg-[var(--app-card-subtle)] text-[var(--app-text-muted)] hover:text-[var(--app-text)] disabled:opacity-30 disabled:pointer-events-none transition-colors"
                     >
                       <ChevronLeft className="w-4 h-4" />
                     </button>
@@ -662,10 +662,10 @@ export default function PajakDashboard() {
                       <button
                         key={i}
                         onClick={() => setCurrentPage(i + 1)}
-                        className={`w-6.5 h-6.5 rounded-md text-xs font-semibold ${
+                        className={`w-7 h-7 rounded-md text-xs font-semibold transition-colors ${
                           currentPage === i + 1
-                            ? 'bg-blue-600 text-white'
-                            : 'hover:bg-slate-800 text-[var(--app-muted)] hover:text-white'
+                            ? 'bg-blue-600 text-white shadow-xs'
+                            : 'hover:bg-[var(--app-card-subtle)] text-[var(--app-text-muted)] hover:text-[var(--app-text)]'
                         }`}
                       >
                         {i + 1}
@@ -674,7 +674,7 @@ export default function PajakDashboard() {
                     <button
                       disabled={currentPage === totalPages}
                       onClick={() => setCurrentPage(currentPage + 1)}
-                      className="p-1.5 rounded-md hover:bg-slate-800 text-[var(--app-muted)] hover:text-white disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                      className="p-1.5 rounded-md hover:bg-[var(--app-card-subtle)] text-[var(--app-text-muted)] hover:text-[var(--app-text)] disabled:opacity-30 disabled:pointer-events-none transition-colors"
                     >
                       <ChevronRight className="w-4 h-4" />
                     </button>
@@ -687,13 +687,13 @@ export default function PajakDashboard() {
           </div>
 
           {/* RIGHT 1 COL FOR SIDEBAR */}
-          <div className="space-y-6">
+          <div className="space-y-6 min-w-0">
             
             {/* Tax Due List */}
-            <div className="bg-[#0B1528]/50 border border-slate-900 rounded-xl p-5 shadow-sm">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-5 shadow-xs">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xs font-bold text-white uppercase tracking-wider">Pajak Jatuh Tempo</h2>
-                <button className="text-[10px] text-blue-400 font-semibold hover:underline">Lihat Semua</button>
+                <h2 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider">Pajak Jatuh Tempo</h2>
+                <button className="text-[10px] text-blue-600 dark:text-blue-400 font-semibold hover:underline cursor-pointer">Lihat Semua</button>
               </div>
 
               <div className="space-y-3">
@@ -704,22 +704,22 @@ export default function PajakDashboard() {
                   { name: 'PPh 25 Juni 2026', total: 45000000, date: '30 Jul 2026', badge: '22 hari lagi', type: 'normal' },
                   { name: 'PPN Masa Mei 2026', total: 15000000, date: '15 Jun 2026', badge: 'Lunas', type: 'success' }
                 ].map((item, index) => (
-                  <div key={index} className="flex items-center justify-between border-b border-slate-900/60 pb-2.5 last:border-b-0 last:pb-0">
+                  <div key={index} className="flex items-center justify-between border-b border-[var(--app-border)]/60 pb-2.5 last:border-b-0 last:pb-0">
                     <div className="space-y-0.5">
-                      <div className="text-xs font-semibold text-white">{item.name}</div>
-                      <div className="text-[10px] text-[var(--app-muted)]">
-                        {formatRupiah(item.total)} • <span className="font-semibold text-slate-300">{item.date}</span>
+                      <div className="text-xs font-semibold text-[var(--app-text)]">{item.name}</div>
+                      <div className="text-[10px] text-[var(--app-text-muted)]">
+                        {formatRupiah(item.total)} • <span className="font-semibold text-[var(--app-text)]">{item.date}</span>
                       </div>
                     </div>
 
-                    <span className={`inline-block px-2 py-0.5 rounded text-[9px] font-bold ${
+                    <span className={`inline-block px-2 py-0.5 rounded text-[9px] font-bold border ${
                       item.type === 'danger'
-                        ? 'bg-rose-500/15 text-rose-400 border border-rose-500/20'
+                        ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20'
                         : item.type === 'warning'
-                        ? 'bg-amber-500/15 text-amber-400 border border-amber-500/20'
+                        ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20'
                         : item.type === 'success'
-                        ? 'bg-emerald-500/15 text-emerald-400'
-                        : 'bg-[var(--app-bg)]0/10 text-slate-300'
+                        ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
+                        : 'bg-slate-500/10 text-[var(--app-text-muted)] border-slate-500/20'
                     }`}>
                       {item.badge}
                     </span>
@@ -729,10 +729,10 @@ export default function PajakDashboard() {
             </div>
 
             {/* SPT Summary */}
-            <div className="bg-[#0B1528]/50 border border-slate-900 rounded-xl p-5 shadow-sm">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-5 shadow-xs">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xs font-bold text-white uppercase tracking-wider">Ringkasan SPT</h2>
-                <select className="bg-[var(--app-bg)] border border-slate-800 text-[10px] px-1.5 py-0.5 rounded text-[var(--app-muted)] font-semibold">
+                <h2 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider">Ringkasan SPT</h2>
+                <select className="bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-[10px] px-2 py-0.5 rounded-lg text-[var(--app-text)] font-semibold focus:outline-hidden">
                   <option>Tahun 2026</option>
                   <option>Tahun 2025</option>
                 </select>
@@ -747,10 +747,10 @@ export default function PajakDashboard() {
                 ].map((item, index) => (
                   <div key={index} className="space-y-1">
                     <div className="flex items-center justify-between text-xs">
-                      <span className="text-[var(--app-muted)]">{item.name}</span>
+                      <span className="text-[var(--app-text-muted)]">{item.name}</span>
                       <span className="text-[var(--app-text)] font-semibold">{item.count}</span>
                     </div>
-                    <div className="w-full bg-[var(--app-bg)] h-1.5 rounded-full overflow-hidden">
+                    <div className="w-full bg-[var(--app-border)]/50 h-1.5 rounded-full overflow-hidden">
                       <div 
                         className="bg-emerald-500 h-full rounded-full transition-all" 
                         style={{ width: `${item.progress}%` }} 
@@ -759,14 +759,14 @@ export default function PajakDashboard() {
                   </div>
                 ))}
               </div>
-              <button className="w-full text-center text-blue-400 font-semibold text-[10px] mt-4 hover:underline block">
+              <button className="w-full text-center text-blue-600 dark:text-blue-400 font-semibold text-[10px] mt-4 hover:underline block cursor-pointer">
                 Lihat Semua SPT &gt;
               </button>
             </div>
 
             {/* Quick Actions */}
-            <div className="bg-[#0B1528]/50 border border-slate-900 rounded-xl p-5 shadow-sm">
-              <h2 className="text-xs font-bold text-white uppercase tracking-wider mb-4">Fitur Cepat</h2>
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-5 shadow-xs">
+              <h2 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-4">Fitur Cepat</h2>
               <div className="grid grid-cols-2 gap-2">
                 {[
                   { label: 'Buat Kewajiban Pajak', icon: Plus },
@@ -781,18 +781,18 @@ export default function PajakDashboard() {
                     onClick={() => {
                       if (btn.label === 'Buat Kewajiban Pajak') setShowAddModal(true);
                     }}
-                    className="flex flex-col items-center justify-center p-3 bg-[var(--app-bg)]/80 hover:bg-[var(--app-bg)] border border-slate-800/80 rounded-lg text-center gap-1.5 transition-colors cursor-pointer group"
+                    className="flex flex-col items-center justify-center p-3 bg-[var(--app-card-subtle)] hover:bg-[var(--app-card-hover)] border border-[var(--app-border)] rounded-lg text-center gap-1.5 transition-colors cursor-pointer group shadow-2xs"
                   >
-                    <btn.icon className="w-4 h-4 text-[var(--app-muted)] group-hover:text-blue-400 transition-colors" />
-                    <span className="text-[9px] text-slate-300 font-medium leading-tight">{btn.label}</span>
+                    <btn.icon className="w-4 h-4 text-[var(--app-text-muted)] group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
+                    <span className="text-[9px] text-[var(--app-text)] font-medium leading-tight">{btn.label}</span>
                   </button>
                 ))}
               </div>
             </div>
 
             {/* Tax Notes Checklist */}
-            <div className="bg-[#0B1528]/50 border border-slate-900 rounded-xl p-5 shadow-sm">
-              <h2 className="text-xs font-bold text-white uppercase tracking-wider mb-4">Catatan Pajak</h2>
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-5 shadow-xs">
+              <h2 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider mb-4">Catatan Pajak</h2>
               <div className="space-y-3">
                 {[
                   'Pastikan semua faktur pajak telah divalidasi.',
@@ -800,12 +800,12 @@ export default function PajakDashboard() {
                   'Rekonsiliasi pajak dilakukan setiap akhir bulan.'
                 ].map((note, index) => (
                   <div key={index} className="flex items-start gap-2.5">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 mt-0.5 flex-shrink-0" />
-                    <span className="text-[10px] text-slate-300 leading-normal">{note}</span>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 mt-0.5 flex-shrink-0" />
+                    <span className="text-[10px] text-[var(--app-text-muted)] leading-normal">{note}</span>
                   </div>
                 ))}
               </div>
-              <button className="w-full text-center text-blue-400 font-semibold text-[10px] mt-4 hover:underline block">
+              <button className="w-full text-center text-blue-600 dark:text-blue-400 font-semibold text-[10px] mt-4 hover:underline block cursor-pointer">
                 Lihat Catatan Lengkap &gt;
               </button>
             </div>
@@ -818,26 +818,26 @@ export default function PajakDashboard() {
 
       {/* CREATE NEW TAX MODAL */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="bg-[#0A1629] border border-slate-800 w-full max-w-lg rounded-xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-150">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-800">
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider">Buat Kewajiban Pajak Baru</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
+          <div className="bg-[var(--app-surface)] border border-[var(--app-border)] w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-150">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--app-border)]">
+              <h3 className="text-sm font-bold text-[var(--app-text)] uppercase tracking-wider">Buat Kewajiban Pajak Baru</h3>
               <button 
                 onClick={() => setShowAddModal(false)}
-                className="text-[var(--app-muted)] hover:text-white transition-colors cursor-pointer"
+                className="text-[var(--app-text-muted)] hover:text-[var(--app-text)] transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
             
-            <form onSubmit={handleAddTax} className="p-5 space-y-4 text-xs text-slate-300">
+            <form onSubmit={handleAddTax} className="p-5 space-y-4 text-xs text-[var(--app-text)]">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="block text-[var(--app-muted)] font-semibold">Jenis Pajak</label>
+                  <label className="block text-[var(--app-text-muted)] font-semibold">Jenis Pajak</label>
                   <select 
                     value={newJenis}
                     onChange={(e) => setNewJenis(e.target.value)}
-                    className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500"
+                    className="bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-[var(--app-text)] rounded-lg p-2.5 w-full focus:outline-hidden focus:border-blue-500 font-medium"
                   >
                     <option>PPN</option>
                     <option>PPh 21</option>
@@ -848,13 +848,13 @@ export default function PajakDashboard() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="block text-[var(--app-muted)] font-semibold">Masa Pajak</label>
+                  <label className="block text-[var(--app-text-muted)] font-semibold">Masa Pajak</label>
                   <input 
                     type="text" 
                     value={newMasa}
                     onChange={(e) => setNewMasa(e.target.value)}
                     placeholder="Contoh: Juni 2026"
-                    className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2 w-full focus:outline-none focus:border-blue-500"
+                    className="bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-[var(--app-text)] placeholder-[var(--app-text-dim)] rounded-lg p-2 w-full focus:outline-hidden focus:border-blue-500"
                     required
                   />
                 </div>
@@ -862,73 +862,73 @@ export default function PajakDashboard() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="block text-[var(--app-muted)] font-semibold">Tanggal Jatuh Tempo</label>
+                  <label className="block text-[var(--app-text-muted)] font-semibold">Tanggal Jatuh Tempo</label>
                   <input 
                     type="text" 
                     value={newJatuhTempo}
                     onChange={(e) => setNewJatuhTempo(e.target.value)}
                     placeholder="Contoh: 15 Jul 2026"
-                    className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2 w-full focus:outline-none focus:border-blue-500"
+                    className="bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-[var(--app-text)] placeholder-[var(--app-text-dim)] rounded-lg p-2 w-full focus:outline-hidden focus:border-blue-500"
                     required
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="block text-[var(--app-muted)] font-semibold">Tarif Pajak (%)</label>
+                  <label className="block text-[var(--app-text-muted)] font-semibold">Tarif Pajak (%)</label>
                   <input 
                     type="text" 
                     value={newTarif}
                     onChange={(e) => setNewTarif(e.target.value)}
                     placeholder="Contoh: 10% atau Tarif Progresif"
-                    className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2 w-full focus:outline-none focus:border-blue-500"
+                    className="bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-[var(--app-text)] placeholder-[var(--app-text-dim)] rounded-lg p-2 w-full focus:outline-hidden focus:border-blue-500"
                     required
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="block text-[var(--app-muted)] font-semibold">DPP - Dasar Pengenaan Pajak (Rp)</label>
+                <label className="block text-[var(--app-text-muted)] font-semibold">DPP - Dasar Pengenaan Pajak (Rp)</label>
                 <input 
                   type="number" 
                   value={newDpp}
                   onChange={(e) => setNewDpp(e.target.value)}
                   placeholder="Contoh: 15000000"
-                  className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2 w-full focus:outline-none focus:border-blue-500"
+                  className="bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-[var(--app-text)] placeholder-[var(--app-text-dim)] rounded-lg p-2 w-full focus:outline-hidden focus:border-blue-500"
                   required
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="block text-[var(--app-muted)] font-semibold">Pajak Terutang (Rp)</label>
+                  <label className="block text-[var(--app-text-muted)] font-semibold">Pajak Terutang (Rp)</label>
                   <input 
                     type="number" 
                     value={newTerutang}
                     onChange={(e) => setNewTerutang(e.target.value)}
                     placeholder="Contoh: 1500000"
-                    className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2 w-full focus:outline-none focus:border-blue-500"
+                    className="bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-[var(--app-text)] placeholder-[var(--app-text-dim)] rounded-lg p-2 w-full focus:outline-hidden focus:border-blue-500"
                     required
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="block text-[var(--app-muted)] font-semibold">Pajak Dibayar (Rp)</label>
+                  <label className="block text-[var(--app-text-muted)] font-semibold">Pajak Dibayar (Rp)</label>
                   <input 
                     type="number" 
                     value={newDibayar}
                     onChange={(e) => setNewDibayar(e.target.value)}
                     placeholder="Contoh: 0"
-                    className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2 w-full focus:outline-none focus:border-blue-500"
+                    className="bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-[var(--app-text)] placeholder-[var(--app-text-dim)] rounded-lg p-2 w-full focus:outline-hidden focus:border-blue-500"
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="block text-[var(--app-muted)] font-semibold">Status Pembayaran</label>
+                <label className="block text-[var(--app-text-muted)] font-semibold">Status Pembayaran</label>
                 <select 
                   value={newStatus}
                   onChange={(e) => setNewStatus(e.target.value as any)}
-                  className="bg-[var(--app-bg)] border border-slate-800 text-white rounded-lg p-2.5 w-full focus:outline-none focus:border-blue-500"
+                  className="bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-[var(--app-text)] rounded-lg p-2.5 w-full focus:outline-hidden focus:border-blue-500 font-medium"
                 >
                   <option value="Belum Lunas">Belum Lunas</option>
                   <option value="Sebagian">Sebagian</option>
@@ -936,17 +936,17 @@ export default function PajakDashboard() {
                 </select>
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-800">
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-[var(--app-border)]">
                 <button 
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold px-4 py-2 rounded-lg cursor-pointer"
+                  className="bg-[var(--app-card-subtle)] hover:bg-[var(--app-card-hover)] border border-[var(--app-border)] text-[var(--app-text)] font-semibold px-4 py-2 rounded-lg cursor-pointer"
                 >
                   Batal
                 </button>
                 <button 
                   type="submit"
-                  className="bg-blue-600 hover:bg-blue-500 text-[var(--app-text)] font-semibold px-5 py-2 rounded-lg cursor-pointer"
+                  className="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-5 py-2 rounded-lg cursor-pointer shadow-sm"
                 >
                   Simpan Kewajiban Pajak
                 </button>
@@ -958,75 +958,75 @@ export default function PajakDashboard() {
 
       {/* VIEW DETAILS MODAL */}
       {showDetailModal && selectedTaxDetails && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="bg-[#0A1629] border border-slate-800 w-full max-w-md rounded-xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-150">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-800">
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider">Detail Kewajiban Pajak</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
+          <div className="bg-[var(--app-surface)] border border-[var(--app-border)] w-full max-w-md rounded-2xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-150">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--app-border)]">
+              <h3 className="text-sm font-bold text-[var(--app-text)] uppercase tracking-wider">Detail Kewajiban Pajak</h3>
               <button 
                 onClick={() => setShowDetailModal(false)}
-                className="text-[var(--app-muted)] hover:text-white transition-colors cursor-pointer"
+                className="text-[var(--app-text-muted)] hover:text-[var(--app-text)] transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
             
             <div className="p-5 space-y-4 text-xs">
-              <div className="grid grid-cols-2 gap-y-3.5 border-b border-slate-900 pb-4">
+              <div className="grid grid-cols-2 gap-y-3.5 border-b border-[var(--app-border)] pb-4">
                 <div>
-                  <div className="text-[var(--app-muted)] font-semibold uppercase tracking-wider text-[10px]">Jenis Pajak</div>
-                  <div className="text-sm font-bold text-white mt-0.5">{selectedTaxDetails.jenisPajak}</div>
+                  <div className="text-[var(--app-text-muted)] font-semibold uppercase tracking-wider text-[10px]">Jenis Pajak</div>
+                  <div className="text-sm font-bold text-[var(--app-text)] mt-0.5">{selectedTaxDetails.jenisPajak}</div>
                 </div>
                 <div>
-                  <div className="text-[var(--app-muted)] font-semibold uppercase tracking-wider text-[10px]">Masa Pajak</div>
-                  <div className="text-sm font-semibold text-slate-200 mt-0.5">{selectedTaxDetails.masaPajak}</div>
+                  <div className="text-[var(--app-text-muted)] font-semibold uppercase tracking-wider text-[10px]">Masa Pajak</div>
+                  <div className="text-sm font-semibold text-[var(--app-text)] mt-0.5">{selectedTaxDetails.masaPajak}</div>
                 </div>
                 <div>
-                  <div className="text-[var(--app-muted)] font-semibold uppercase tracking-wider text-[10px]">Jatuh Tempo</div>
-                  <div className="text-sm font-semibold text-slate-200 mt-0.5">{selectedTaxDetails.tglJatuhTempo}</div>
+                  <div className="text-[var(--app-text-muted)] font-semibold uppercase tracking-wider text-[10px]">Jatuh Tempo</div>
+                  <div className="text-sm font-semibold text-[var(--app-text)] mt-0.5">{selectedTaxDetails.tglJatuhTempo}</div>
                 </div>
                 <div>
-                  <div className="text-[var(--app-muted)] font-semibold uppercase tracking-wider text-[10px]">Tarif</div>
-                  <div className="text-sm font-semibold text-slate-200 mt-0.5">{selectedTaxDetails.tarif}</div>
+                  <div className="text-[var(--app-text-muted)] font-semibold uppercase tracking-wider text-[10px]">Tarif</div>
+                  <div className="text-sm font-semibold text-[var(--app-text)] mt-0.5">{selectedTaxDetails.tarif}</div>
                 </div>
               </div>
 
               <div className="space-y-3.5 pt-1">
                 <div className="flex justify-between items-center">
-                  <span className="text-[var(--app-muted)]">Dasar Pengenaan Pajak (DPP):</span>
-                  <span className="font-semibold text-white">{formatRupiah(selectedTaxDetails.dpp)}</span>
+                  <span className="text-[var(--app-text-muted)]">Dasar Pengenaan Pajak (DPP):</span>
+                  <span className="font-semibold text-[var(--app-text)]">{formatRupiah(selectedTaxDetails.dpp)}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-[var(--app-muted)]">Pajak Terutang:</span>
-                  <span className="font-semibold text-blue-400">{formatRupiah(selectedTaxDetails.pajakTerutang)}</span>
+                  <span className="text-[var(--app-text-muted)]">Pajak Terutang:</span>
+                  <span className="font-semibold text-blue-600 dark:text-blue-400">{formatRupiah(selectedTaxDetails.pajakTerutang)}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-[var(--app-muted)]">Pajak Dibayar:</span>
-                  <span className="font-semibold text-emerald-400">{formatRupiah(selectedTaxDetails.pajakDibayar)}</span>
+                  <span className="text-[var(--app-text-muted)]">Pajak Dibayar:</span>
+                  <span className="font-semibold text-emerald-600 dark:text-emerald-400">{formatRupiah(selectedTaxDetails.pajakDibayar)}</span>
                 </div>
-                <div className="flex justify-between items-center border-t border-slate-900 pt-3">
-                  <span className="text-[var(--app-muted)] font-semibold">Sisa Kurang Bayar:</span>
-                  <span className="font-bold text-rose-400">
+                <div className="flex justify-between items-center border-t border-[var(--app-border)] pt-3">
+                  <span className="text-[var(--app-text-muted)] font-semibold">Sisa Kurang Bayar:</span>
+                  <span className="font-bold text-rose-600 dark:text-rose-400">
                     {formatRupiah(Math.max(0, selectedTaxDetails.pajakTerutang - selectedTaxDetails.pajakDibayar))}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-[var(--app-muted)]">Status Pembayaran:</span>
-                  <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold ${
+                  <span className="text-[var(--app-text-muted)]">Status Pembayaran:</span>
+                  <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold border ${
                     selectedTaxDetails.status === 'Lunas' 
-                      ? 'bg-emerald-500/10 text-emerald-400' 
+                      ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20' 
                       : selectedTaxDetails.status === 'Sebagian'
-                      ? 'bg-amber-500/10 text-amber-400'
-                      : 'bg-rose-500/10 text-rose-400'
+                      ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20'
+                      : 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20'
                   }`}>
                     {selectedTaxDetails.status}
                   </span>
                 </div>
               </div>
 
-              <div className="flex items-center justify-end pt-4 border-t border-slate-800">
+              <div className="flex items-center justify-end pt-4 border-t border-[var(--app-border)]">
                 <button 
                   onClick={() => setShowDetailModal(false)}
-                  className="bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold px-5 py-2 rounded-lg cursor-pointer"
+                  className="bg-[var(--app-card-subtle)] hover:bg-[var(--app-card-hover)] border border-[var(--app-border)] text-[var(--app-text)] font-semibold px-5 py-2 rounded-lg cursor-pointer"
                 >
                   Tutup
                 </button>

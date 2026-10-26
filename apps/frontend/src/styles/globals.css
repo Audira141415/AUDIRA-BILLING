@@ -23,6 +23,7 @@
   --app-text: #0f172a;
   --app-text-muted: #64748b;
   --app-text-dim: #94a3b8;
+  --app-muted: #64748b;
   --app-primary: #1e3a5f;
   --app-primary-hover: #172d4a;
   --app-primary-light: #2563eb;
@@ -54,6 +55,7 @@
   --app-text: #f8fafc;
   --app-text-muted: #94a3b8;
   --app-text-dim: #64748b;
+  --app-muted: #94a3b8;
   --app-primary: #38bdf8;
   --app-primary-hover: #0ea5e9;
   --app-primary-light: #38bdf8;

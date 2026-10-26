@@ -428,7 +428,7 @@ export default function Sidebar() {
 
     return navigationGroups.map(group => {
       const roleFilteredItems = group.items.filter(item => {
-        if (!user) return true
+        if (!user || !item.roles) return true
         return item.roles.some(role => role.toUpperCase() === user.role.toUpperCase())
       })
 
