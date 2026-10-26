@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
+import ReportSubTabDetail from '@/components/ReportSubTabDetail';
 import {
   Download, Calendar, RefreshCw, Filter, ChevronDown, FileDown,
   FileSpreadsheet, FileText, BarChart2, TrendingUp,
@@ -538,14 +539,7 @@ function TabRingkasan() {
   );
 }
 
-function TabPlaceholder({ name }: { name: string }) {
-  return (
-    <div className="flex flex-col items-center justify-center py-20 text-[var(--app-muted)] space-y-3">
-      <BarChart2 size={40} className="text-gray-700" />
-      <p className="text-sm font-bold">Tab <span className="text-blue-400">{name}</span> sedang dalam pengembangan</p>
-    </div>
-  );
-}
+// TabPlaceholder replaced by ReportSubTabDetail
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
@@ -665,7 +659,7 @@ export default function FinanceReportPage() {
         </div>
 
         {/* Tab Content */}
-        {activeTab === 'Ringkasan' ? <TabRingkasan /> : <TabPlaceholder name={activeTab} />}
+        {activeTab === 'Ringkasan' ? <TabRingkasan /> : <ReportSubTabDetail tabName={activeTab} category="Keuangan" />}
       </div>
     </Layout>
   );

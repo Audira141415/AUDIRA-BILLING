@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import React, { useState } from 'react';
 import Layout from '@/components/Layout';
+import ReportSubTabDetail from '@/components/ReportSubTabDetail';
 import {
   Search, Filter, Eye, Download, Calendar, Bell, Mail, FileText,
   Clock, CheckCircle, XCircle, ArrowUpRight, TrendingUp, MessageSquare,
@@ -504,15 +505,7 @@ function TabRingkasan() {
 
 // ─── Placeholder Tab ─────────────────────────────────────────────────────────
 
-function TabPlaceholder({ name }: { name: string }) {
-  return (
-    <div className="flex flex-col items-center justify-center py-20 text-[var(--app-muted)] space-y-3">
-      <BarChart2 size={40} className="text-gray-700" />
-      <p className="text-sm font-bold">Tab <span className="text-blue-400">{name}</span> sedang dalam pengembangan</p>
-      <p className="text-xs">Fitur ini akan segera tersedia</p>
-    </div>
-  );
-}
+// TabPlaceholder replaced by ReportSubTabDetail
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
@@ -640,7 +633,7 @@ export default function WhatsappReportsPage() {
         </div>
 
         {/* ─── Tab Content ─────────────────────────────────────────────── */}
-        {activeTab === 'Ringkasan' ? <TabRingkasan /> : <TabPlaceholder name={activeTab} />}
+        {activeTab === 'Ringkasan' ? <TabRingkasan /> : <ReportSubTabDetail tabName={activeTab} category="WhatsApp Gateway" />}
 
       </div>
     </Layout>

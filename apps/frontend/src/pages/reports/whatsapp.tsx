@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import React, { useState } from 'react';
 import Layout from '@/components/Layout';
+import ReportSubTabDetail from '@/components/ReportSubTabDetail';
 import {
   Download, Calendar, RefreshCw, Filter, ChevronDown, FileDown,
   FileSpreadsheet, FileText, BarChart2, TrendingUp, TrendingDown,
@@ -415,15 +416,7 @@ function TabAgentRevenue() {
 
 // ─── Placeholder ─────────────────────────────────────────────────────────────
 
-function TabPlaceholder({ name }: { name: string }) {
-  return (
-    <div className="flex flex-col items-center justify-center py-20 text-[var(--app-muted)] space-y-3">
-      <BarChart2 size={40} className="text-gray-700" />
-      <p className="text-sm font-bold">Tab <span className="text-blue-400">{name}</span> sedang dalam pengembangan</p>
-      <p className="text-xs">Fitur ini akan segera tersedia</p>
-    </div>
-  );
-}
+// TabPlaceholder replaced by ReportSubTabDetail
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
@@ -437,7 +430,7 @@ export default function ReportsWhatsappPage() {
       case 'ROI & Konversi':
       case 'Performa Campaign': return <TabCampaignROI />;
       case 'Performa Agent': return <TabAgentRevenue />;
-      default: return <TabPlaceholder name={activeTab} />;
+      default: return <ReportSubTabDetail tabName={activeTab} category="WhatsApp" />;
     }
   };
 
