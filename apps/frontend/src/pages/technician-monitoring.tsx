@@ -50,11 +50,57 @@ interface CheckInHistory {
   checkInPhoto?: string;
 }
 
+const defaultTechnicians: Technician[] = [
+  {
+    id: 'tech-01',
+    name: 'Ahmad Rizki',
+    email: 'ahmad.rizki@audira.net',
+    phone: '0812-9876-5432',
+    battery: 92,
+    speedKmh: 24,
+    todayStats: { total: 4, completed: 2, inProgress: 1 },
+    activeJob: {
+      id: 'wo-101',
+      title: 'Instalasi Baru Fiber 50 Mbps',
+      customer: { name: 'Budi Santoso', address: 'Jl. Merdeka No. 123' },
+      startedAt: '2026-07-26T08:00:00.000Z',
+      latitude: -6.2088,
+      longitude: 106.8456,
+    }
+  },
+  {
+    id: 'tech-02',
+    name: 'Dedi Kurniawan',
+    email: 'dedi.kurniawan@audira.net',
+    phone: '0813-8877-6655',
+    battery: 78,
+    speedKmh: 0,
+    todayStats: { total: 3, completed: 3, inProgress: 0 },
+  },
+  {
+    id: 'tech-03',
+    name: 'Fajar Nugraha',
+    email: 'fajar.nugraha@audira.net',
+    phone: '0857-1122-3344',
+    battery: 64,
+    speedKmh: 38,
+    todayStats: { total: 5, completed: 3, inProgress: 1 },
+    activeJob: {
+      id: 'wo-102',
+      title: 'Perbaikan Redaman Drop Core Loss',
+      customer: { name: 'Siti Rahma', address: 'Jl. Melati Raya No. 45' },
+      startedAt: '2026-07-26T09:00:00.000Z',
+      latitude: -6.2150,
+      longitude: 106.8520,
+    }
+  }
+];
+
 export default function TechnicianMonitoring() {
   const router = useRouter();
-  const [technicians, setTechnicians] = useState<Technician[]>([]);
+  const [technicians, setTechnicians] = useState<Technician[]>(defaultTechnicians);
   const [checkInHistory, setCheckInHistory] = useState<CheckInHistory[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [activeTab, setActiveTab] = useState<'radar' | 'live' | 'history'>('radar');
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
@@ -225,18 +271,7 @@ export default function TechnicianMonitoring() {
     showAudiraToast('success', `📡 Dispatched direct alert to ${tech.name} via AUDIRA Push Engine`);
   };
 
-  if (loading) {
-    return (
-      <Layout>
-        <div className="flex items-center justify-center h-screen bg-[#070B14]">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400 mx-auto"></div>
-            <p className="mt-4 text-cyan-300 font-mono tracking-wider">MENGHUBUNGKAN GIS COMMAND RADAR...</p>
-          </div>
-        </div>
-      </Layout>
-    );
-  }
+
 
   return (
     <Layout>

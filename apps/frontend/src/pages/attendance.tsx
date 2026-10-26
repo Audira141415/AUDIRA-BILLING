@@ -11,7 +11,7 @@ export default function AttendanceCheckIn() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [attendance, setAttendance] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
   const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
   const [checkInOut, setCheckInOut] = useState<'in' | 'out'>('in');
@@ -204,24 +204,15 @@ export default function AttendanceCheckIn() {
     });
   };
 
-  const [currentTime, setCurrentTime] = useState(getCurrentTime());
+  const [currentTime, setCurrentTime] = useState('');
 
   useEffect(() => {
+    setCurrentTime(getCurrentTime());
     const interval = setInterval(() => {
       setCurrentTime(getCurrentTime());
     }, 1000);
     return () => clearInterval(interval);
   }, []);
-
-  if (loading) {
-    return (
-      <Layout>
-        <div className="flex items-center justify-center h-screen">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        </div>
-      </Layout>
-    );
-  }
 
   return (
     <Layout>

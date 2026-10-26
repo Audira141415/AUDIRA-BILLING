@@ -17,6 +17,10 @@ export default function App({ Component, pageProps }: AppProps) {
   const isStandalone =
     router.pathname.startsWith('/customer') ||
     router.pathname === '/login' ||
+    router.pathname === '/forgot-password' ||
+    router.pathname === '/register' ||
+    router.pathname === '/terms' ||
+    router.pathname === '/privacy' ||
     (router.pathname === '/sales/daftar' && (router.query.public === 'true' || router.query.public === '1'))
 
   return (

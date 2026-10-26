@@ -293,11 +293,11 @@ export default function FranchiseManagement() {
                       <DollarSign className="w-4 h-4 inline mr-2" />
                       Lihat Komisi
                     </button>
-                    <button onClick={() => router.push('/settings')} className="w-full bg-purple-50 text-purple-700 px-4 py-2 rounded-lg text-left hover:bg-purple-100">
+                    <button onClick={() => router.push('/pengaturan')} className="w-full bg-purple-50 text-purple-700 px-4 py-2 rounded-lg text-left hover:bg-purple-100">
                       <Users className="w-4 h-4 inline mr-2" />
                       Kelola User
                     </button>
-                    <button onClick={() => router.push('/settings')} className="w-full bg-orange-50 text-orange-700 px-4 py-2 rounded-lg text-left hover:bg-orange-100">
+                    <button onClick={() => router.push('/pengaturan')} className="w-full bg-orange-50 text-orange-700 px-4 py-2 rounded-lg text-left hover:bg-orange-100">
                       <Settings className="w-4 h-4 inline mr-2" />
                       White-Label Settings
                     </button>

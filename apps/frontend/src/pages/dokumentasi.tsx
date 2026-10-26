@@ -608,10 +608,10 @@ tail -f apps/backend/logs/error.log
         <div className="hidden xl:block w-64 bg-[var(--app-bg)] border-l border-[var(--app-border)] p-6">
           <h3 className="text-sm font-semibold text-[var(--app-text)] mb-4">Quick Links</h3>
           <div className="space-y-2 text-sm">
-            <a href="/test-api" className="flex items-center gap-2 text-blue-600 hover:text-blue-700">
+            <Link href="/debug/test-api" className="flex items-center gap-2 text-blue-600 hover:text-blue-700">
               <Terminal className="h-4 w-4" />
               API Test Dashboard
-            </a>
+            </Link>
             <a href="https://github.com/Audira141415/PJTAUDIRANETANDBILLING" target="_blank" className="flex items-center gap-2 text-[var(--app-muted)] hover:text-[var(--app-text)]">
               <ExternalLink className="h-4 w-4" />
               GitHub Repository

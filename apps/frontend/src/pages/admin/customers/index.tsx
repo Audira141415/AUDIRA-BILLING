@@ -399,7 +399,7 @@ export default function AdminCustomersPage() {
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-bold text-gray-900">Customer Management</h1>
             <button
-              onClick={() => router.push('/admin/dashboard')}
+              onClick={() => router.push('/')}
               className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900"
             >
               ← Back to Dashboard

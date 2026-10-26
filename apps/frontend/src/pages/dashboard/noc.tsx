@@ -213,7 +213,7 @@ export default function NOCDashboard() {
               <p className="text-sm font-medium text-gray-900">GenieACS</p>
             </button>
             <button
-              onClick={() => router.push('/infrastruktur')}
+              onClick={() => router.push('/infrastruktur/olt')}
               className="p-4 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors text-center"
             >
               <HardDrive className="mx-auto mb-2 text-purple-600" size={32} />

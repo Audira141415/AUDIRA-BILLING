@@ -211,7 +211,7 @@ export default function PaymentRefundsPage() {
 
           <div className="flex items-center gap-2.5">
             <Link
-              href="/payment/transactions"
+              href="/transaksi"
               className="px-3.5 py-2 bg-[var(--app-card)] hover:bg-[var(--app-border)]/30 border border-[var(--app-border)] text-[var(--app-text)] text-xs font-semibold rounded-xl transition-all"
             >
               Semua Transaksi
