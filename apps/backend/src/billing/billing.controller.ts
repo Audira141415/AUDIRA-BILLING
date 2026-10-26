@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, Res, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Res, HttpStatus, Headers } from '@nestjs/common';
 import { Response } from 'express';
 import { BillingService } from './billing.service';
 import { BillingCronService } from './billing.cron.service';
@@ -288,4 +288,35 @@ export class BillingController {
   async cancelGracePeriod(@Param('customerId') customerId: string) {
     return this.billingService.cancelGracePeriod(customerId);
   }
+
+  /**
+   * 📊 Dynamic Invoice Breakdown (Biaya Pokok, PPN 11%, Sewa ONT, Diskon)
+   */
+  @Get('invoices/:id/breakdown')
+  async getInvoiceBreakdown(@Param('id') invoiceId: string) {
+    return this.billingService.getInvoiceBreakdown(invoiceId);
+  }
+
+  /**
+   * ⚡ Instant Payment Checkout with Autonomous RADIUS CoA Unblock
+   * Menghilangkan isolir dan memulihkan sesi pelanggan dalam < 2 detik
+   */
+  @Post('invoices/:id/pay')
+  async payInvoice(
+    @Param('id') invoiceId: string,
+    @Body() body: {
+      method?: string;
+      transactionId?: string;
+      amount?: number;
+      idempotencyKey?: string;
+    },
+    @Headers('x-idempotency-key') headerIdempotencyKey?: string,
+  ) {
+    const idempotencyKey = body.idempotencyKey || headerIdempotencyKey;
+    return this.billingService.payInvoiceWithCoa(invoiceId, {
+      ...body,
+      idempotencyKey,
+    });
+  }
 }
+
