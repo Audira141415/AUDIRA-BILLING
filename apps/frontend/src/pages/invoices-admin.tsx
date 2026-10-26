@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
+import { showAudiraToast } from '@/contexts/ToastContext'
 import { 
   FileText, 
   DollarSign, 
@@ -193,13 +194,13 @@ export default function InvoicesAdmin() {
         throw new Error(errorData.message || 'Failed to create invoice')
       }
 
-      alert('Invoice berhasil dibuat!')
+      showAudiraToast.success('Invoice berhasil dibuat!', 'Invoice Baru')
       setShowCreateModal(false)
       resetForm()
       fetchInvoices()
       fetchStatistics()
     } catch (err: any) {
-      alert(`Error: ${err.message}`)
+      showAudiraToast.error(`Gagal membuat invoice: ${err.message}`, 'Error')
     } finally {
       setLoading(false)
     }
@@ -230,14 +231,14 @@ export default function InvoicesAdmin() {
         throw new Error(errorData.message || 'Failed to update invoice')
       }
 
-      alert('Invoice berhasil diupdate!')
+      showAudiraToast.success('Invoice berhasil diperbarui!', 'Update Sukses')
       setShowEditModal(false)
       setSelectedInvoice(null)
       resetForm()
       fetchInvoices()
       fetchStatistics()
     } catch (err: any) {
-      alert(`Error: ${err.message}`)
+      showAudiraToast.error(`Gagal update invoice: ${err.message}`, 'Error')
     } finally {
       setLoading(false)
     }
@@ -257,11 +258,11 @@ export default function InvoicesAdmin() {
 
       if (!response.ok) throw new Error('Failed to delete invoice')
 
-      alert('Invoice berhasil dihapus!')
+      showAudiraToast.success('Invoice berhasil dihapus!', 'Dihapus')
       fetchInvoices()
       fetchStatistics()
     } catch (err: any) {
-      alert(`Error: ${err.message}`)
+      showAudiraToast.error(`Gagal menghapus invoice: ${err.message}`, 'Error')
     } finally {
       setLoading(false)
     }
@@ -292,13 +293,13 @@ export default function InvoicesAdmin() {
         throw new Error(errorData.message || 'Failed to record payment')
       }
 
-      alert('Pembayaran berhasil dicatat!')
+      showAudiraToast.success('Pembayaran berhasil dicatat!', 'Lunas')
       setShowPaymentModal(false)
       setPaymentData({ amount: '', paymentMethod: '', transactionId: '', description: '' })
       fetchInvoices()
       fetchStatistics()
     } catch (err: any) {
-      alert(`Error: ${err.message}`)
+      showAudiraToast.error(`Gagal mencatat pembayaran: ${err.message}`, 'Error')
     } finally {
       setLoading(false)
     }

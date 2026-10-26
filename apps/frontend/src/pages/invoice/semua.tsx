@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Layout from '@/components/Layout';
 import api from '@/lib/api';
+import { showAudiraToast } from '@/contexts/ToastContext';
 import {
   Search,
   Download,
@@ -177,8 +178,9 @@ export default function SemuaInvoicePage() {
       setShowGenerateModal(false);
       await fetchInvoices();
       await fetchStats();
+      showAudiraToast.success(`Berhasil generate invoice periode ${generateMonth}! ${result?.created ? `${result.created} tagihan dibuat.` : ''}`, 'Generate Sukses');
     } catch (error: any) {
-      alert(`Gagal: ${error.message}`);
+      showAudiraToast.error(`Gagal generate invoice: ${error.message || 'Koneksi error'}`, 'Gagal');
     } finally {
       setActionLoading(null);
     }
@@ -190,11 +192,13 @@ export default function SemuaInvoicePage() {
       setActionLoading('mark-paid');
       await api.keuangan.markPaid(selectedInvoice.id, markPaidMethod);
       setShowMarkPaidModal(false);
+      const invNum = selectedInvoice.invoiceNumber;
       setSelectedInvoice(null);
       await fetchInvoices();
       await fetchStats();
+      showAudiraToast.success(`Tagihan ${invNum} berhasil ditandai LUNAS via ${markPaidMethod}!`, 'Pembayaran Sukses');
     } catch (error: any) {
-      alert(`Gagal: ${error.message}`);
+      showAudiraToast.error(`Gagal menandai lunas: ${error.message}`, 'Gagal');
     } finally {
       setActionLoading(null);
     }
@@ -1026,8 +1030,29 @@ export default function SemuaInvoicePage() {
                 )}
 
                 {/* Bottom link button */}
-                <div className="border-t border-slate-200 pt-4">
-                  <button onClick={() => window.open(`/invoice/public/${selectedInvoice?.id || ''}`, '_blank')} className="w-full flex items-center justify-center gap-2 bg-slate-50 border border-slate-200 hover:bg-slate-100 text-blue-400 text-xs font-bold py-2.5 rounded-xl transition-all">
+                <div className="border-t border-slate-200 pt-4 flex flex-col gap-2">
+                  <div className="grid grid-cols-2 gap-2">
+                    <button 
+                      onClick={() => window.open(`${API_BASE_URL}/billing/invoices/${activeDetail.id}/receipt-pdf`, '_blank')} 
+                      className="flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2.5 rounded-xl transition-all shadow-xs"
+                      title="Unduh Kwitansi PDF Resmi"
+                    >
+                      <Download size={14} />
+                      <span>Kwitansi PDF</span>
+                    </button>
+                    <button 
+                      onClick={() => {
+                        setSelectedInvoice(activeDetail);
+                        setShowMarkPaidModal(true);
+                      }}
+                      disabled={activeDetail.status === 'PAID'}
+                      className="flex items-center justify-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2.5 rounded-xl transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-xs"
+                    >
+                      <CheckCircle size={14} />
+                      <span>{activeDetail.status === 'PAID' ? 'Sudah Lunas' : 'Tandai Lunas'}</span>
+                    </button>
+                  </div>
+                  <button onClick={() => window.open(`/invoice/public/${activeDetail.id}`, '_blank')} className="w-full flex items-center justify-center gap-2 bg-slate-50 border border-slate-200 hover:bg-slate-100 text-blue-500 text-xs font-bold py-2.5 rounded-xl transition-all">
                     <span>Lihat Invoice Public (Customer View)</span>
                     <span>↗</span>
                   </button>

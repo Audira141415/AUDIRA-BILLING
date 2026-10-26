@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { API_BASE_URL, API_ENDPOINTS } from '../config/api';
 import Layout from '@/components/Layout';
+import { showAudiraToast } from '@/contexts/ToastContext';
 import { Package, Plus, Search, Filter, Edit, Trash2, User, Calendar, AlertCircle } from 'lucide-react';
 
 export default function Inventory() {
@@ -104,7 +105,7 @@ export default function Inventory() {
       const data = await response.json();
       
       if (data.success) {
-        alert('Equipment berhasil ditambahkan!');
+        showAudiraToast.success('Equipment berhasil ditambahkan ke inventory!', 'Simpan Sukses');
         setShowAddModal(false);
         setFormData({
           type: 'ONT',
@@ -118,10 +119,10 @@ export default function Inventory() {
         });
         fetchData();
       } else {
-        alert(data.message);
+        showAudiraToast.error(data.message || 'Gagal menambahkan equipment', 'Gagal');
       }
-    } catch (error) {
-      alert('Gagal menambahkan equipment');
+    } catch (error: any) {
+      showAudiraToast.error(`Gagal menambahkan equipment: ${error.message}`, 'Error');
     }
   };
 
@@ -138,11 +139,13 @@ export default function Inventory() {
       const data = await response.json();
       
       if (data.success) {
-        alert('Equipment berhasil dihapus!');
+        showAudiraToast.success('Equipment berhasil dihapus dari inventory!', 'Dihapus');
         fetchData();
+      } else {
+        showAudiraToast.error(data.message || 'Gagal menghapus', 'Error');
       }
-    } catch (error) {
-      alert('Gagal menghapus equipment');
+    } catch (error: any) {
+      showAudiraToast.error(`Gagal menghapus equipment: ${error.message}`, 'Error');
     }
   };
 

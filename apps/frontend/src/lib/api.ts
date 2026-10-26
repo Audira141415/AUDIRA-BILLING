@@ -139,11 +139,52 @@ export const api = {
     },
   },
 
-  // Paket endpoints
+  // Paket / Packages endpoints
   paket: {
-    getAll: async () => {
-      const res = await fetchWithAuth(`${API_BASE_URL}/packages`);
+    getAll: async (query?: any) => {
+      const params = query ? `?${new URLSearchParams(query)}` : '';
+      const res = await fetchWithAuth(`${API_BASE_URL}/packages${params}`);
       if (!res.ok) throw new Error('Failed to fetch packages');
+      return res.json();
+    },
+    getStatistics: async () => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/packages/statistics/overview`);
+      if (!res.ok) throw new Error('Failed to fetch package statistics');
+      return res.json();
+    },
+    getAvailable: async () => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/packages/available`);
+      if (!res.ok) throw new Error('Failed to fetch available packages');
+      return res.json();
+    },
+    getOne: async (id: string) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/packages/${id}`);
+      if (!res.ok) throw new Error('Failed to fetch package detail');
+      return res.json();
+    },
+    create: async (data: any) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/packages`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error('Failed to create package');
+      return res.json();
+    },
+    update: async (id: string, data: any) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/packages/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error('Failed to update package');
+      return res.json();
+    },
+    delete: async (id: string) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/packages/${id}`, {
+        method: 'DELETE',
+      });
+      if (!res.ok) throw new Error('Failed to delete package');
       return res.json();
     },
   },
@@ -916,6 +957,314 @@ export const api = {
         body: JSON.stringify(data),
       });
       if (!res.ok) throw new Error('Failed to send reminder via WhatsApp');
+      return res.json();
+    },
+  },
+
+  // Billing & Invoicing Automation endpoints
+  billing: {
+    getAllInvoices: async () => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/billing/invoices-all`);
+      if (!res.ok) throw new Error('Failed to fetch all invoices');
+      return res.json();
+    },
+    getSchedulerSummary: async () => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/billing/scheduler-summary`);
+      if (!res.ok) throw new Error('Failed to fetch billing scheduler summary');
+      return res.json();
+    },
+    getReceiptPdfUrl: (invoiceId: string) => {
+      return `${API_BASE_URL}/billing/invoices/${invoiceId}/receipt-pdf`;
+    },
+    downloadReceiptPdf: async (invoiceId: string) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/billing/invoices/${invoiceId}/receipt-pdf`);
+      if (!res.ok) throw new Error('Failed to download receipt PDF');
+      return res.blob();
+    },
+    triggerH3Scheduler: async () => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/billing/scheduler/run-h3`, {
+        method: 'POST',
+      });
+      if (!res.ok) throw new Error('Failed to trigger H-3 scheduler');
+      return res.json();
+    },
+    triggerHariHScheduler: async () => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/billing/scheduler/run-hari-h`, {
+        method: 'POST',
+      });
+      if (!res.ok) throw new Error('Failed to trigger Hari-H scheduler');
+      return res.json();
+    },
+    generateInvoices: async () => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/billing/generate-invoices`, {
+        method: 'POST',
+      });
+      if (!res.ok) throw new Error('Failed to trigger invoice generation');
+      return res.json();
+    },
+    sendReminders: async () => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/billing/send-reminders`, {
+        method: 'POST',
+      });
+      if (!res.ok) throw new Error('Failed to trigger reminders');
+      return res.json();
+    },
+    createPayment: async (invoiceId: string) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/billing/create-payment`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ invoiceId }),
+      });
+      if (!res.ok) throw new Error('Failed to create payment transaction');
+      return res.json();
+    },
+    createQRISPayment: async (invoiceId: string) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/billing/create-qris-payment`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ invoiceId }),
+      });
+      if (!res.ok) throw new Error('Failed to create QRIS payment');
+      return res.json();
+    },
+    createVAPayment: async (invoiceId: string, bank: string) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/billing/create-va-payment`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ invoiceId, bank }),
+      });
+      if (!res.ok) throw new Error('Failed to create Virtual Account payment');
+      return res.json();
+    },
+  },
+
+  // GenieACS TR-069 Device Management endpoints
+  genieacs: {
+    getDevices: async (search?: string) => {
+      const url = search ? `${API_BASE_URL}/genieacs/devices?search=${encodeURIComponent(search)}` : `${API_BASE_URL}/genieacs/devices`;
+      const res = await fetchWithAuth(url);
+      if (!res.ok) throw new Error('Failed to fetch GenieACS devices');
+      return res.json();
+    },
+    getDevice: async (id: string) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/genieacs/devices/${id}`);
+      if (!res.ok) throw new Error('Failed to fetch device detail');
+      return res.json();
+    },
+    refreshDevice: async (id: string) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/genieacs/devices/${id}/refresh`, {
+        method: 'POST',
+      });
+      if (!res.ok) throw new Error('Failed to refresh device parameters');
+      return res.json();
+    },
+    rebootDevice: async (id: string) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/genieacs/devices/${id}/reboot`, {
+        method: 'POST',
+      });
+      if (!res.ok) throw new Error('Failed to send reboot signal');
+      return res.json();
+    },
+    getOpticalPower: async (id: string) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/genieacs/devices/${id}/optical`);
+      if (!res.ok) throw new Error('Failed to fetch optical power');
+      return res.json();
+    },
+    updateWifi: async (id: string, data: { ssid24?: string; password24?: string; ssid5?: string; password5?: string }) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/genieacs/devices/${id}/wifi`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error('Failed to update WiFi configuration');
+      return res.json();
+    },
+    factoryReset: async (id: string) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/genieacs/devices/${id}/factory-reset`, {
+        method: 'POST',
+      });
+      if (!res.ok) throw new Error('Failed to factory reset device');
+      return res.json();
+    },
+    getStats: async () => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/genieacs/stats`);
+      if (!res.ok) throw new Error('Failed to fetch GenieACS stats');
+      return res.json();
+    },
+    getPresets: async () => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/genieacs/presets`);
+      if (!res.ok) throw new Error('Failed to fetch GenieACS presets');
+      return res.json();
+    },
+  },
+
+  // Inventory & Equipment Management endpoints
+  inventory: {
+    getAll: async (params?: { type?: string; status?: string; customerId?: string }) => {
+      const query = params ? `?${new URLSearchParams(params as any)}` : '';
+      const res = await fetchWithAuth(`${API_BASE_URL}/inventory/equipment${query}`);
+      if (!res.ok) throw new Error('Failed to fetch inventory equipment');
+      return res.json();
+    },
+    getOne: async (id: string) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/inventory/equipment/${id}`);
+      if (!res.ok) throw new Error('Failed to fetch equipment detail');
+      return res.json();
+    },
+    create: async (data: any) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/inventory/equipment`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error('Failed to create equipment');
+      return res.json();
+    },
+    update: async (id: string, data: any) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/inventory/equipment/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error('Failed to update equipment');
+      return res.json();
+    },
+    delete: async (id: string) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/inventory/equipment/${id}`, {
+        method: 'DELETE',
+      });
+      if (!res.ok) throw new Error('Failed to delete equipment');
+      return res.json();
+    },
+    getStats: async () => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/inventory/stats`);
+      if (!res.ok) throw new Error('Failed to fetch inventory stats');
+      return res.json();
+    },
+  },
+
+  // Field Service & Work Order endpoints
+  fieldService: {
+    getJobs: async (filters?: any) => {
+      const query = filters ? `?${new URLSearchParams(filters)}` : '';
+      const res = await fetchWithAuth(`${API_BASE_URL}/field-service/jobs${query}`);
+      if (!res.ok) throw new Error('Failed to fetch field service jobs');
+      return res.json();
+    },
+    getJob: async (id: string) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/field-service/jobs/${id}`);
+      if (!res.ok) throw new Error('Failed to fetch work order');
+      return res.json();
+    },
+    createJob: async (data: any) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/field-service/jobs`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error('Failed to create work order');
+      return res.json();
+    },
+    updateJob: async (id: string, data: any) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/field-service/jobs/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error('Failed to update work order');
+      return res.json();
+    },
+    assignTechnician: async (id: string, technicianId: string) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/field-service/jobs/${id}/assign`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ technicianId }),
+      });
+      if (!res.ok) throw new Error('Failed to assign technician');
+      return res.json();
+    },
+    updateStatus: async (id: string, status: string) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/field-service/jobs/${id}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status }),
+      });
+      if (!res.ok) throw new Error('Failed to update job status');
+      return res.json();
+    },
+    startJob: async (id: string, latitude?: number, longitude?: number, checkInPhoto?: string) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/field-service/jobs/${id}/start`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ latitude, longitude, checkInPhoto }),
+      });
+      if (!res.ok) throw new Error('Failed to start job');
+      return res.json();
+    },
+    completeJob: async (id: string, data: any) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/field-service/jobs/${id}/complete`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error('Failed to complete job');
+      return res.json();
+    },
+  },
+
+  // Tickets Helpdesk endpoints
+  tickets: {
+    getAll: async (query?: any) => {
+      const params = query ? `?${new URLSearchParams(query)}` : '';
+      const res = await fetchWithAuth(`${API_BASE_URL}/tickets${params}`);
+      if (!res.ok) throw new Error('Failed to fetch tickets');
+      return res.json();
+    },
+    getStatistics: async () => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/tickets/statistics/overview`);
+      if (!res.ok) throw new Error('Failed to fetch ticket statistics');
+      return res.json();
+    },
+    getUnassigned: async () => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/tickets/unassigned`);
+      if (!res.ok) throw new Error('Failed to fetch unassigned tickets');
+      return res.json();
+    },
+    getAvailableTechnicians: async () => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/tickets/technicians/available`);
+      if (!res.ok) throw new Error('Failed to fetch available technicians');
+      return res.json();
+    },
+    getOne: async (id: string) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/tickets/${id}`);
+      if (!res.ok) throw new Error('Failed to fetch ticket detail');
+      return res.json();
+    },
+    create: async (data: any) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/tickets`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error('Failed to create ticket');
+      return res.json();
+    },
+    assign: async (id: string, technicianId: string) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/tickets/${id}/assign`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ technicianId }),
+      });
+      if (!res.ok) throw new Error('Failed to assign ticket');
+      return res.json();
+    },
+    updateStatus: async (id: string, status: string) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/tickets/${id}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status }),
+      });
+      if (!res.ok) throw new Error('Failed to update ticket status');
       return res.json();
     },
   },

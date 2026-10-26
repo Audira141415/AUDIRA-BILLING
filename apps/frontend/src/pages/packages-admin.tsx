@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
+import { showAudiraToast } from '@/contexts/ToastContext';
 import { 
   Zap, 
   Star, 
@@ -244,12 +245,14 @@ export default function PackageManagementPage() {
         setShowCreateModal(false);
         fetchPackages();
         fetchStatistics();
+        showAudiraToast.success('Paket internet baru berhasil dibuat!', 'Paket Ditambahkan');
       } else {
         const error = await response.json();
-        alert(`Error: ${error.message || 'Failed to create package'}`);
+        showAudiraToast.error(`Gagal membuat paket: ${error.message || 'Error server'}`, 'Gagal');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
+      showAudiraToast.error(`Error: ${error.message}`, 'Gagal');
     } finally {
       setFormLoading(false);
     }
@@ -269,12 +272,14 @@ export default function PackageManagementPage() {
         setShowEditModal(false);
         fetchPackages();
         fetchStatistics();
+        showAudiraToast.success('Paket internet berhasil diperbarui!', 'Update Berhasil');
       } else {
         const error = await response.json();
-        alert(`Error: ${error.message || 'Failed to update package'}`);
+        showAudiraToast.error(`Gagal update paket: ${error.message || 'Error server'}`, 'Gagal');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
+      showAudiraToast.error(`Error: ${error.message}`, 'Gagal');
     } finally {
       setFormLoading(false);
     }
@@ -292,12 +297,14 @@ export default function PackageManagementPage() {
         setShowDeleteModal(false);
         fetchPackages();
         fetchStatistics();
+        showAudiraToast.success('Paket internet berhasil dihapus!', 'Paket Dihapus');
       } else {
         const error = await response.json();
-        alert(`Error: ${error.message || 'Failed to delete package'}`);
+        showAudiraToast.error(`Gagal menghapus paket: ${error.message || 'Error server'}`, 'Gagal');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
+      showAudiraToast.error(`Error: ${error.message}`, 'Gagal');
     } finally {
       setFormLoading(false);
     }

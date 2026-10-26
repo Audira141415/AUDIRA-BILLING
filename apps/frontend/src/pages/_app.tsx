@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { ThemeProvider } from '@/contexts/ThemeContext'
 import { RealtimeProvider } from '@/contexts/RealtimeContext'
+import { ToastProvider } from '@/contexts/ToastContext'
 import NavigationProgressBar from '@/components/NavigationProgressBar'
 import { RealtimeNotificationBanner } from '@/components/RealtimeNotificationBanner'
 import Layout from '@/components/Layout'
@@ -27,15 +28,17 @@ export default function App({ Component, pageProps }: AppProps) {
       <ThemeProvider>
         <AuthProvider>
           <RealtimeProvider>
-            <NavigationProgressBar />
-            <RealtimeNotificationBanner />
-            {isStandalone ? (
-              <Component {...pageProps} />
-            ) : (
-              <Layout>
+            <ToastProvider>
+              <NavigationProgressBar />
+              <RealtimeNotificationBanner />
+              {isStandalone ? (
                 <Component {...pageProps} />
-              </Layout>
-            )}
+              ) : (
+                <Layout>
+                  <Component {...pageProps} />
+                </Layout>
+              )}
+            </ToastProvider>
           </RealtimeProvider>
         </AuthProvider>
       </ThemeProvider>

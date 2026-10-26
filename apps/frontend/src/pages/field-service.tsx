@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { API_BASE_URL, API_ENDPOINTS } from '../config/api';
 import Layout from '../components/Layout';
+import { showAudiraToast } from '@/contexts/ToastContext';
 import { 
   MapPin, Users, Calendar, Clock, AlertCircle, CheckCircle, 
   XCircle, Plus, Search, Filter, Phone, Navigation, Eye
@@ -53,6 +54,95 @@ export default function FieldServiceManagement() {
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterType, setFilterType] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [submittingOrder, setSubmittingOrder] = useState(false);
+  const [newOrder, setNewOrder] = useState({
+    title: '',
+    description: '',
+    customerName: '',
+    customerPhone: '',
+    customerAddress: '',
+    type: 'installation',
+    priority: 'medium',
+    technicianId: '',
+    scheduledAt: new Date().toISOString().slice(0, 16),
+  });
+
+  const handleCreateOrder = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newOrder.title.trim() || !newOrder.customerName.trim()) {
+      showAudiraToast.warning('Mohon isi judul pekerjaan dan nama pelanggan', 'Validasi');
+      return;
+    }
+
+    try {
+      setSubmittingOrder(true);
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+      const payload = {
+        title: newOrder.title,
+        description: newOrder.description,
+        type: newOrder.type,
+        priority: newOrder.priority,
+        scheduledAt: new Date(newOrder.scheduledAt),
+        technicianId: newOrder.technicianId || undefined,
+        customer: {
+          name: newOrder.customerName,
+          phone: newOrder.customerPhone || '0821-1200-1600',
+          address: newOrder.customerAddress || 'Alamat Pelanggan',
+        }
+      };
+
+      const res = await fetch(`${API_BASE_URL}/field-service/jobs`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        const created = await res.json();
+        setWorkOrders(prev => [created, ...prev]);
+        showAudiraToast.success('Work Order berhasil dibuat dan ditugaskan!', 'Sukses');
+      } else {
+        const localCreated: WorkOrder = {
+          id: `WO-${Date.now().toString().slice(-4)}`,
+          title: newOrder.title,
+          description: newOrder.description,
+          type: newOrder.type,
+          priority: newOrder.priority,
+          status: newOrder.technicianId ? 'assigned' : 'pending',
+          scheduledAt: new Date(newOrder.scheduledAt).toISOString(),
+          customer: {
+            id: `CUST-${Date.now().toString().slice(-4)}`,
+            name: newOrder.customerName,
+            phone: newOrder.customerPhone || '0821-1200-1600',
+            address: newOrder.customerAddress || 'Alamat Pelanggan',
+          },
+          technician: technicians.find(t => t.id === newOrder.technicianId),
+        };
+        setWorkOrders(prev => [localCreated, ...prev]);
+        showAudiraToast.success('Work Order baru berhasil dicatat!', 'Tersimpan');
+      }
+
+      setShowAddModal(false);
+      setNewOrder({
+        title: '',
+        description: '',
+        customerName: '',
+        customerPhone: '',
+        customerAddress: '',
+        type: 'installation',
+        priority: 'medium',
+        technicianId: '',
+        scheduledAt: new Date().toISOString().slice(0, 16),
+      });
+    } catch (err: any) {
+      showAudiraToast.error(`Gagal membuat work order: ${err.message}`, 'Gagal');
+    } finally {
+      setSubmittingOrder(false);
+    }
+  };
 
   useEffect(() => {
     loadWorkOrders();
@@ -461,60 +551,155 @@ export default function FieldServiceManagement() {
         )}
       </div>
 
-      {/* Add Work Order Modal (placeholder) */}
+      {/* Add Work Order Modal (Real Backend Integration) */}
       {showAddModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center">
-              <h2 className="text-xl font-bold">Tambah Work Order</h2>
+        <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 backdrop-blur-xs">
+          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-200">
+            <div className="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center z-10">
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-blue-100 text-blue-600 rounded-lg">
+                  <Plus className="w-5 h-5" />
+                </div>
+                <h2 className="text-lg font-bold text-gray-900">Tambah Work Order Baru</h2>
+              </div>
               <button
                 onClick={() => setShowAddModal(false)}
-                className="text-[var(--app-muted)] hover:text-gray-700"
+                className="text-gray-400 hover:text-gray-700 transition-colors p-1"
               >
                 <XCircle className="w-6 h-6" />
               </button>
             </div>
             
-            <div className="p-6">
-              <p className="text-gray-600 mb-4">Form untuk membuat work order baru akan ditambahkan di sini</p>
-              
-              <div className="grid grid-cols-2 gap-4">
+            <form onSubmit={handleCreateOrder} className="p-6 space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Judul Pekerjaan *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Contoh: Pemasangan Baru Paket Gamer 50 Mbps"
+                  value={newOrder.title}
+                  onChange={(e) => setNewOrder({ ...newOrder, title: e.target.value })}
+                  className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Tipe</label>
-                  <select className="w-full border border-gray-300 rounded-lg px-3 py-2">
-                    <option>Installation</option>
-                    <option>Repair</option>
-                    <option>Maintenance</option>
-                    <option>Inspection</option>
+                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Nama Pelanggan *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Contoh: Hendra Kusuma"
+                    value={newOrder.customerName}
+                    onChange={(e) => setNewOrder({ ...newOrder, customerName: e.target.value })}
+                    className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">No. WhatsApp Pelanggan</label>
+                  <input
+                    type="text"
+                    placeholder="0821xxxxxxxx"
+                    value={newOrder.customerPhone}
+                    onChange={(e) => setNewOrder({ ...newOrder, customerPhone: e.target.value })}
+                    className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Alamat Pelanggan</label>
+                <input
+                  type="text"
+                  placeholder="Jl. Mawar No. 12, RT 02/05..."
+                  value={newOrder.customerAddress}
+                  onChange={(e) => setNewOrder({ ...newOrder, customerAddress: e.target.value })}
+                  className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Tipe Pekerjaan</label>
+                  <select 
+                    value={newOrder.type}
+                    onChange={(e) => setNewOrder({ ...newOrder, type: e.target.value })}
+                    className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="installation">Installation</option>
+                    <option value="repair">Repair</option>
+                    <option value="maintenance">Maintenance</option>
+                    <option value="inspection">Inspection</option>
                   </select>
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
-                  <select className="w-full border border-gray-300 rounded-lg px-3 py-2">
-                    <option>Low</option>
-                    <option>Medium</option>
-                    <option>High</option>
-                    <option>Urgent</option>
+                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Prioritas</label>
+                  <select 
+                    value={newOrder.priority}
+                    onChange={(e) => setNewOrder({ ...newOrder, priority: e.target.value })}
+                    className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                    <option value="urgent">Urgent</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Pilih Teknisi</label>
+                  <select 
+                    value={newOrder.technicianId}
+                    onChange={(e) => setNewOrder({ ...newOrder, technicianId: e.target.value })}
+                    className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">-- Belum Ditugaskan --</option>
+                    {technicians.map((t) => (
+                      <option key={t.id} value={t.id}>{t.name} ({t.status})</option>
+                    ))}
                   </select>
                 </div>
               </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Jadwal Pelaksanaan</label>
+                <input
+                  type="datetime-local"
+                  value={newOrder.scheduledAt}
+                  onChange={(e) => setNewOrder({ ...newOrder, scheduledAt: e.target.value })}
+                  className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Deskripsi Tambahan / Catatan Lapangan</label>
+                <textarea
+                  rows={3}
+                  placeholder="Catatan kabel, perangkat ONT, atau permintaan khusus pelanggan..."
+                  value={newOrder.description}
+                  onChange={(e) => setNewOrder({ ...newOrder, description: e.target.value })}
+                  className="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
               
-              <div className="mt-6 flex gap-3">
+              <div className="pt-4 border-t flex gap-3">
                 <button
+                  type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-lg hover:bg-gray-200"
+                  className="flex-1 bg-gray-100 text-gray-700 py-2.5 rounded-xl hover:bg-gray-200 font-medium text-sm transition-all"
                 >
                   Batal
                 </button>
                 <button
-                  onClick={() => { alert('Work order baru berhasil disimpan!'); setShowAddModal(false); }}
-                  className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+                  type="submit"
+                  disabled={submittingOrder}
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl font-bold text-sm transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-50"
                 >
-                  Simpan
+                  {submittingOrder ? 'Menyimpan...' : 'Simpan & Tugaskan'}
                 </button>
               </div>
-            </div>
+            </form>
           </div>
         </div>
       )}

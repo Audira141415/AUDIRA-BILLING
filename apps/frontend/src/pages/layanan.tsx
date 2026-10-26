@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Layout from '@/components/Layout'
-import { Server, Plus, Search, Edit, Trash2, PlayCircle, PauseCircle, StopCircle, CheckCircle, X, User, Package, Calendar, Info } from 'lucide-react'
+import { showAudiraToast } from '@/contexts/ToastContext'
+import { Server, Plus, Search, Edit, Trash2, PlayCircle, PauseCircle, StopCircle, CheckCircle, X, User, Package, Calendar, Info, XCircle } from 'lucide-react'
 
 interface Service {
   id: string
@@ -17,10 +18,73 @@ interface Service {
 export default function Layanan() {
   const [showServiceModal, setShowServiceModal] = useState(false);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const [showAddServiceModal, setShowAddServiceModal] = useState(false);
+  const [newServiceData, setNewServiceData] = useState({
+    serviceName: '',
+    serviceType: 'Residential Internet',
+    customerName: '',
+    packageName: 'Paket 50 Mbps',
+    autoRenew: true,
+  });
 
   const handleServiceClick = (service: Service) => {
     setSelectedService(service);
     setShowServiceModal(true);
+  };
+
+  const handleToggleSuspend = (service: Service) => {
+    const isActivating = service.status !== 'active';
+    const updatedStatus: 'active' | 'suspended' = isActivating ? 'active' : 'suspended';
+    setServices(prev => prev.map(s => s.id === service.id ? { ...s, status: updatedStatus } : s));
+    if (selectedService && selectedService.id === service.id) {
+      setSelectedService({ ...selectedService, status: updatedStatus });
+    }
+    if (isActivating) {
+      showAudiraToast.success(`Layanan ${service.serviceName} berhasil diaktifkan kembali!`, 'Layanan Aktif');
+    } else {
+      showAudiraToast.warning(`Layanan ${service.serviceName} telah disuspend.`, 'Layanan Ditangguhkan');
+    }
+  };
+
+  const handleDeleteService = (service: Service) => {
+    if (!confirm(`Hapus layanan ${service.serviceName}?`)) return;
+    setServices(prev => prev.filter(s => s.id !== service.id));
+    if (selectedService && selectedService.id === service.id) {
+      setShowServiceModal(false);
+      setSelectedService(null);
+    }
+    showAudiraToast.success(`Layanan ${service.serviceName} berhasil dihapus.`, 'Dihapus');
+  };
+
+  const handleCreateService = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newServiceData.serviceName || !newServiceData.customerName) {
+      showAudiraToast.warning('Mohon lengkapi nama layanan dan nama pelanggan', 'Validasi');
+      return;
+    }
+
+    const created: Service = {
+      id: `SRV-${Date.now().toString().slice(-4)}`,
+      serviceName: newServiceData.serviceName,
+      serviceType: newServiceData.serviceType,
+      customerName: newServiceData.customerName,
+      packageName: newServiceData.packageName,
+      status: 'active',
+      activationDate: new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }),
+      expiryDate: new Date(Date.now() + 365 * 24 * 3600 * 1000).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }),
+      autoRenew: newServiceData.autoRenew,
+    };
+
+    setServices(prev => [created, ...prev]);
+    setShowAddServiceModal(false);
+    setNewServiceData({
+      serviceName: '',
+      serviceType: 'Residential Internet',
+      customerName: '',
+      packageName: 'Paket 50 Mbps',
+      autoRenew: true,
+    });
+    showAudiraToast.success(`Layanan ${created.serviceName} berhasil diaktifkan untuk pelanggan!`, 'Layanan Baru Aktif');
   };
 
   const [services, setServices] = useState<Service[]>([
@@ -166,7 +230,7 @@ export default function Layanan() {
             <h1 className="text-3xl font-bold text-gray-900">Manajemen Layanan</h1>
             <p className="text-gray-600 mt-1">Kelola aktivasi dan status layanan pelanggan</p>
           </div>
-              <button onClick={() => alert("Membuka formulir Tambah Layanan Pelanggan Baru...")} className="flex items-center space-x-2 bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+          <button onClick={() => setShowAddServiceModal(true)} className="flex items-center space-x-2 bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
             <Plus size={20} />
             <span>Tambah Layanan</span>
           </button>
@@ -340,18 +404,18 @@ export default function Layanan() {
                     <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
                       <div className="flex items-center justify-end space-x-2">
                         {service.status === 'active' ? (
-                          <button onClick={() => alert(`Layanan ${service.serviceName} disuspend.`)} className="p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors" title="Suspend">
+                          <button onClick={() => handleToggleSuspend(service)} className="p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors" title="Suspend Layanan">
                             <PauseCircle size={18} />
                           </button>
                         ) : (
-                          <button onClick={() => alert(`Layanan ${service.serviceName} diaktifkan kembali.`)} className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors" title="Activate">
+                          <button onClick={() => handleToggleSuspend(service)} className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors" title="Aktivasi Layanan">
                             <PlayCircle size={18} />
                           </button>
                         )}
-                        <button onClick={() => { setSelectedService(service); setShowServiceModal(true); }} className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
+                        <button onClick={() => { setSelectedService(service); setShowServiceModal(true); }} className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors" title="Edit / Detail">
                           <Edit size={18} />
                         </button>
-                        <button onClick={() => alert(`Hapus layanan ${service.serviceName}?`)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                        <button onClick={() => handleDeleteService(service)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Hapus Layanan">
                           <Trash2 size={18} />
                         </button>
                       </div>
@@ -476,18 +540,119 @@ export default function Layanan() {
                   Tutup
                 </button>
                 {selectedService.status === 'active' ? (
-                  <button onClick={() => { alert(`Layanan ${selectedService.serviceName} disuspend.`); setShowServiceModal(false); }} className="px-6 py-2.5 bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl">
+                  <button onClick={() => { handleToggleSuspend(selectedService); }} className="px-6 py-2.5 bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl">
                     <PauseCircle className="inline mr-2" size={18} />
                     Suspend Layanan
                   </button>
                 ) : (
-                  <button onClick={() => { alert(`Layanan ${selectedService.serviceName} diaktifkan.`); setShowServiceModal(false); }} className="px-6 py-2.5 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl">
+                  <button onClick={() => { handleToggleSuspend(selectedService); }} className="px-6 py-2.5 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl">
                     <PlayCircle className="inline mr-2" size={18} />
                     Aktivasi Layanan
                   </button>
                 )}
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add Service Modal */}
+      {showAddServiceModal && (
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-xs">
+          <div className="bg-white rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl border border-gray-200">
+            <div className="p-5 border-b flex justify-between items-center bg-gray-50">
+              <h3 className="font-bold text-base text-gray-900 flex items-center gap-2">
+                <Plus size={18} className="text-orange-600" />
+                Tambah Layanan Pelanggan Baru
+              </h3>
+              <button onClick={() => setShowAddServiceModal(false)} className="text-gray-400 hover:text-gray-600">
+                <XCircle size={20} />
+              </button>
+            </div>
+            <form onSubmit={handleCreateService} className="p-6 space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Nama Layanan *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Contoh: Dedicated Internet - Kantor Cabang"
+                  value={newServiceData.serviceName}
+                  onChange={e => setNewServiceData({ ...newServiceData, serviceName: e.target.value })}
+                  className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Nama Pelanggan *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Contoh: PT Sumber Rezeki Mandiri"
+                  value={newServiceData.customerName}
+                  onChange={e => setNewServiceData({ ...newServiceData, customerName: e.target.value })}
+                  className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Tipe Layanan</label>
+                  <select
+                    value={newServiceData.serviceType}
+                    onChange={e => setNewServiceData({ ...newServiceData, serviceType: e.target.value })}
+                    className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-orange-500"
+                  >
+                    <option value="Residential Internet">Residential Internet</option>
+                    <option value="Business Internet">Business Internet</option>
+                    <option value="Corporate Internet">Corporate Internet</option>
+                    <option value="Dedicated Bandwidth">Dedicated Bandwidth</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Pilihan Paket</label>
+                  <select
+                    value={newServiceData.packageName}
+                    onChange={e => setNewServiceData({ ...newServiceData, packageName: e.target.value })}
+                    className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-orange-500"
+                  >
+                    <option value="Paket 20 Mbps">Paket 20 Mbps - Rp 175.000</option>
+                    <option value="Paket 50 Mbps">Paket 50 Mbps - Rp 250.000</option>
+                    <option value="Paket 100 Mbps">Paket 100 Mbps - Rp 375.000</option>
+                    <option value="Business 200 Mbps">Business 200 Mbps - Rp 750.000</option>
+                    <option value="Corporate 1 Gbps">Corporate 1 Gbps - Rp 2.500.000</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 pt-2">
+                <input
+                  type="checkbox"
+                  id="autoRenew"
+                  checked={newServiceData.autoRenew}
+                  onChange={e => setNewServiceData({ ...newServiceData, autoRenew: e.target.checked })}
+                  className="rounded border-gray-300 text-orange-600 focus:ring-orange-500 h-4 w-4"
+                />
+                <label htmlFor="autoRenew" className="text-xs text-gray-700 font-medium cursor-pointer">
+                  Aktifkan Auto-Renew tagihan bulanan
+                </label>
+              </div>
+
+              <div className="pt-3 border-t flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowAddServiceModal(false)}
+                  className="flex-1 bg-gray-100 text-gray-700 py-2.5 rounded-xl hover:bg-gray-200 font-medium text-sm transition-all"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 bg-orange-600 hover:bg-orange-700 text-white py-2.5 rounded-xl font-bold text-sm transition-all shadow-md"
+                >
+                  Aktifkan Layanan
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

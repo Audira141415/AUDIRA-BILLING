@@ -66,16 +66,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               return
             } catch {}
           }
-          // Default local dev admin fallback if in development
+          // Default local dev admin fallback if in development: fetch live JWT token from backend
           if (process.env.NODE_ENV === 'development' || window.location.hostname === 'localhost') {
+            try {
+              const loginRes = await fetch(`${API_URL}/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: 'admin@audira.net', password: 'admin123' }),
+              });
+              if (loginRes.ok) {
+                const loginData = await loginRes.json();
+                const activeToken = loginData.access_token || loginData.token;
+                if (activeToken) {
+                  localStorage.setItem('token', activeToken);
+                  localStorage.setItem('adminToken', activeToken);
+                  const adminUser: User = {
+                    id: loginData.user?.id || 'admin-1',
+                    email: loginData.user?.email || 'admin@audira.net',
+                    name: loginData.user?.name || 'Agus Dwi Rianto',
+                    role: 'ADMIN',
+                  };
+                  setUser(adminUser);
+                  localStorage.setItem('user', JSON.stringify(adminUser));
+                  return;
+                }
+              }
+            } catch (err) {
+              console.warn('Backend auto-login notice:', err);
+            }
             const devAdmin: User = {
               id: 'dev-admin-1',
               email: 'admin@audira.net',
               name: 'Agus Dwi Rianto',
-              role: 'ADMIN'
-            }
-            setUser(devAdmin)
-            localStorage.setItem('user', JSON.stringify(devAdmin))
+              role: 'ADMIN',
+            };
+            setUser(devAdmin);
+            localStorage.setItem('user', JSON.stringify(devAdmin));
           }
         }
       }

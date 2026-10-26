@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import Link from 'next/link';
+import { showAudiraToast } from '@/contexts/ToastContext';
 import { 
   Ticket as TicketIcon, 
   Search, 
@@ -106,12 +107,13 @@ export default function TicketsPage() {
         setShowCreateModal(false);
         setCreateForm({ title: '', description: '', priority: 'medium', customerId: '' });
         fetchTickets();
+        showAudiraToast.success('Tiket pengaduan baru berhasil dibuat!', 'Tiket Dibuat');
       } else {
-        alert('Gagal membuat tiket');
+        showAudiraToast.error('Gagal membuat tiket di server', 'Gagal');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating ticket:', error);
-      alert('Gagal membuat ticket');
+      showAudiraToast.error(`Gagal membuat ticket: ${error.message || 'Error koneksi'}`, 'Error');
     } finally {
       setIsSubmitting(false);
     }
@@ -135,10 +137,13 @@ export default function TicketsPage() {
         if (selectedTicket && selectedTicket.id === ticketId) {
           setSelectedTicket({ ...selectedTicket, status: newStatus as any });
         }
+        showAudiraToast.success(`Status tiket diubah menjadi ${newStatus}!`, 'Status Diperbarui');
+      } else {
+        showAudiraToast.error('Gagal memperbarui status di server', 'Error');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error updating ticket:', error);
-      alert('Gagal memperbarui status tiket');
+      showAudiraToast.error(`Gagal memperbarui status tiket: ${error.message}`, 'Error');
     }
   };
 
