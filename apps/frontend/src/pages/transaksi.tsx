@@ -169,8 +169,11 @@ export default function SemuaPembayaranPage() {
       <html>
         <head>
           <title>Struk Bukti Bayar - ${tx.invoiceNumber}</title>
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+          <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@500;700&display=swap" rel="stylesheet" />
           <style>
-            body { font-family: monospace; font-size: 11px; padding: 12px; margin: 0; }
+            body { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; padding: 12px; margin: 0; font-feature-settings: "tnum" 1; }
             .text-center { text-align: center; }
             .divider { border-top: 1px dashed #000; margin: 8px 0; }
             .row { display: flex; justify-content: space-between; margin-bottom: 4px; }

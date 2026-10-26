@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Outfit:wght@400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -11,6 +11,9 @@
    ========================================================================== */
 
 :root {
+  --app-font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --app-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
   --color-primary: #0070f3;
   --color-accent: #00dfd8;
   --color-purple: #7928ca;
@@ -43,16 +46,56 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Universal Typography & Form Inheritance */
+*, ::before, ::after {
+  box-sizing: border-box;
+}
+
+html, body, button, input, select, textarea, optgroup {
+  font-family: var(--app-font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+}
+
 body {
-  font-family: 'Outfit', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--app-font-sans);
   overflow-x: hidden;
   background-color: var(--bg-primary);
   color: var(--text-main);
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.font-mono {
-  font-family: 'JetBrains Mono', monospace;
+/* Typography Utilities */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--app-font-sans);
+  letter-spacing: -0.025em;
+  font-weight: 700;
+}
+
+.font-sans {
+  font-family: var(--app-font-sans) !important;
+}
+
+.font-heading, .font-display {
+  font-family: var(--app-font-sans) !important;
+  letter-spacing: -0.025em;
+}
+
+.font-outfit {
+  font-family: 'Outfit', sans-serif !important;
+}
+
+.font-mono, code, kbd, samp, pre {
+  font-family: var(--app-font-mono) !important;
+  font-feature-settings: "tnum" 1, "zero" 1;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
 }
 
 /* Custom Scrollbar */

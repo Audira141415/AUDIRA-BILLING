@@ -164,13 +164,16 @@ export default function Gaji() {
       <html>
       <head>
         <title>Slip Gaji - ${salary.employee?.fullName}</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
         <style>
           @media print {
             @page { margin: 20mm; }
             body { margin: 0; }
           }
           body {
-            font-family: Arial, sans-serif;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             padding: 40px;
             max-width: 800px;
             margin: 0 auto;
@@ -226,7 +229,8 @@ export default function Gaji() {
           }
           .amount {
             text-align: right;
-            font-family: 'Courier New', monospace;
+            font-family: 'JetBrains Mono', monospace;
+            font-feature-settings: "tnum" 1;
           }
           .total-row {
             font-weight: bold;

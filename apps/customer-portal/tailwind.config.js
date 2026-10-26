@@ -8,8 +8,11 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Outfit', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'monospace'],
+        sans: ['var(--app-font-sans)', 'Plus Jakarta Sans', 'Outfit', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        heading: ['var(--app-font-sans)', 'Plus Jakarta Sans', 'Outfit', 'sans-serif'],
+        display: ['var(--app-font-sans)', 'Plus Jakarta Sans', 'Outfit', 'sans-serif'],
+        mono: ['var(--app-font-mono)', 'JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+        outfit: ['Outfit', 'sans-serif'],
       },
       colors: {
         brand: {

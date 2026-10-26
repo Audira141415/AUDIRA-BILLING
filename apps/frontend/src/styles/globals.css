@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -38,8 +38,8 @@
   --app-radius-sm: 8px;
   --app-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.04), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
   --app-shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.03);
-  --app-font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  --app-font-mono: 'JetBrains Mono', monospace;
+  --app-font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --app-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 .dark, [data-theme="dark"] {
@@ -70,25 +70,53 @@
   --app-shadow-md: 0 4px 12px 0 rgba(0, 0, 0, 0.45);
 }
 
+/* Universal Font Enforcement — Ensures Inputs, Buttons, & Controls Inherit Plus Jakarta Sans */
+*, ::before, ::after {
+  box-sizing: border-box;
+}
+
+html, body, button, input, select, textarea, optgroup {
+  font-family: var(--app-font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+}
+
 /* Base Body Styles */
 body {
   background-color: var(--app-bg);
   color: var(--app-text);
   font-family: var(--app-font-sans);
   line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Typography Standards */
+/* Typography Standards & Utilities */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--app-font-sans);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
+  font-weight: 700;
 }
 
-.font-mono {
-  font-family: var(--app-font-mono);
+.font-sans {
+  font-family: var(--app-font-sans) !important;
+}
+
+.font-heading, .font-display {
+  font-family: var(--app-font-sans) !important;
+  letter-spacing: -0.025em;
+}
+
+.font-mono, code, kbd, samp, pre {
+  font-family: var(--app-font-mono) !important;
+  font-feature-settings: "tnum" 1, "zero" 1;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
 }
 
 /* ==========================================================================
