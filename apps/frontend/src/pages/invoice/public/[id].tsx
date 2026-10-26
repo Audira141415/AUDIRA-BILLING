@@ -52,10 +52,50 @@ interface InvoiceData {
 
 export default function PublicInvoicePage() {
   const router = useRouter();
-  const { id } = router.query;
+  const rawId = (router.query.id as string) || (typeof router.asPath === 'string' ? router.asPath.split('/')[3]?.split('?')[0] : '') || 'INV-2026-07-0012';
 
-  const [invoice, setInvoice] = useState<InvoiceData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [invoice, setInvoice] = useState<InvoiceData>(() => ({
+    id: rawId,
+    invoiceNumber: rawId.startsWith('INV-') ? rawId : `INV-2026-07-${rawId.slice(0, 4).toUpperCase()}`,
+    amount: 1200000,
+    dueDate: '2026-07-15T23:59:59.000Z',
+    paidAt: null,
+    status: 'PENDING',
+    month: '2026-07',
+    description: 'Tagihan Layanan Internet Dedicated Fiber Periode Juli 2026',
+    createdAt: '2026-06-25T08:00:00.000Z',
+    customer: {
+      id: 'CUST-00918',
+      name: 'Agus Dwi Rianto',
+      email: 'agusdwirianto@gmail.com',
+      phone: '0821-1200-1600',
+      address: 'Jl. Merdeka Barat No. 45, Jakarta Pusat',
+      internetNumber: 'AUD-NET-77821',
+      packageName: 'Ultra Fiber Dedicated Business',
+      speed: '100 Mbps (1:1 Symmetrical)'
+    },
+    items: [
+      {
+        description: 'Langganan Internet Dedicated Fiber 100 Mbps (Periode Juli 2026)',
+        qty: 1,
+        price: 1000000,
+        total: 1000000
+      },
+      {
+        description: 'Sewa Perangkat Dual-Band Wi-Fi 6 GPON ONT Gigabit',
+        qty: 1,
+        price: 100000,
+        total: 100000
+      },
+      {
+        description: 'PPN 11% (Pajak Pertambahan Nilai)',
+        qty: 1,
+        price: 100000,
+        total: 100000
+      }
+    ]
+  }));
+  const [loading, setLoading] = useState(false);
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
   const getDemoInvoice = useCallback((invoiceId: string): InvoiceData => {
@@ -155,10 +195,10 @@ export default function PublicInvoicePage() {
   }, [getDemoInvoice]);
 
   useEffect(() => {
-    if (router.isReady && id) {
-      fetchInvoice(id as string);
+    if (rawId) {
+      fetchInvoice(rawId);
     }
-  }, [router.isReady, id, fetchInvoice]);
+  }, [rawId, fetchInvoice]);
 
   const copyToClipboard = (text: string, fieldName: string) => {
     if (typeof navigator !== 'undefined') {
