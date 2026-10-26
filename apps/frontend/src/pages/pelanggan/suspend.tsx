@@ -347,7 +347,7 @@ export default function CustomerSuspend() {
               <button onClick={handleResetFilters} className="px-4 py-3 bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 hover:text-slate-900 text-xs font-semibold rounded-xl text-slate-500 hover:text-slate-900 transition">
                 Reset
               </button>
-              <button className="flex items-center gap-1.5 px-4 py-3 bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 hover:text-slate-900 text-xs font-semibold rounded-xl text-slate-500 hover:text-slate-900 transition">
+              <button onClick={() => alert("Mengekspor daftar pelanggan tersuspend...")} className="flex items-center gap-1.5 px-4 py-3 bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 hover:text-slate-900 text-xs font-semibold rounded-xl text-slate-500 hover:text-slate-900 transition">
                 Export <ChevronDown size={14} />
               </button>
             </div>
@@ -578,12 +578,8 @@ export default function CustomerSuspend() {
                                 <button onClick={() => router.push(`/pelanggan/${row.id}`)} className="p-1 hover:bg-slate-100 hover:text-white text-slate-500 rounded transition" title="Lihat Detail">
                                   <Eye size={12} />
                                 </button>
-                                <button className="p-1 hover:bg-slate-100 hover:text-white text-slate-500 rounded transition" title="Edit Data">
-                                  <Edit size={12} />
-                                </button>
-                                <button className="p-1 hover:bg-slate-100 hover:text-white text-slate-500 rounded transition">
-                                  <MoreHorizontal size={12} />
-                                </button>
+                                <button onClick={() => alert("Membuka modal edit data...")} className="p-1 hover:bg-slate-100 hover:text-white text-slate-500 rounded transition" title="Edit Data"><Edit size={12} /></button>
+                                <button onClick={() => alert("Opsi tindakan: Kirim Notifikasi, Isolir Layanan, Cetak Bukti.")} className="p-1 hover:bg-slate-100 hover:text-white text-slate-500 rounded transition"><MoreHorizontal size={12} /></button>
                               </div>
                             </td>
                           </tr>
@@ -598,13 +594,13 @@ export default function CustomerSuspend() {
             <div className="flex justify-between items-center text-xs text-slate-400 font-medium pt-2">
               <span>Menampilkan 1 - {Math.min(filteredCustomers.length, pageSize)} dari {filteredCustomers.length} data</span>
               <div className="flex gap-1">
-                <button className="px-3 py-1 bg-slate-100 border border-slate-200 text-slate-500 hover:text-slate-900 rounded-lg font-semibold">&lt;</button>
-                <button className="px-3 py-1 bg-blue-600/20 text-blue-400 border border-blue-500/20 rounded-lg font-semibold">1</button>
-                <button className="px-3 py-1 bg-slate-100 border border-slate-200/50 text-slate-400 rounded-lg font-semibold">2</button>
-                <button className="px-3 py-1 bg-slate-100 border border-slate-200/50 text-slate-400 rounded-lg font-semibold">3</button>
+                <button onClick={() => alert("Halaman pertama sudah aktif.")} className="px-3 py-1 bg-slate-100 border border-slate-200 text-slate-500 hover:text-slate-900 rounded-lg font-semibold">&lt;</button>
+                <button onClick={() => alert("Halaman 1 saat ini aktif.")} className="px-3 py-1 bg-blue-600/20 text-blue-400 border border-blue-500/20 rounded-lg font-semibold">1</button>
+                <button onClick={() => alert("Beralih ke halaman 2.")} className="px-3 py-1 bg-slate-100 border border-slate-200/50 text-slate-400 rounded-lg font-semibold">2</button>
+                <button onClick={() => alert("Beralih ke halaman 3.")} className="px-3 py-1 bg-slate-100 border border-slate-200/50 text-slate-400 rounded-lg font-semibold">3</button>
                 <span className="px-2 pt-1 text-gray-600">...</span>
-                <button className="px-3 py-1 bg-slate-100 border border-slate-200/50 text-slate-400 rounded-lg font-semibold">13</button>
-                <button className="px-3 py-1 bg-slate-100 border border-slate-200/50 text-slate-500 hover:text-slate-900 rounded-lg font-semibold">&gt;</button>
+                <button onClick={() => alert("Beralih ke halaman 13")} className="px-3 py-1 bg-slate-100 border border-slate-200/50 text-slate-400 rounded-lg font-semibold">13</button>
+                <button onClick={() => alert("Beralih ke halaman selanjutnya.")} className="px-3 py-1 bg-slate-100 border border-slate-200/50 text-slate-500 hover:text-slate-900 rounded-lg font-semibold">&gt;</button>
               </div>
             </div>
 
@@ -718,7 +714,7 @@ export default function CustomerSuspend() {
               <button onClick={handleBulkUnsuspend} className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-xs font-bold text-slate-800 rounded-xl transition shadow-lg">
                 Aktifkan Massal
               </button>
-              <button className="w-full py-2.5 bg-slate-100 hover:bg-slate-100 border border-slate-200 text-xs font-bold text-slate-600 rounded-xl transition">
+              <button onClick={() => alert("Membuka modal penjadwalan aktivasi otomatis pelanggan tersuspend...")} className="w-full py-2.5 bg-slate-100 hover:bg-slate-100 border border-slate-200 text-xs font-bold text-slate-600 rounded-xl transition">
                 Jadwalkan Aktivasi
               </button>
             </div>

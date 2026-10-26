@@ -47,155 +47,47 @@ interface RefundRow {
   createdBy: string;
 }
 
-const mockRefunds: RefundRow[] = [
-  {
-    id: '1',
-    rfNumber: 'RF/2026/07/0001',
-    invoiceNumber: 'INV/2026/06/0003',
-    customerName: 'Budi Santoso',
-    customerNo: 'CUST-0001',
-    reason: 'Kelebihan Bayar',
-    nominal: 375000,
-    method: 'Transfer Bank',
-    status: 'Selesai',
-    refundDate: '22/10/2026',
-    createdBy: 'Agus Dwi Rianto'
-  },
-  {
-    id: '2',
-    rfNumber: 'RF/2026/07/0002',
-    invoiceNumber: 'INV/2026/06/0005',
-    customerName: 'Siti Aminah',
-    customerNo: 'CUST-0002',
-    reason: 'Pembatalan Layanan',
-    nominal: 250000,
-    method: 'QRIS',
-    status: 'Diproses',
-    refundDate: '22/10/2026',
-    createdBy: 'Rina Marlina'
-  },
-  {
-    id: '3',
-    rfNumber: 'RF/2026/06/0021',
-    invoiceNumber: 'INV/2026/06/0007',
-    customerName: 'Andi Pratama',
-    customerNo: 'CUST-0003',
-    reason: 'Gangguan Layanan',
-    nominal: 575000,
-    method: 'Transfer Bank',
-    status: 'Selesai',
-    refundDate: '30/06/2026',
-    createdBy: 'Agus Dwi Rianto'
-  },
-  {
-    id: '4',
-    rfNumber: 'RF/2026/06/0020',
-    invoiceNumber: 'INV/2026/06/0010',
-    customerName: 'Rina Marlina',
-    customerNo: 'CUST-0004',
-    reason: 'Double Payment',
-    nominal: 100000,
-    method: 'E-Wallet',
-    status: 'Ditolak',
-    refundDate: '30/06/2026',
-    createdBy: 'Rina Marlina'
-  },
-  {
-    id: '5',
-    rfNumber: 'RF/2026/06/0019',
-    invoiceNumber: 'INV/2026/06/0002',
-    customerName: 'PT. Maju Bersama',
-    customerNo: 'CUST-0005',
-    reason: 'Pembatalan Layanan',
-    nominal: 1250000,
-    method: 'Transfer Bank',
-    status: 'Selesai',
-    refundDate: '29/06/2026',
-    createdBy: 'Fitri Handayani'
-  },
-  {
-    id: '6',
-    rfNumber: 'RF/2026/06/0018',
-    invoiceNumber: 'INV/2026/06/0006',
-    customerName: 'Dewi Lestari',
-    customerNo: 'CUST-0006',
-    reason: 'Kelebihan Bayar',
-    nominal: 150000,
-    method: 'Cash',
-    status: 'Selesai',
-    refundDate: '29/06/2026',
-    createdBy: 'Agus Dwi Rianto'
-  },
-  {
-    id: '7',
-    rfNumber: 'RF/2026/06/0017',
-    invoiceNumber: 'INV/2026/06/0008',
-    customerName: 'Fajar Nugroho',
-    customerNo: 'CUST-0007',
-    reason: 'Gangguan Layanan',
-    nominal: 200000,
-    method: 'QRIS',
-    status: 'Diproses',
-    refundDate: '28/06/2026',
-    createdBy: 'Rina Marlina'
-  },
-  {
-    id: '8',
-    rfNumber: 'RF/2026/06/0016',
-    invoiceNumber: 'INV/2026/06/0001',
-    customerName: 'Nina Wulandari',
-    customerNo: 'CUST-0008',
-    reason: 'Double Payment',
-    nominal: 250000,
-    method: 'E-Wallet',
-    status: 'Selesai',
-    refundDate: '28/06/2026',
-    createdBy: 'Fitri Handayani'
-  },
-  {
-    id: '9',
-    rfNumber: 'RF/2026/06/0015',
-    invoiceNumber: 'INV/2026/06/0004',
-    customerName: 'Yudi Hermawan',
-    customerNo: 'CUST-0009',
-    reason: 'Pembatalan Layanan',
-    nominal: 500000,
-    method: 'Transfer Bank',
-    status: 'Selesai',
-    refundDate: '27/06/2026',
-    createdBy: 'Agus Dwi Rianto'
-  },
-  {
-    id: '10',
-    rfNumber: 'RF/2026/06/0014',
-    invoiceNumber: 'INV/2026/05/0028',
-    customerName: 'CV. Sinar Abadi',
-    customerNo: 'CUST-0010',
-    reason: 'Penyesuaian Tagihan',
-    nominal: 2000000,
-    method: 'Transfer Bank',
-    status: 'Ditolak',
-    refundDate: '27/06/2026',
-    createdBy: 'Rina Marlina'
-  }
+const initialRefunds: RefundRow[] = [
+  { id: '1', rfNumber: 'RF/2026/07/0001', invoiceNumber: 'INV/2026/06/0003', customerName: 'Budi Santoso', customerNo: 'CUST-0001', reason: 'Kelebihan Bayar Transfer', nominal: 375000, method: 'Transfer Bank BCA', status: 'Selesai', refundDate: '26/10/2026 08:32', createdBy: 'Agus Dwi Rianto' },
+  { id: '2', rfNumber: 'RF/2026/07/0002', invoiceNumber: 'INV/2026/06/0005', customerName: 'Siti Aminah', customerNo: 'CUST-0002', reason: 'Downtime Jaringan > 24 Jam', nominal: 250000, method: 'Transfer Mandiri', status: 'Diproses', refundDate: '26/10/2026 07:45', createdBy: 'Rina Marlina' },
+  { id: '3', rfNumber: 'RF/2026/07/0003', invoiceNumber: 'INV/2026/06/0007', customerName: 'Andi Pratama', customerNo: 'CUST-0003', reason: 'Pembatalan Pasang Baru (ODP Full)', nominal: 500000, method: 'Transfer BRI', status: 'Selesai', refundDate: '25/10/2026 21:15', createdBy: 'Agus Dwi Rianto' },
+  { id: '4', rfNumber: 'RF/2026/07/0004', invoiceNumber: 'INV/2026/06/0010', customerName: 'Rina Marlina', customerNo: 'CUST-0004', reason: 'Double Payment Payment Gateway', nominal: 350000, method: 'E-Wallet DANA', status: 'Diproses', refundDate: '25/10/2026 19:30', createdBy: 'Rina Marlina' },
+  { id: '5', rfNumber: 'RF/2026/07/0005', invoiceNumber: 'INV/2026/06/0002', customerName: 'PT. Maju Bersama', customerNo: 'CUST-0005', reason: 'Deposit Terminasi Kontrak', nominal: 1800000, method: 'Transfer Bank BCA', status: 'Selesai', refundDate: '24/10/2026 16:20', createdBy: 'Fitri Handayani' },
+  { id: '6', rfNumber: 'RF/2026/07/0006', invoiceNumber: 'INV/2026/06/0006', customerName: 'Dewi Lestari', customerNo: 'CUST-0006', reason: 'Salah Input Nominal Pelanggan', nominal: 150000, method: 'Transfer BCA', status: 'Ditolak', refundDate: '24/10/2026 10:10', createdBy: 'Agus Dwi Rianto' },
+  { id: '7', rfNumber: 'RF/2026/07/0007', invoiceNumber: 'INV/2026/06/0001', customerName: 'Fajar Nugroho', customerNo: 'CUST-0007', reason: 'Kompensasi SLA Korporat', nominal: 2000000, method: 'Transfer BNI', status: 'Selesai', refundDate: '23/10/2026 14:00', createdBy: 'Rina Marlina' },
+  { id: '8', rfNumber: 'RF/2026/07/0008', invoiceNumber: 'INV/2026/06/0008', customerName: 'Nina Wulandari', customerNo: 'CUST-0008', reason: 'Migrasi Paket Lebih Murah', nominal: 250000, method: 'Transfer Mandiri', status: 'Diproses', refundDate: '22/10/2026 11:20', createdBy: 'Fitri Handayani' }
 ];
 
 export default function RefundPage() {
+  const [refunds, setRefunds] = useState<RefundRow[]>(initialRefunds);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('Semua Status');
+  const [methodFilter, setMethodFilter] = useState('Semua Metode');
 
-  const handleSelectRow = (id: string) => {
-    setSelectedIds(prev =>
-      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
-    );
-  };
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
-  const handleSelectAll = () => {
-    if (selectedIds.length === mockRefunds.length) {
-      setSelectedIds([]);
-    } else {
-      setSelectedIds(mockRefunds.map(d => d.id));
-    }
+  // Modals
+  const [detailModal, setDetailModal] = useState<RefundRow | null>(null);
+  const [editModal, setEditModal] = useState<RefundRow | null>(null);
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // Form State
+  const [formData, setFormData] = useState({
+    customerName: '',
+    customerNo: '',
+    invoiceNumber: '',
+    reason: 'Kelebihan Bayar Transfer',
+    nominal: 250000,
+    method: 'Transfer Bank BCA'
+  });
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3500);
   };
 
   const formatCurrency = (amount: number) => {
@@ -206,10 +98,122 @@ export default function RefundPage() {
     }).format(amount);
   };
 
+  const handleSelectRow = (id: string) => {
+    setSelectedIds(prev =>
+      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+    );
+  };
+
+  const handleSelectAll = () => {
+    if (selectedIds.length === filteredData.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(filteredData.map(d => d.id));
+    }
+  };
+
+  // Filter
+  const filteredData = refunds.filter(d => {
+    const matchSearch = d.rfNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        d.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        d.invoiceNumber.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchStatus = statusFilter === 'Semua Status' || d.status === statusFilter;
+    const matchMethod = methodFilter === 'Semua Metode' || d.method.includes(methodFilter);
+    return matchSearch && matchStatus && matchMethod;
+  });
+
+  const totalPages = Math.ceil(filteredData.length / pageSize) || 1;
+  const paginatedData = filteredData.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+  // Mass actions
+  const handleMassApprove = () => {
+    if (selectedIds.length === 0) return;
+    setRefunds(refunds.map(c => selectedIds.includes(c.id) ? { ...c, status: 'Selesai' } : c));
+    showToast(`${selectedIds.length} Pengajuan Refund berhasil diproses & diselesaikan!`);
+    setSelectedIds([]);
+  };
+
+  const handleMassReject = () => {
+    if (selectedIds.length === 0) return;
+    setRefunds(refunds.map(c => selectedIds.includes(c.id) ? { ...c, status: 'Ditolak' } : c));
+    showToast(`${selectedIds.length} Pengajuan Refund ditolak.`);
+    setSelectedIds([]);
+  };
+
+  const handleExportCSV = () => {
+    const target = selectedIds.length > 0 ? refunds.filter(c => selectedIds.includes(c.id)) : filteredData;
+    const headers = ['Nomor Refund', 'Invoice', 'Nama Customer', 'ID Customer', 'Alasan', 'Nominal', 'Metode', 'Status', 'Tanggal'];
+    const rows = target.map(c => [
+      c.rfNumber,
+      c.invoiceNumber,
+      `"${c.customerName.replace(/"/g, '""')}"`,
+      c.customerNo,
+      `"${c.reason.replace(/"/g, '""')}"`,
+      c.nominal,
+      `"${c.method}"`,
+      c.status,
+      c.refundDate
+    ]);
+
+    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+    const link = document.createElement('a');
+    link.href = encodeURI(csvContent);
+    link.download = `refunds_${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast('Data Refund berhasil diekspor ke CSV.');
+  };
+
+  const handleCreateSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.customerName.trim()) return;
+
+    const newRF: RefundRow = {
+      id: Date.now().toString(),
+      rfNumber: `RF/2026/10/${String(refunds.length + 1).padStart(4, '0')}`,
+      invoiceNumber: formData.invoiceNumber || 'INV/2026/10/0122',
+      customerName: formData.customerName,
+      customerNo: formData.customerNo || `CUST-00${refunds.length + 1}`,
+      reason: formData.reason,
+      nominal: Number(formData.nominal) || 100000,
+      method: formData.method,
+      status: 'Diproses',
+      refundDate: 'Baru saja',
+      createdBy: 'Agus Dwi Rianto'
+    };
+
+    setRefunds([newRF, ...refunds]);
+    setIsCreateOpen(false);
+    showToast(`Pengajuan Refund ${newRF.rfNumber} berhasil dibuat!`);
+  };
+
+  const handleEditSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editModal) return;
+    setRefunds(refunds.map(c => c.id === editModal.id ? editModal : c));
+    setEditModal(null);
+    showToast(`Status Refund ${editModal.rfNumber} berhasil diperbarui.`);
+  };
+
+  // KPIs
+  const totalNominal = refunds.reduce((acc, c) => acc + c.nominal, 0);
+  const doneCount = refunds.filter(c => c.status === 'Selesai').length;
+  const procCount = refunds.filter(c => c.status === 'Diproses').length;
+  const rejectCount = refunds.filter(c => c.status === 'Ditolak').length;
+
   return (
     <Layout>
       <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] p-4 md:p-6 space-y-6">
         
+        {/* Toast */}
+        {toastMessage && (
+          <div className="fixed top-5 right-5 z-50 bg-blue-600 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-blue-400">
+            <CheckCircle size={18} />
+            <span className="text-xs font-semibold">{toastMessage}</span>
+          </div>
+        )}
+
         {/* ─── Top Header bar ────────────────────────────────────────────── */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-[var(--app-border)] pb-5">
           <div className="space-y-1">
@@ -218,406 +222,321 @@ export default function RefundPage() {
               <span>/</span>
               <Link href="/invoice" className="hover:text-[var(--app-text)]">Billing & Tagihan</Link>
               <span>/</span>
-              <span className="text-blue-500 font-semibold">Pengembalian Dana (Refund)</span>
+              <span className="text-blue-500 font-semibold">Refund Dana</span>
             </div>
             <h1 className="text-xl md:text-2xl font-bold tracking-tight text-[var(--app-text)]">
-              Pencatatan & Verifikasi Pengembalian Dana
+              Manajemen Pengembalian Dana (Refund)
             </h1>
             <p className="text-xs text-[var(--app-muted)]">
-              Proses pengembalian kelebihan bayar, deposit instalasi, dan kompensasi gangguan jaringan terverifikasi.
+              Otorisasi dan pencatatan pengembalian dana pembayaran berlebih atau deposit langganan pelanggan.
             </p>
           </div>
 
           <div className="flex items-center gap-2.5">
-            <Link href="/payment/history" className="px-3 py-2 bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)] text-xs font-semibold rounded-lg">Riwayat Bayar</Link>
+            <Link
+              href="/invoice/semua"
+              className="px-3.5 py-2 bg-[var(--app-card)] hover:bg-[var(--app-border)]/30 border border-[var(--app-border)] text-[var(--app-text)] text-xs font-semibold rounded-xl transition-all"
+            >
+              Semua Invoice
+            </Link>
+            <button 
+              onClick={() => setIsCreateOpen(true)}
+              className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-md transition-all"
+            >
+              <Plus size={15} />
+              <span>Buat Refund</span>
+            </button>
           </div>
         </div>
 
         {/* ─── KPI Cards Row ─────────────────────────────────────────────── */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-          {/* Card 1: Total Refund */}
-          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4 flex items-center gap-4">
-            <div className="p-3.5 bg-purple-500/10 text-purple-400 border border-purple-500/20 rounded-xl">
-              <FileText size={20} />
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-4 flex items-center gap-3">
+            <div className="p-3 bg-blue-500/10 text-blue-500 border border-blue-500/20 rounded-xl">
+              <FileText size={18} />
             </div>
             <div>
-              <p className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider">Total Refund</p>
-              <p className="text-2xl font-black text-[var(--app-text)] mt-0.5">28</p>
-              <p className="text-[10px] text-[var(--app-muted)] mt-0.5 font-medium">Semua Refund</p>
+              <p className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider">Total Kasus</p>
+              <p className="text-xl font-black text-[var(--app-text)] mt-0.5">{refunds.length}</p>
+              <p className="text-[9px] text-[var(--app-muted)]">Pengajuan refund</p>
             </div>
           </div>
 
-          {/* Card 2: Total Nominal Refund */}
-          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4 flex items-center gap-4">
-            <div className="p-3.5 bg-green-500/10 text-green-400 border border-green-500/20 rounded-xl">
-              <Wallet size={20} />
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-4 flex items-center gap-3">
+            <div className="p-3 bg-green-500/10 text-green-500 border border-green-500/20 rounded-xl">
+              <Wallet size={18} />
             </div>
             <div>
-              <p className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider">Total Nominal Refund</p>
-              <p className="text-xl font-black text-[var(--app-text)] mt-0.5">Rp 12.850.000</p>
-              <p className="text-[10px] text-[var(--app-muted)] mt-0.5 font-medium">Semua Refund</p>
+              <p className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider">Total Dana</p>
+              <p className="text-base font-black text-green-500 mt-0.5">{formatCurrency(totalNominal)}</p>
+              <p className="text-[9px] text-[var(--app-muted)]">Nilai nominal</p>
             </div>
           </div>
 
-          {/* Card 3: Selesai */}
-          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4 flex items-center gap-4">
-            <div className="p-3.5 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-xl">
-              <CheckCircle size={20} />
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-4 flex items-center gap-3">
+            <div className="p-3 bg-teal-500/10 text-teal-500 border border-teal-500/20 rounded-xl">
+              <CheckCircle size={18} />
             </div>
             <div>
               <p className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider">Selesai</p>
-              <p className="text-2xl font-black text-[var(--app-text)] mt-0.5">22</p>
-              <p className="text-[10px] text-[var(--app-muted)] mt-0.5 font-medium">78.6% dari total</p>
+              <p className="text-xl font-black text-teal-500 mt-0.5">{doneCount}</p>
+              <p className="text-[9px] text-[var(--app-muted)]">Telah ditransfer</p>
             </div>
           </div>
 
-          {/* Card 4: Diproses */}
-          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4 flex items-center gap-4">
-            <div className="p-3.5 bg-orange-500/10 text-orange-400 border border-orange-500/20 rounded-xl">
-              <Clock size={20} />
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-4 flex items-center gap-3">
+            <div className="p-3 bg-orange-500/10 text-orange-500 border border-orange-500/20 rounded-xl">
+              <Clock size={18} />
             </div>
             <div>
               <p className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider">Diproses</p>
-              <p className="text-2xl font-black text-[var(--app-text)] mt-0.5">4</p>
-              <p className="text-[10px] text-[var(--app-muted)] mt-0.5 font-medium">14.3% dari total</p>
+              <p className="text-xl font-black text-orange-500 mt-0.5">{procCount}</p>
+              <p className="text-[9px] text-[var(--app-muted)]">Verifikasi finance</p>
             </div>
           </div>
 
-          {/* Card 5: Ditolak */}
-          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4 flex items-center gap-4">
-            <div className="p-3.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded-xl">
-              <XCircle size={20} />
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-4 flex items-center gap-3">
+            <div className="p-3 bg-red-500/10 text-red-500 border border-red-500/20 rounded-xl">
+              <XCircle size={18} />
             </div>
             <div>
               <p className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider">Ditolak</p>
-              <p className="text-2xl font-black text-[var(--app-text)] mt-0.5">2</p>
-              <p className="text-[10px] text-[var(--app-muted)] mt-0.5 font-medium">7.1% dari total</p>
+              <p className="text-xl font-black text-red-500 mt-0.5">{rejectCount}</p>
+              <p className="text-[9px] text-[var(--app-muted)]">Klaim tidak valid</p>
             </div>
           </div>
         </div>
 
         {/* ─── Filter Bar ────────────────────────────────────────────────── */}
-        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4">
-          <div className="flex flex-wrap items-center gap-4">
-            <div className="relative flex-1 min-w-[240px]">
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4 flex flex-wrap items-center justify-between gap-4">
+          <div className="flex flex-wrap items-center gap-3 flex-1">
+            <div className="relative min-w-[200px] flex-1 max-w-sm">
               <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-[var(--app-muted)] w-4 h-4" />
               <input 
                 type="text" 
-                placeholder="Cari refund, invoice, customer..."
+                placeholder="Cari refund no, customer, invoice..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] text-xs pl-10 pr-4 py-2.5 rounded-xl text-[var(--app-text)] placeholder-slate-400 focus:outline-none focus:border-blue-500 transition-colors"
+                onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+                className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] text-xs pl-10 pr-4 py-2.5 rounded-xl text-[var(--app-text)] placeholder-[var(--app-muted)] focus:outline-none focus:border-blue-500"
               />
             </div>
 
-            <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]">
-              <option>Semua Status</option>
-            </select>
-
-            <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]">
-              <option>Semua Metode</option>
-            </select>
-
-            <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]">
-              <option>Semua Sales</option>
-            </select>
-            
-            {/* Date range picker mock */}
-            <div className="flex items-center gap-2 bg-[var(--app-bg)] border border-[var(--app-border)] px-3 py-2.5 rounded-xl text-xs text-[var(--app-text)]/80 cursor-pointer">
-              <Calendar size={14} className="text-[var(--app-muted)]" />
-              <span>01/06/2026 - 22/10/2026</span>
-            </div>
-
-            <button 
-              onClick={() => { setSearchTerm(''); }}
-              className="text-xs font-semibold text-[var(--app-muted)] hover:text-[var(--app-text)] px-4 py-2.5 rounded-xl border border-transparent hover:border-[var(--app-border)] transition-all ml-auto"
+            <select 
+              value={statusFilter}
+              onChange={e => { setStatusFilter(e.target.value); setCurrentPage(1); }}
+              className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-3 rounded-xl text-[var(--app-text)] focus:outline-none min-w-[130px]"
             >
-              Reset
-            </button>
+              <option value="Semua Status">Semua Status</option>
+              <option value="Diproses">Diproses</option>
+              <option value="Selesai">Selesai</option>
+              <option value="Ditolak">Ditolak</option>
+            </select>
 
-            <button className="flex items-center gap-2 bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-md transition-all">
-              <Filter size={14} />
-              <span>Filter</span>
-            </button>
+            <select 
+              value={methodFilter}
+              onChange={e => { setMethodFilter(e.target.value); setCurrentPage(1); }}
+              className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-3 rounded-xl text-[var(--app-text)] focus:outline-none min-w-[130px]"
+            >
+              <option value="Semua Metode">Semua Metode</option>
+              <option value="BCA">Transfer BCA</option>
+              <option value="Mandiri">Transfer Mandiri</option>
+              <option value="BRI">Transfer BRI</option>
+              <option value="E-Wallet">E-Wallet</option>
+            </select>
 
-            <button className="flex items-center gap-2 bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-md transition-all">
-              <Plus size={14} />
-              <span>Buat Refund</span>
-            </button>
+            {(searchTerm || statusFilter !== 'Semua Status' || methodFilter !== 'Semua Metode') && (
+              <button 
+                onClick={() => { setSearchTerm(''); setStatusFilter('Semua Status'); setMethodFilter('Semua Metode'); }}
+                className="text-xs text-red-500 hover:underline font-semibold"
+              >
+                Reset Filter
+              </button>
+            )}
+          </div>
 
-            <button className="flex items-center gap-2 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-sm border-gray-800">
-              <Download size={14} className="text-[var(--app-muted)]" />
-              <span>Export</span>
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={handleExportCSV}
+              className="flex items-center gap-1.5 bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-[var(--app-text)] text-xs font-semibold px-3.5 py-2.5 rounded-xl transition-all"
+            >
+              <Download size={13} className="text-green-500" />
+              <span>Export CSV</span>
             </button>
           </div>
         </div>
 
         {/* ─── Mass Action bar ────────────────────────────────────────────── */}
-        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4 flex flex-wrap items-center gap-3">
-          <span className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider mr-2">
-            Mass Action ({selectedIds.length} dipilih)
-          </span>
-          
-          <button className="flex items-center gap-1.5 bg-[var(--app-bg)] border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] text-xs px-3.5 py-2 rounded-xl transition-all">
-            <CheckCircle size={13} className="text-green-500" />
-            <span>Proses Refund</span>
-          </button>
+        {selectedIds.length > 0 && (
+          <div className="bg-blue-600/10 border border-blue-500/20 rounded-2xl p-4 flex flex-wrap items-center gap-3">
+            <span className="text-xs font-bold text-blue-500 mr-2">
+              Mass Action ({selectedIds.length} Refund dipilih):
+            </span>
+            
+            <button 
+              onClick={handleMassApprove}
+              className="flex items-center gap-1.5 bg-green-600 hover:bg-green-700 text-white text-xs px-3.5 py-2 rounded-xl font-bold shadow-xs transition-all"
+            >
+              <CheckCircle size={13} />
+              <span>Selesaikan Refund Terpilih</span>
+            </button>
 
-          <button className="flex items-center gap-1.5 bg-[var(--app-bg)] border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] text-xs px-3.5 py-2 rounded-xl transition-all">
-            <Mail size={13} />
-            <span>Kirim Email</span>
-          </button>
+            <button 
+              onClick={() => window.print()}
+              className="flex items-center gap-1.5 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-[var(--app-text)] text-xs px-3.5 py-2 rounded-xl font-semibold transition-all"
+            >
+              <FileText size={13} />
+              <span>Cetak Bukti Refund</span>
+            </button>
 
-          <button className="flex items-center gap-1.5 bg-[var(--app-bg)] border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] text-xs px-3.5 py-2 rounded-xl transition-all">
-            <FileText size={13} />
-            <span>Cetak PDF</span>
-          </button>
-
-          <button className="flex items-center gap-1.5 bg-[var(--app-bg)] border border-[var(--app-border)] text-[var(--app-muted)] hover:text-red-400 text-xs px-3.5 py-2 rounded-xl transition-all">
-            <XCircle size={13} className="text-red-500" />
-            <span>Batalkan</span>
-          </button>
-
-          <button className="flex items-center gap-1.5 bg-[var(--app-bg)] border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] text-xs px-3.5 py-2 rounded-xl transition-all">
-            <Send size={13} />
-            <span>Export</span>
-          </button>
-
-          <button className="p-2 bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 rounded-xl text-[var(--app-muted)]">
-            <MoreVertical size={13} />
-          </button>
-        </div>
+            <button 
+              onClick={handleMassReject}
+              className="flex items-center gap-1.5 bg-red-600/10 hover:bg-red-600 text-red-500 hover:text-white border border-red-500/20 text-xs px-3.5 py-2 rounded-xl font-bold transition-all"
+            >
+              <XCircle size={13} />
+              <span>Tolak Pengajuan</span>
+            </button>
+          </div>
+        )}
 
         {/* ─── Main Content Grid ─────────────────────────────────────────── */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-          {/* Left Column: Refund Table & Extra Charts */}
           <div className="lg:col-span-9 space-y-6">
             
             {/* Table Card */}
             <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
+                <table className="w-full text-left border-collapse text-xs">
                   <thead>
                     <tr className="border-b border-[var(--app-border)] bg-[var(--app-border)]/10 text-[var(--app-muted)] text-[10px] font-bold uppercase tracking-wider">
-                      <th className="p-4 w-10">
+                      <th className="p-3.5 w-10 text-center">
                         <input 
                           type="checkbox" 
-                          checked={selectedIds.length > 0}
+                          checked={selectedIds.length > 0 && selectedIds.length === filteredData.length}
                           onChange={handleSelectAll}
-                          className="rounded bg-[var(--app-bg)] border-[var(--app-border)] text-blue-600 focus:ring-0" 
+                          className="rounded text-blue-600 focus:ring-0" 
                         />
                       </th>
-                      <th className="p-4 w-12">NO</th>
-                      <th className="p-4 w-44">REFUND NO</th>
-                      <th className="p-4 w-44">INVOICE NO</th>
-                      <th className="p-4 w-44">CUSTOMER</th>
-                      <th className="p-4 w-48">ALASAN REFUND</th>
-                      <th className="p-4 w-32">NOMINAL</th>
-                      <th className="p-4 w-32">METODE</th>
-                      <th className="p-4 w-28">STATUS</th>
-                      <th className="p-4 w-32">REFUND DATE</th>
-                      <th className="p-4 w-36">DIBUAT OLEH</th>
-                      <th className="p-4 w-20 text-center">AKSI</th>
+                      <th className="p-3.5 w-12 text-center">NO</th>
+                      <th className="p-3.5 w-32">NOMOR REFUND</th>
+                      <th className="p-3.5 w-32">INVOICE</th>
+                      <th className="p-3.5">PELANGGAN</th>
+                      <th className="p-3.5">ALASAN REFUND</th>
+                      <th className="p-3.5 text-right">NOMINAL</th>
+                      <th className="p-3.5">METODE</th>
+                      <th className="p-3.5 w-24 text-center">STATUS</th>
+                      <th className="p-3.5 text-center w-24">AKSI</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[var(--app-border)] text-xs text-[var(--app-text)]/80">
-                    {mockRefunds.map((d, idx) => {
-                      const isSelected = selectedIds.includes(d.id);
-                      return (
-                        <tr 
-                          key={d.id}
-                          onClick={() => handleSelectRow(d.id)}
-                          className={`hover:bg-[var(--app-border)]/20 transition-colors cursor-pointer ${isSelected ? 'bg-[var(--app-border)]/20/50' : ''}`}
-                        >
-                          <td className="p-4" onClick={(e) => e.stopPropagation()}>
-                            <input 
-                              type="checkbox" 
-                              checked={isSelected}
-                              onChange={() => handleSelectRow(d.id)}
-                              className="rounded bg-[var(--app-bg)] border-[var(--app-border)] text-blue-600 focus:ring-0" 
-                            />
-                          </td>
-                          <td className="p-4 text-[var(--app-muted)] font-medium">{idx + 1}</td>
-                          <td className="p-4 font-mono font-semibold text-white tracking-wider">
-                            <span className="text-blue-400 font-bold">{d.rfNumber}</span>
-                          </td>
-                          <td className="p-4 font-mono font-semibold text-[var(--app-muted)]">{d.invoiceNumber}</td>
-                          <td className="p-4">
-                            <div className="space-y-0.5">
-                              <span className="font-bold text-[var(--app-text)] block">{d.customerName}</span>
-                              <span className="text-[10px] text-[var(--app-muted)] block font-semibold">{d.customerNo}</span>
-                            </div>
-                          </td>
-                          <td className="p-4 font-semibold text-[var(--app-text)]/80">{d.reason}</td>
-                          <td className="p-4 font-bold text-[var(--app-text)]">{formatCurrency(d.nominal)}</td>
-                          <td className="p-4 text-[var(--app-muted)] font-medium">{d.method}</td>
-                          <td className="p-4">
-                            <span className={`px-2.5 py-1 text-[10px] font-bold rounded-full ${
-                              d.status === 'Selesai' 
-                                ? 'bg-green-500/10 text-green-400 border border-green-500/20' 
-                                : d.status === 'Diproses'
-                                ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20'
-                                : 'bg-red-500/10 text-red-400 border border-red-500/20'
-                            }`}>
-                              {d.status}
-                            </span>
-                          </td>
-                          <td className="p-4 text-[var(--app-muted)] font-medium">{d.refundDate}</td>
-                          <td className="p-4 text-[var(--app-muted)] font-medium">{d.createdBy}</td>
-                          <td className="p-4" onClick={(e) => e.stopPropagation()}>
-                            <div className="flex items-center justify-center gap-1.5">
-                              <button className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors">
-                                <Eye size={13} />
-                              </button>
-                              <button className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors">
-                                <Edit2 size={13} />
-                              </button>
-                              <button className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors">
-                                <MoreVertical size={13} />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
+                  <tbody className="divide-y divide-[var(--app-border)] text-[var(--app-text)]">
+                    {paginatedData.length === 0 ? (
+                      <tr>
+                        <td colSpan={10} className="p-8 text-center text-[var(--app-muted)]">
+                          Tidak ada pengajuan refund yang sesuai filter.
+                        </td>
+                      </tr>
+                    ) : (
+                      paginatedData.map((d, idx) => {
+                        const isSelected = selectedIds.includes(d.id);
+                        return (
+                          <tr 
+                            key={d.id}
+                            onClick={() => handleSelectRow(d.id)}
+                            className={`hover:bg-[var(--app-border)]/20 transition-colors cursor-pointer ${isSelected ? 'bg-blue-600/5' : ''}`}
+                          >
+                            <td className="p-3.5 text-center" onClick={(e) => e.stopPropagation()}>
+                              <input 
+                                type="checkbox" 
+                                checked={isSelected}
+                                onChange={() => handleSelectRow(d.id)}
+                                className="rounded text-blue-600 focus:ring-0" 
+                              />
+                            </td>
+                            <td className="p-3.5 text-center text-[var(--app-muted)] font-mono">
+                              {(currentPage - 1) * pageSize + idx + 1}
+                            </td>
+                            <td className="p-3.5 font-mono font-semibold text-blue-500">{d.rfNumber}</td>
+                            <td className="p-3.5 font-mono text-[var(--app-muted)]">{d.invoiceNumber}</td>
+                            <td className="p-3.5">
+                              <div>
+                                <span className="font-bold text-[var(--app-text)] block">{d.customerName}</span>
+                                <span className="text-[10px] text-[var(--app-muted)] font-mono">{d.customerNo}</span>
+                              </div>
+                            </td>
+                            <td className="p-3.5 text-[var(--app-muted)] text-[11px] max-w-[180px] truncate">{d.reason}</td>
+                            <td className="p-3.5 text-right font-bold text-green-500">{formatCurrency(d.nominal)}</td>
+                            <td className="p-3.5 text-[var(--app-muted)] text-[11px]">{d.method}</td>
+                            <td className="p-3.5 text-center">
+                              <span className={`px-2 py-0.5 text-[8px] font-black uppercase rounded ${
+                                d.status === 'Selesai' 
+                                  ? 'bg-teal-500/10 text-teal-500' 
+                                  : d.status === 'Diproses'
+                                  ? 'bg-orange-500/10 text-orange-500'
+                                  : 'bg-red-500/10 text-red-500'
+                              }`}>
+                                {d.status}
+                              </span>
+                            </td>
+                            <td className="p-3.5" onClick={(e) => e.stopPropagation()}>
+                              <div className="flex items-center justify-center gap-1">
+                                <button 
+                                  onClick={() => setDetailModal(d)}
+                                  title="Lihat Detail"
+                                  className="p-1.5 hover:bg-[var(--app-border)]/40 rounded-lg text-[var(--app-muted)] hover:text-blue-500 transition-colors"
+                                >
+                                  <Eye size={13} />
+                                </button>
+                                <button 
+                                  onClick={() => setEditModal(d)}
+                                  title="Edit Status"
+                                  className="p-1.5 hover:bg-[var(--app-border)]/40 rounded-lg text-[var(--app-muted)] hover:text-green-500 transition-colors"
+                                >
+                                  <Edit2 size={13} />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
                   </tbody>
                 </table>
               </div>
 
               {/* Table pagination */}
-              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-t border-[var(--app-border)] bg-white/60">
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-t border-[var(--app-border)] bg-[var(--app-card)]">
                 <span className="text-xs text-[var(--app-muted)]">
-                  Menampilkan <span className="font-semibold text-white">1 - 10</span> dari <span className="font-semibold text-white">28</span> data
+                  Menampilkan <span className="font-semibold text-[var(--app-text)]">{filteredData.length > 0 ? (currentPage - 1) * pageSize + 1 : 0} - {Math.min(currentPage * pageSize, filteredData.length)}</span> dari <span className="font-semibold text-[var(--app-text)]">{filteredData.length}</span> data
                 </span>
                 
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <button 
-                      disabled
-                      className="p-2 border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 rounded-xl text-[var(--app-muted)] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                    >
-                      <ChevronLeft size={14} />
-                    </button>
-                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border bg-[#0052cc] text-white border-[#0052cc]">1</button>
-                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/30">2</button>
-                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/30">3</button>
-                    <button className="p-2 border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 rounded-xl text-[var(--app-muted)] transition-colors">
-                      <ChevronRight size={14} />
-                    </button>
-                  </div>
-
-                  <select
-                    className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-1.5 px-3 rounded-lg text-[var(--app-text)]/80 focus:outline-none"
+                <div className="flex items-center gap-1.5">
+                  <button 
+                    onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
+                    disabled={currentPage === 1}
+                    className="p-1.5 border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] disabled:opacity-30 disabled:cursor-not-allowed"
                   >
-                    <option value={10}>10 / halaman</option>
-                  </select>
+                    <ChevronLeft size={14} />
+                  </button>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+                    <button 
+                      key={p}
+                      onClick={() => setCurrentPage(p)}
+                      className={`w-7 h-7 rounded-lg text-xs font-semibold border transition-all ${
+                        currentPage === p ? 'bg-blue-600 text-white border-blue-600' : 'border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/30'
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  ))}
+                  <button 
+                    onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
+                    disabled={currentPage === totalPages}
+                    className="p-1.5 border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] disabled:opacity-30 disabled:cursor-not-allowed"
+                  >
+                    <ChevronRight size={14} />
+                  </button>
                 </div>
               </div>
-            </div>
-
-            {/* Bottom Row Charts */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-              
-              {/* Status Refund */}
-              <div className="lg:col-span-4 bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-4">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Status Refund</h4>
-                
-                <div className="grid grid-cols-3 gap-2 text-center">
-                  <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-xl space-y-1">
-                    <CheckCircle size={16} className="text-green-500 mx-auto" />
-                    <p className="text-lg font-black text-[var(--app-text)]">22</p>
-                    <p className="text-[9px] text-[var(--app-muted)] font-bold uppercase">Selesai</p>
-                  </div>
-                  <div className="p-3 bg-orange-500/10 border border-orange-500/20 rounded-xl space-y-1">
-                    <Clock size={16} className="text-orange-400 mx-auto" />
-                    <p className="text-lg font-black text-[var(--app-text)]">4</p>
-                    <p className="text-[9px] text-[var(--app-muted)] font-bold uppercase">Diproses</p>
-                  </div>
-                  <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl space-y-1">
-                    <XCircle size={16} className="text-red-500 mx-auto" />
-                    <p className="text-lg font-black text-[var(--app-text)]">2</p>
-                    <p className="text-[9px] text-[var(--app-muted)] font-bold uppercase">Ditolak</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Refund Bulanan Line Chart */}
-              <div className="lg:col-span-5 bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-3">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Refund Bulanan (Nominal)</h4>
-                
-                {/* SVG Line Chart */}
-                <div className="h-28 w-full mt-2">
-                  <svg viewBox="0 0 300 100" className="w-full h-full overflow-visible">
-                    {/* Grids */}
-                    <line x1="0" y1="20" x2="300" y2="20" stroke="#e2e8f0" strokeDasharray="3 3" />
-                    <line x1="0" y1="50" x2="300" y2="50" stroke="#e2e8f0" strokeDasharray="3 3" />
-                    <line x1="0" y1="80" x2="300" y2="80" stroke="#e2e8f0" strokeDasharray="3 3" />
-                    
-                    {/* Labels */}
-                    <text x="5" y="16" fill="#4a5568" fontSize="8" fontWeight="bold">Rp 6M</text>
-                    <text x="5" y="46" fill="#4a5568" fontSize="8" fontWeight="bold">Rp 4M</text>
-                    <text x="5" y="76" fill="#4a5568" fontSize="8" fontWeight="bold">Rp 2M</text>
-                    
-                    {/* Blue line path */}
-                    <path
-                      d="M20,80 L60,78 L100,75 L140,82 L180,72 L220,40 L260,80"
-                      fill="none"
-                      stroke="#3b82f6"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                    />
-                    
-                    {/* Dots on peak */}
-                    <circle cx="220" cy="40" r="4" fill="#3b82f6" stroke="#0b1329" strokeWidth="1.5" />
-                    
-                    {/* Month labels */}
-                    <text x="15" y="96" fill="#4a5568" fontSize="8" fontWeight="bold">Jan</text>
-                    <text x="55" y="96" fill="#4a5568" fontSize="8" fontWeight="bold">Feb</text>
-                    <text x="95" y="96" fill="#4a5568" fontSize="8" fontWeight="bold">Mar</text>
-                    <text x="135" y="96" fill="#4a5568" fontSize="8" fontWeight="bold">Apr</text>
-                    <text x="175" y="96" fill="#4a5568" fontSize="8" fontWeight="bold">Mei</text>
-                    <text x="215" y="96" fill="#4a5568" fontSize="8" fontWeight="bold">Jun</text>
-                    <text x="255" y="96" fill="#4a5568" fontSize="8" fontWeight="bold">Jul</text>
-                  </svg>
-                </div>
-              </div>
-
-              {/* Aksi Cepat */}
-              <div className="lg:col-span-3 bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-3.5">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Aksi Cepat</h4>
-                
-                <div className="space-y-2 text-[10px] font-bold text-[var(--app-muted)]">
-                  <div className="flex items-center justify-between p-2 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl hover:bg-[var(--app-border)]/20 cursor-pointer">
-                    <div className="flex items-center gap-2">
-                      <Plus size={12} className="text-blue-500" />
-                      <span>Buat Refund</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between p-2 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl hover:bg-[var(--app-border)]/20 cursor-pointer">
-                    <div className="flex items-center gap-2">
-                      <FileText size={12} className="text-purple-400" />
-                      <span>Refund dari Invoice</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between p-2 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl hover:bg-[var(--app-border)]/20 cursor-pointer">
-                    <div className="flex items-center gap-2">
-                      <Clock size={12} className="text-yellow-500" />
-                      <span>Riwayat Refund</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between p-2 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl hover:bg-[var(--app-border)]/20 cursor-pointer">
-                    <div className="flex items-center gap-2">
-                      <Download size={12} className="text-green-500" />
-                      <span>Export Data</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
             </div>
 
           </div>
@@ -625,134 +544,29 @@ export default function RefundPage() {
           {/* Right Column: Widgets */}
           <div className="lg:col-span-3 space-y-6">
             
-            {/* Card 1: Ringkasan Refund Donut */}
-            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Ringkasan Refund</h3>
-              
-              <div className="relative flex justify-center py-2">
-                <svg width="140" height="140" viewBox="0 0 42 42" className="transform -rotate-90">
-                  <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#101935" strokeWidth="4.5" />
-                  
-                  {/* Selesai: 22 / 28 = 78.6% */}
-                  <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#10b981" strokeWidth="4.5" 
-                    strokeDasharray={`${(22 / 28) * 100} ${100 - (22 / 28) * 100}`} 
-                    strokeDashoffset="0" 
-                  />
-
-                  {/* Diproses: 4 / 28 = 14.3% */}
-                  <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#f97316" strokeWidth="4.5" 
-                    strokeDasharray={`${(4 / 28) * 100} ${100 - (4 / 28) * 100}`} 
-                    strokeDashoffset={`${100 - (22 / 28) * 100}`} 
-                  />
-
-                  {/* Ditolak: 2 / 28 = 7.1% */}
-                  <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#ef4444" strokeWidth="4.5" 
-                    strokeDasharray={`${(2 / 28) * 100} ${100 - (2 / 28) * 100}`} 
-                    strokeDashoffset={`${100 - (26 / 28) * 100}`} 
-                  />
-                </svg>
-                {/* Center text */}
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-                  <p className="text-xl font-black text-[var(--app-text)]">28</p>
-                  <p className="text-[9px] text-[var(--app-muted)] font-bold uppercase">Total</p>
-                </div>
-              </div>
-
-              {/* Legends */}
-              <div className="space-y-2 text-[11px] text-[var(--app-muted)]">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded bg-[#10b981] inline-block"></span>
-                    <span>Selesai</span>
-                  </div>
-                  <span className="font-semibold text-white">22 (78.6%)</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded bg-[#f97316] inline-block"></span>
-                    <span>Diproses</span>
-                  </div>
-                  <span className="font-semibold text-white">4 (14.3%)</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded bg-[#ef4444] inline-block"></span>
-                    <span>Ditolak</span>
-                  </div>
-                  <span className="font-semibold text-white">2 (7.1%)</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 2: Total Nominal Refund */}
-            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs flex items-center justify-between relative overflow-hidden">
-              <div className="space-y-1">
-                <span className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider block">Total Nominal Refund</span>
-                <p className="text-lg font-black text-[var(--app-text)]">Rp 12.850.000</p>
-              </div>
-              <div className="w-10 h-10 rounded-xl bg-green-500/10 text-green-400 border border-green-500/20 flex items-center justify-center flex-shrink-0">
-                <Wallet size={18} />
-              </div>
-            </div>
-
-            {/* Card 3: Metode Refund */}
-            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Metode Refund</h3>
-              
-              <div className="space-y-3.5">
-                {[
-                  { name: 'Transfer Bank', amount: 7650000, percentage: 59.5, color: 'bg-blue-600' },
-                  { name: 'E-Wallet', amount: 2450000, percentage: 19.1, color: 'bg-purple-600' },
-                  { name: 'QRIS', amount: 1750000, percentage: 13.6, color: 'bg-orange-600' },
-                  { name: 'Cash', amount: 1000000, percentage: 7.8, color: 'bg-green-600' },
-                ].map((item, index) => {
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-3">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Alasan Pengembalian Dana</h3>
+              <div className="space-y-2 text-xs">
+                {['Kelebihan Bayar Transfer', 'Downtime Jaringan > 24 Jam', 'Pembatalan Pasang Baru (ODP Full)', 'Double Payment Payment Gateway'].map(r => {
+                  const count = refunds.filter(c => c.reason.includes(r.split(' ')[0])).length;
                   return (
-                    <div key={index} className="space-y-1">
-                      <div className="flex items-center justify-between text-xs font-semibold">
-                        <span className="text-[var(--app-text)]/80">{item.name}</span>
-                        <span className="text-[var(--app-muted)]">{formatCurrency(item.amount)} ({item.percentage}%)</span>
-                      </div>
-                      <div className="w-full bg-[var(--app-bg)] h-1.5 rounded-full overflow-hidden">
-                        <div 
-                          className={`${item.color} h-full rounded-full transition-all duration-500`} 
-                          style={{ width: `${item.percentage}%` }}
-                        ></div>
-                      </div>
+                    <div key={r} className="flex justify-between items-center py-1 border-b border-[var(--app-border)]/40 last:border-0 text-[11px]">
+                      <span className="text-[var(--app-muted)] truncate max-w-[160px]">{r}</span>
+                      <span className="font-bold text-[var(--app-text)]">{count} kasus</span>
                     </div>
                   );
                 })}
               </div>
             </div>
 
-            {/* Card 4: Alasan Refund Terbanyak */}
-            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Alasan Refund Terbanyak</h3>
-              
-              <div className="space-y-3.5">
-                {[
-                  { name: '1. Kelebihan Bayar', count: 9, percentage: 32.1 },
-                  { name: '2. Pembatalan Layanan', count: 8, percentage: 28.6 },
-                  { name: '3. Gangguan Layanan', count: 6, percentage: 21.4 },
-                  { name: '4. Double Payment', count: 4, percentage: 14.3 },
-                  { name: '5. Penyesuaian Tagihan', count: 1, percentage: 3.6 }
-                ].map((item, idx) => (
-                  <div key={idx} className="flex justify-between items-center text-xs font-semibold">
-                    <span className="text-[var(--app-text)]/80">{item.name}</span>
-                    <span className="text-white">{item.count} ({item.percentage}%)</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Tips Card */}
-            <div className="bg-white/40 border border-[var(--app-border)] p-4.5 rounded-2xl flex items-start gap-3">
-              <div className="p-2 bg-yellow-500/10 text-yellow-500 rounded-lg">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] p-4 rounded-2xl flex items-start gap-3 shadow-2xs">
+              <div className="p-2 bg-yellow-500/10 text-yellow-500 rounded-lg shrink-0">
                 <Lightbulb size={16} />
               </div>
               <div className="space-y-1">
-                <h5 className="text-[11px] font-bold text-[var(--app-text)]">Tips</h5>
-                <p className="text-[10px] text-[var(--app-muted)] font-medium leading-relaxed">
-                  Pastikan alasan refund sudah sesuai kebijakan perusahaan sebelum memproses refund.
+                <h5 className="text-[11px] font-bold text-[var(--app-text)]">SLA Pencairan Refund</h5>
+                <p className="text-[10px] text-[var(--app-muted)] leading-relaxed">
+                  Pengembalian dana diproses maksimal 1x24 jam kerja ke nomor rekening bank terdaftar pelanggan.
                 </p>
               </div>
             </div>
@@ -760,6 +574,217 @@ export default function RefundPage() {
           </div>
 
         </div>
+
+        {/* ─── MODAL: Buat Refund ─────────────────────────────────────────── */}
+        {isCreateOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+              <div className="flex justify-between items-center border-b border-[var(--app-border)] pb-3">
+                <h3 className="text-sm font-bold text-[var(--app-text)] flex items-center gap-2">
+                  <Plus size={16} className="text-blue-500" />
+                  Buat Pengajuan Refund Baru
+                </h3>
+                <button onClick={() => setIsCreateOpen(false)} className="text-[var(--app-muted)] hover:text-[var(--app-text)]">
+                  <X size={16} />
+                </button>
+              </div>
+
+              <form onSubmit={handleCreateSubmit} className="space-y-3.5 text-xs">
+                <div className="space-y-1">
+                  <label className="font-semibold text-[var(--app-text)]">Nama Pelanggan *</label>
+                  <input 
+                    type="text"
+                    required
+                    placeholder="Contoh: Budi Santoso"
+                    value={formData.customerName}
+                    onChange={e => setFormData({ ...formData, customerName: e.target.value })}
+                    className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl p-2.5 text-[var(--app-text)] focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="font-semibold text-[var(--app-text)]">Nomor Invoice Rujukan</label>
+                  <input 
+                    type="text"
+                    placeholder="INV/2026/10/0045"
+                    value={formData.invoiceNumber}
+                    onChange={e => setFormData({ ...formData, invoiceNumber: e.target.value })}
+                    className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl p-2.5 text-[var(--app-text)] font-mono"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="font-semibold text-[var(--app-text)]">Alasan Pengembalian Dana</label>
+                  <select 
+                    value={formData.reason}
+                    onChange={e => setFormData({ ...formData, reason: e.target.value })}
+                    className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl p-2.5 text-[var(--app-text)] focus:outline-none"
+                  >
+                    <option value="Kelebihan Bayar Transfer">Kelebihan Bayar Transfer</option>
+                    <option value="Downtime Jaringan Lebih Dari 24 Jam">Downtime Jaringan &gt; 24 Jam</option>
+                    <option value="Pembatalan Pasang Baru (ODP Full)">Pembatalan Pasang Baru (ODP Full)</option>
+                    <option value="Double Payment Payment Gateway">Double Payment Payment Gateway</option>
+                    <option value="Deposit Terminasi Kontrak">Deposit Terminasi Kontrak</option>
+                  </select>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <label className="font-semibold text-[var(--app-text)]">Nominal (Rp) *</label>
+                    <input 
+                      type="number"
+                      required
+                      min={1000}
+                      value={formData.nominal}
+                      onChange={e => setFormData({ ...formData, nominal: Number(e.target.value) })}
+                      className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl p-2.5 text-[var(--app-text)] font-mono font-bold"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="font-semibold text-[var(--app-text)]">Metode Transfer</label>
+                    <select 
+                      value={formData.method}
+                      onChange={e => setFormData({ ...formData, method: e.target.value })}
+                      className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl p-2.5 text-[var(--app-text)]"
+                    >
+                      <option value="Transfer Bank BCA">Transfer Bank BCA</option>
+                      <option value="Transfer Bank Mandiri">Transfer Bank Mandiri</option>
+                      <option value="Transfer Bank BRI">Transfer Bank BRI</option>
+                      <option value="Transfer Bank BNI">Transfer Bank BNI</option>
+                      <option value="E-Wallet DANA">E-Wallet DANA</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-2 pt-3 border-t border-[var(--app-border)]">
+                  <button 
+                    type="button" 
+                    onClick={() => setIsCreateOpen(false)}
+                    className="px-4 py-2 border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 rounded-xl font-semibold"
+                  >
+                    Batal
+                  </button>
+                  <button 
+                    type="submit"
+                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-md"
+                  >
+                    Kirim Pengajuan
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* ─── MODAL: Detail Refund ──────────────────────────────────────── */}
+        {detailModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+              <div className="flex justify-between items-center border-b border-[var(--app-border)] pb-3">
+                <h3 className="text-sm font-bold text-[var(--app-text)]">Detail Pengajuan Refund</h3>
+                <button onClick={() => setDetailModal(null)} className="text-[var(--app-muted)] hover:text-[var(--app-text)]">
+                  <X size={16} />
+                </button>
+              </div>
+
+              <div className="space-y-3 text-xs">
+                <div className="flex justify-between py-1 border-b border-[var(--app-border)]/40">
+                  <span className="text-[var(--app-muted)]">Nomor Refund</span>
+                  <span className="font-mono font-bold text-blue-500">{detailModal.rfNumber}</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-[var(--app-border)]/40">
+                  <span className="text-[var(--app-muted)]">Invoice Rujukan</span>
+                  <span className="font-mono">{detailModal.invoiceNumber}</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-[var(--app-border)]/40">
+                  <span className="text-[var(--app-muted)]">Nama Pelanggan</span>
+                  <span className="font-bold text-[var(--app-text)]">{detailModal.customerName}</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-[var(--app-border)]/40">
+                  <span className="text-[var(--app-muted)]">Alasan Pengembalian</span>
+                  <span className="font-semibold text-right max-w-[200px]">{detailModal.reason}</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-[var(--app-border)]/40">
+                  <span className="text-[var(--app-muted)]">Nominal Refund</span>
+                  <span className="font-bold font-mono text-green-500">{formatCurrency(detailModal.nominal)}</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-[var(--app-border)]/40">
+                  <span className="text-[var(--app-muted)]">Metode Transfer</span>
+                  <span className="font-medium">{detailModal.method}</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-[var(--app-border)]/40">
+                  <span className="text-[var(--app-muted)]">Status</span>
+                  <span className="font-semibold">{detailModal.status}</span>
+                </div>
+                <div className="flex justify-between py-1">
+                  <span className="text-[var(--app-muted)]">Diverifikasi Oleh</span>
+                  <span>{detailModal.createdBy}</span>
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-3 border-t border-[var(--app-border)]">
+                <button 
+                  onClick={() => window.print()}
+                  className="px-3.5 py-2 border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 rounded-xl font-semibold flex items-center gap-1.5 text-xs"
+                >
+                  <FileText size={13} />
+                  <span>Cetak PDF</span>
+                </button>
+                <button 
+                  onClick={() => setDetailModal(null)}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-xs"
+                >
+                  Tutup
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ─── MODAL: Edit Refund ────────────────────────────────────────── */}
+        {editModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+              <div className="flex justify-between items-center border-b border-[var(--app-border)] pb-3">
+                <h3 className="text-sm font-bold text-[var(--app-text)]">Update Status Refund ({editModal.rfNumber})</h3>
+                <button onClick={() => setEditModal(null)} className="text-[var(--app-muted)] hover:text-[var(--app-text)]">
+                  <X size={16} />
+                </button>
+              </div>
+
+              <form onSubmit={handleEditSubmit} className="space-y-3 text-xs">
+                <div className="space-y-1">
+                  <label className="font-semibold text-[var(--app-text)]">Status Refund</label>
+                  <select 
+                    value={editModal.status}
+                    onChange={e => setEditModal({ ...editModal, status: e.target.value as any })}
+                    className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl p-2.5 text-[var(--app-text)] focus:outline-none"
+                  >
+                    <option value="Diproses">Diproses</option>
+                    <option value="Selesai">Selesai (Sudah Ditransfer)</option>
+                    <option value="Ditolak">Ditolak</option>
+                  </select>
+                </div>
+
+                <div className="flex justify-end gap-2 pt-3 border-t border-[var(--app-border)]">
+                  <button 
+                    type="button"
+                    onClick={() => setEditModal(null)}
+                    className="px-4 py-2 border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 rounded-xl font-semibold"
+                  >
+                    Batal
+                  </button>
+                  <button 
+                    type="submit"
+                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold"
+                  >
+                    Simpan Perubahan
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
 
       </div>
     </Layout>

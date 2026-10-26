@@ -95,7 +95,7 @@ export default function CustomerLogin() {
 
           <div className="flex items-center justify-between">
             <div className="text-sm">
-              <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
+              <a href="https://wa.me/6282112001600?text=Halo%20Admin%20AUDIRA,%20saya%20lupa%20password%20akun%20pelanggan" target="_blank" rel="noopener noreferrer" className="font-medium text-blue-600 hover:text-blue-500">
                 Lupa password?
               </a>
             </div>

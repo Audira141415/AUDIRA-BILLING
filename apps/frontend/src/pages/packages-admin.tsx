@@ -377,15 +377,15 @@ export default function PackageManagementPage() {
 
             {/* Notification and Profile icons */}
             <div className="flex items-center gap-3">
-              <button className="relative p-2 bg-white border border-slate-200 rounded-xl hover:bg-slate-100 transition-colors">
+              <button onClick={() => alert("Tidak ada notifikasi baru paket.")} className="relative p-2 bg-white border border-slate-200 rounded-xl hover:bg-slate-100 transition-colors">
                 <Bell size={16} className="text-slate-500" />
                 <span className="absolute -top-1 -right-1 bg-red-500 text-[9px] font-bold text-slate-800 px-1.5 py-0.5 rounded-full scale-75">12</span>
               </button>
-              <button className="relative p-2 bg-white border border-slate-200 rounded-xl hover:bg-slate-100 transition-colors">
+              <button onClick={() => alert("Membuka pesan tiket dan permintaan paket...")} className="relative p-2 bg-white border border-slate-200 rounded-xl hover:bg-slate-100 transition-colors">
                 <Mail size={16} className="text-slate-500" />
                 <span className="absolute -top-1 -right-1 bg-red-500 text-[9px] font-bold text-slate-800 px-1.5 py-0.5 rounded-full scale-75">8</span>
               </button>
-              <button className="p-2 bg-white border border-slate-200 rounded-xl hover:bg-slate-100 transition-colors max-sm:hidden">
+              <button onClick={() => { if (!document.fullscreenElement) { document.documentElement.requestFullscreen?.(); } else { document.exitFullscreen?.(); } }} className="p-2 bg-white border border-slate-200 rounded-xl hover:bg-slate-100 transition-colors max-sm:hidden">
                 <Maximize2 size={16} className="text-slate-500" />
               </button>
               
@@ -678,7 +678,7 @@ export default function PackageManagementPage() {
                             <td className="p-4 font-semibold text-white">{pkg.customerCount || 0}</td>
                             <td className="p-4">
                               <div className="flex items-center justify-center gap-2">
-                                <button className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-slate-900 transition-colors">
+                                <button onClick={() => { setSelectedPackage(pkg); setFormData({ name: pkg.name, price: pkg.price, speed: pkg.speed, description: pkg.description || '', status: pkg.status }); setShowEditModal(true); }} className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-slate-900 transition-colors">
                                   <Eye size={14} />
                                 </button>
                                 <button 

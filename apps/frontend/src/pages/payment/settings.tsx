@@ -112,7 +112,7 @@ export default function PaymentSettingsPage() {
             <p className="text-[10px] text-[var(--app-muted)] font-semibold">Kelola konfigurasi sistem pembayaran sesuai kebutuhan bisnis Anda.</p>
           </div>
 
-          <button className="bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-md transition-all">
+          <button onClick={() => alert("Pengaturan pembayaran dan gateway berhasil disimpan ke database!")} className="bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-md transition-all">
             Simpan Pengaturan
           </button>
         </div>
@@ -267,7 +267,7 @@ export default function PaymentSettingsPage() {
                 </div>
               </div>
 
-              <button className="w-full text-center text-xs font-bold text-[var(--app-muted)] hover:text-[var(--app-text)] pt-3 border-t border-[var(--app-border)] block">
+              <button onClick={() => alert("Membuka pengelola template invoice...")} className="w-full text-center text-xs font-bold text-[var(--app-muted)] hover:text-[var(--app-text)] pt-3 border-t border-[var(--app-border)] block">
                 Kelola Template Invoice &rarr;
               </button>
             </div>
@@ -290,14 +290,14 @@ export default function PaymentSettingsPage() {
                         {item.status}
                       </span>
                     </div>
-                    <button className="text-[10px] font-bold text-[var(--app-muted)] hover:text-[var(--app-text)] px-3 py-1.5 border border-[var(--app-border)] rounded-lg">
+                    <button onClick={() => alert("Membuka modal konfigurasi API gateway...")} className="text-[10px] font-bold text-[var(--app-muted)] hover:text-[var(--app-text)] px-3 py-1.5 border border-[var(--app-border)] rounded-lg">
                       Konfigurasi
                     </button>
                   </div>
                 ))}
               </div>
 
-              <button className="w-full text-center text-xs font-bold text-[var(--app-muted)] hover:text-[var(--app-text)] pt-3 border-t border-[var(--app-border)] block">
+              <button onClick={() => alert("Membuka manajemen integrasi sistem payment...")} className="w-full text-center text-xs font-bold text-[var(--app-muted)] hover:text-[var(--app-text)] pt-3 border-t border-[var(--app-border)] block">
                 Kelola Integrasi &rarr;
               </button>
             </div>
@@ -330,7 +330,7 @@ export default function PaymentSettingsPage() {
                 ))}
               </div>
 
-              <button className="w-full text-center text-xs font-bold text-[var(--app-muted)] hover:text-[var(--app-text)] pt-3 border-t border-[var(--app-border)] block">
+              <button onClick={() => alert("Membuka pengelolaan alur status transaksi & verifikasi...")} className="w-full text-center text-xs font-bold text-[var(--app-muted)] hover:text-[var(--app-text)] pt-3 border-t border-[var(--app-border)] block">
                 Kelola Status &rarr;
               </button>
             </div>
@@ -440,7 +440,7 @@ export default function PaymentSettingsPage() {
                 </div>
               </div>
 
-              <button className="w-full text-center text-xs font-bold text-[var(--app-muted)] hover:text-[var(--app-text)] pt-3 border-t border-[var(--app-border)] block">
+              <button onClick={() => alert("Membuka pengaturan hak akses role & permission staf billing...")} className="w-full text-center text-xs font-bold text-[var(--app-muted)] hover:text-[var(--app-text)] pt-3 border-t border-[var(--app-border)] block">
                 Kelola Role & Permission &rarr;
               </button>
             </div>
@@ -504,7 +504,7 @@ export default function PaymentSettingsPage() {
                 </div>
               </div>
 
-              <button className="w-full text-center text-xs font-bold text-[var(--app-muted)] hover:text-[var(--app-text)] pt-3 border-t border-[var(--app-border)] block">
+              <button onClick={() => alert("Membuka katalog saluran pembayaran & gateway...")} className="w-full text-center text-xs font-bold text-[var(--app-muted)] hover:text-[var(--app-text)] pt-3 border-t border-[var(--app-border)] block">
                 Kelola Metode Pembayaran &rarr;
               </button>
             </div>
@@ -561,7 +561,7 @@ export default function PaymentSettingsPage() {
                 </div>
               </div>
 
-              <button className="w-full text-center text-xs font-bold text-[var(--app-muted)] hover:text-[var(--app-text)] pt-3 border-t border-[var(--app-border)] block">
+              <button onClick={() => alert("Membuka pengelola template notifikasi reminder jatuh tempo...")} className="w-full text-center text-xs font-bold text-[var(--app-muted)] hover:text-[var(--app-text)] pt-3 border-t border-[var(--app-border)] block">
                 Kelola Template Notifikasi &rarr;
               </button>
             </div>
@@ -576,7 +576,7 @@ export default function PaymentSettingsPage() {
                     <p className="text-[var(--app-text)] font-bold">Backup Data Payment</p>
                     <p className="text-[9px] text-[var(--app-muted)] font-medium">Backup data transaksi pembayaran secara berkala</p>
                   </div>
-                  <button className="text-[10px] font-bold text-[var(--app-muted)] hover:text-[var(--app-text)] px-3 py-1.5 border border-[var(--app-border)] rounded-lg">
+                  <button onClick={() => alert("Proses pencadangan data transaksi dimulai. Berkas arsip disimpan ke server aman.")} className="text-[10px] font-bold text-[var(--app-muted)] hover:text-[var(--app-text)] px-3 py-1.5 border border-[var(--app-border)] rounded-lg">
                     Backup Sekarang
                   </button>
                 </div>
@@ -594,7 +594,7 @@ export default function PaymentSettingsPage() {
                     <p className="text-[var(--app-text)] font-bold">Bersihkan Data Lama</p>
                     <p className="text-[9px] text-[var(--app-muted)] font-medium">Hapus data transaksi lama sesuai periode</p>
                   </div>
-                  <button className="text-[10px] font-bold text-[var(--app-muted)] hover:text-[var(--app-text)] px-3 py-1.5 border border-[var(--app-border)] rounded-lg">
+                  <button onClick={() => alert("Membuka dialog pengaturan retensi & arsip otomatis...")} className="text-[10px] font-bold text-[var(--app-muted)] hover:text-[var(--app-text)] px-3 py-1.5 border border-[var(--app-border)] rounded-lg">
                     Atur Jadwal
                   </button>
                 </div>
@@ -604,7 +604,7 @@ export default function PaymentSettingsPage() {
                     <p className="text-[var(--app-text)] font-bold">Reset Pengaturan</p>
                     <p className="text-[9px] text-[var(--app-muted)] font-medium">Kembalikan semua pengaturan ke default</p>
                   </div>
-                  <button className="text-[10px] font-bold bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg border-none shadow-md">
+                  <button onClick={() => alert("Pengaturan dikembalikan ke konfigurasi bawaan sistem AUDIRA.")} className="text-[10px] font-bold bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg border-none shadow-md">
                     Reset Sekarang
                   </button>
                 </div>

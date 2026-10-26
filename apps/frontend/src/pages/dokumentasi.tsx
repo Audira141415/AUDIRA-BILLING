@@ -612,11 +612,11 @@ tail -f apps/backend/logs/error.log
               <Terminal className="h-4 w-4" />
               API Test Dashboard
             </a>
-            <a href="https://github.com/yourusername/audiranet" target="_blank" className="flex items-center gap-2 text-[var(--app-muted)] hover:text-[var(--app-text)]">
+            <a href="https://github.com/Audira141415/PJTAUDIRANETANDBILLING" target="_blank" className="flex items-center gap-2 text-[var(--app-muted)] hover:text-[var(--app-text)]">
               <ExternalLink className="h-4 w-4" />
               GitHub Repository
             </a>
-            <a href="#" className="flex items-center gap-2 text-[var(--app-muted)] hover:text-[var(--app-text)]">
+            <a href="https://audira.my.id" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-[var(--app-muted)] hover:text-[var(--app-text)]">
               <FileText className="h-4 w-4" />
               Changelog
             </a>
@@ -627,13 +627,13 @@ tail -f apps/backend/logs/error.log
             <div className="space-y-3 text-sm">
               <div className="bg-[var(--app-card)] p-3 rounded-lg border border-[var(--app-border)]">
                 <p className="text-[var(--app-muted)] mb-2">Join our community</p>
-                <a href="#" className="text-blue-600 hover:text-blue-700 font-medium">
+                <a href="https://wa.me/6282112001600" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 font-medium">
                   Discord Server →
                 </a>
               </div>
               <div className="bg-[var(--app-card)] p-3 rounded-lg border border-[var(--app-border)]">
                 <p className="text-[var(--app-muted)] mb-2">Report an issue</p>
-                <a href="#" className="text-blue-600 hover:text-blue-700 font-medium">
+                <a href="https://github.com/Audira141415/PJTAUDIRANETANDBILLING/issues" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 font-medium">
                   GitHub Issues →
                 </a>
               </div>

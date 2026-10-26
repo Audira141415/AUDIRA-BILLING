@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import Layout from '../components/Layout';
 import {
   Building2,
@@ -34,6 +35,7 @@ interface Tenant {
 }
 
 export default function FranchiseManagement() {
+  const router = useRouter();
   const [tenants, setTenants] = useState<Tenant[]>([]);
   const [selectedTenant, setSelectedTenant] = useState<Tenant | null>(null);
   const [stats, setStats] = useState<any>(null);
@@ -195,10 +197,10 @@ export default function FranchiseManagement() {
                   <div className="flex items-center justify-between mb-4">
                     <h2 className="font-semibold text-[var(--app-text)]">Detail Franchise</h2>
                     <div className="flex gap-2">
-                      <button className="p-2 text-[var(--app-muted)] hover:text-[var(--app-text)]">
+                      <button onClick={() => alert("Mengubah data mitra franchise...")} className="p-2 text-[var(--app-muted)] hover:text-[var(--app-text)]">
                         <Edit className="w-5 h-5" />
                       </button>
-                      <button className="p-2 text-[var(--app-muted)] hover:text-[var(--app-text)]">
+                      <button onClick={() => alert("Pengaturan konfigurasi franchise...")} className="p-2 text-[var(--app-muted)] hover:text-[var(--app-text)]">
                         <Settings className="w-5 h-5" />
                       </button>
                     </div>
@@ -283,19 +285,19 @@ export default function FranchiseManagement() {
                 <div className="bg-[var(--app-card)] rounded-lg shadow p-6">
                   <h3 className="font-semibold text-[var(--app-text)] mb-3">Quick Actions</h3>
                   <div className="space-y-2">
-                    <button className="w-full bg-blue-50 text-blue-700 px-4 py-2 rounded-lg text-left hover:bg-blue-100">
+                    <button onClick={() => router.push('/pelanggan')} className="w-full bg-blue-50 text-blue-700 px-4 py-2 rounded-lg text-left hover:bg-blue-100">
                       <Eye className="w-4 h-4 inline mr-2" />
                       Lihat Pelanggan
                     </button>
-                    <button className="w-full bg-green-50 text-green-700 px-4 py-2 rounded-lg text-left hover:bg-green-100">
+                    <button onClick={() => router.push('/finance/pendapatan')} className="w-full bg-green-50 text-green-700 px-4 py-2 rounded-lg text-left hover:bg-green-100">
                       <DollarSign className="w-4 h-4 inline mr-2" />
                       Lihat Komisi
                     </button>
-                    <button className="w-full bg-purple-50 text-purple-700 px-4 py-2 rounded-lg text-left hover:bg-purple-100">
+                    <button onClick={() => router.push('/settings')} className="w-full bg-purple-50 text-purple-700 px-4 py-2 rounded-lg text-left hover:bg-purple-100">
                       <Users className="w-4 h-4 inline mr-2" />
                       Kelola User
                     </button>
-                    <button className="w-full bg-orange-50 text-orange-700 px-4 py-2 rounded-lg text-left hover:bg-orange-100">
+                    <button onClick={() => router.push('/settings')} className="w-full bg-orange-50 text-orange-700 px-4 py-2 rounded-lg text-left hover:bg-orange-100">
                       <Settings className="w-4 h-4 inline mr-2" />
                       White-Label Settings
                     </button>
@@ -428,7 +430,7 @@ export default function FranchiseManagement() {
                   >
                     Batal
                   </button>
-                  <button className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+                  <button onClick={() => { alert('Mitra franchise baru berhasil disimpan!'); setShowAddModal(false); }} className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
                     Simpan
                   </button>
                 </div>

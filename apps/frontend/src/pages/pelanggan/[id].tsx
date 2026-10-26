@@ -485,7 +485,7 @@ export default function CustomerDetailPage() {
             <div className="flex flex-col items-center bg-slate-100 p-3 rounded-2xl border border-slate-200 text-center w-36">
               <span className="text-[10px] text-slate-400 font-bold mb-1.5">Customer QR Code</span>
               <QrCode size={64} className="text-white" />
-              <button className="text-[10px] text-blue-400 font-bold hover:underline mt-2 flex items-center gap-1">
+              <button onClick={() => alert("Mengunduh QR Code Pelanggan AUDIRA...")} className="text-[10px] text-blue-400 font-bold hover:underline mt-2 flex items-center gap-1">
                 <Download size={10} /> Download
               </button>
             </div>

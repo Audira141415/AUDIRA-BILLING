@@ -166,7 +166,7 @@ export default function Layanan() {
             <h1 className="text-3xl font-bold text-gray-900">Manajemen Layanan</h1>
             <p className="text-gray-600 mt-1">Kelola aktivasi dan status layanan pelanggan</p>
           </div>
-              <button className="flex items-center space-x-2 bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+              <button onClick={() => alert("Membuka formulir Tambah Layanan Pelanggan Baru...")} className="flex items-center space-x-2 bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
             <Plus size={20} />
             <span>Tambah Layanan</span>
           </button>
@@ -340,18 +340,18 @@ export default function Layanan() {
                     <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
                       <div className="flex items-center justify-end space-x-2">
                         {service.status === 'active' ? (
-                          <button className="p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors" title="Suspend">
+                          <button onClick={() => alert(`Layanan ${service.serviceName} disuspend.`)} className="p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors" title="Suspend">
                             <PauseCircle size={18} />
                           </button>
                         ) : (
-                          <button className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors" title="Activate">
+                          <button onClick={() => alert(`Layanan ${service.serviceName} diaktifkan kembali.`)} className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors" title="Activate">
                             <PlayCircle size={18} />
                           </button>
                         )}
-                        <button className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
+                        <button onClick={() => { setSelectedService(service); setShowServiceModal(true); }} className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
                           <Edit size={18} />
                         </button>
-                        <button className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                        <button onClick={() => alert(`Hapus layanan ${service.serviceName}?`)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
                           <Trash2 size={18} />
                         </button>
                       </div>
@@ -476,12 +476,12 @@ export default function Layanan() {
                   Tutup
                 </button>
                 {selectedService.status === 'active' ? (
-                  <button className="px-6 py-2.5 bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl">
+                  <button onClick={() => { alert(`Layanan ${selectedService.serviceName} disuspend.`); setShowServiceModal(false); }} className="px-6 py-2.5 bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl">
                     <PauseCircle className="inline mr-2" size={18} />
                     Suspend Layanan
                   </button>
                 ) : (
-                  <button className="px-6 py-2.5 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl">
+                  <button onClick={() => { alert(`Layanan ${selectedService.serviceName} diaktifkan.`); setShowServiceModal(false); }} className="px-6 py-2.5 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl">
                     <PlayCircle className="inline mr-2" size={18} />
                     Aktivasi Layanan
                   </button>

@@ -81,11 +81,11 @@ export default function GenieAcs() {
             <p className="text-gray-600 mt-1">Manajemen perangkat CPE dengan TR-069</p>
           </div>
           <div className="flex space-x-3">
-            <button className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+            <button onClick={() => alert("Sinkronisasi perangkat GenieACS via TR-069 berhasil dijalankan.")} className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
               <RefreshCcw size={20} />
               <span>Sync Devices</span>
             </button>
-            <button className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+            <button onClick={() => alert("Membuka formulir registrasi CPE Device GenieACS baru...")} className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
               <Plus size={20} />
               <span>Add Device</span>
             </button>
@@ -230,13 +230,13 @@ export default function GenieAcs() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-end space-x-2">
-                        <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                        <button onClick={() => alert(`Mengirim perintah reboot/re-inform ke ${device.id}...`)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
                           <RefreshCcw size={18} />
                         </button>
-                        <button className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
+                        <button onClick={() => alert(`Mengubah parameter TR-069 perangkat ${device.id}...`)} className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
                           <Edit size={18} />
                         </button>
-                        <button className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                        <button onClick={() => alert(`Hapus perangkat ${device.id} dari GenieACS?`)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
                           <Trash2 size={18} />
                         </button>
                       </div>

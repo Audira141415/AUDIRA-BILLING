@@ -304,7 +304,7 @@ export default function Rekonsiliasi() {
               <Plus className="w-4 h-4" />
               <span>Rekonsiliasi Baru</span>
             </button>
-            <button className="flex items-center gap-1.5 bg-[var(--app-card)] hover:bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-[var(--app-text)] text-xs font-medium px-4.5 py-2.5 rounded-lg transition-colors cursor-pointer shadow-xs">
+            <button onClick={() => alert("Membuka dialog Import Mutasi Bank...")} className="flex items-center gap-1.5 bg-[var(--app-card)] hover:bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-[var(--app-text)] text-xs font-medium px-4.5 py-2.5 rounded-lg transition-colors cursor-pointer shadow-xs">
               <RefreshCw className="w-3.5 h-3.5" />
               <span>Import Mutasi</span>
             </button>
@@ -315,7 +315,7 @@ export default function Rekonsiliasi() {
               <Download className="w-3.5 h-3.5" />
               <span>Ekspor</span>
             </button>
-            <button className="flex items-center gap-1.5 bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200 text-xs font-medium px-4 py-2.5 rounded-lg transition-colors cursor-pointer">
+            <button onClick={() => alert("Panduan Rekonsiliasi: Cocokkan transaksi mutasi bank rekening dengan invoice pelanggan AUDIRA.")} className="flex items-center gap-1.5 bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200 text-xs font-medium px-4 py-2.5 rounded-lg transition-colors cursor-pointer">
               <HelpCircle className="w-3.5 h-3.5" />
               <span>Bantuan</span>
             </button>

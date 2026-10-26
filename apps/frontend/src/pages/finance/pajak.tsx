@@ -257,7 +257,7 @@ export default function PajakDashboard() {
               <Plus className="w-4 h-4" />
               <span>Pajak Baru</span>
             </button>
-            <button className="flex items-center gap-1.5 bg-[var(--app-card)] hover:bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-[var(--app-text)] text-xs font-medium px-4 py-2.5 rounded-lg transition-colors cursor-pointer shadow-xs">
+            <button onClick={() => alert("Membuka dialog Import Faktur & Pajak...")} className="flex items-center gap-1.5 bg-[var(--app-card)] hover:bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-[var(--app-text)] text-xs font-medium px-4 py-2.5 rounded-lg transition-colors cursor-pointer shadow-xs">
               <Upload className="w-3.5 h-3.5 text-[var(--app-text-muted)]" />
               <span>Import Data Pajak</span>
             </button>
@@ -599,6 +599,7 @@ export default function PajakDashboard() {
                                   <Eye className="w-3.5 h-3.5" />
                                 </button>
                                 <button 
+                                  onClick={() => { setSelectedTaxDetails(item); setShowAddModal(true); }}
                                   className="p-1.5 text-[var(--app-text-muted)] hover:text-amber-600 dark:hover:text-amber-400 hover:bg-[var(--app-card-subtle)] rounded-md transition-colors cursor-pointer"
                                   title="Edit"
                                 >
@@ -693,7 +694,7 @@ export default function PajakDashboard() {
             <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-5 shadow-xs">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider">Pajak Jatuh Tempo</h2>
-                <button className="text-[10px] text-blue-600 dark:text-blue-400 font-semibold hover:underline cursor-pointer">Lihat Semua</button>
+                <button onClick={() => alert("Menampilkan semua jadwal pajak jatuh tempo.")} className="text-[10px] text-blue-600 dark:text-blue-400 font-semibold hover:underline cursor-pointer">Lihat Semua</button>
               </div>
 
               <div className="space-y-3">
@@ -759,7 +760,7 @@ export default function PajakDashboard() {
                   </div>
                 ))}
               </div>
-              <button className="w-full text-center text-blue-600 dark:text-blue-400 font-semibold text-[10px] mt-4 hover:underline block cursor-pointer">
+              <button onClick={() => alert("Menampilkan seluruh arsip pelaporan SPT Masa/Tahunan...")} className="w-full text-center text-blue-600 dark:text-blue-400 font-semibold text-[10px] mt-4 hover:underline block cursor-pointer">
                 Lihat Semua SPT &gt;
               </button>
             </div>
@@ -805,7 +806,7 @@ export default function PajakDashboard() {
                   </div>
                 ))}
               </div>
-              <button className="w-full text-center text-blue-600 dark:text-blue-400 font-semibold text-[10px] mt-4 hover:underline block cursor-pointer">
+              <button onClick={() => alert("Membuka panduan kepatuhan regulasi perpustakaan pajak.")} className="w-full text-center text-blue-600 dark:text-blue-400 font-semibold text-[10px] mt-4 hover:underline block cursor-pointer">
                 Lihat Catatan Lengkap &gt;
               </button>
             </div>

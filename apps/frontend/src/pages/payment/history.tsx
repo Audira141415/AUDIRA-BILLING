@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import React, { useState } from 'react';
+import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
 import {
   Search,
@@ -64,6 +65,7 @@ const mockHistoryData: PaymentHistoryRow[] = [
 ];
 
 export default function PaymentHistoryPage() {
+  const router = useRouter();
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
@@ -208,7 +210,7 @@ export default function PaymentHistoryPage() {
               />
             </div>
 
-            <button className="flex items-center gap-2 bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-md transition-all">
+            <button onClick={() => alert("Penyaringan data diterapkan berdasarkan parameter yang dipilih.")} className="flex items-center gap-2 bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-md transition-all">
               <Filter size={14} />
               <span>Filter</span>
             </button>
@@ -225,7 +227,7 @@ export default function PaymentHistoryPage() {
             <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs overflow-hidden">
               <div className="flex justify-between items-center p-4 border-b border-[var(--app-border)] bg-white/40">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Daftar Riwayat Payment</h3>
-                <button className="flex items-center gap-2 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-white text-[10px] font-bold px-3.5 py-1.5 rounded-xl transition-all border-gray-800">
+                <button onClick={() => alert("Mengekspor seluruh riwayat pembayaran ke CSV...")} className="flex items-center gap-2 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-white text-[10px] font-bold px-3.5 py-1.5 rounded-xl transition-all border-gray-800">
                   <Download size={12} className="text-[var(--app-muted)]" />
                   <span>Export</span>
                 </button>
@@ -289,12 +291,8 @@ export default function PaymentHistoryPage() {
                         <td className="p-4 text-[var(--app-muted)] font-medium">{d.note}</td>
                         <td className="p-4">
                           <div className="flex items-center justify-center gap-1.5">
-                            <button className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors">
-                              <Eye size={13} />
-                            </button>
-                            <button className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors">
-                              <MoreVertical size={13} />
-                            </button>
+                            <button onClick={() => alert("Membuka rincian bukti bayar...")} className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors"><Eye size={13} /></button>
+                            <button onClick={() => alert("Opsi tindakan: Kirim Kuitansi WhatsApp, Void Pembayaran.")} className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors"><MoreVertical size={13} /></button>
                           </div>
                         </td>
                       </tr>
@@ -311,18 +309,15 @@ export default function PaymentHistoryPage() {
                 
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
-                    <button 
-                      disabled
-                      className="p-2 border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 rounded-xl text-[var(--app-muted)] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                    >
+                    <button onClick={() => alert("Halaman pertama sudah tercapai.")} className="p-2 border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 rounded-xl text-[var(--app-muted)] transition-colors">
                       <ChevronLeft size={14} />
                     </button>
-                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border bg-[#0052cc] text-white border-[#0052cc]">1</button>
-                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/30">2</button>
-                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/30">3</button>
+                    <button onClick={() => alert("Halaman 1 saat ini aktif.")} className="w-8 h-8 rounded-xl text-xs font-semibold border bg-[#0052cc] text-white border-[#0052cc]">1</button>
+                    <button onClick={() => alert("Beralih ke halaman 2")} className="w-8 h-8 rounded-xl text-xs font-semibold border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/30">2</button>
+                    <button onClick={() => alert("Beralih ke halaman 3")} className="w-8 h-8 rounded-xl text-xs font-semibold border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/30">3</button>
                     <span className="text-gray-600 text-xs px-1">...</span>
-                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/30">190</button>
-                    <button className="p-2 border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 rounded-xl text-[var(--app-muted)] transition-colors">
+                    <button onClick={() => alert("Beralih ke halaman 190")} className="w-8 h-8 rounded-xl text-xs font-semibold border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/30">190</button>
+                    <button onClick={() => alert("Beralih ke halaman selanjutnya.")} className="p-2 border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 rounded-xl text-[var(--app-muted)] transition-colors">
                       <ChevronRight size={14} />
                     </button>
                   </div>
@@ -413,6 +408,12 @@ export default function PaymentHistoryPage() {
                     return (
                       <button 
                         key={idx} 
+                        onClick={() => {
+                          if (item.name === 'Verifikasi Pembayaran') router.push('/payment/confirmation');
+                          else if (item.name === 'Proses Refund') router.push('/finance/pengeluaran');
+                          else if (item.name === 'Proses Void') router.push('/invoice/history');
+                          else if (item.name === 'Export Laporan') router.push('/invoice/export');
+                        }}
                         className={`flex flex-col items-center justify-center p-4 rounded-xl border text-center transition-all duration-200 transform hover:scale-[1.02] ${item.color}`}
                       >
                         <Icon size={16} className="mb-2" />
@@ -607,7 +608,7 @@ export default function PaymentHistoryPage() {
                 ))}
               </div>
 
-              <button className="w-full text-center text-xs font-bold text-blue-500 hover:underline pt-2 border-t border-[var(--app-border)] block">
+              <button onClick={() => alert("Membuka seluruh riwayat log aktivitas pembayaran...")} className="w-full text-center text-xs font-bold text-blue-500 hover:underline pt-2 border-t border-[var(--app-border)] block">
                 Lihat Semua Aktivitas &rarr;
               </button>
             </div>

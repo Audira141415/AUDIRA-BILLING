@@ -176,7 +176,7 @@ export default function Paket() {
         <div className="max-w-7xl mx-auto mb-12">
           <div className="text-white mb-6">
             <div className="flex items-center space-x-2 mb-4">
-              <button className="flex items-center space-x-2 text-blue-200 hover:text-white transition-colors">
+              <button onClick={() => window.history.back()} className="flex items-center space-x-2 text-blue-200 hover:text-white transition-colors">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
@@ -192,15 +192,15 @@ export default function Paket() {
 
           {/* Action Buttons */}
           <div className="flex flex-wrap gap-4">
-            <button className="flex items-center space-x-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-xl font-medium transition-colors">
+            <button onClick={() => window.open('https://wa.me/6282112001600?text=Halo%20AUDIRA,%20saya%20tertarik%20dengan%20paket%20billing%20ISP', '_blank')} className="flex items-center space-x-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-xl font-medium transition-colors">
               <MessageCircle size={20} />
               <span>Chat WhatsApp</span>
             </button>
-            <button className="flex items-center space-x-2 bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-xl font-medium transition-colors">
+            <button onClick={() => window.open('mailto:agusdwirianto@gmail.com?subject=Informasi%20Paket%20Billing%20ISP%20AUDIRA', '_blank')} className="flex items-center space-x-2 bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-xl font-medium transition-colors">
               <Mail size={20} />
               <span>Email Kami</span>
             </button>
-            <button className="flex items-center space-x-2 bg-gray-700 hover:bg-gray-800 text-white px-6 py-3 rounded-xl font-medium transition-colors">
+            <button onClick={() => window.open('https://play.google.com/store/apps/details?id=com.audiranet.customer', '_blank')} className="flex items-center space-x-2 bg-gray-700 hover:bg-gray-800 text-white px-6 py-3 rounded-xl font-medium transition-colors">
               <Play size={20} />
               <span>Play Store</span>
             </button>
@@ -269,7 +269,7 @@ export default function Paket() {
                 </ul>
 
                 {/* CTA Button */}
-                <button className={`w-full ${pkg.ctaColor} font-semibold py-3 rounded-xl transition-all transform hover:scale-105`}>
+                <button onClick={() => { setSelectedPackage(pkg); setShowPackageModal(true); }} className={`w-full ${pkg.ctaColor} font-semibold py-3 rounded-xl transition-all transform hover:scale-105`}>
                   {pkg.ctaText}
                 </button>
               </div>
@@ -354,7 +354,7 @@ export default function Paket() {
                 >
                   Tutup
                 </button>
-                <button className={`px-6 py-2.5 ${selectedPackage.ctaColor} font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl`}>
+                <button onClick={() => { alert(`Pesanan untuk paket ${selectedPackage.name} berhasil diajukan! Tim kami akan segera menghubungi Anda.`); setShowPackageModal(false); }} className={`px-6 py-2.5 ${selectedPackage.ctaColor} font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl`}>
                   {selectedPackage.ctaText}
                 </button>
               </div>

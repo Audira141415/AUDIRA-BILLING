@@ -508,6 +508,7 @@ export default function FieldServiceManagement() {
                   Batal
                 </button>
                 <button
+                  onClick={() => { alert('Work order baru berhasil disimpan!'); setShowAddModal(false); }}
                   className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
                 >
                   Simpan

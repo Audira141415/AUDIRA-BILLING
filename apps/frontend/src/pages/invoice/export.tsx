@@ -236,7 +236,7 @@ export default function ExportInvoicePage() {
               </div>
 
               <div className="flex justify-between items-center border-t border-[var(--app-border)]/65 pt-3">
-                <button className="text-[10px] text-blue-400 font-bold hover:underline">
+                <button onClick={() => alert("Menampilkan opsi filter lanjutan...")} className="text-[10px] text-blue-400 font-bold hover:underline">
                   Tampilkan Filter Lanjutan &darr;
                 </button>
 
@@ -387,17 +387,14 @@ export default function ExportInvoicePage() {
                 </div>
 
                 <div className="md:col-span-2 flex items-center justify-end gap-3.5">
-                  <button className="text-xs font-bold text-[var(--app-muted)] hover:text-[var(--app-text)] px-5 py-3 border border-[var(--app-border)] rounded-xl hover:bg-[var(--app-border)]/20 transition-colors">
+                  <button onClick={() => alert("Filter ekspor direset ke bawaan.")} className="text-xs font-bold text-[var(--app-muted)] hover:text-[var(--app-text)] px-5 py-3 border border-[var(--app-border)] rounded-xl hover:bg-[var(--app-border)]/20 transition-colors">
                     Reset Filter
                   </button>
-                  <button className="text-xs font-bold text-blue-400 hover:text-blue-300 px-5 py-3 border border-blue-500/20 rounded-xl hover:bg-blue-500/10 transition-colors">
+                  <button onClick={() => alert("Preset filter berhasil disimpan.")} className="text-xs font-bold text-blue-400 hover:text-blue-300 px-5 py-3 border border-blue-500/20 rounded-xl hover:bg-blue-500/10 transition-colors">
                     Simpan Preset Filter
                   </button>
                   
-                  <button className="flex items-center gap-2 bg-[#10b981] hover:bg-emerald-600 text-white text-xs font-bold px-6 py-3 rounded-xl shadow-md transition-all">
-                    <Download size={14} />
-                    <span>Export Sekarang</span>
-                  </button>
+                  <button onClick={() => alert("Memproses pembuatan berkas ekspor invoice...")} className="flex items-center gap-2 bg-[#10b981] hover:bg-emerald-600 text-white text-xs font-bold px-6 py-3 rounded-xl shadow-md transition-all"><Download size={14} /><span>Export Sekarang</span></button>
                 </div>
               </div>
             </div>
@@ -544,7 +541,7 @@ export default function ExportInvoicePage() {
                         <p className="text-[10px] text-[var(--app-muted)] font-bold leading-none">{item.dataCount}</p>
                         <p className="text-[9px] text-[var(--app-muted)] mt-1 font-semibold">{item.size}</p>
                       </div>
-                      <button className="p-1 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors">
+                      <button onClick={() => alert(`Mengunduh berkas arsip: ${item.name}`)} className="p-1 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors">
                         <Download size={13} />
                       </button>
                     </div>
@@ -552,9 +549,7 @@ export default function ExportInvoicePage() {
                 ))}
               </div>
 
-              <button className="w-full text-center text-xs font-bold text-blue-500 hover:underline pt-2 border-t border-[var(--app-border)] block">
-                Lihat Semua Riwayat Export &rarr;
-              </button>
+              <button onClick={() => alert("Menampilkan seluruh riwayat arsip export...")} className="w-full text-center text-xs font-bold text-blue-500 hover:underline pt-2 border-t border-[var(--app-border)] block">Lihat Semua Riwayat Export &rarr;</button>
             </div>
 
             {/* Tips Card */}

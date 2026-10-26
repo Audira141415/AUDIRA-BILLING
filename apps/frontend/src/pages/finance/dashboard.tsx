@@ -479,7 +479,7 @@ export default function FinanceDashboard() {
                       </td>
                       <td className="py-3 text-center whitespace-nowrap">
                         <div className="flex items-center justify-center gap-1.5">
-                          <button className="p-1 text-[var(--app-muted)] hover:text-cyan-400">
+                          <button onClick={() => alert(`Edit transaksi ${tx.id}`)} className="p-1 text-[var(--app-muted)] hover:text-cyan-400">
                             <Edit className="w-3 h-3" />
                           </button>
                           <button 
@@ -500,7 +500,7 @@ export default function FinanceDashboard() {
               </table>
             </div>
             <div className="mt-4 text-center">
-              <button className="text-[11px] font-medium text-blue-400 hover:underline">Lihat Semua Transaksi →</button>
+              <button onClick={() => router.push('/finance/transaksi')} className="text-[11px] font-medium text-blue-400 hover:underline">Lihat Semua Transaksi →</button>
             </div>
           </div>
 
@@ -542,7 +542,7 @@ export default function FinanceDashboard() {
             <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4">
               <div className="flex justify-between items-center mb-3">
                 <h4 className="text-xs font-bold text-[var(--app-text)] tracking-wide uppercase">Top 5 Pendapatan</h4>
-                <button className="text-[10px] font-semibold text-cyan-400 hover:underline">Lihat Semua</button>
+                <button onClick={() => window.location.href = "/finance/transaksi"} className="text-[10px] font-semibold text-cyan-400 hover:underline">Lihat Semua</button>
               </div>
               <div className="space-y-3 text-xs">
                 {distributionData.map((d, index) => (
@@ -640,7 +640,7 @@ export default function FinanceDashboard() {
               </div>
             </div>
             <div className="mt-4 text-center">
-              <button className="text-[10px] text-blue-400 hover:underline">Lihat Detail Neraca</button>
+              <button onClick={() => window.location.href = "/finance/laporan"} className="text-[10px] text-blue-400 hover:underline">Lihat Detail Neraca</button>
             </div>
           </div>
 
@@ -673,7 +673,7 @@ export default function FinanceDashboard() {
               </div>
             </div>
             <div className="mt-3 text-center">
-              <button className="text-[10px] text-blue-400 hover:underline">Lihat Detail Arus Kas</button>
+              <button onClick={() => window.location.href = "/finance/laporan"} className="text-[10px] text-blue-400 hover:underline">Lihat Detail Arus Kas</button>
             </div>
           </div>
 
@@ -721,7 +721,7 @@ export default function FinanceDashboard() {
               </div>
             </div>
             <div className="mt-2 text-center">
-              <button className="text-[10px] text-blue-400 hover:underline">Lihat Semua Pengeluaran</button>
+              <button onClick={() => window.location.href = "/finance/pengeluaran"} className="text-[10px] text-blue-400 hover:underline">Lihat Semua Pengeluaran</button>
             </div>
           </div>
         </div>

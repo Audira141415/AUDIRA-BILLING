@@ -844,6 +844,81 @@ export const api = {
       return res.json();
     },
   },
+
+  // WhatsApp endpoints
+  whatsapp: {
+    getStatus: async () => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/whatsapp/gateway/status`);
+      if (!res.ok) throw new Error('Failed to fetch WhatsApp gateway status');
+      return res.json();
+    },
+    getQr: async () => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/whatsapp/gateway/qr`);
+      if (!res.ok) throw new Error('Failed to fetch WhatsApp QR');
+      return res.json();
+    },
+    startSession: async () => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/whatsapp/gateway/start`, {
+        method: 'POST',
+      });
+      if (!res.ok) throw new Error('Failed to start WhatsApp session');
+      return res.json();
+    },
+    sendMessage: async (data: { phone: string; message: string }) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/whatsapp/test`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error('Failed to send WhatsApp message');
+      return res.json();
+    },
+    sendH3Reminder: async (data: { phone: string; invoiceId?: string }) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/whatsapp/test/h3-reminder`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error('Failed to send H-3 reminder');
+      return res.json();
+    },
+    sendHariHReminder: async (data: { phone: string; invoiceId?: string }) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/whatsapp/test/hari-h-reminder`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error('Failed to send Hari-H reminder');
+      return res.json();
+    },
+    sendReceipt: async (data: { phone: string; invoiceId?: string }) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/whatsapp/test/payment-receipt`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error('Failed to send WhatsApp receipt');
+      return res.json();
+    },
+    sendInvoice: async (data: { customer: any; invoice: any }) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/whatsapp/send-invoice`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error('Failed to send invoice via WhatsApp');
+      return res.json();
+    },
+    sendReminder: async (data: { customer: any; invoice: any; daysLeft: number }) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/whatsapp/send-reminder`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error('Failed to send reminder via WhatsApp');
+      return res.json();
+    },
+  },
 };
 
 export default api;

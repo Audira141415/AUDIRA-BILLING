@@ -147,9 +147,9 @@ export default function TaxReportPage() {
             <p className="text-xs text-[var(--app-muted)] mt-0.5">Laporan perpajakan berdasarkan transaksi, invoice, dan periode pajak.</p>
           </div>
           <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-4 py-2 rounded-lg shadow-lg transition-all"><Download className="w-3.5 h-3.5"/>Export<ChevronDown className="w-3 h-3 ml-0.5"/></button>
-            <button className="flex items-center gap-1.5 bg-[var(--app-bg)] hover:bg-[var(--app-bg)] border border-[var(--app-border)] text-slate-200 text-xs font-semibold px-4 py-2 rounded-lg transition-colors"><Star className="w-3.5 h-3.5 text-[var(--app-muted)]"/>Jadwalkan Laporan</button>
-            <button className="p-2 rounded-lg bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-bg)] text-[var(--app-muted)] hover:text-white"><MoreVertical className="w-4 h-4"/></button>
+            <button onClick={() => alert("Mengunduh laporan perpajakan (PDF / Excel)...")} className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-4 py-2 rounded-lg shadow-lg transition-all"><Download className="w-3.5 h-3.5"/>Export<ChevronDown className="w-3 h-3 ml-0.5"/></button>
+            <button onClick={() => alert("Menjadwalkan pengiriman laporan pajak otomatis via Email/WhatsApp mingguan/bulanan...")} className="flex items-center gap-1.5 bg-[var(--app-bg)] hover:bg-[var(--app-bg)] border border-[var(--app-border)] text-slate-200 text-xs font-semibold px-4 py-2 rounded-lg transition-colors"><Star className="w-3.5 h-3.5 text-[var(--app-muted)]"/>Jadwalkan Laporan</button>
+            <button onClick={() => alert("Opsi Laporan Pajak: Salin URL, Cetak Rekapitulasi, Sinkronisasi Cloud.")} className="p-2 rounded-lg bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-bg)] text-[var(--app-muted)] hover:text-white"><MoreVertical className="w-4 h-4"/></button>
           </div>
         </div>
 
@@ -175,8 +175,8 @@ export default function TaxReportPage() {
             ))}
           </div>
           <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 bg-[var(--app-card-subtle)] hover:bg-[var(--app-card-hover)] border border-[var(--app-border)] text-[var(--app-text)] text-xs px-3 py-1.5 rounded-lg transition-colors"><Sliders className="w-3.5 h-3.5"/>Filter Lainnya</button>
-            <button className="text-[var(--app-text-muted)] hover:text-[var(--app-text)] text-xs px-3 py-1.5 rounded-lg hover:bg-[var(--app-card-subtle)] transition-colors">Reset</button>
+            <button onClick={() => alert("Membuka filter lanjutan perpajakan...")} className="flex items-center gap-1.5 bg-[var(--app-card-subtle)] hover:bg-[var(--app-card-hover)] border border-[var(--app-border)] text-[var(--app-text)] text-xs px-3 py-1.5 rounded-lg transition-colors"><Sliders className="w-3.5 h-3.5"/>Filter Lainnya</button>
+            <button onClick={() => window.location.reload()} className="text-[var(--app-text-muted)] hover:text-[var(--app-text)] text-xs px-3 py-1.5 rounded-lg hover:bg-[var(--app-card-subtle)] transition-colors">Reset</button>
           </div>
         </div>
 
@@ -352,7 +352,7 @@ export default function TaxReportPage() {
                     <select className="bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg px-2.5 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-blue-500"><option>Semua {lbl}</option></select>
                   </div>
                 ))}
-                <button className="w-full bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold py-2 rounded-lg mt-1 transition-colors">Terapkan Filter</button>
+                <button onClick={() => alert("Filter pajak diterapkan berdasarkan parameter terpilih.")} className="w-full bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold py-2 rounded-lg mt-1 transition-colors">Terapkan Filter</button>
               </div>
             </div>
             {/* Aksi Cepat */}
@@ -360,7 +360,7 @@ export default function TaxReportPage() {
               <h3 className="text-xs font-bold text-[var(--app-text)] mb-3">Aksi Cepat</h3>
               <div className="flex flex-col gap-1.5">
                 {[{label:'Lihat Detail Pajak',icon:Eye},{label:'Export Tax Report (Excel)',icon:FileDown},{label:'Export Tax Report (PDF)',icon:FileText},{label:'e-Faktur Summary',icon:Database},{label:'Withholding Tax Report',icon:FileText},{label:'Download Tax History',icon:Download},{label:'Rekonsiliasi Pajak',icon:RefreshCw}].map(({label,icon:Icon})=>(
-                  <button key={label} className="flex items-center justify-between px-3 py-2 rounded-lg bg-[var(--app-bg)] hover:bg-[var(--app-card-subtle)]/30 border border-[var(--app-border)] hover:border-blue-500/30 text-xs text-slate-300 hover:text-white transition-all group">
+                  <button key={label} onClick={() => alert(`Mengeksekusi aksi pajak: ${label}`)} className="flex items-center justify-between px-3 py-2 rounded-lg bg-[var(--app-bg)] hover:bg-[var(--app-card-subtle)]/30 border border-[var(--app-border)] hover:border-blue-500/30 text-xs text-slate-300 hover:text-white transition-all group">
                     <div className="flex items-center gap-2"><Icon className="w-3.5 h-3.5 text-[var(--app-muted)] group-hover:text-blue-400 transition-colors"/><span>{label}</span></div>
                     <ChevronRight className="w-3 h-3 text-[var(--app-text)]/80 group-hover:text-slate-300 transition-colors"/>
                   </button>
@@ -375,7 +375,7 @@ export default function TaxReportPage() {
                 <li>PPh 23 mengalami kenaikan signifikan pada pembayaran ke vendor.</li>
                 <li>Pastikan pembayaran pajak sebelum jatuh tempo untuk menghindari denda.</li>
               </ul>
-              <button className="flex items-center gap-1.5 text-blue-400 hover:text-blue-300 text-xs font-semibold mt-3"><span>Lihat Insight Lengkap</span><ArrowRight className="w-3.5 h-3.5"/></button>
+              <button onClick={() => alert("Membuka insight & rekomendasi fiskal lengkap...")} className="flex items-center gap-1.5 text-blue-400 hover:text-blue-300 text-xs font-semibold mt-3"><span>Lihat Insight Lengkap</span><ArrowRight className="w-3.5 h-3.5"/></button>
             </div>
           </div>
         </div>
@@ -388,11 +388,11 @@ export default function TaxReportPage() {
                 <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-[var(--app-muted)]"/>
                 <input type="text" placeholder="Cari nomor faktur, dokumen..." value={taxSearch} onChange={e=>setTaxSearch(e.target.value)} className="bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-300 placeholder-slate-600 focus:outline-none focus:border-blue-500 w-52 transition-colors"/>
               </div>
-              <button className="flex items-center gap-1.5 bg-blue-600/10 hover:bg-blue-600/20 text-blue-400 border border-blue-500/20 text-xs px-3 py-1.5 rounded-lg">
+              <button onClick={() => alert("Penyaringan tabel faktur pajak diterapkan.")} className="flex items-center gap-1.5 bg-blue-600/10 hover:bg-blue-600/20 text-blue-400 border border-blue-500/20 text-xs px-3 py-1.5 rounded-lg">
                 <Filter className="w-3 h-3"/>Filter
                 <span className="bg-blue-600 text-white text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center">88</span>
               </button>
-              <button className="p-1.5 rounded-lg bg-[var(--app-bg)] border border-[var(--app-border)] text-[var(--app-muted)] hover:text-white"><MoreVertical className="w-3.5 h-3.5"/></button>
+              <button onClick={() => alert("Opsi tabel pajak: Download CSV, Sinkronisasi DJP Online.")} className="p-1.5 rounded-lg bg-[var(--app-bg)] border border-[var(--app-border)] text-[var(--app-muted)] hover:text-white"><MoreVertical className="w-3.5 h-3.5"/></button>
             </div>
           </div>
           <div className="overflow-x-auto">
@@ -422,9 +422,9 @@ export default function TaxReportPage() {
                     <td className="py-2.5 px-2 text-[var(--app-text-muted)]">{row.area}</td>
                     <td className="py-2.5 px-2">
                       <div className="flex items-center justify-center gap-1">
-                        <button className="p-1 hover:bg-[var(--app-card-subtle)] rounded text-[var(--app-text-muted)] hover:text-[var(--app-text)] transition-colors"><Eye className="w-3 h-3"/></button>
-                        <button className="p-1 hover:bg-[var(--app-card-subtle)] rounded text-[var(--app-text-muted)] hover:text-[var(--app-text)] transition-colors"><Download className="w-3 h-3"/></button>
-                        <button className="p-1 hover:bg-[var(--app-card-subtle)] rounded text-[var(--app-text-muted)] hover:text-[var(--app-text)] transition-colors"><MoreVertical className="w-3 h-3"/></button>
+                        <button onClick={() => alert("Melihat detail faktur pajak & dokumen pendukung.")} className="p-1 hover:bg-[var(--app-card-subtle)] rounded text-[var(--app-text-muted)] hover:text-[var(--app-text)] transition-colors"><Eye className="w-3 h-3"/></button>
+                        <button onClick={() => alert("Mengunduh dokumen e-Faktur resmi.")} className="p-1 hover:bg-[var(--app-card-subtle)] rounded text-[var(--app-text-muted)] hover:text-[var(--app-text)] transition-colors"><Download className="w-3 h-3"/></button>
+                        <button onClick={() => alert("Opsi tindakan: Kirim Faktur ke WhatsApp Pelanggan, Batalkan Faktur.")} className="p-1 hover:bg-[var(--app-card-subtle)] rounded text-[var(--app-text-muted)] hover:text-[var(--app-text)] transition-colors"><MoreVertical className="w-3 h-3"/></button>
                       </div>
                     </td>
                   </tr>
@@ -441,7 +441,7 @@ export default function TaxReportPage() {
                   <button key={n} onClick={()=>setPage(n)} className={`h-7 w-7 flex items-center justify-center rounded-lg text-xs font-semibold transition-colors ${page===n?'bg-blue-600 text-white':'bg-[var(--app-bg)] border border-[var(--app-border)] text-[var(--app-muted)] hover:text-white'}`}>{n}</button>
                 ))}
                 <span className="text-[var(--app-text)]/80 text-xs px-1">...</span>
-                <button className="h-7 px-2 flex items-center justify-center rounded-lg bg-[var(--app-bg)] border border-[var(--app-border)] text-[var(--app-muted)] hover:text-white text-xs">49</button>
+                <button onClick={() => alert("Beralih ke halaman 49")} className="h-7 px-2 flex items-center justify-center rounded-lg bg-[var(--app-bg)] border border-[var(--app-border)] text-[var(--app-muted)] hover:text-white text-xs">49</button>
                 <button onClick={()=>setPage(p=>p+1)} className="h-7 w-7 flex items-center justify-center rounded-lg bg-[var(--app-bg)] border border-[var(--app-border)] text-[var(--app-muted)] hover:text-white"><ChevronRight className="w-3.5 h-3.5"/></button>
               </div>
               <select value={perPage} onChange={e=>setPerPage(Number(e.target.value))} className="bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg px-2.5 py-1 text-xs text-slate-300 focus:outline-none focus:border-blue-500">

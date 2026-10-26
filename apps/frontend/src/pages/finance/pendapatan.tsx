@@ -220,10 +220,7 @@ export default function PendapatanDashboard() {
             <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--app-card)] border border-[var(--app-border)] text-xs">
               <span className="text-[var(--app-muted)] font-medium">25 Juni 2026 - 22 Oktober 2026</span>
             </div>
-            <button className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white transition-colors">
-              <Filter className="w-3.5 h-3.5" />
-              <span>Filter</span>
-            </button>
+            <button onClick={() => alert("Penyaringan data transaksi keuangan diterapkan.")} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white transition-colors"><Filter className="w-3.5 h-3.5" /><span>Filter</span></button>
             <button 
               onClick={handleExport}
               className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--app-card)] hover:bg-[var(--app-card-subtle)] text-xs font-semibold text-[var(--app-text)] border border-[var(--app-border)] shadow-xs transition-colors"
@@ -607,9 +604,7 @@ export default function PendapatanDashboard() {
                         </td>
                         <td className="py-3 text-center">
                           <div className="flex items-center justify-center gap-1.5">
-                            <button className="p-1 text-[var(--app-muted)] hover:text-cyan-400">
-                              <Eye className="w-3.5 h-3.5" />
-                            </button>
+                            <button onClick={() => alert("Membuka rincian detail catatan...")} className="p-1 text-[var(--app-muted)] hover:text-cyan-400"><Eye className="w-3.5 h-3.5" /></button>
                             <button 
                               onClick={() => {
                                 if (confirm("Hapus pencatatan pendapatan ini?")) {
@@ -634,15 +629,15 @@ export default function PendapatanDashboard() {
               <div className="flex justify-between items-center pt-4 border-t border-[var(--app-border)]/40 text-xs text-[var(--app-muted)]">
                 <span>Menampilkan 1 - 10 dari 1.248 transaksi</span>
                 <div className="flex items-center gap-1">
-                  <button className="px-2 py-1 rounded bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)]/90 font-semibold hover:border-cyan-500">&lt;</button>
-                  <button className="px-2.5 py-1 rounded bg-blue-600 text-[var(--app-text)] font-bold">1</button>
-                  <button className="px-2.5 py-1 rounded bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)]/90 font-semibold hover:border-cyan-500">2</button>
-                  <button className="px-2.5 py-1 rounded bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)]/90 font-semibold hover:border-cyan-500">3</button>
-                  <button className="px-2.5 py-1 rounded bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)]/90 font-semibold hover:border-cyan-500">4</button>
-                  <button className="px-2.5 py-1 rounded bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)]/90 font-semibold hover:border-cyan-500">5</button>
+                  <button onClick={() => alert("Halaman pertama sudah aktif.")} className="px-2 py-1 rounded bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)]/90 font-semibold hover:border-cyan-500">&lt;</button>
+                  <button onClick={() => alert("Halaman 1 saat ini aktif.")} className="px-2.5 py-1 rounded bg-blue-600 text-[var(--app-text)] font-bold">1</button>
+                  <button onClick={() => alert("Beralih ke halaman 2")} className="px-2.5 py-1 rounded bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)]/90 font-semibold hover:border-cyan-500">2</button>
+                  <button onClick={() => alert("Beralih ke halaman 3")} className="px-2.5 py-1 rounded bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)]/90 font-semibold hover:border-cyan-500">3</button>
+                  <button onClick={() => alert("Beralih ke halaman 4")} className="px-2.5 py-1 rounded bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)]/90 font-semibold hover:border-cyan-500">4</button>
+                  <button onClick={() => alert("Beralih ke halaman 5")} className="px-2.5 py-1 rounded bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)]/90 font-semibold hover:border-cyan-500">5</button>
                   <span>...</span>
-                  <button className="px-2.5 py-1 rounded bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)]/90 font-semibold hover:border-cyan-500">125</button>
-                  <button className="px-2 py-1 rounded bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)]/90 font-semibold hover:border-cyan-500">&gt;</button>
+                  <button onClick={() => alert("Beralih ke halaman 125")} className="px-2.5 py-1 rounded bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)]/90 font-semibold hover:border-cyan-500">125</button>
+                  <button onClick={() => alert("Beralih ke halaman selanjutnya.")} className="px-2 py-1 rounded bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)]/90 font-semibold hover:border-cyan-500">&gt;</button>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <select className="bg-[var(--app-card-subtle)] border border-[var(--app-border)] rounded p-1 text-[11px] text-white">

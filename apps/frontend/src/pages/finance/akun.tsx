@@ -307,7 +307,7 @@ export default function AkunDashboard() {
               <Plus className="w-3.5 h-3.5" />
               <span>Akun Baru</span>
             </button>
-            <button className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--app-card)] hover:bg-[var(--app-card-subtle)] text-xs font-semibold text-[var(--app-text)] border border-[var(--app-border)] shadow-xs transition-colors">
+            <button onClick={() => alert("Membuka dialog Import COA / Bagan Akun...")} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--app-card)] hover:bg-[var(--app-card-subtle)] text-xs font-semibold text-[var(--app-text)] border border-[var(--app-border)] shadow-xs transition-colors">
               <FolderOpen className="w-3.5 h-3.5 text-[var(--app-muted)]" />
               <span>Import Akun</span>
             </button>
@@ -668,7 +668,7 @@ export default function AkunDashboard() {
             <div className="flex justify-between items-center mt-4 pt-4 border-t border-[var(--app-border)]/60 text-[11px] text-[var(--app-muted)]">
               <span>Menampilkan {filteredAccounts.length} dari {totalAkun} akun</span>
               <div className="flex items-center gap-1.5">
-                <button className="px-2.5 py-1 rounded bg-blue-600 text-white text-xs font-semibold">1</button>
+                <button onClick={() => alert("Halaman 1")} className="px-2.5 py-1 rounded bg-blue-600 text-white text-xs font-semibold">1</button>
               </div>
             </div>
           </div>

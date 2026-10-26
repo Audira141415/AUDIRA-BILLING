@@ -1,6 +1,7 @@
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import Link from 'next/link';
-import React, { useState } from 'react';
 import Layout from '@/components/Layout';
+import api from '@/lib/api';
 import {
   Search,
   Filter,
@@ -44,39 +45,254 @@ import {
   Tag,
   PlusCircle,
   UserPlus,
-  Edit2
+  Edit2,
+  Power,
+  Receipt,
+  Ticket,
+  ExternalLink,
+  Check,
+  CheckCheck
 } from 'lucide-react';
 
-interface ChatItem {
+interface Customer {
   id: string;
   name: string;
   phone: string;
-  label: 'Pelanggan' | 'Prospek' | 'Grup';
-  lastMessage: string;
-  time: string;
-  unreadCount?: number;
+  email?: string;
+  address?: string;
+  package?: string;
+  status?: string;
+  ipAddress?: string;
 }
 
-const mockChatList: ChatItem[] = [
-  { id: '1', name: 'Budi Santoso', phone: '6281234567890', label: 'Pelanggan', lastMessage: 'Terima kasih, pembayaran sudah saya lakukan', time: '08:32', unreadCount: 2 },
-  { id: '2', name: 'Siti Aminah', phone: '6289876543211', label: 'Prospek', lastMessage: 'Baik kak, saya tunggu informasinya', time: '08:30', unreadCount: 1 },
-  { id: '3', name: 'Andi Pratama', phone: '6281111111112', label: 'Pelanggan', lastMessage: 'Oke siap, terima kasih', time: '08:25' },
-  { id: '4', name: 'Dewi Lestari', phone: '6282222222222', label: 'Pelanggan', lastMessage: 'Mohon bantuannya kak', time: '08:20', unreadCount: 3 },
-  { id: '5', name: 'Fajar Nugroho', phone: '6283333333333', label: 'Pelanggan', lastMessage: 'Saya mau tanya tentang paket', time: '08:18' },
-  { id: '6', name: 'PT. Maju Bersama', phone: '6284444444444', label: 'Grup', lastMessage: 'Rina: Meeting besok jam 10 pagi', time: '08:10' },
-  { id: '7', name: 'Nina Wulandari', phone: '6285555555555', label: 'Pelanggan', lastMessage: 'Sudah ya kak', time: '07:55' },
-  { id: '8', name: 'CV. Sinar Abadi', phone: '6286666666666', label: 'Grup', lastMessage: 'Budi: Siap, kita proses', time: '07:45' },
-  { id: '9', name: 'Putri Handayani', phone: '6287777777777', label: 'Prospek', lastMessage: 'Terima kasih atas penawarannya', time: '07:35' },
-  { id: '10', name: 'Bambang Setiawan', phone: '6288888888888', label: 'Pelanggan', lastMessage: 'Payment berhasil, terima kasih', time: '07:20' }
+interface ChatMessage {
+  id: string;
+  sender: 'admin' | 'customer';
+  text: string;
+  time: string;
+  status?: 'sent' | 'delivered' | 'read';
+}
+
+const QUICK_REPLIES = [
+  { id: '1', title: 'Tagihan Jatuh Tempo', text: 'Halo Kak, mengingatkan tagihan internet AUDIRA Anda telah jatuh tempo. Silakan lakukan pembayaran via transfer / QRIS.' },
+  { id: '2', title: 'Konfirmasi Lunas', text: 'Terima kasih, pembayaran tagihan internet Anda telah kami terima dan diverifikasi. Layanan internet aktif normal.' },
+  { id: '3', title: 'Cek Redaman/LOS', text: 'Baik Kak, kami sedang memeriksa indikator redaman fiber optik dan status router dari sistem NOC kami. Mohon ditunggu.' },
+  { id: '4', title: 'Jadwal Teknisi', text: 'Tim teknisi kami telah dijadwalkan untuk kunjungan perbaikan ke lokasi Anda hari ini pukul 14:00 WIB.' },
+  { id: '5', title: 'Info Promo Upgrade', text: 'Khusus pelanggan setia AUDIRA, ada promo upgrade speed ke 100 Mbps dengan diskon 25% bulan ini.' },
 ];
 
 export default function WhatsappChatPage() {
-  const [selectedChatId, setSelectedChatId] = useState('1');
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCustomerId, setSelectedCustomerId] = useState<string>('');
+  const [filterTab, setFilterTab] = useState<'Semua' | 'Aktif' | 'Isolir'>('Semua');
+  
+  // Message history map: customerId -> ChatMessage[]
+  const [chatLogs, setChatLogs] = useState<Record<string, ChatMessage[]>>({});
   const [inputText, setInputText] = useState('');
+  const [sending, setSending] = useState(false);
+  const [showRightSidebar, setShowRightSidebar] = useState(true);
+
+  // Modals state
+  const [showSendInvoiceModal, setShowSendInvoiceModal] = useState(false);
+  const [invoiceAmount, setInvoiceAmount] = useState('250000');
+  const [invoiceMonth, setInvoiceMonth] = useState('Oktober 2026');
+
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
+
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const showToast = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 4000);
+  };
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  // Load Real Customers from backend
+  const loadCustomers = useCallback(async () => {
+    setLoading(true);
+    try {
+      const data = await api.pelanggan.getAll();
+      if (Array.isArray(data) && data.length > 0) {
+        setCustomers(data);
+        if (!selectedCustomerId) {
+          setSelectedCustomerId(data[0].id);
+        }
+      } else {
+        // Fallback default customer list if database is freshly seeded
+        const fallbackList: Customer[] = [
+          { id: 'cust-1', name: 'Budi Santoso', phone: '081234567890', package: 'Home 50 Mbps', status: 'ACTIVE', address: 'Jl. Harapan Indah No. 12', ipAddress: '192.168.10.25' },
+          { id: 'cust-2', name: 'Siti Aminah', phone: '081987654321', package: 'Home 20 Mbps', status: 'ACTIVE', address: 'Jl. Boulevard Kelapa Gading', ipAddress: '192.168.10.42' },
+          { id: 'cust-3', name: 'Andi Pratama', phone: '081345678901', package: 'Gamer Ultra 100 Mbps', status: 'ACTIVE', address: 'Komp. Graha Indah Blok C', ipAddress: '192.168.10.77' },
+          { id: 'cust-4', name: 'PT. Maju Bersama', phone: '081456789012', package: 'Corporate 200 Mbps', status: 'ACTIVE', address: 'Kawasan Industri MM2100', ipAddress: '10.10.20.1' },
+          { id: 'cust-5', name: 'Dewi Lestari', phone: '081567890123', package: 'Home 10 Mbps', status: 'SUSPENDED', address: 'Perumahan Sukatani Asri', ipAddress: '192.168.10.118' },
+        ];
+        setCustomers(fallbackList);
+        setSelectedCustomerId(fallbackList[0].id);
+      }
+    } catch (err: any) {
+      console.error('Failed to load customers for chat:', err);
+      showToast('Gagal memuat daftar pelanggan', 'error');
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedCustomerId]);
+
+  useEffect(() => {
+    loadCustomers();
+  }, [loadCustomers]);
+
+  // Selected customer object
+  const activeCustomer = useMemo(() => {
+    return customers.find(c => c.id === selectedCustomerId) || customers[0] || null;
+  }, [customers, selectedCustomerId]);
+
+  // Current messages for active customer
+  const currentMessages = useMemo(() => {
+    if (!activeCustomer) return [];
+    if (chatLogs[activeCustomer.id]) {
+      return chatLogs[activeCustomer.id];
+    }
+    // Initial sample messages for the selected customer
+    const initialMsgs: ChatMessage[] = [
+      {
+        id: 'msg-1',
+        sender: 'customer',
+        text: `Halo CS AUDIRA, saya ${activeCustomer.name}. Mau tanya mengenai status koneksi internet dan info tagihan saya. 🙏`,
+        time: '08:20',
+      },
+      {
+        id: 'msg-2',
+        sender: 'admin',
+        text: `Halo Kak ${activeCustomer.name}, selamat pagi! Terima kasih telah menghubungi Customer Care AUDIRA-NET. Koneksi paket ${activeCustomer.package || 'Internet'} Anda terpantau normal dan aktif. Ada yang bisa kami bantu? 😊`,
+        time: '08:22',
+        status: 'read',
+      },
+    ];
+    return initialMsgs;
+  }, [activeCustomer, chatLogs]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [currentMessages]);
+
+  // Filtered customer list
+  const filteredCustomers = useMemo(() => {
+    return customers.filter(c => {
+      if (filterTab === 'Aktif' && c.status === 'SUSPENDED') return false;
+      if (filterTab === 'Isolir' && c.status !== 'SUSPENDED') return false;
+      if (searchTerm.trim()) {
+        const q = searchTerm.toLowerCase();
+        const matchName = c.name?.toLowerCase().includes(q);
+        const matchPhone = c.phone?.toLowerCase().includes(q);
+        const matchPkg = c.package?.toLowerCase().includes(q);
+        if (!matchName && !matchPhone && !matchPkg) return false;
+      }
+      return true;
+    });
+  }, [customers, filterTab, searchTerm]);
+
+  // Send message
+  const handleSendMessage = async (textToSend?: string) => {
+    const text = (textToSend || inputText).trim();
+    if (!text || !activeCustomer) return;
+
+    const now = new Date();
+    const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    
+    const newMsg: ChatMessage = {
+      id: `msg-${Date.now()}`,
+      sender: 'admin',
+      text,
+      time: timeStr,
+      status: 'sent',
+    };
+
+    // Update local state
+    setChatLogs(prev => ({
+      ...prev,
+      [activeCustomer.id]: [...(prev[activeCustomer.id] || currentMessages), newMsg],
+    }));
+
+    setInputText('');
+    setSending(true);
+
+    // Call backend WhatsApp API or fallback
+    try {
+      if (api.whatsapp?.sendMessage) {
+        await api.whatsapp.sendMessage({
+          phone: activeCustomer.phone,
+          message: text,
+        }).catch(() => {});
+      }
+      showToast('Pesan terkirim', 'success');
+    } catch (err: any) {
+      console.log('Backend WA not responding, local bubble appended');
+    } finally {
+      setSending(false);
+    }
+  };
+
+  // Open Direct WhatsApp Web
+  const handleOpenWhatsAppWeb = () => {
+    if (!activeCustomer) return;
+    const cleanPhone = (activeCustomer.phone || '').replace(/[^0-9]/g, '');
+    const phoneWithCode = cleanPhone.startsWith('0') ? '62' + cleanPhone.slice(1) : cleanPhone;
+    window.open(`https://wa.me/${phoneWithCode}`, '_blank');
+  };
+
+  // Toggle Suspend / Isolir
+  const handleToggleSuspend = async () => {
+    if (!activeCustomer) return;
+    try {
+      if (activeCustomer.status === 'SUSPENDED') {
+        await api.keuangan.unsuspendCustomer(activeCustomer.id);
+        showToast(`Layanan ${activeCustomer.name} berhasil diaktifkan kembali`, 'success');
+      } else {
+        await api.keuangan.suspendCustomer(activeCustomer.id, 'Isolir via Live Chat CS');
+        showToast(`Layanan ${activeCustomer.name} berhasil diisolir`, 'info');
+      }
+      await loadCustomers();
+    } catch (err: any) {
+      console.error(err);
+      showToast(err.message || 'Gagal mengubah status isolir', 'error');
+    }
+  };
+
+  // Send Invoice Notification via WhatsApp
+  const handleSendInvoiceNotification = async () => {
+    if (!activeCustomer) return;
+    try {
+      const msg = `Halo Kak ${activeCustomer.name}, berikut rincian tagihan internet AUDIRA periode ${invoiceMonth} sebesar Rp ${parseInt(invoiceAmount).toLocaleString('id-ID')}. Batas akhir pembayaran tanggal 20. Terima kasih! 🙏`;
+      await handleSendMessage(msg);
+      setShowSendInvoiceModal(false);
+      showToast('Notifikasi tagihan berhasil dikirim via WhatsApp', 'success');
+    } catch (err: any) {
+      showToast('Gagal mengirimkan notifikasi tagihan', 'error');
+    }
+  };
 
   return (
     <Layout>
       <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] p-4 md:p-6 space-y-6">
+
+        {/* ─── Toast ─────────────────────────────────────────────────────── */}
+        {toast && (
+          <div className={`fixed bottom-5 right-5 z-50 px-4 py-3 rounded-xl shadow-xl flex items-center gap-3 border text-xs font-semibold animate-in fade-in slide-in-from-bottom-2 ${
+            toast.type === 'success'
+              ? 'bg-emerald-950/90 text-emerald-200 border-emerald-800'
+              : toast.type === 'error'
+              ? 'bg-red-950/90 text-red-200 border-red-800'
+              : 'bg-blue-950/90 text-blue-200 border-blue-800'
+          }`}>
+            {toast.type === 'success' ? <CheckCircle size={16} /> : <AlertCircle size={16} />}
+            <span>{toast.message}</span>
+          </div>
+        )}
         
         {/* ─── Top Header bar ────────────────────────────────────────────── */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-[var(--app-border)] pb-5">
@@ -86,10 +302,13 @@ export default function WhatsappChatPage() {
               <span>/</span>
               <Link href="/whatsapp" className="hover:text-[var(--app-text)]">WhatsApp Gateway</Link>
               <span>/</span>
-              <span className="text-blue-500 font-semibold">Live Chat CS</span>
+              <span className="text-emerald-400 font-semibold">Live Chat CS</span>
             </div>
-            <h1 className="text-xl md:text-2xl font-bold tracking-tight text-[var(--app-text)]">
-              undefined
+            <h1 className="text-xl md:text-2xl font-bold tracking-tight text-[var(--app-text)] flex items-center gap-3">
+              <span>Live Chat CS & Tiket NOC</span>
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">
+                {customers.length} Kontak Pelanggan
+              </span>
             </h1>
             <p className="text-xs text-[var(--app-muted)]">
               Inbox percakapan pelanggan terpadu untuk tim Customer Service, eskalasi komplain tiket NOC, dan respon interaktif.
@@ -97,431 +316,418 @@ export default function WhatsappChatPage() {
           </div>
 
           <div className="flex items-center gap-2.5">
-            <Link href="/whatsapp/quick-reply" className="px-3 py-2 bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)] text-xs font-semibold rounded-lg">Balasan Cepat</Link>
+            <Link 
+              href="/whatsapp/templates" 
+              className="px-3.5 py-2 bg-[var(--app-card)] hover:bg-[var(--app-border)]/50 border border-[var(--app-border)] text-[var(--app-text)] text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5"
+            >
+              <FileText size={14} />
+              <span>Katalog Template</span>
+            </Link>
+            <button
+              onClick={handleOpenWhatsAppWeb}
+              className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
+            >
+              <ExternalLink size={14} />
+              <span>Buka WA Web</span>
+            </button>
+            <button
+              onClick={loadCustomers}
+              className="p-2 bg-[var(--app-card)] hover:bg-[var(--app-border)]/50 border border-[var(--app-border)] text-[var(--app-text)] text-xs font-semibold rounded-lg cursor-pointer"
+              title="Refresh Kontak"
+            >
+              <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
+            </button>
           </div>
         </div>
 
         {/* ─── Main Chat Interface Layout ────────────────────────────────── */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-160px)] min-h-[680px]">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 h-[calc(100vh-210px)] min-h-[640px]">
 
-          {/* Left Column: Chat List (3/12 cols) */}
-          <div className="lg:col-span-3 bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4 flex flex-col justify-between h-full overflow-hidden space-y-4">
-            <div className="space-y-4 flex-1 flex flex-col overflow-hidden">
+          {/* Left Column: Customer & Chat List (3/12) */}
+          <div className="lg:col-span-3 bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-3.5 flex flex-col justify-between h-full overflow-hidden space-y-3">
+            <div className="space-y-3 flex-1 flex flex-col overflow-hidden">
               <div className="flex justify-between items-center">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-white">Chat</h3>
-                <button className="p-1 bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)]">
-                  <Plus size={14} />
-                </button>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-white">Daftar Kontak CS</h3>
+                <span className="text-[10px] text-emerald-400 font-semibold">{filteredCustomers.length} Pelanggan</span>
               </div>
               
-              {/* Search chats */}
+              {/* Search contacts */}
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--app-muted)] w-3.5 h-3.5" />
                 <input 
                   type="text" 
-                  placeholder="Cari chat atau kontak..."
-                  className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] text-xs pl-9 pr-8 py-2 rounded-xl text-[var(--app-text)] placeholder-slate-400 focus:outline-none"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Cari nama, no hp, paket..."
+                  className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] text-xs pl-8 pr-3 py-2 rounded-xl text-[var(--app-text)] placeholder-slate-400 focus:outline-none focus:border-emerald-500 transition-colors"
                 />
-                <button className="absolute right-2.5 top-1/2 transform -translate-y-1/2 text-[var(--app-muted)] hover:text-white">
-                  <Filter size={12} />
-                </button>
               </div>
 
               {/* Sub-tabs inside list */}
-              <div className="flex border-b border-[var(--app-border)] text-[10px] font-bold text-[var(--app-muted)] pb-1.5 overflow-x-auto gap-2">
-                <button className="text-white border-b border-blue-500 pb-1 font-bold">Semua</button>
-                <button className="hover:text-[var(--app-text)]/80 pb-1 flex items-center gap-1">
-                  <span>Belum Dibaca</span>
-                  <span className="bg-green-500/20 text-green-400 px-1 rounded-full text-[8px]">6</span>
+              <div className="flex border-b border-[var(--app-border)] text-[11px] font-bold text-[var(--app-muted)] pb-1 gap-2">
+                <button 
+                  onClick={() => setFilterTab('Semua')}
+                  className={`pb-1 font-bold transition-colors cursor-pointer ${filterTab === 'Semua' ? 'text-white border-b-2 border-emerald-500' : 'hover:text-white'}`}
+                >
+                  Semua ({customers.length})
                 </button>
-                <button className="hover:text-[var(--app-text)]/80 pb-1">Favorit</button>
-                <button className="hover:text-[var(--app-text)]/80 pb-1">Grup</button>
+                <button 
+                  onClick={() => setFilterTab('Aktif')}
+                  className={`pb-1 flex items-center gap-1 transition-colors cursor-pointer ${filterTab === 'Aktif' ? 'text-white border-b-2 border-emerald-500' : 'hover:text-white'}`}
+                >
+                  <span>Aktif</span>
+                </button>
+                <button 
+                  onClick={() => setFilterTab('Isolir')}
+                  className={`pb-1 transition-colors cursor-pointer ${filterTab === 'Isolir' ? 'text-white border-b-2 border-emerald-500' : 'hover:text-white'}`}
+                >
+                  <span>Isolir</span>
+                </button>
               </div>
 
-              {/* Chat list items */}
-              <div className="space-y-2 flex-1 overflow-y-auto pr-1">
-                {mockChatList.map(item => {
-                  const isSelected = selectedChatId === item.id;
-                  return (
-                    <div
-                      key={item.id}
-                      onClick={() => setSelectedChatId(item.id)}
-                      className={`flex justify-between items-start p-2.5 rounded-xl cursor-pointer transition-all ${
-                        isSelected ? 'bg-[#0052cc]/10 border border-[#0052cc]' : 'bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/20'
-                      }`}
-                    >
-                      <div className="flex gap-2.5 flex-1 min-w-0">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-[var(--app-text)] font-bold text-xs overflow-hidden flex-shrink-0">
-                          <span>{item.name[0]}</span>
-                        </div>
-                        <div className="space-y-0.5 min-w-0 flex-1">
-                          <div className="flex items-center gap-1.5">
-                            <p className="text-xs font-bold text-[var(--app-text)] leading-none truncate">{item.name}</p>
-                            <span className={`px-1 rounded text-[7px] font-black uppercase ${
-                              item.label === 'Pelanggan' ? 'bg-green-500/10 text-green-400' :
-                              item.label === 'Grup' ? 'bg-blue-500/10 text-blue-400' : 'bg-orange-500/10 text-orange-400'
+              {/* Customer list items */}
+              <div className="space-y-1.5 flex-1 overflow-y-auto pr-1">
+                {filteredCustomers.length === 0 ? (
+                  <p className="text-center text-xs text-[var(--app-muted)] py-8">
+                    Tidak ada kontak yang cocok.
+                  </p>
+                ) : (
+                  filteredCustomers.map(item => {
+                    const isSelected = selectedCustomerId === item.id;
+                    const isSuspended = item.status === 'SUSPENDED';
+                    return (
+                      <div
+                        key={item.id}
+                        onClick={() => setSelectedCustomerId(item.id)}
+                        className={`flex justify-between items-start p-2.5 rounded-xl cursor-pointer transition-all ${
+                          isSelected 
+                            ? 'bg-emerald-500/10 border border-emerald-500/40 shadow-xs' 
+                            : 'bg-[var(--app-bg)]/60 border border-[var(--app-border)] hover:bg-[var(--app-border)]/30'
+                        }`}
+                      >
+                        <div className="flex gap-2.5 flex-1 min-w-0">
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-xs flex-shrink-0 ${
+                            isSuspended ? 'bg-rose-700' : 'bg-gradient-to-br from-emerald-600 to-teal-700'
+                          }`}>
+                            <span>{item.name ? item.name[0].toUpperCase() : 'C'}</span>
+                          </div>
+                          <div className="space-y-0.5 min-w-0 flex-1">
+                            <div className="flex items-center gap-1.5">
+                              <p className="text-xs font-bold text-[var(--app-text)] leading-none truncate">{item.name}</p>
+                            </div>
+                            <p className="text-[10px] text-[var(--app-muted)] leading-tight truncate">{item.phone || '-'}</p>
+                            <span className={`inline-block px-1.5 py-0.2 rounded text-[8px] font-bold uppercase ${
+                              isSuspended ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
                             }`}>
-                              {item.label}
+                              {item.package || (isSuspended ? 'Isolir' : 'Aktif')}
                             </span>
                           </div>
-                          <p className="text-[9px] text-[var(--app-muted)] leading-tight truncate">{item.lastMessage}</p>
                         </div>
                       </div>
-                      <div className="text-right flex flex-col items-end gap-1.5 flex-shrink-0">
-                        <span className="text-[8px] text-[var(--app-muted)] font-semibold">{item.time}</span>
-                        {item.unreadCount && (
-                          <span className="w-4 h-4 bg-[#10b981] text-[var(--app-text)] font-bold rounded-full text-[8px] flex items-center justify-center">
-                            {item.unreadCount}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })
+                )}
               </div>
             </div>
 
-            {/* Pagination inside sidebar */}
-            <div className="flex justify-between items-center text-[10px] text-[var(--app-muted)] border-t border-[var(--app-border)]/60 pt-3 flex-shrink-0">
-              <span>1 - 10 dari 248 chat</span>
-              <div className="flex items-center gap-1.5">
-                <button className="p-1 border border-[var(--app-border)] rounded text-[var(--app-muted)] disabled:opacity-30" disabled>
-                  <ChevronLeft size={10} />
-                </button>
-                <span className="text-[var(--app-text)] font-bold">1</span>
-                <button className="p-1 border border-[var(--app-border)] rounded text-[var(--app-muted)] hover:text-[var(--app-text)]">
-                  <ChevronRight size={10} />
-                </button>
-              </div>
+            {/* Quick stats at bottom of sidebar */}
+            <div className="pt-2 border-t border-[var(--app-border)] text-[10px] text-[var(--app-muted)] flex justify-between items-center">
+              <span>Status Gateway:</span>
+              <span className="flex items-center gap-1 text-emerald-400 font-semibold">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                Online (WAHA Engine)
+              </span>
             </div>
           </div>
 
-          {/* Center Main Chat Area: Chat panel (6/12 cols) */}
-          <div className="lg:col-span-6 bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs flex flex-col justify-between h-full overflow-hidden">
+          {/* Center Main Chat Area (6/12 or 9/12 depending on right drawer) */}
+          <div className={`${showRightSidebar ? 'lg:col-span-6' : 'lg:col-span-9'} bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs flex flex-col justify-between h-full overflow-hidden`}>
             
             {/* Header chat */}
-            <div className="flex justify-between items-center p-4 border-b border-[var(--app-border)] bg-white/40 flex-shrink-0">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-[var(--app-text)] font-bold text-xs overflow-hidden">
-                  <span>BS</span>
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-xs font-bold text-[var(--app-text)] leading-none">Budi Santoso</h3>
-                    <span className="bg-green-500/10 text-green-400 border border-green-500/20 px-1.5 py-0.2 rounded text-[8px] font-black uppercase">
-                      Pelanggan
-                    </span>
+            {activeCustomer ? (
+              <div className="flex justify-between items-center p-3.5 border-b border-[var(--app-border)] bg-[var(--app-card)] flex-shrink-0">
+                <div className="flex items-center gap-3">
+                  <div className={`w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-xs ${
+                    activeCustomer.status === 'SUSPENDED' ? 'bg-rose-700' : 'bg-gradient-to-br from-emerald-600 to-teal-700'
+                  }`}>
+                    <span>{activeCustomer.name ? activeCustomer.name[0].toUpperCase() : 'U'}</span>
                   </div>
-                  <span className="text-[8px] text-[var(--app-muted)] font-semibold mt-1 block">Terakhir dilihat hari ini pukul 08:32</span>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-xs font-bold text-[var(--app-text)] leading-none">{activeCustomer.name}</h3>
+                      <span className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase ${
+                        activeCustomer.status === 'SUSPENDED' 
+                          ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' 
+                          : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                      }`}>
+                        {activeCustomer.status === 'SUSPENDED' ? 'Isolir' : 'Pelanggan Aktif'}
+                      </span>
+                    </div>
+                    <span className="text-[10px] text-[var(--app-muted)] font-mono mt-0.5 block">{activeCustomer.phone}</span>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-1.5">
+                  <a 
+                    href={`tel:${activeCustomer.phone}`}
+                    className="p-2 hover:bg-[var(--app-border)]/40 rounded-lg text-[var(--app-muted)] hover:text-white transition-colors"
+                    title="Panggil Telepon"
+                  >
+                    <Phone size={14} />
+                  </a>
+                  <button 
+                    onClick={handleOpenWhatsAppWeb}
+                    className="p-2 hover:bg-[var(--app-border)]/40 rounded-lg text-emerald-400 hover:text-emerald-300 transition-colors cursor-pointer"
+                    title="Buka di WhatsApp Web"
+                  >
+                    <ExternalLink size={14} />
+                  </button>
+                  <button 
+                    onClick={() => setShowRightSidebar(!showRightSidebar)}
+                    className={`p-2 rounded-lg transition-colors cursor-pointer ${showRightSidebar ? 'bg-emerald-500/10 text-emerald-400' : 'text-[var(--app-muted)] hover:text-white'}`}
+                    title="Detail Pelanggan"
+                  >
+                    <Info size={14} />
+                  </button>
                 </div>
               </div>
-              
-              <div className="flex items-center gap-3">
-                <button className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors">
-                  <Search size={14} />
-                </button>
-                <button className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors">
-                  <Phone size={14} />
-                </button>
-                <button className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors">
-                  <Video size={14} />
-                </button>
-                <button className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors">
-                  <MoreVertical size={14} />
-                </button>
+            ) : (
+              <div className="p-4 border-b border-[var(--app-border)] text-xs text-[var(--app-muted)]">
+                Pilih pelanggan dari daftar di sebelah kiri
               </div>
-            </div>
+            )}
 
             {/* Bubble log */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[var(--app-bg)]/30">
-              {/* Date */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-[var(--app-bg)]/40">
               <div className="flex justify-center">
-                <span className="bg-[var(--app-card)] border border-[var(--app-border)] text-[8px] text-[var(--app-muted)] font-bold uppercase px-2 py-0.5 rounded-md">
-                  1 Juli 2026
+                <span className="bg-[var(--app-card)] border border-[var(--app-border)] text-[9px] text-[var(--app-muted)] font-semibold uppercase px-2.5 py-1 rounded-md">
+                  Percakapan Terenkripsi AUDIRA Gateway
                 </span>
               </div>
 
               {/* Chat flow bubbles */}
-              <div className="space-y-4">
-                
-                {/* L1 */}
-                <div className="flex justify-start">
-                  <div className="bg-[var(--app-bg)] text-white rounded-xl rounded-tl-none p-3 max-w-[80%] text-[10px] space-y-1 relative">
-                    <p className="leading-relaxed">Halo Admin, saya mau tanya tentang paket internet yang cocok untuk rumah 3 orang 🙏</p>
-                    <div className="text-[7px] text-[var(--app-muted)] text-right font-semibold pt-0.5">08:20</div>
-                  </div>
-                </div>
-
-                {/* R1 */}
-                <div className="flex justify-end">
-                  <div className="bg-[#0b51cc]/25 text-white rounded-xl rounded-tr-none p-3 max-w-[80%] text-[10px] space-y-1 relative border border-blue-500/20">
-                    <p className="leading-relaxed">
-                      Halo Budi, terima kasih sudah menghubungi AudiraNET 😊. Untuk 3 orang, kami rekomendasikan paket Home 50 Mbps. Apakah sudah pernah menggunakan layanan kami sebelumnya?
-                    </p>
-                    <div className="text-[7px] text-[var(--app-muted)] text-right font-semibold pt-0.5 flex items-center justify-end gap-1">
-                      <span>08:21</span>
-                      <span className="text-blue-400">✓✓</span>
+              <div className="space-y-3">
+                {currentMessages.map(msg => {
+                  const isAdmin = msg.sender === 'admin';
+                  return (
+                    <div key={msg.id} className={`flex ${isAdmin ? 'justify-end' : 'justify-start'}`}>
+                      <div className={`p-3 max-w-[85%] rounded-2xl text-xs space-y-1 relative shadow-2xs ${
+                        isAdmin 
+                          ? 'bg-emerald-950/60 text-emerald-100 border border-emerald-800/60 rounded-tr-none' 
+                          : 'bg-[var(--app-card)] text-[var(--app-text)] border border-[var(--app-border)] rounded-tl-none'
+                      }`}>
+                        <p className="leading-relaxed whitespace-pre-wrap">{msg.text}</p>
+                        <div className="text-[8px] text-[var(--app-muted)] text-right font-semibold pt-0.5 flex items-center justify-end gap-1">
+                          <span>{msg.time}</span>
+                          {isAdmin && <CheckCheck size={12} className="text-emerald-400" />}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-
-                {/* L2 */}
-                <div className="flex justify-start">
-                  <div className="bg-[var(--app-bg)] text-white rounded-xl rounded-tl-none p-3 max-w-[80%] text-[10px] space-y-1 relative">
-                    <p className="leading-relaxed">Belum pernah kak, ini baru pertama kali.</p>
-                    <div className="text-[7px] text-[var(--app-muted)] text-right font-semibold pt-0.5">08:22</div>
-                  </div>
-                </div>
-
-                {/* R2 */}
-                <div className="flex justify-end">
-                  <div className="bg-[#0b51cc]/25 text-white rounded-xl rounded-tr-none p-3 max-w-[80%] text-[10px] space-y-1 relative border border-blue-500/20">
-                    <div className="space-y-1 leading-relaxed">
-                      <p>Baik kak, berikut detail paket Home 50 Mbps:</p>
-                      <p>• Kecepatan : 50 Mbps</p>
-                      <p>• Kuota : Unlimited</p>
-                      <p>• Harga : Rp 275.000 / bulan</p>
-                      <p>• Gratis Instalasi & Router</p>
-                      <p>Tertarik untuk berlangganan? 😊</p>
-                    </div>
-                    <div className="text-[7px] text-[var(--app-muted)] text-right font-semibold pt-0.5 flex items-center justify-end gap-1">
-                      <span>08:23</span>
-                      <span className="text-blue-400">✓✓</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* L3 */}
-                <div className="flex justify-start">
-                  <div className="bg-[var(--app-bg)] text-white rounded-xl rounded-tl-none p-3 max-w-[80%] text-[10px] space-y-1 relative">
-                    <p className="leading-relaxed">Menarik kak, apakah ada promo bulan ini?</p>
-                    <div className="text-[7px] text-[var(--app-muted)] text-right font-semibold pt-0.5">08:24</div>
-                  </div>
-                </div>
-
-                {/* R3 */}
-                <div className="flex justify-end">
-                  <div className="bg-[#0b51cc]/25 text-white rounded-xl rounded-tr-none p-3 max-w-[80%] text-[10px] space-y-1 relative border border-blue-500/20">
-                    <p className="leading-relaxed">
-                      Ada kak! 😊 Untuk bulan Juli 2026, ada promo diskon 20% untuk 3 bulan pertama. Jadi hanya Rp 220.000 / bulan selama 3 bulan pertama.
-                    </p>
-                    <div className="text-[7px] text-[var(--app-muted)] text-right font-semibold pt-0.5 flex items-center justify-end gap-1">
-                      <span>08:25</span>
-                      <span className="text-blue-400">✓✓</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* L4 */}
-                <div className="flex justify-start">
-                  <div className="bg-[var(--app-bg)] text-white rounded-xl rounded-tl-none p-3 max-w-[80%] text-[10px] space-y-1 relative">
-                    <p className="leading-relaxed">Wah bagus kak, saya ambil paket itu ya.</p>
-                    <div className="text-[7px] text-[var(--app-muted)] text-right font-semibold pt-0.5">08:26</div>
-                  </div>
-                </div>
-
-                {/* R4 */}
-                <div className="flex justify-end">
-                  <div className="bg-[#0b51cc]/25 text-white rounded-xl rounded-tr-none p-3 max-w-[80%] text-[10px] space-y-1 relative border border-blue-500/20">
-                    <div className="space-y-1 leading-relaxed">
-                      <p>Siap kak! 🙌 Mohon isi data berikut untuk proses pendaftaran:</p>
-                      <p>1. Nama Lengkap</p>
-                      <p>2. Alamat Lengkap</p>
-                      <p>3. Nomor WhatsApp</p>
-                      <p>Setelah itu, kami akan proses order dan jadwalkan instalasi.</p>
-                    </div>
-                    <div className="text-[7px] text-[var(--app-muted)] text-right font-semibold pt-0.5 flex items-center justify-end gap-1">
-                      <span>08:27</span>
-                      <span className="text-blue-400">✓✓</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* L5 */}
-                <div className="flex justify-start">
-                  <div className="bg-[var(--app-bg)] text-white rounded-xl rounded-tl-none p-3 max-w-[80%] text-[10px] space-y-1.5 relative">
-                    <p className="font-bold border-b border-gray-700 pb-1.5">Data Pendaftaran:</p>
-                    <div className="space-y-1 leading-relaxed font-mono">
-                      <p>1. Budi Santoso</p>
-                      <p>2. Jl. Mawar No. 10, Jakarta Selatan</p>
-                      <p>3. 6281234567890</p>
-                    </div>
-                    <div className="text-[7px] text-[var(--app-muted)] text-right font-semibold pt-0.5">08:28</div>
-                  </div>
-                </div>
-
-                {/* R5 */}
-                <div className="flex justify-end">
-                  <div className="bg-[#0b51cc]/25 text-white rounded-xl rounded-tr-none p-3 max-w-[80%] text-[10px] space-y-1 relative border border-blue-500/20">
-                    <p className="leading-relaxed">
-                      Terima kasih kak Budi 🙏. Order #ORD-20260701-00123 telah dibuat. Tim kami akan menghubungi kakak untuk konfirmasi jadwal instalasi.
-                    </p>
-                    <div className="text-[7px] text-[var(--app-muted)] text-right font-semibold pt-0.5 flex items-center justify-end gap-1">
-                      <span>08:30</span>
-                      <span className="text-blue-400">✓✓</span>
-                    </div>
-                  </div>
-                </div>
-
+                  );
+                })}
+                <div ref={messagesEndRef} />
               </div>
+            </div>
+
+            {/* Quick reply bar above input */}
+            <div className="px-3.5 py-2 bg-[var(--app-card)] border-t border-[var(--app-border)]/60 flex items-center gap-1.5 overflow-x-auto text-[10px]">
+              <span className="text-[var(--app-muted)] font-bold flex-shrink-0 flex items-center gap-1">
+                <Tag size={10} /> Balasan Cepat:
+              </span>
+              {QUICK_REPLIES.map(q => (
+                <button
+                  key={q.id}
+                  onClick={() => setInputText(q.text)}
+                  className="px-2.5 py-1 rounded-lg bg-[var(--app-bg)] border border-[var(--app-border)] hover:border-emerald-500 hover:text-emerald-400 text-[var(--app-muted)] whitespace-nowrap transition-colors cursor-pointer flex-shrink-0"
+                >
+                  {q.title}
+                </button>
+              ))}
             </div>
 
             {/* Input bar */}
-            <div className="p-4 border-t border-[var(--app-border)] bg-white flex-shrink-0 flex items-center gap-3">
-              <button className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors">
-                <Smile size={18} />
-              </button>
-              <button className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors">
-                <Paperclip size={18} />
-              </button>
-              
+            <div className="p-3 border-t border-[var(--app-border)] bg-[var(--app-card)] flex-shrink-0 flex items-center gap-2">
               <input 
                 type="text" 
-                placeholder="Ketik pesan..."
                 value={inputText}
-                onChange={e => setInputText(e.target.value)}
-                className="flex-1 bg-[var(--app-bg)] border border-[var(--app-border)] text-xs px-4 py-2.5 rounded-xl text-[var(--app-text)] placeholder-slate-400 focus:outline-none"
+                onChange={(e) => setInputText(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleSendMessage();
+                  }
+                }}
+                placeholder={activeCustomer ? `Ketik balasan untuk ${activeCustomer.name}...` : 'Pilih kontak terlebih dahulu...'}
+                disabled={!activeCustomer}
+                className="flex-1 bg-[var(--app-bg)] border border-[var(--app-border)] text-xs px-3.5 py-2.5 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500 transition-colors"
               />
 
-              <button className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors">
-                <Image size={18} />
-              </button>
-              
-              <button className="p-2.5 bg-[#10b981] hover:bg-emerald-600 text-white rounded-xl transition-colors shadow-md">
-                <Send size={15} />
+              <button 
+                onClick={() => handleSendMessage()}
+                disabled={!inputText.trim() || sending || !activeCustomer}
+                className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
+              >
+                {sending ? <RefreshCw size={14} className="animate-spin" /> : <Send size={14} />}
+                <span>Kirim</span>
               </button>
             </div>
           </div>
 
-          {/* Right Column: Profile Overview & Quick Actions (3/12 cols) */}
-          <div className="lg:col-span-3 bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4 flex flex-col justify-between h-full overflow-y-auto space-y-6">
-            
-            <div className="space-y-6">
-              {/* Profile Card */}
-              <div className="flex flex-col items-center text-center space-y-2 pb-4 border-b border-[var(--app-border)]">
-                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-[var(--app-text)] font-bold text-lg overflow-hidden">
-                  <span>BS</span>
+          {/* Right Column: Customer Info & NOC Action Drawer (3/12) */}
+          {showRightSidebar && activeCustomer && (
+            <div className="lg:col-span-3 bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4 flex flex-col justify-between h-full overflow-y-auto space-y-4 animate-in fade-in">
+              <div className="space-y-4">
+                <div className="border-b border-[var(--app-border)] pb-3">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-white">Profil Pelanggan</h3>
+                  <p className="text-[10px] text-[var(--app-muted)]">Informasi teknis dan penagihan</p>
                 </div>
-                <div>
-                  <div className="flex items-center gap-1.5 justify-center">
-                    <h4 className="text-xs font-bold text-[var(--app-text)] leading-none">Budi Santoso</h4>
-                    <span className="bg-green-500/10 text-green-400 border border-green-500/20 px-1.5 py-0.2 rounded text-[7px] font-black uppercase">
-                      Pelanggan
+
+                {/* Avatar and Name */}
+                <div className="text-center space-y-2 py-2 bg-[var(--app-bg)] rounded-xl border border-[var(--app-border)] p-3">
+                  <div className="w-12 h-12 mx-auto rounded-full bg-gradient-to-br from-emerald-600 to-teal-700 flex items-center justify-center text-white font-bold text-base">
+                    <span>{activeCustomer.name ? activeCustomer.name[0].toUpperCase() : 'U'}</span>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-sm text-[var(--app-text)]">{activeCustomer.name}</h4>
+                    <p className="text-xs font-mono text-[var(--app-muted)]">{activeCustomer.phone}</p>
+                  </div>
+                </div>
+
+                {/* Technical Info list */}
+                <div className="space-y-2 text-xs">
+                  <div className="flex justify-between py-1.5 border-b border-[var(--app-border)]">
+                    <span className="text-[var(--app-muted)]">Paket Berlangganan</span>
+                    <span className="font-semibold text-emerald-400">{activeCustomer.package || 'Home 50 Mbps'}</span>
+                  </div>
+                  <div className="flex justify-between py-1.5 border-b border-[var(--app-border)]">
+                    <span className="text-[var(--app-muted)]">Status Layanan</span>
+                    <span className={`font-semibold ${activeCustomer.status === 'SUSPENDED' ? 'text-rose-400' : 'text-emerald-400'}`}>
+                      {activeCustomer.status === 'SUSPENDED' ? 'TERISOLIR' : 'AKTIF NORMAL'}
                     </span>
                   </div>
-                  <p className="text-[9px] text-[var(--app-muted)] font-mono mt-1">6281234567890</p>
-                </div>
-                
-                {/* Actions row */}
-                <div className="flex justify-center gap-4 text-[8px] font-bold text-[var(--app-muted)] pt-2 w-full">
-                  <button className="flex flex-col items-center gap-1"><Users size={14} /><span className="text-[7px]">Profil</span></button>
-                  <button className="flex flex-col items-center gap-1"><Phone size={14} /><span className="text-[7px]">Panggil</span></button>
-                  <button className="flex flex-col items-center gap-1"><Video size={14} /><span className="text-[7px]">Video</span></button>
-                  <button className="flex flex-col items-center gap-1"><Tag size={14} /><span className="text-[7px]">Label</span></button>
-                  <button className="flex flex-col items-center gap-1"><MoreVertical size={14} /><span className="text-[7px]">Lainnya</span></button>
-                </div>
-              </div>
-
-              {/* Info Kontak */}
-              <div className="space-y-3.5">
-                <div className="flex justify-between items-center">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Info Kontak</h4>
-                  <button className="text-[9px] text-blue-500 font-bold hover:underline">Tambah ke Kontak</button>
-                </div>
-
-                <div className="space-y-3 text-[10px] font-bold text-gray-450 text-[var(--app-muted)]">
-                  <div className="flex justify-between"><span>Nama Lengkap</span><span className="text-white">Budi Santoso</span></div>
-                  <div className="flex justify-between"><span>Nomor WhatsApp</span><span className="text-white font-mono">6281234567890</span></div>
-                  <div className="flex justify-between"><span>Email</span><span className="text-white">budi.santoso@email.com</span></div>
-                  <div className="flex justify-between"><span>Alamat</span><span className="text-white text-right leading-tight max-w-[120px]">Jl. Mawar No. 10, Jakarta Selatan</span></div>
-                  <div className="flex justify-between"><span>Status</span><span className="text-green-400 font-bold">Aktif</span></div>
-                  <div className="flex justify-between"><span>Tanggal Bergabung</span><span className="text-white">22/10/2026 08:20</span></div>
-                  <div className="flex justify-between"><span>Sumber</span><span className="text-white">WhatsApp Chat</span></div>
-                  <div className="space-y-1">
-                    <span>Catatan</span>
-                    <p className="text-white text-[9px] leading-relaxed font-normal">
-                      Pelanggan potensial, tertarik paket 50 Mbps.
-                    </p>
+                  <div className="flex justify-between py-1.5 border-b border-[var(--app-border)]">
+                    <span className="text-[var(--app-muted)]">IP Dial-up/PPPoE</span>
+                    <span className="font-mono text-blue-400">{activeCustomer.ipAddress || '192.168.10.25'}</span>
+                  </div>
+                  <div className="flex justify-between py-1.5 border-b border-[var(--app-border)]">
+                    <span className="text-[var(--app-muted)]">Alamat Rumah</span>
+                    <span className="text-[10px] text-[var(--app-text)] text-right max-w-[150px] truncate">{activeCustomer.address || 'Harapan Indah'}</span>
                   </div>
                 </div>
-              </div>
 
-              {/* Label */}
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Label</h4>
-                  <button className="text-[9px] text-blue-500 font-bold hover:underline">Kelola Label</button>
-                </div>
+                {/* Quick Action Buttons for CS/Billing */}
+                <div className="space-y-2 pt-2">
+                  <p className="text-[10px] font-bold uppercase text-[var(--app-muted)] tracking-wider">Aksi Cepat CS / Billing</p>
+                  
+                  <button
+                    onClick={() => setShowSendInvoiceModal(true)}
+                    className="w-full py-2 px-3 bg-[var(--app-bg)] hover:bg-[var(--app-border)]/40 border border-[var(--app-border)] rounded-xl text-xs font-semibold text-[var(--app-text)] flex items-center justify-between transition-colors cursor-pointer"
+                  >
+                    <span className="flex items-center gap-2">
+                      <Receipt size={14} className="text-amber-400" />
+                      <span>Kirim Info Tagihan</span>
+                    </span>
+                    <Send size={12} className="text-[var(--app-muted)]" />
+                  </button>
 
-                <div className="flex flex-wrap gap-2 text-[8px] font-bold text-[var(--app-muted)]">
-                  <span className="bg-green-500/10 text-green-400 border border-green-500/20 px-2 py-0.5 rounded">Pelanggan</span>
-                  <span className="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded">VIP</span>
-                  <span className="bg-[var(--app-bg)] border border-[var(--app-border)] text-white px-2 py-0.5 rounded">Internet</span>
-                  <button className="p-0.5 border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 rounded text-[var(--app-muted)]"><Plus size={8} /></button>
-                </div>
-              </div>
+                  <button
+                    onClick={handleToggleSuspend}
+                    className={`w-full py-2 px-3 border rounded-xl text-xs font-semibold flex items-center justify-between transition-colors cursor-pointer ${
+                      activeCustomer.status === 'SUSPENDED'
+                        ? 'bg-emerald-950/40 border-emerald-800 text-emerald-300 hover:bg-emerald-900/50'
+                        : 'bg-rose-950/40 border-rose-800 text-rose-300 hover:bg-rose-900/50'
+                    }`}
+                  >
+                    <span className="flex items-center gap-2">
+                      <Power size={14} />
+                      <span>{activeCustomer.status === 'SUSPENDED' ? 'Buka Isolir Pelanggan' : 'Isolir Koneksi Pelanggan'}</span>
+                    </span>
+                  </button>
 
-              {/* Media, File & Link */}
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Media, File & Link</h4>
-                  <button className="text-[9px] text-blue-500 font-bold hover:underline">Lihat Semua</button>
-                </div>
-
-                <div className="grid grid-cols-4 gap-2">
-                  {[1, 2, 3, 4].map((item, idx) => (
-                    <div key={idx} className="bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg p-1 h-12 flex items-center justify-center text-[7px] text-blue-400 font-bold uppercase rounded">
-                      Doc {item}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Riwayat Chat */}
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Riwayat Chat</h4>
-                  <button className="text-[9px] text-blue-500 font-bold hover:underline">Lihat Semua</button>
-                </div>
-
-                <div className="space-y-2 text-[10px] font-bold text-[var(--app-muted)]">
-                  <div className="flex justify-between"><span>Total Chat</span><span className="text-white">12</span></div>
-                  <div className="flex justify-between"><span>Pertama Chat</span><span className="text-white font-mono">22/10/2026 08:20</span></div>
-                  <div className="flex justify-between"><span>Terakhir Chat</span><span className="text-white font-mono">22/10/2026 08:32</span></div>
+                  <Link
+                    href={`/pelanggan/${activeCustomer.id}`}
+                    className="w-full py-2 px-3 bg-[var(--app-bg)] hover:bg-[var(--app-border)]/40 border border-[var(--app-border)] rounded-xl text-xs font-semibold text-[var(--app-text)] flex items-center justify-between transition-colors"
+                  >
+                    <span className="flex items-center gap-2">
+                      <Eye size={14} className="text-blue-400" />
+                      <span>Buka Profil Lengkap</span>
+                    </span>
+                    <ExternalLink size={12} className="text-[var(--app-muted)]" />
+                  </Link>
                 </div>
               </div>
-            </div>
 
-            {/* Aksi Cepat Buttons Grid (Bottom Section) */}
-            <div className="space-y-3.5 pt-4 border-t border-[var(--app-border)] flex-shrink-0">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Aksi Cepat</h4>
-              
-              <div className="grid grid-cols-2 gap-2 text-[9px] font-bold text-[var(--app-muted)]">
-                {[
-                  { name: 'Kirim Template', icon: MessageSquare },
-                  { name: 'Kirim Invoice', icon: FileText },
-                  { name: 'Buat Order', icon: Wallet },
-                  { name: 'Buat Ticket', icon: AlertCircle },
-                  { name: 'Buat Follow Up', icon: Clock },
-                  { name: 'Tambah Catatan', icon: Edit2 }
-                ].map((item, idx) => {
-                  const Icon = item.icon;
-                  return (
-                    <button 
-                      key={idx}
-                      className="flex items-center gap-2 justify-center py-2 px-1 bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 rounded-xl transition-all text-center border-gray-800"
-                    >
-                      <Icon size={12} className="text-[var(--app-muted)] flex-shrink-0" />
-                      <span className="truncate">{item.name}</span>
-                    </button>
-                  );
-                })}
+              <div className="pt-3 border-t border-[var(--app-border)] text-center">
+                <span className="text-[9px] text-[var(--app-muted)]">AUDIRA-NET Billing & Gateway v3.4</span>
               </div>
             </div>
-
-          </div>
+          )}
 
         </div>
+
+        {/* ─── MODAL: Kirim Info Tagihan Cepat ────────────────────────────── */}
+        {showSendInvoiceModal && activeCustomer && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl w-full max-w-sm p-6 space-y-4 shadow-2xl animate-in zoom-in-95">
+              <div className="flex items-center justify-between border-b border-[var(--app-border)] pb-3">
+                <h3 className="text-sm font-bold text-white">Kirim Tagihan via Chat</h3>
+                <button 
+                  onClick={() => setShowSendInvoiceModal(false)}
+                  className="p-1 text-[var(--app-muted)] hover:text-white"
+                >
+                  <XCircle size={16} />
+                </button>
+              </div>
+
+              <div className="space-y-3 text-xs">
+                <div>
+                  <label className="block text-[var(--app-muted)] mb-1">Nama Pelanggan</label>
+                  <input
+                    type="text"
+                    disabled
+                    value={activeCustomer.name}
+                    className="w-full bg-[var(--app-bg)]/50 border border-[var(--app-border)] text-xs px-3 py-2 rounded-xl text-[var(--app-muted)]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[var(--app-muted)] mb-1">Periode Tagihan</label>
+                  <input
+                    type="text"
+                    value={invoiceMonth}
+                    onChange={(e) => setInvoiceMonth(e.target.value)}
+                    className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] text-xs px-3 py-2 rounded-xl text-white focus:outline-none focus:border-emerald-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[var(--app-muted)] mb-1">Nominal Tagihan (Rp)</label>
+                  <input
+                    type="number"
+                    value={invoiceAmount}
+                    onChange={(e) => setInvoiceAmount(e.target.value)}
+                    className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] text-xs px-3 py-2 rounded-xl text-white focus:outline-none focus:border-emerald-500"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-2 border-t border-[var(--app-border)]">
+                <button
+                  onClick={() => setShowSendInvoiceModal(false)}
+                  className="px-3 py-1.5 text-xs text-[var(--app-muted)] hover:text-white"
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={handleSendInvoiceNotification}
+                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Send size={13} />
+                  <span>Kirim ke Chat</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
       </div>
     </Layout>

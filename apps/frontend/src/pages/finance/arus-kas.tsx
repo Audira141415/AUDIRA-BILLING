@@ -234,7 +234,7 @@ export default function ArusKasDashboard() {
             <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--app-card)] border border-[var(--app-border)] text-xs">
               <span className="text-[var(--app-muted)] font-medium">25 Juni 2026 - 22 Oktober 2026</span>
             </div>
-            <button className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white transition-colors">
+            <button onClick={() => alert("Penyaringan arus kas per periode diterapkan.")} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white transition-colors">
               <Filter className="w-3.5 h-3.5" />
               <span>Filter</span>
             </button>
@@ -607,19 +607,19 @@ export default function ArusKasDashboard() {
                     <MinusSquare className="w-4 h-4 text-rose-400" />
                     <span>Catat Kas Keluar</span>
                   </button>
-                  <button className="w-full flex items-center gap-2 p-2.5 rounded-lg bg-[var(--app-card)] hover:bg-[#0c1d36] border border-[var(--app-border)] text-left text-[var(--app-text)] transition-colors">
+                  <button onClick={() => router.push('/finance/transaksi')} className="w-full flex items-center gap-2 p-2.5 rounded-lg bg-[var(--app-card)] hover:bg-[#0c1d36] border border-[var(--app-border)] text-left text-[var(--app-text)] transition-colors">
                     <ArrowRightLeft className="w-4 h-4 text-cyan-400" />
                     <span>Transfer Dana</span>
                   </button>
-                  <button className="w-full flex items-center gap-2 p-2.5 rounded-lg bg-[var(--app-card)] hover:bg-[#0c1d36] border border-[var(--app-border)] text-left text-[var(--app-text)] transition-colors">
+                  <button onClick={() => router.push('/finance/rekonsiliasi')} className="w-full flex items-center gap-2 p-2.5 rounded-lg bg-[var(--app-card)] hover:bg-[#0c1d36] border border-[var(--app-border)] text-left text-[var(--app-text)] transition-colors">
                     <CheckSquare className="w-4 h-4 text-emerald-400" />
                     <span>Rekonsiliasi Bank</span>
                   </button>
-                  <button className="w-full flex items-center gap-2 p-2.5 rounded-lg bg-[var(--app-card)] hover:bg-[#0c1d36] border border-[var(--app-border)] text-left text-[var(--app-text)] transition-colors">
+                  <button onClick={() => router.push('/finance/anggaran')} className="w-full flex items-center gap-2 p-2.5 rounded-lg bg-[var(--app-card)] hover:bg-[#0c1d36] border border-[var(--app-border)] text-left text-[var(--app-text)] transition-colors">
                     <Briefcase className="w-4 h-4 text-purple-400" />
                     <span>Buat Anggaran Kas</span>
                   </button>
-                  <button className="w-full flex items-center gap-2 p-2.5 rounded-lg bg-[var(--app-card)] hover:bg-[#0c1d36] border border-[var(--app-border)] text-left text-[var(--app-text)] transition-colors">
+                  <button onClick={() => alert("Mengekspor laporan arus kas...")} className="w-full flex items-center gap-2 p-2.5 rounded-lg bg-[var(--app-card)] hover:bg-[#0c1d36] border border-[var(--app-border)] text-left text-[var(--app-text)] transition-colors">
                     <FileText className="w-4 h-4 text-amber-400" />
                     <span>Export Laporan</span>
                   </button>

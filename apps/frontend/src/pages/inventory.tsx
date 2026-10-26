@@ -306,7 +306,7 @@ export default function Inventory() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         <div className="flex gap-2">
-                          <button className="text-blue-600 hover:text-blue-800">
+                          <button onClick={() => { setFormData({ type: item.type, serialNumber: item.serialNumber, brand: item.brand, model: item.model, macAddress: item.macAddress || '', vendor: '', location: '', notes: '' }); setShowAddModal(true); }} className="text-blue-600 hover:text-blue-800">
                             <Edit className="h-4 w-4" />
                           </button>
                           <button

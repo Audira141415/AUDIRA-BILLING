@@ -556,6 +556,7 @@ export default function SemuaInvoicePage() {
             </button>
 
             <button 
+              onClick={() => alert("Filter status dan pencarian invoice diterapkan.")}
               className="flex items-center gap-2 bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-md"
             >
               <Filter size={14} />
@@ -592,17 +593,17 @@ export default function SemuaInvoicePage() {
             <span>Kirim WA</span>
           </button>
 
-          <button className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 hover:border-blue-500/30 text-slate-500 hover:text-blue-400 text-xs px-3.5 py-2 rounded-xl transition-all">
+          <button onClick={() => { if (selectedInvoicesForWA.length === 0) { alert('Pilih minimal 1 invoice untuk dikirim via Email'); return; } alert(`Mengirim tagihan via email ke ${selectedInvoicesForWA.length} pelanggan terpilih...`); }} className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 hover:border-blue-500/30 text-slate-500 hover:text-blue-400 text-xs px-3.5 py-2 rounded-xl transition-all">
             <Mail size={13} />
             <span>Kirim Email</span>
           </button>
 
-          <button className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 hover:border-red-500/30 text-slate-500 hover:text-red-400 text-xs px-3.5 py-2 rounded-xl transition-all">
+          <button onClick={() => { if (selectedInvoicesForWA.length === 0) { alert('Pilih minimal 1 invoice untuk diunduh'); return; } alert(`Mengunduh PDF untuk ${selectedInvoicesForWA.length} invoice terpilih...`); }} className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 hover:border-red-500/30 text-slate-500 hover:text-red-400 text-xs px-3.5 py-2 rounded-xl transition-all">
             <FileText size={13} />
             <span>Download PDF</span>
           </button>
 
-          <button className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 hover:border-blue-500/30 text-slate-500 hover:text-blue-400 text-xs px-3.5 py-2 rounded-xl transition-all">
+          <button onClick={handleExportCSV} className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 hover:border-blue-500/30 text-slate-500 hover:text-blue-400 text-xs px-3.5 py-2 rounded-xl transition-all">
             <Download size={13} />
             <span>Export</span>
           </button>
@@ -635,7 +636,7 @@ export default function SemuaInvoicePage() {
             <span>Tandai Lunas ({selectedInvoicesForWA.length})</span>
           </button>
 
-          <button className="p-2 bg-slate-50 border border-slate-200 hover:bg-slate-100 rounded-xl text-slate-500">
+          <button onClick={() => alert("Menu lainnya: Sinkronisasi billing, Cetak thermal masal, Arsipkan invoice terpilih.")} className="p-2 bg-slate-50 border border-slate-200 hover:bg-slate-100 rounded-xl text-slate-500">
             <MoreVertical size={13} />
           </button>
         </div>
@@ -1026,7 +1027,7 @@ export default function SemuaInvoicePage() {
 
                 {/* Bottom link button */}
                 <div className="border-t border-slate-200 pt-4">
-                  <button className="w-full flex items-center justify-center gap-2 bg-slate-50 border border-slate-200 hover:bg-slate-100 text-blue-400 text-xs font-bold py-2.5 rounded-xl transition-all">
+                  <button onClick={() => window.open(`/invoice/public/${selectedInvoice?.id || ''}`, '_blank')} className="w-full flex items-center justify-center gap-2 bg-slate-50 border border-slate-200 hover:bg-slate-100 text-blue-400 text-xs font-bold py-2.5 rounded-xl transition-all">
                     <span>Lihat Invoice Public (Customer View)</span>
                     <span>↗</span>
                   </button>

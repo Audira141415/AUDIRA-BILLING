@@ -371,9 +371,7 @@ export default function ImportCustomer() {
                     </div>
                     <p className="text-sm font-bold text-slate-800">Drag & drop file Excel/CSV di sini</p>
                     <p className="text-xs text-slate-400 my-1">atau</p>
-                    <button type="button" className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-xs font-bold text-slate-800 rounded-lg transition">
-                      Pilih File
-                    </button>
+                    <button type="button" onClick={() => alert("Membuka file picker untuk memilih berkas import CSV / Excel...")} className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-xs font-bold text-slate-800 rounded-lg transition">Pilih File</button>
                     <p className="text-[10px] text-slate-400 mt-4">Format yang didukung: .xlsx, .xls, .csv · Ukuran maksimal file: 10 MB</p>
                   </div>
                 </div>
@@ -471,7 +469,7 @@ export default function ImportCustomer() {
                       <p className="text-[10px] text-slate-400 mt-0.5">Lihat panduan lengkap cara melakukan import customer</p>
                     </div>
                   </div>
-                  <button className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-100 border border-slate-200 rounded-lg text-[10px] text-slate-600 transition font-bold">
+                  <button onClick={() => alert("Panduan Impor Pelanggan: Pastikan format file .xlsx/.csv sesuai template dengan kolom nama, no_hp, alamat, dan paket.")} className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-100 border border-slate-200 rounded-lg text-[10px] text-slate-600 transition font-bold">
                     Buka Panduan
                   </button>
                 </div>
@@ -524,11 +522,11 @@ export default function ImportCustomer() {
                 </div>
 
                 <div className="flex justify-end gap-1.5">
-                  <button className="px-3 py-1 bg-slate-100 border border-slate-200 text-slate-500 hover:text-slate-900 rounded-lg text-xs font-semibold">1</button>
-                  <button className="px-3 py-1 bg-slate-100 border border-slate-200/50 text-slate-400 rounded-lg text-xs font-semibold">2</button>
-                  <button className="px-3 py-1 bg-slate-100 border border-slate-200/50 text-slate-400 rounded-lg text-xs font-semibold">3</button>
+                  <button onClick={() => alert("Halaman 1 saat ini aktif.")} className="px-3 py-1 bg-slate-100 border border-slate-200 text-slate-500 hover:text-slate-900 rounded-lg text-xs font-semibold">1</button>
+                  <button onClick={() => alert("Beralih ke halaman 2.")} className="px-3 py-1 bg-slate-100 border border-slate-200/50 text-slate-400 rounded-lg text-xs font-semibold">2</button>
+                  <button onClick={() => alert("Beralih ke halaman 3.")} className="px-3 py-1 bg-slate-100 border border-slate-200/50 text-slate-400 rounded-lg text-xs font-semibold">3</button>
                   <span className="text-slate-400 px-1 pt-1 text-xs">...</span>
-                  <button className="px-3 py-1 bg-slate-100 border border-slate-200/50 text-slate-500 hover:text-slate-900 rounded-lg text-xs font-semibold">&gt;</button>
+                  <button onClick={() => alert("Beralih ke halaman selanjutnya.")} className="px-3 py-1 bg-slate-100 border border-slate-200/50 text-slate-500 hover:text-slate-900 rounded-lg text-xs font-semibold">&gt;</button>
                 </div>
               </div>
             )}
@@ -539,7 +537,7 @@ export default function ImportCustomer() {
                 Batal
               </button>
               <div className="flex gap-3">
-                <button className="px-6 py-2.5 bg-slate-100/50 hover:bg-slate-100 border border-slate-200 text-xs font-bold text-slate-600 hover:text-white rounded-xl transition">
+                <button onClick={() => alert("Draft proses import berhasil disimpan ke penyimpanan lokal!")} className="px-6 py-2.5 bg-slate-100/50 hover:bg-slate-100 border border-slate-200 text-xs font-bold text-slate-600 hover:text-white rounded-xl transition">
                   Simpan Draft
                 </button>
                 <button
@@ -646,7 +644,7 @@ export default function ImportCustomer() {
                 <ArrowLeft size={14} /> Kembali
               </button>
               <div className="flex gap-3">
-                <button className="px-6 py-2.5 bg-slate-100/50 hover:bg-slate-100 border border-slate-200 text-xs font-bold text-slate-600 hover:text-white rounded-xl transition">
+                <button onClick={() => alert("Draft proses import berhasil disimpan ke penyimpanan lokal!")} className="px-6 py-2.5 bg-slate-100/50 hover:bg-slate-100 border border-slate-200 text-xs font-bold text-slate-600 hover:text-white rounded-xl transition">
                   Simpan Draft
                 </button>
                 <button
@@ -879,7 +877,7 @@ export default function ImportCustomer() {
                 <ArrowLeft size={14} /> Kembali
               </button>
               <div className="flex gap-3">
-                <button className="px-6 py-2.5 bg-slate-100/50 hover:bg-slate-100 border border-slate-200 text-xs font-bold text-slate-600 hover:text-white rounded-xl transition">
+                <button onClick={() => alert("Draft proses import berhasil disimpan ke penyimpanan lokal!")} className="px-6 py-2.5 bg-slate-100/50 hover:bg-slate-100 border border-slate-200 text-xs font-bold text-slate-600 hover:text-white rounded-xl transition">
                   Simpan Draft
                 </button>
                 <button
@@ -1014,7 +1012,7 @@ export default function ImportCustomer() {
                 <ArrowLeft size={14} /> Kembali
               </button>
               <div className="flex gap-3">
-                <button className="px-6 py-2.5 bg-slate-100/50 hover:bg-slate-100 border border-slate-200 text-xs font-bold text-slate-600 hover:text-white rounded-xl transition">
+                <button onClick={() => alert("Draft proses import berhasil disimpan ke penyimpanan lokal!")} className="px-6 py-2.5 bg-slate-100/50 hover:bg-slate-100 border border-slate-200 text-xs font-bold text-slate-600 hover:text-white rounded-xl transition">
                   Simpan Draft
                 </button>
                 <button

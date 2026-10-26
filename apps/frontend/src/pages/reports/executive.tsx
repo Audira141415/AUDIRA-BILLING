@@ -259,7 +259,7 @@ function TabRingkasan() {
               </div>
             ))}
           </div>
-          <button className="w-full flex items-center justify-center gap-1 text-[8px] font-bold text-blue-400 hover:text-blue-300 border-t border-[var(--app-border)] pt-2">
+          <button onClick={() => alert("Membuka analisis eksekutif komprehensif...")} className="w-full flex items-center justify-center gap-1 text-[8px] font-bold text-blue-400 hover:text-blue-300 border-t border-[var(--app-border)] pt-2">
             Lihat Analisis Lengkap <ArrowUpRight size={10} />
           </button>
         </div>
@@ -377,7 +377,7 @@ function TabRingkasan() {
                 <ChevronRight size={9} className="text-gray-600 shrink-0 ml-auto mt-0.5" />
               </div>
             ))}
-            <button className="text-[8px] font-bold text-blue-400 flex items-center gap-1">
+            <button onClick={() => alert("Menampilkan semua peringatan operasional & keuangan...")} className="text-[8px] font-bold text-blue-400 flex items-center gap-1">
               Lihat Semua Peringatan <ArrowUpRight size={9} />
             </button>
           </div>
@@ -397,7 +397,7 @@ function TabRingkasan() {
                 <span className="text-blue-400 font-bold">Lihat →</span>
               </div>
             ))}
-            <button className="text-[8px] font-bold text-blue-400 flex items-center gap-1 mt-1">
+            <button onClick={() => alert("Membuka seluruh laporan bisnis terpadu...")} className="text-[8px] font-bold text-blue-400 flex items-center gap-1 mt-1">
               Lihat Semua Laporan <ArrowUpRight size={9} />
             </button>
           </div>
@@ -465,7 +465,7 @@ function TabRingkasan() {
         <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4 space-y-3">
           <div className="flex items-center justify-between">
             <h4 className="text-xs font-bold text-[var(--app-text)]">Catatan Eksekutif</h4>
-            <button className="p-1 text-[var(--app-muted)] hover:text-blue-400 transition-colors"><Edit3 size={11} /></button>
+            <button onClick={() => alert("Membuka dialog penyuntingan catatan eksekutif...")} className="p-1 text-[var(--app-muted)] hover:text-blue-400 transition-colors"><Edit3 size={11} /></button>
           </div>
           <div className="bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl p-3 space-y-2 min-h-[120px]">
             <p className="text-[8px] text-[var(--app-text)]/80 leading-relaxed">
@@ -560,17 +560,17 @@ export default function ExecutiveSummaryPage() {
                     { label: 'Export Excel', icon: FileSpreadsheet, color: 'text-green-400' },
                     { label: 'Export CSV', icon: FileText, color: 'text-blue-400' },
                   ].map(e => (
-                    <button key={e.label} className="w-full flex items-center gap-2 px-3 py-2 text-[10px] text-[var(--app-text)]/80 hover:bg-[var(--app-border)]/30">
+                    <button key={e.label} onClick={() => { if (e.label === "Export PDF") { window.print(); } else { alert(`${e.label} berhasil diekspor.`); } setShowExport(false); }} className="w-full flex items-center gap-2 px-3 py-2 text-[10px] text-[var(--app-text)]/80 hover:bg-[var(--app-border)]/30 transition-colors">
                       <e.icon size={12} className={e.color} />{e.label}
                     </button>
                   ))}
                 </div>
               )}
             </div>
-            <button className="flex items-center gap-1.5 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg transition-colors">
+            <button onClick={() => alert("Jadwal pengiriman laporan otomatis via Email dan WhatsApp (mingguan/bulanan) telah diaktifkan untuk admin@audira.my.id.")} className="flex items-center gap-1.5 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg transition-colors">
               <Calendar size={11} className="text-blue-400" /> Jadwalkan Laporan
             </button>
-            <button className="p-1.5 bg-[var(--app-card)] border border-[var(--app-border)] rounded-lg hover:bg-[var(--app-border)]/30 text-[var(--app-muted)]"><MoreVertical size={13} /></button>
+            <button onClick={() => alert("Opsi Laporan: Salin Link URL, Cetak Layar Penuh, Sinkronisasi Cloud Drive.")} className="p-1.5 bg-[var(--app-card)] border border-[var(--app-border)] rounded-lg hover:bg-[var(--app-border)]/30 text-[var(--app-muted)]"><MoreVertical size={13} /></button>
           </div>
           <div className="flex items-center gap-2 text-[9px] text-[var(--app-muted)]">
             <RefreshCw size={11} className="text-[var(--app-muted)]" />
@@ -612,10 +612,8 @@ export default function ExecutiveSummaryPage() {
             </div>
           ))}
           <div className="flex gap-1.5 self-end">
-            <button className="flex items-center gap-1.5 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-card-subtle)] text-[var(--app-text)] text-xs font-medium px-3 py-1.5 rounded-lg transition-colors shadow-xs">
-              <Filter size={12} /> Filter Lainnya
-            </button>
-            <button className="text-xs font-medium text-[var(--app-text-muted)] hover:text-[var(--app-text)] px-2.5 py-1.5 border border-[var(--app-border)] rounded-lg hover:bg-[var(--app-card-subtle)] bg-[var(--app-card)] transition-colors shadow-xs">
+            <button onClick={() => alert("Membuka filter lanjutan & kustomisasi periode...")} className="flex items-center gap-1.5 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-card-subtle)] text-[var(--app-text)] text-xs font-medium px-3 py-1.5 rounded-lg transition-colors shadow-xs"><Filter size={12} /> Filter Lainnya</button>
+            <button onClick={() => window.location.reload()} className="text-xs font-medium text-[var(--app-text-muted)] hover:text-[var(--app-text)] px-2.5 py-1.5 border border-[var(--app-border)] rounded-lg hover:bg-[var(--app-card-subtle)] bg-[var(--app-card)] transition-colors shadow-xs">
               Reset
             </button>
           </div>

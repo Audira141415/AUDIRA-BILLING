@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import React, { useState } from 'react';
+import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
 import {
   Search,
@@ -64,6 +65,7 @@ const mockLogs: ConfirmationLog[] = [
 ];
 
 export default function PaymentConfirmationPage() {
+  const router = useRouter();
   const [selectedStatus, setSelectedStatus] = useState('Terima');
   const [notes, setNotes] = useState('Pembayaran sesuai dengan invoice. Terima kasih.');
 
@@ -109,7 +111,7 @@ export default function PaymentConfirmationPage() {
             <p className="text-[10px] text-[var(--app-muted)] font-semibold">Tinjau dan verifikasi bukti pembayaran dari customer</p>
           </div>
 
-          <button className="flex items-center gap-2 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-white text-xs font-bold px-4 py-2 rounded-xl transition-all border-gray-800">
+          <button onClick={() => window.history.back()} className="flex items-center gap-2 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-white text-xs font-bold px-4 py-2 rounded-xl transition-all border-gray-800">
             <ArrowLeft size={14} />
             <span>Kembali ke Daftar</span>
           </button>
@@ -207,7 +209,7 @@ export default function PaymentConfirmationPage() {
                   </div>
                 </div>
 
-                <button className="w-full flex items-center justify-center gap-2 bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-[var(--app-text)]/80 text-xs font-bold py-2.5 rounded-xl transition-all border-gray-800 mt-4">
+                <button onClick={() => router.push('/invoice/INV-2026-07-0012')} className="w-full flex items-center justify-center gap-2 bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-[var(--app-text)]/80 text-xs font-bold py-2.5 rounded-xl transition-all border-gray-800 mt-4">
                   <FileText size={13} />
                   <span>Lihat Detail Invoice</span>
                 </button>
@@ -412,17 +414,17 @@ export default function PaymentConfirmationPage() {
 
               {/* Action buttons */}
               <div className="flex justify-between items-center border-t border-[var(--app-border)]/60 pt-4">
-                <button className="text-xs font-bold text-[var(--app-muted)] hover:text-[var(--app-text)] px-5 py-2.5 border border-[var(--app-border)] rounded-xl hover:bg-[var(--app-border)]/20 transition-colors">
+                <button onClick={() => router.push('/payment/history')} className="text-xs font-bold text-[var(--app-muted)] hover:text-[var(--app-text)] px-5 py-2.5 border border-[var(--app-border)] rounded-xl hover:bg-[var(--app-border)]/20 transition-colors">
                   Batal
                 </button>
                 
                 <div className="flex items-center gap-3">
-                  <button className="flex items-center gap-1.5 bg-[#10b981] hover:bg-emerald-600 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-md transition-all">
+                  <button onClick={() => alert("Pembayaran berhasil diverifikasi dan diproses.")} className="flex items-center gap-1.5 bg-[#10b981] hover:bg-emerald-600 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-md transition-all">
                     <CheckCircle size={14} />
                     <span>Simpan & Proses</span>
                   </button>
 
-                  <button className="flex items-center gap-1.5 bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-md transition-all">
+                  <button onClick={() => alert("Perubahan status verifikasi pembayaran disimpan.")} className="flex items-center gap-1.5 bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-md transition-all">
                     <CheckCircle size={14} />
                     <span>Simpan</span>
                   </button>
@@ -482,15 +484,15 @@ export default function PaymentConfirmationPage() {
 
               {/* Action Buttons */}
               <div className="grid grid-cols-3 gap-2">
-                <button className="flex flex-col items-center justify-center p-2 rounded-lg bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-[9px] font-bold text-[var(--app-text)]/80 transition-colors">
+                <button onClick={() => alert("Membuka preview struk bukti transfer...")} className="flex flex-col items-center justify-center p-2 rounded-lg bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-[9px] font-bold text-[var(--app-text)]/80 transition-colors">
                   <Eye size={12} className="mb-1" />
                   <span>Lihat</span>
                 </button>
-                <button className="flex flex-col items-center justify-center p-2 rounded-lg bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-[9px] font-bold text-[var(--app-text)]/80 transition-colors">
+                <button onClick={() => alert("Mengunduh bukti-transfer-budi-santoso.jpg...")} className="flex flex-col items-center justify-center p-2 rounded-lg bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-[9px] font-bold text-[var(--app-text)]/80 transition-colors">
                   <Download size={12} className="mb-1" />
                   <span>Unduh</span>
                 </button>
-                <button className="flex flex-col items-center justify-center p-2 rounded-lg bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-[9px] font-bold text-[var(--app-text)]/80 transition-colors">
+                <button onClick={() => alert("Memperbesar gambar bukti transfer...")} className="flex flex-col items-center justify-center p-2 rounded-lg bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-[9px] font-bold text-[var(--app-text)]/80 transition-colors">
                   <ZoomIn size={12} className="mb-1" />
                   <span>Zoom</span>
                 </button>

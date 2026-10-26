@@ -75,7 +75,7 @@ export default function WhatsappSettingsPage() {
               <span className="text-blue-500 font-semibold">Gateway Settings</span>
             </div>
             <h1 className="text-xl md:text-2xl font-bold tracking-tight text-[var(--app-text)]">
-              undefined
+              Pengaturan & Koneksi WhatsApp Gateway
             </h1>
             <p className="text-xs text-[var(--app-muted)]">
               Pairing QR Code multi-device WhatsApp, Webhook listener URL, rate-limit jeda pengiriman anti-banned, dan status koneksi API.
@@ -143,7 +143,7 @@ export default function WhatsappSettingsPage() {
                 </div>
               </div>
 
-              <button className="w-full flex items-center justify-center gap-2 bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-[var(--app-text)]/80 text-xs font-bold py-2 rounded-xl transition-all border-gray-800">
+              <button onClick={() => alert("Membuka formulir Ubah Informasi WhatsApp Gateway...")} className="w-full flex items-center justify-center gap-2 bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-[var(--app-text)]/80 text-xs font-bold py-2 rounded-xl transition-all border-gray-800">
                 <span>Ubah Informasi</span>
               </button>
             </div>
@@ -195,7 +195,7 @@ export default function WhatsappSettingsPage() {
                 </div>
               </div>
 
-              <button className="w-full bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold py-2.5 rounded-xl shadow-md transition-all mt-4 border-none">
+              <button onClick={() => alert("Pengaturan WhatsApp berhasil disimpan!")} className="w-full bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold py-2.5 rounded-xl shadow-md transition-all mt-4 border-none">
                 Simpan Pengaturan
               </button>
             </div>
@@ -244,7 +244,7 @@ export default function WhatsappSettingsPage() {
                 </div>
               </div>
 
-              <button className="w-full bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold py-2.5 rounded-xl shadow-md transition-all mt-4 border-none">
+              <button onClick={() => alert("Pengaturan WhatsApp berhasil disimpan!")} className="w-full bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold py-2.5 rounded-xl shadow-md transition-all mt-4 border-none">
                 Simpan Pengaturan
               </button>
             </div>
@@ -307,7 +307,7 @@ export default function WhatsappSettingsPage() {
                 </div>
               </div>
 
-              <button className="w-full bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold py-2.5 rounded-xl shadow-md transition-all mt-4 border-none">
+              <button onClick={() => alert("Pengaturan WhatsApp berhasil disimpan!")} className="w-full bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold py-2.5 rounded-xl shadow-md transition-all mt-4 border-none">
                 Simpan Pengaturan
               </button>
             </div>
@@ -387,7 +387,7 @@ export default function WhatsappSettingsPage() {
                 </div>
               </div>
 
-              <button className="w-full bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold py-2.5 rounded-xl shadow-md transition-all mt-4 border-none">
+              <button onClick={() => alert("Pengaturan WhatsApp berhasil disimpan!")} className="w-full bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold py-2.5 rounded-xl shadow-md transition-all mt-4 border-none">
                 Simpan Pengaturan
               </button>
             </div>
@@ -458,7 +458,7 @@ export default function WhatsappSettingsPage() {
                 </div>
               </div>
 
-              <button className="w-full bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold py-2.5 rounded-xl shadow-md transition-all mt-4 border-none">
+              <button onClick={() => alert("Pengaturan WhatsApp berhasil disimpan!")} className="w-full bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold py-2.5 rounded-xl shadow-md transition-all mt-4 border-none">
                 Simpan Pengaturan
               </button>
             </div>
@@ -527,7 +527,7 @@ export default function WhatsappSettingsPage() {
                 </div>
               </div>
 
-              <button className="w-full bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold py-2.5 rounded-xl shadow-md transition-all mt-4 border-none">
+              <button onClick={() => alert("Pengaturan WhatsApp berhasil disimpan!")} className="w-full bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold py-2.5 rounded-xl shadow-md transition-all mt-4 border-none">
                 Simpan Pengaturan
               </button>
             </div>

@@ -597,10 +597,10 @@ export default function Operational() {
                 </div>
 
                 <div className="flex space-x-2">
-                  <button className="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-600 px-4 py-2 rounded-lg font-medium transition-colors">
+                  <button onClick={() => { alert(`Tugaskan tiket ke teknisi ${tech.name}`); setShowTicketModal(true); }} className="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-600 px-4 py-2 rounded-lg font-medium transition-colors">
                     Assign Ticket
                   </button>
-                  <button className="p-2 text-[var(--app-muted)] hover:bg-gray-50 rounded-lg transition-colors">
+                  <button onClick={() => alert(`Edit profil teknisi ${tech.name}`)} className="p-2 text-[var(--app-muted)] hover:bg-gray-50 rounded-lg transition-colors">
                     <Edit size={18} />
                   </button>
                 </div>
@@ -844,7 +844,7 @@ export default function Operational() {
                 >
                   Tutup
                 </button>
-                <button className="px-6 py-2.5 bg-gradient-to-r from-rose-600 to-pink-700 hover:from-rose-700 hover:to-pink-800 text-[var(--app-text)] font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl">
+                <button onClick={() => { alert('Teknisi berhasil ditugaskan ke tiket ini!'); setShowTicketModal(false); }} className="px-6 py-2.5 bg-gradient-to-r from-rose-600 to-pink-700 hover:from-rose-700 hover:to-pink-800 text-[var(--app-text)] font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl">
                   Assign Technician
                 </button>
               </div>

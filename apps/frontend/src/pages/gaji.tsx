@@ -269,7 +269,7 @@ export default function Gaji() {
         </style>
       </head>
       <body>
-        <button class="print-btn" onclick="window.print()">🖨️ Print</button>
+        <button class="print-btn" onClick="window.print()">🖨️ Print</button>
         
         <div class="header">
           <div class="company-name">AUDIRA BILLING SYSTEM</div>

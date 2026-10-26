@@ -131,6 +131,7 @@ export default function KategoriPackagePage() {
         {/* ─── Add Category Button Area ──────────────────────────────────── */}
         <div className="flex justify-end">
           <button 
+            onClick={() => alert("Membuka formulir Tambah Kategori Baru...")}
             className="flex items-center gap-2 bg-[#0052cc] hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-lg shadow-blue-900/20 transition-all transform hover:scale-[1.02]"
           >
             <Plus size={16} />
@@ -211,6 +212,7 @@ export default function KategoriPackagePage() {
             </button>
 
             <button 
+              onClick={() => alert("Filter kategori diterapkan.")}
               className="flex items-center gap-2 bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-md transition-all"
             >
               <Filter size={14} />
@@ -276,15 +278,9 @@ export default function KategoriPackagePage() {
                             </td>
                             <td className="p-4">
                               <div className="flex items-center justify-center gap-2">
-                                <button className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-slate-900 transition-colors">
-                                  <Eye size={14} />
-                                </button>
-                                <button className="p-1.5 hover:bg-slate-100 rounded-lg text-blue-400 hover:text-blue-300 transition-colors">
-                                  <Edit size={14} />
-                                </button>
-                                <button className="p-1.5 hover:bg-red-500/10 rounded-lg text-red-400 hover:text-red-300 transition-colors">
-                                  <Trash2 size={14} />
-                                </button>
+                                <button onClick={() => alert("Membuka rincian detail kategori...")} className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-slate-900 transition-colors"><Eye size={14} /></button>
+                                <button onClick={() => alert("Membuka modal edit kategori...")} className="p-1.5 hover:bg-slate-100 rounded-lg text-blue-400 hover:text-blue-300 transition-colors"><Edit size={14} /></button>
+                                <button onClick={() => alert("Kategori paket dinonaktifkan.")} className="p-1.5 hover:bg-red-500/10 rounded-lg text-red-400 hover:text-red-300 transition-colors"><Trash2 size={14} /></button>
                               </div>
                             </td>
                           </tr>
@@ -310,6 +306,7 @@ export default function KategoriPackagePage() {
                       <ChevronLeft size={14} />
                     </button>
                     <button
+                      onClick={() => alert("Halaman 1 saat ini aktif.")}
                       className="w-8 h-8 rounded-xl text-xs font-semibold border bg-[#0052cc] text-white border-[#0052cc]"
                     >
                       1

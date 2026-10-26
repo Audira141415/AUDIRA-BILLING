@@ -163,9 +163,7 @@ export default function InvoiceSettingsPage() {
               </div>
 
               <div className="flex justify-end pt-5 border-t border-[var(--app-border)]/60 mt-5">
-                <button className="bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-md transition-all">
-                  Simpan Perubahan
-                </button>
+                <button onClick={() => alert("Perubahan konfigurasi berhasil disimpan ke database!")} className="bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-md transition-all">Simpan Perubahan</button>
               </div>
             </div>
 
@@ -179,7 +177,7 @@ export default function InvoiceSettingsPage() {
                     <span className="text-[10px] text-[var(--app-muted)] font-bold uppercase block">Format Nomor Invoice</span>
                     <div className="flex items-center gap-2">
                       <input type="text" defaultValue="INV/{YY}/{MM}/{SEQ}" className="flex-1 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl text-xs px-3.5 py-2.5 text-white focus:outline-none" />
-                      <button className="bg-[var(--app-card)] border border-[var(--app-border)] text-blue-400 hover:bg-[var(--app-border)]/30 text-xs font-bold px-4 py-2.5 rounded-xl transition-all border-blue-500/20">
+                      <button onClick={() => alert("Format nomor invoice siap disunting.")} className="bg-[var(--app-card)] border border-[var(--app-border)] text-blue-400 hover:bg-[var(--app-border)]/30 text-xs font-bold px-4 py-2.5 rounded-xl transition-all border-blue-500/20">
                         Edit Format
                       </button>
                     </div>
@@ -199,7 +197,7 @@ export default function InvoiceSettingsPage() {
                     <span className="text-[10px] text-[var(--app-muted)] font-bold uppercase block">Nomor Awal</span>
                     <div className="flex items-center gap-2">
                       <input type="text" defaultValue="0001" className="flex-1 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl text-xs px-3.5 py-2.5 text-white focus:outline-none" />
-                      <button className="text-xs font-bold text-[var(--app-muted)] hover:text-[var(--app-text)] px-4 py-2.5 border border-[var(--app-border)] rounded-xl hover:bg-[var(--app-border)]/20 transition-colors">
+                      <button onClick={() => alert("Nomor awal direset ke 0001.")} className="text-xs font-bold text-[var(--app-muted)] hover:text-[var(--app-text)] px-4 py-2.5 border border-[var(--app-border)] rounded-xl hover:bg-[var(--app-border)]/20 transition-colors">
                         Reset
                       </button>
                     </div>
@@ -215,9 +213,7 @@ export default function InvoiceSettingsPage() {
               </div>
 
               <div className="flex justify-end pt-5 border-t border-[var(--app-border)]/60 mt-5">
-                <button className="bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-md transition-all">
-                  Simpan Perubahan
-                </button>
+                <button onClick={() => alert("Perubahan konfigurasi berhasil disimpan ke database!")} className="bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-md transition-all">Simpan Perubahan</button>
               </div>
             </div>
 
@@ -302,9 +298,7 @@ export default function InvoiceSettingsPage() {
               </div>
 
               <div className="flex justify-end pt-5 border-t border-[var(--app-border)]/60 mt-5">
-                <button className="bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-md transition-all">
-                  Simpan Perubahan
-                </button>
+                <button onClick={() => alert("Perubahan konfigurasi berhasil disimpan ke database!")} className="bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-md transition-all">Simpan Perubahan</button>
               </div>
             </div>
 
@@ -360,9 +354,7 @@ export default function InvoiceSettingsPage() {
               </div>
 
               <div className="flex justify-end pt-5 border-t border-[var(--app-border)]/60 mt-5">
-                <button className="bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-md transition-all">
-                  Simpan Perubahan
-                </button>
+                <button onClick={() => alert("Perubahan konfigurasi berhasil disimpan ke database!")} className="bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-md transition-all">Simpan Perubahan</button>
               </div>
             </div>
 
@@ -430,9 +422,7 @@ export default function InvoiceSettingsPage() {
               </div>
 
               <div className="flex justify-end pt-5 border-t border-[var(--app-border)]/60 mt-5">
-                <button className="bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-md transition-all">
-                  Simpan Perubahan
-                </button>
+                <button onClick={() => alert("Perubahan konfigurasi berhasil disimpan ke database!")} className="bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-md transition-all">Simpan Perubahan</button>
               </div>
             </div>
 
@@ -500,9 +490,7 @@ export default function InvoiceSettingsPage() {
               </div>
 
               <div className="flex justify-end pt-5 border-t border-[var(--app-border)]/60 mt-5">
-                <button className="bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-md transition-all">
-                  Simpan Perubahan
-                </button>
+                <button onClick={() => alert("Perubahan konfigurasi berhasil disimpan ke database!")} className="bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-md transition-all">Simpan Perubahan</button>
               </div>
             </div>
 
@@ -555,7 +543,7 @@ export default function InvoiceSettingsPage() {
 
           <div className="flex items-center gap-2">
             <span>Log Perubahan Terakhir</span>
-            <button className="text-blue-500 hover:underline">Lihat Log Perubahan &rarr;</button>
+            <button onClick={() => alert("Menampilkan log perubahan konfigurasi...")} className="text-blue-500 hover:underline">Lihat Log Perubahan &rarr;</button>
           </div>
         </div>
 

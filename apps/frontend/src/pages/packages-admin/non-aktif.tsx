@@ -198,6 +198,7 @@ export default function PaketNonAktifPage() {
         {/* ─── Add Non Active Button Area ─────────────────────────────────── */}
         <div className="flex justify-end">
           <button 
+            onClick={() => alert("Membuka formulir Tambah Paket Non Aktif...")}
             className="flex items-center gap-2 bg-[#0052cc] hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-lg shadow-blue-900/20 transition-all transform hover:scale-[1.02]"
           >
             <Plus size={16} />
@@ -318,6 +319,7 @@ export default function PaketNonAktifPage() {
             </button>
 
             <button 
+              onClick={() => alert("Filter paket non-aktif diterapkan.")}
               className="flex items-center gap-2 bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-md transition-all"
             >
               <Filter size={14} />
@@ -394,15 +396,11 @@ export default function PaketNonAktifPage() {
                             </td>
                             <td className="p-4">
                               <div className="flex items-center justify-center gap-1.5">
-                                <button className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-slate-900 transition-colors">
-                                  <Eye size={14} />
-                                </button>
-                                <button className="p-1.5 hover:bg-slate-100 rounded-lg text-blue-400 hover:text-blue-300 transition-colors">
+                                <button onClick={() => alert("Membuka tampilan detail...")} className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-slate-900 transition-colors"><Eye size={14} /></button>
+                                <button onClick={() => alert("Mengaktifkan kembali paket ini...")} className="p-1.5 hover:bg-slate-100 rounded-lg text-blue-400 hover:text-blue-300 transition-colors">
                                   <RefreshCw size={14} />
                                 </button>
-                                <button className="p-1.5 hover:bg-red-500/10 rounded-lg text-red-400 hover:text-red-300 transition-colors">
-                                  <Trash2 size={14} />
-                                </button>
+                                <button onClick={() => alert("Menghapus data terpilih...")} className="p-1.5 hover:bg-red-500/10 rounded-lg text-red-400 hover:text-red-300 transition-colors"><Trash2 size={14} /></button>
                               </div>
                             </td>
                           </tr>
@@ -427,7 +425,7 @@ export default function PaketNonAktifPage() {
                     >
                       <ChevronLeft size={14} />
                     </button>
-                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border bg-[#0052cc] text-white border-[#0052cc]">1</button>
+                    <button onClick={() => alert("Halaman 1 saat ini aktif.")} className="w-8 h-8 rounded-xl text-xs font-semibold border bg-[#0052cc] text-white border-[#0052cc]">1</button>
                     <button 
                       disabled
                       className="p-2 border border-slate-200 hover:bg-slate-100 rounded-xl text-slate-400 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
@@ -455,7 +453,7 @@ export default function PaketNonAktifPage() {
                 <h4 className="text-sm font-bold text-slate-800">Kelola Paket Non Aktif dengan Mudah</h4>
                 <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">Pantau paket yang tidak aktif, lihat alasan dan dampaknya, serta aktifkan kembali jika diperlukan.</p>
               </div>
-              <button className="flex items-center gap-2 bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl transition-all shadow-md">
+              <button onClick={() => alert("Membuka Laporan Analitik Paket Non Aktif...")} className="flex items-center gap-2 bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl transition-all shadow-md">
                 <Plus size={14} />
                 <span>Lihat Laporan Lengkap</span>
               </button>

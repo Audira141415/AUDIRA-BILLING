@@ -307,7 +307,7 @@ export default function TransaksiDashboard() {
             <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--app-card)] border border-[var(--app-border)] text-xs">
               <span className="text-[var(--app-muted)] font-medium">25 Juni 2026 - 22 Oktober 2026</span>
             </div>
-            <button className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white transition-colors">
+            <button onClick={() => alert("Penyaringan data transaksi keuangan diterapkan.")} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white transition-colors">
               <Filter className="w-3.5 h-3.5" />
               <span>Filter</span>
             </button>
@@ -529,9 +529,7 @@ export default function TransaksiDashboard() {
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 pt-2">
-                  <button className="bg-blue-600 hover:bg-blue-500 py-2 rounded text-[var(--app-text)] font-semibold">
-                    Terapkan Filter
-                  </button>
+                  <button onClick={() => alert("Penyaringan transaksi diterapkan.")} className="bg-blue-600 hover:bg-blue-500 py-2 rounded text-[var(--app-text)] font-semibold">Terapkan Filter</button>
                   <button onClick={handleResetFilter} className="bg-slate-800 hover:bg-slate-700 py-2 rounded text-white">
                     Reset
                   </button>
@@ -592,7 +590,7 @@ export default function TransaksiDashboard() {
                     <Plus className="w-3.5 h-3.5" />
                     <span>Transaksi Baru</span>
                   </button>
-                  <button className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-[var(--app-border)] rounded text-xs text-white">
+                  <button onClick={() => alert("Membuka modal impor transaksi dari rekening koran / CSV...")} className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-[var(--app-border)] rounded text-xs text-white">
                     <UploadCloud className="w-3.5 h-3.5 text-[var(--app-muted)]" />
                     <span>Import Transaksi</span>
                   </button>
@@ -686,17 +684,13 @@ export default function TransaksiDashboard() {
               <div className="flex justify-between items-center mt-4 pt-4 border-t border-[var(--app-border)]/60 text-xs text-[var(--app-muted)]">
                 <span>Menampilkan {filteredList.length} dari {totalTrxCount} transaksi</span>
                 <div className="flex items-center gap-2">
-                  <button className="p-1 rounded bg-[#071225] border border-[var(--app-border)] hover:text-white">
-                    <ChevronLeft className="w-4 h-4" />
-                  </button>
-                  <button className="px-2 py-1 rounded bg-blue-600 text-[var(--app-text)] font-semibold">1</button>
-                  <button className="px-2 py-1 rounded bg-[#071225] hover:text-white">2</button>
-                  <button className="px-2 py-1 rounded bg-[#071225] hover:text-white">3</button>
+                  <button onClick={() => alert("Halaman pertama sudah aktif.")} className="p-1 rounded bg-[#071225] border border-[var(--app-border)] hover:text-white"><ChevronLeft className="w-4 h-4" /></button>
+                  <button onClick={() => alert("Halaman 1 saat ini aktif.")} className="px-2 py-1 rounded bg-blue-600 text-[var(--app-text)] font-semibold">1</button>
+                  <button onClick={() => alert("Beralih ke halaman 2")} className="px-2 py-1 rounded bg-[#071225] hover:text-white">2</button>
+                  <button onClick={() => alert("Beralih ke halaman 3")} className="px-2 py-1 rounded bg-[#071225] hover:text-white">3</button>
                   <span>...</span>
-                  <button className="px-2 py-1 rounded bg-[#071225] hover:text-white">125</button>
-                  <button className="p-1 rounded bg-[#071225] border border-[var(--app-border)] hover:text-white">
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
+                  <button onClick={() => alert("Beralih ke halaman 125")} className="px-2 py-1 rounded bg-[#071225] hover:text-white">125</button>
+                  <button onClick={() => alert("Beralih ke halaman selanjutnya.")} className="p-1 rounded bg-[#071225] border border-[var(--app-border)] hover:text-white"><ChevronRight className="w-4 h-4" /></button>
                 </div>
               </div>
             </div>

@@ -274,7 +274,7 @@ export default function AnggaranDashboard() {
               <Plus className="w-3.5 h-3.5" />
               <span>Anggaran Baru</span>
             </button>
-            <button className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--app-card)] hover:bg-[var(--app-card-subtle)] text-xs font-semibold text-[var(--app-text)] border border-[var(--app-border)] shadow-xs transition-colors">
+            <button onClick={() => alert("Membuka modal impor data rencana anggaran...")} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--app-card)] hover:bg-[var(--app-card-subtle)] text-xs font-semibold text-[var(--app-text)] border border-[var(--app-border)] shadow-xs transition-colors">
               <FolderOpen className="w-3.5 h-3.5 text-[var(--app-muted)]" />
               <span>Import Anggaran</span>
             </button>
@@ -602,12 +602,12 @@ export default function AnggaranDashboard() {
             <div className="flex justify-between items-center mt-4 pt-4 border-t border-[var(--app-border)]/60 text-[11px] text-[var(--app-muted)]">
               <span>Menampilkan 1 - {filteredBudgets.length} dari {budgets.length} anggaran</span>
               <div className="flex items-center gap-1.5">
-                <button className="px-2 py-0.5 rounded bg-[var(--app-card-subtle)] hover:text-white">&lt;</button>
-                <button className="px-2 py-0.5 rounded bg-blue-600 text-[var(--app-text)] font-semibold">1</button>
-                <button className="px-2 py-0.5 rounded bg-[var(--app-card-subtle)] hover:text-white">2</button>
-                <button className="px-2 py-0.5 rounded bg-[var(--app-card-subtle)] hover:text-white">3</button>
-                <button className="px-2 py-0.5 rounded bg-[var(--app-card-subtle)] hover:text-white">4</button>
-                <button className="px-2 py-0.5 rounded bg-[var(--app-card-subtle)] hover:text-white">&gt;</button>
+                <button onClick={() => alert("Halaman pertama sudah aktif.")} className="px-2 py-0.5 rounded bg-[var(--app-card-subtle)] hover:text-white">&lt;</button>
+                <button onClick={() => alert("Halaman 1 saat ini aktif.")} className="px-2 py-0.5 rounded bg-blue-600 text-[var(--app-text)] font-semibold">1</button>
+                <button onClick={() => alert("Beralih ke halaman 2.")} className="px-2 py-0.5 rounded bg-[var(--app-card-subtle)] hover:text-white">2</button>
+                <button onClick={() => alert("Beralih ke halaman 3.")} className="px-2 py-0.5 rounded bg-[var(--app-card-subtle)] hover:text-white">3</button>
+                <button onClick={() => alert("Beralih ke halaman 4.")} className="px-2 py-0.5 rounded bg-[var(--app-card-subtle)] hover:text-white">4</button>
+                <button onClick={() => alert("Beralih ke halaman selanjutnya.")} className="px-2 py-0.5 rounded bg-[var(--app-card-subtle)] hover:text-white">&gt;</button>
               </div>
             </div>
           </div>
@@ -670,16 +670,16 @@ export default function AnggaranDashboard() {
                 >
                   + Buat Anggaran Baru
                 </button>
-                <button className="w-full text-left py-2 px-3 rounded bg-[var(--app-card-subtle)]/20 hover:bg-[var(--app-card-subtle)]/40 text-[var(--app-text)]/90 border border-[var(--app-border)] block">
+                <button onClick={() => alert("Membuka modal impor data rencana anggaran...")} className="w-full text-left py-2 px-3 rounded bg-[var(--app-card-subtle)]/20 hover:bg-[var(--app-card-subtle)]/40 text-[var(--app-text)]/90 border border-[var(--app-border)] block">
                   Import Anggaran
                 </button>
-                <button className="w-full text-left py-2 px-3 rounded bg-[var(--app-card-subtle)]/20 hover:bg-[var(--app-card-subtle)]/40 text-[var(--app-text)]/90 border border-[var(--app-border)] block">
+                <button onClick={() => alert("Membuka formulir pengajuan revisi pagu anggaran...")} className="w-full text-left py-2 px-3 rounded bg-[var(--app-card-subtle)]/20 hover:bg-[var(--app-card-subtle)]/40 text-[var(--app-text)]/90 border border-[var(--app-border)] block">
                   Revisi Anggaran
                 </button>
-                <button className="w-full text-left py-2 px-3 rounded bg-[var(--app-card-subtle)]/20 hover:bg-[var(--app-card-subtle)]/40 text-[var(--app-text)]/90 border border-[var(--app-border)] block">
+                <button onClick={() => alert("Menampilkan rekapitulasi realisasi anggaran vs belanja...")} className="w-full text-left py-2 px-3 rounded bg-[var(--app-card-subtle)]/20 hover:bg-[var(--app-card-subtle)]/40 text-[var(--app-text)]/90 border border-[var(--app-border)] block">
                   Laporan Anggaran
                 </button>
-                <button className="w-full text-left py-2 px-3 rounded bg-[var(--app-card-subtle)]/20 hover:bg-[var(--app-card-subtle)]/40 text-[var(--app-text)]/90 border border-[var(--app-border)] block">
+                <button onClick={() => alert("Mengekspor data anggaran ke format Excel...")} className="w-full text-left py-2 px-3 rounded bg-[var(--app-card-subtle)]/20 hover:bg-[var(--app-card-subtle)]/40 text-[var(--app-text)]/90 border border-[var(--app-border)] block">
                   Ekspor Data Anggaran
                 </button>
               </div>

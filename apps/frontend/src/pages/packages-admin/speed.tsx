@@ -114,6 +114,7 @@ export default function SpeedProfilePage() {
         {/* ─── Add Profile Button Area ───────────────────────────────────── */}
         <div className="flex justify-end">
           <button 
+            onClick={() => alert("Membuka formulir Tambah Speed Profile Baru...")}
             className="flex items-center gap-2 bg-[#0052cc] hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-lg shadow-blue-900/20 transition-all transform hover:scale-[1.02]"
           >
             <Plus size={16} />
@@ -214,6 +215,7 @@ export default function SpeedProfilePage() {
             </button>
 
             <button 
+              onClick={() => alert("Filter speed profile diterapkan.")}
               className="flex items-center gap-2 bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-md transition-all"
             >
               <Filter size={14} />
@@ -284,15 +286,9 @@ export default function SpeedProfilePage() {
                             <td className="p-4 font-semibold text-slate-500">{prof.usedCount} Package</td>
                             <td className="p-4">
                               <div className="flex items-center justify-center gap-1.5">
-                                <button className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-slate-900 transition-colors">
-                                  <Eye size={14} />
-                                </button>
-                                <button className="p-1.5 hover:bg-slate-100 rounded-lg text-blue-400 hover:text-blue-300 transition-colors">
-                                  <Edit size={14} />
-                                </button>
-                                <button className="p-1.5 hover:bg-red-500/10 rounded-lg text-red-400 hover:text-red-300 transition-colors">
-                                  <Trash2 size={14} />
-                                </button>
+                                <button onClick={() => alert("Membuka tampilan detail...")} className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-slate-900 transition-colors"><Eye size={14} /></button>
+                                <button onClick={() => alert("Membuka modal edit...")} className="p-1.5 hover:bg-slate-100 rounded-lg text-blue-400 hover:text-blue-300 transition-colors"><Edit size={14} /></button>
+                                <button onClick={() => alert("Menghapus data terpilih...")} className="p-1.5 hover:bg-red-500/10 rounded-lg text-red-400 hover:text-red-300 transition-colors"><Trash2 size={14} /></button>
                               </div>
                             </td>
                           </tr>
@@ -317,11 +313,9 @@ export default function SpeedProfilePage() {
                     >
                       <ChevronLeft size={14} />
                     </button>
-                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border bg-[#0052cc] text-white border-[#0052cc]">1</button>
-                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-100">2</button>
-                    <button className="p-2 border border-slate-200 hover:bg-slate-100 rounded-xl text-slate-500 transition-colors">
-                      <ChevronRight size={14} />
-                    </button>
+                    <button onClick={() => alert("Halaman 1 saat ini aktif.")} className="w-8 h-8 rounded-xl text-xs font-semibold border bg-[#0052cc] text-white border-[#0052cc]">1</button>
+                    <button onClick={() => alert("Beralih ke halaman 2")} className="w-8 h-8 rounded-xl text-xs font-semibold border border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-100">2</button>
+                    <button onClick={() => alert("Beralih ke halaman selanjutnya.")} className="p-2 border border-slate-200 hover:bg-slate-100 rounded-xl text-slate-500 transition-colors"><ChevronRight size={14} /></button>
                   </div>
 
                   <select

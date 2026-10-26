@@ -274,17 +274,17 @@ export default function TechnicianDashboard() {
               </p>
               
               <div className="space-y-3">
-                <button className="w-full bg-blue-600 text-white py-3 rounded-lg flex items-center justify-center gap-2">
+                <button onClick={() => alert("Membuka kamera/galeri untuk upload foto pekerjaan teknisi...")} className="w-full bg-blue-600 text-white py-3 rounded-lg flex items-center justify-center gap-2">
                   <Camera className="w-5 h-5" />
                   Upload Foto
                 </button>
                 
-                <button className="w-full bg-purple-600 text-white py-3 rounded-lg flex items-center justify-center gap-2">
+                <button onClick={() => alert("Membuka canvas tanda tangan digital pelanggan...")} className="w-full bg-purple-600 text-white py-3 rounded-lg flex items-center justify-center gap-2">
                   <FileSignature className="w-5 h-5" />
                   Tanda Tangan Pelanggan
                 </button>
                 
-                <button className="w-full bg-green-600 text-white py-3 rounded-lg flex items-center justify-center gap-2">
+                <button onClick={() => { alert("Pekerjaan berhasil diselesaikan!"); setShowJobDetail(false); }} className="w-full bg-green-600 text-white py-3 rounded-lg flex items-center justify-center gap-2">
                   <CheckCircle className="w-5 h-5" />
                   Selesaikan Pekerjaan
                 </button>

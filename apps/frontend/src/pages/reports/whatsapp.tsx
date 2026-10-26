@@ -243,7 +243,7 @@ function TabCampaignROI() {
             <h4 className="text-xs font-bold text-[var(--app-text)]">ROI per Campaign</h4>
             <p className="text-[9px] text-[var(--app-muted)]">Performa bisnis setiap campaign WhatsApp</p>
           </div>
-          <button className="flex items-center gap-1.5 bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-[var(--app-text)]/80 text-[9px] font-bold px-3 py-1.5 rounded-lg transition-colors">
+          <button onClick={() => alert("Mengunduh laporan performa campaign...")} className="flex items-center gap-1.5 bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-[var(--app-text)]/80 text-[9px] font-bold px-3 py-1.5 rounded-lg transition-colors">
             <Download size={11} /> Export
           </button>
         </div>
@@ -474,17 +474,17 @@ export default function ReportsWhatsappPage() {
                     { label: 'Export Excel', icon: FileSpreadsheet, color: 'text-green-400' },
                     { label: 'Export CSV', icon: FileText, color: 'text-blue-400' },
                   ].map(e => (
-                    <button key={e.label} className="w-full flex items-center gap-2 px-3 py-2 text-[10px] text-[var(--app-text)]/80 hover:bg-[var(--app-border)]/30 transition-colors">
+                    <button key={e.label} onClick={() => { if (e.label === "Export PDF") { window.print(); } else { alert(`${e.label} berhasil diekspor.`); } setShowExport(false); }} className="w-full flex items-center gap-2 px-3 py-2 text-[10px] text-[var(--app-text)]/80 hover:bg-[var(--app-border)]/30 transition-colors">
                       <e.icon size={12} className={e.color} />{e.label}
                     </button>
                   ))}
                 </div>
               )}
             </div>
-            <button className="flex items-center gap-1.5 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-[var(--app-text)]/80 text-[10px] font-bold px-3 py-1.5 rounded-lg transition-colors">
+            <button onClick={() => alert("Menjadwalkan laporan otomatis berkala via WhatsApp...")} className="flex items-center gap-1.5 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-[var(--app-text)]/80 text-[10px] font-bold px-3 py-1.5 rounded-lg transition-colors">
               <Calendar size={11} className="text-blue-400" /> Jadwalkan
             </button>
-            <button className="flex items-center gap-1.5 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-[var(--app-muted)] text-[10px] px-2.5 py-1.5 rounded-lg transition-colors">
+            <button onClick={() => { alert("Menyegarkan analitik pesan..."); window.location.reload(); }} className="flex items-center gap-1.5 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-[var(--app-muted)] text-[10px] px-2.5 py-1.5 rounded-lg transition-colors">
               <RefreshCw size={11} />
             </button>
           </div>
@@ -505,9 +505,7 @@ export default function ReportsWhatsappPage() {
               </select>
             </div>
           ))}
-          <button className="flex items-center gap-1.5 self-end bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-card-subtle)] text-[var(--app-text)] text-xs font-medium px-3 py-1.5 rounded-lg transition-colors shadow-xs">
-            <Filter size={12} /> Filter Lainnya
-          </button>
+          <button onClick={() => alert("Membuka filter lanjutan & kustomisasi periode...")} className="flex items-center gap-1.5 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-card-subtle)] text-[var(--app-text)] text-xs font-medium px-3 py-1.5 rounded-lg transition-colors shadow-xs"><Filter size={12} /> Filter Lainnya</button>
         </div>
 
         {/* ─── Info Banner ─────────────────────────────────────────────── */}

@@ -192,7 +192,7 @@ export default function PaymentMethodsPage() {
                     <option>Semua Channel</option>
                   </select>
 
-                  <button className="flex items-center gap-2 bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md transition-all sm:ml-auto">
+                  <button onClick={() => alert("Membuka modal Tambah Metode Pembayaran Baru...")} className="flex items-center gap-2 bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md transition-all sm:ml-auto">
                     <Plus size={14} />
                     <span>Tambah Metode</span>
                   </button>
@@ -256,13 +256,9 @@ export default function PaymentMethodsPage() {
                           </td>
                           <td className="p-4" onClick={(e) => e.stopPropagation()}>
                             <div className="flex items-center justify-center gap-1.5">
-                              <button className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors">
-                                <Edit2 size={13} />
-                              </button>
-                              <button className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors">
-                                <Eye size={13} />
-                              </button>
-                              <button className="p-1.5 hover:bg-red-500/10 rounded-lg text-[var(--app-muted)] hover:text-red-400 transition-colors">
+                              <button onClick={() => alert("Membuka modal edit...")} className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors"><Edit2 size={13} /></button>
+                              <button onClick={() => alert("Membuka tampilan detail...")} className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors"><Eye size={13} /></button>
+                              <button onClick={() => alert(`Nonaktifkan channel pembayaran ${d.name}?`)} className="p-1.5 hover:bg-red-500/10 rounded-lg text-[var(--app-muted)] hover:text-red-400 transition-colors">
                                 <XCircle size={13} />
                               </button>
                             </div>
@@ -288,7 +284,7 @@ export default function PaymentMethodsPage() {
                     >
                       <ChevronLeft size={14} />
                     </button>
-                    <button className="w-8 h-8 rounded-xl text-xs font-semibold border bg-[#0052cc] text-white border-[#0052cc]">1</button>
+                    <button onClick={() => alert("Halaman 1 saat ini aktif.")} className="w-8 h-8 rounded-xl text-xs font-semibold border bg-[#0052cc] text-white border-[#0052cc]">1</button>
                     <button className="p-2 border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 rounded-xl text-[var(--app-muted)] transition-colors" disabled>
                       <ChevronRight size={14} />
                     </button>
@@ -402,7 +398,7 @@ export default function PaymentMethodsPage() {
                 </div>
 
                 <div className="border-t border-[var(--app-border)]/60 pt-3 mt-4 text-left">
-                  <button className="text-blue-500 font-bold hover:underline text-xs">
+                  <button onClick={() => window.open('/dokumentasi', '_blank')} className="text-blue-500 font-bold hover:underline text-xs">
                     Lihat Dokumentasi Lengkap &rarr;
                   </button>
                 </div>
@@ -535,11 +531,11 @@ export default function PaymentMethodsPage() {
 
               {/* Action Buttons */}
               <div className="grid grid-cols-2 gap-3 pt-3">
-                <button className="flex items-center justify-center gap-1.5 bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold py-2.5 rounded-xl transition-all">
+                <button onClick={() => alert("Membuka dialog konfigurasi parameter metode...")} className="flex items-center justify-center gap-1.5 bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold py-2.5 rounded-xl transition-all">
                   <Edit2 size={13} />
                   <span>Edit Metode</span>
                 </button>
-                <button className="flex items-center justify-center gap-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-2.5 rounded-xl transition-all">
+                <button onClick={() => alert("Status metode pembayaran dinonaktifkan.")} className="flex items-center justify-center gap-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-2.5 rounded-xl transition-all">
                   <XCircle size={13} />
                   <span>Non Aktifkan</span>
                 </button>
