@@ -78,28 +78,6 @@ interface DashboardStats {
   }
 }
 
-const initialDemoCustomers = [
-  { id: 'c1', name: 'Budi Santoso', phone: '081234567890', status: 'active', package: 'Fiber 50 Mbps', pppoeUser: 'budi_fiber' },
-  { id: 'c2', name: 'Dewi Lestari', phone: '081398765432', status: 'active', package: 'Fiber 100 Mbps', pppoeUser: 'dewi_net' },
-  { id: 'c3', name: 'Hendra Gunawan', phone: '082155443322', status: 'isolated', package: 'Fiber 30 Mbps', pppoeUser: 'hendra_g' },
-  { id: 'c4', name: 'Siti Rahmawati', phone: '085711223344', status: 'active', package: 'Fiber 50 Mbps', pppoeUser: 'siti_net' },
-  { id: 'c5', name: 'Ahmad Fauzi', phone: '087899001122', status: 'active', package: 'Gamer Pro 150 Mbps', pppoeUser: 'fauzi_gaming' },
-  { id: 'c6', name: 'Rina Wijaya', phone: '081277889900', status: 'isolated', package: 'Fiber 30 Mbps', pppoeUser: 'rina_w' },
-  { id: 'c7', name: 'Bambang Kusuma', phone: '082233445566', status: 'active', package: 'Corporate 200 Mbps', pppoeUser: 'bambang_corp' },
-  { id: 'c8', name: 'Maya Anggraini', phone: '085266778899', status: 'active', package: 'Fiber 50 Mbps', pppoeUser: 'maya_a' },
-]
-
-const initialDemoInvoices = [
-  { id: 'inv-01', invoiceNumber: 'INV/2026/10/001', customerName: 'Budi Santoso', amount: 250000, dueDate: '2026-10-28', status: 'PAID', paidAt: '2026-10-24' },
-  { id: 'inv-02', invoiceNumber: 'INV/2026/10/002', customerName: 'Dewi Lestari', amount: 375000, dueDate: '2026-10-25', status: 'PAID', paidAt: '2026-10-23' },
-  { id: 'inv-03', invoiceNumber: 'INV/2026/10/003', customerName: 'Hendra Gunawan', amount: 200000, dueDate: '2026-10-15', status: 'OVERDUE' },
-  { id: 'inv-04', invoiceNumber: 'INV/2026/10/004', customerName: 'Siti Rahmawati', amount: 250000, dueDate: '2026-10-29', status: 'PENDING' },
-  { id: 'inv-05', invoiceNumber: 'INV/2026/10/005', customerName: 'Ahmad Fauzi', amount: 550000, dueDate: '2026-10-30', status: 'PENDING' },
-  { id: 'inv-06', invoiceNumber: 'INV/2026/10/006', customerName: 'Rina Wijaya', amount: 200000, dueDate: '2026-10-10', status: 'OVERDUE' },
-  { id: 'inv-07', invoiceNumber: 'INV/2026/10/007', customerName: 'Bambang Kusuma', amount: 1200000, dueDate: '2026-10-22', status: 'PAID', paidAt: '2026-10-21' },
-  { id: 'inv-08', invoiceNumber: 'INV/2026/10/008', customerName: 'Maya Anggraini', amount: 250000, dueDate: '2026-10-31', status: 'PENDING' },
-]
-
 const initialDemoMikrotik = [
   { id: 'm1', name: 'CCR2004-1G-12S+2XS (Core Gateway)', ipAddress: '10.10.10.1', port: 8728, status: 'active', model: 'CCR2004', version: 'RouterOS v7.14' },
   { id: 'm2', name: 'RB4011iGS+RM (Distribution Batam)', ipAddress: '10.10.20.1', port: 8728, status: 'active', model: 'RB4011', version: 'RouterOS v7.12' },
@@ -111,8 +89,8 @@ export default function Home() {
   
   // Real database states with active operational defaults
   const [realStats, setRealStats] = useState<DashboardStats | null>(null)
-  const [customers, setCustomers] = useState<any[]>(initialDemoCustomers)
-  const [invoices, setInvoices] = useState<any[]>(initialDemoInvoices)
+  const [customers, setCustomers] = useState<any[]>([])
+  const [invoices, setInvoices] = useState<any[]>([])
   const [mikrotikList, setMikrotikList] = useState<any[]>(initialDemoMikrotik)
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [syncSource, setSyncSource] = useState<'LIVE_API' | 'LOCAL_SNAPSHOT'>('LOCAL_SNAPSHOT')
@@ -240,11 +218,11 @@ export default function Home() {
         setRealStats(statsData.value)
         anyFulfilled = true
       }
-      if (custList.status === 'fulfilled' && Array.isArray(custList.value) && custList.value.length > 0) {
+      if (custList.status === 'fulfilled' && Array.isArray(custList.value)) {
         setCustomers(custList.value)
         anyFulfilled = true
       }
-      if (invList.status === 'fulfilled' && Array.isArray(invList.value) && invList.value.length > 0) {
+      if (invList.status === 'fulfilled' && Array.isArray(invList.value)) {
         setInvoices(invList.value)
         anyFulfilled = true
       }
@@ -295,15 +273,6 @@ export default function Home() {
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [])
-
-  // Initial Demo Data Generator for Testing
-  const handleActivateDemoData = () => {
-    setCustomers(initialDemoCustomers)
-    setInvoices(initialDemoInvoices)
-    setMikrotikList(initialDemoMikrotik)
-    setSyncSource('LOCAL_SNAPSHOT')
-    showToast('Data simulasi operasional ISP berhasil diaktifkan.', 'success')
-  }
 
   // Action Handlers
   const handleCreateInvoiceSubmit = async (e: React.FormEvent) => {
@@ -794,8 +763,8 @@ export default function Home() {
             showToast(`Router MikroTik ${r.name} berhasil dihubungkan & disimpan!`, 'success')
           }}
           onSyncCustomers={async () => {
-            setCustomers(initialDemoCustomers)
-            showToast('8 Akun PPPoE berhasil diimpor ke CRM Billing!', 'success')
+            await loadDashboardData(false)
+            showToast('Sinkronisasi akun PPPoE dari database/router selesai!', 'success')
           }}
           onSyncPackages={async () => {
             showToast('Profil Bandwidth MikroTik berhasil disinkronkan!', 'success')
@@ -806,29 +775,31 @@ export default function Home() {
           }}
         />
 
-        {/* ─── Demo / Simulation Action Banner (When Data Empty) ─────────────── */}
+        {/* ─── Clean Empty State Banner (When Customer & Invoice Empty) ─── */}
         {customers.length === 0 && invoices.length === 0 && (
-          <div className="p-4 rounded-xl bg-[var(--app-card)] border border-[var(--app-primary-border)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
+          <div className="p-4 rounded-xl bg-[var(--app-card)] border border-[var(--app-border)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
             <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-lg bg-blue-600 text-white">
-                <Info size={18} />
+              <div className="p-2.5 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+                <Users size={18} />
               </div>
               <div>
                 <p className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider">
-                  Mode Inisialisasi Sistem: Uji Coba Cepat
+                  Database Bersih &amp; Siap untuk Pelanggan Riil
                 </p>
                 <p className="text-xs text-[var(--app-text-muted)] mt-0.5">
-                  Database masih kosong. Aktifkan data simulasi pelanggan, invoice, dan router untuk menguji seluruh tombol dan filter dashboard.
+                  Belum ada pelanggan terdaftar. Tambahkan pelanggan baru atau hubungkan router MikroTik untuk menarik sesi PPPoE aktif.
                 </p>
               </div>
             </div>
-            <button
-              onClick={handleActivateDemoData}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition cursor-pointer active:scale-95 flex items-center gap-1.5 flex-shrink-0"
-            >
-              <Zap size={14} />
-              <span>Aktifkan Data Simulasi &amp; Uji Coba</span>
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowQuickCustomerModal(true)}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition cursor-pointer active:scale-95 flex items-center gap-1.5 flex-shrink-0 shadow-xs"
+              >
+                <Plus size={14} />
+                <span>+ Tambah Pelanggan Pertama</span>
+              </button>
+            </div>
           </div>
         )}
 

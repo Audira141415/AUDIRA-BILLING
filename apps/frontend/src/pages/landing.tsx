@@ -1265,7 +1265,7 @@ export default function LandingPage() {
               </div>
 
               <p className="text-slate-600 dark:text-gray-400 leading-relaxed text-xs max-w-sm">
-                AudiraNET adalah ekosistem penyedia layanan internet fiber optik dan sistem manajemen ISP terpadu, dikembangkan di bawah naungan Audira Multimedia Digital / Audira Sukses Mandiri.
+                AUDIRA-NET adalah platform BSS/OSS manajemen ISP terpadu, otomatisasi isolir MikroTik RADIUS CoA RFC 3576, peta spasial ODP FTTH, dan billing payment gateway 24 jam di bawah naungan Audira Multimedia Digital / Audira Sukses Mandiri.
               </p>
 
               <div className="font-mono text-[11px] text-slate-600 dark:text-gray-400 space-y-1 pt-1">
@@ -1295,10 +1295,10 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Column 2: LAYANAN INTERNET */}
+            {/* Column 2: SOLUSI & PAKET LISENSI ISP */}
             <div className="space-y-3">
               <h4 className="text-slate-900 dark:text-white font-mono font-bold uppercase tracking-wider text-xs">
-                LAYANAN INTERNET
+                PAKET LISENSI ISP
               </h4>
               <ul className="space-y-2.5 font-medium">
                 <li>
@@ -1307,7 +1307,7 @@ export default function LandingPage() {
                     onClick={() => openAuthModal('REGISTER', 'starter')}
                     className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors text-left cursor-pointer"
                   >
-                    Home Starter 20 Mbps
+                    Paket Starter (100 Pelanggan)
                   </button>
                 </li>
                 <li>
@@ -1316,7 +1316,7 @@ export default function LandingPage() {
                     onClick={() => openAuthModal('REGISTER', 'pro')}
                     className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors text-left cursor-pointer"
                   >
-                    Gamer Ultra 50 Mbps
+                    Paket Pro (500 Pelanggan + GIS)
                   </button>
                 </li>
                 <li>
@@ -1325,44 +1325,44 @@ export default function LandingPage() {
                     onClick={() => openAuthModal('REGISTER', 'enterprise')}
                     className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors text-left cursor-pointer"
                   >
-                    Pro Streamer 100 Mbps
+                    Paket Enterprise (Unlimited)
                   </button>
-                </li>
-                <li>
-                  <a
-                    href="https://wa.me/6282112001600?text=Halo%20AUDIRA,%20saya%20tertarik%20dengan%20layanan%20Dedicated%20Corporate"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors block"
-                  >
-                    Dedicated Corporate
-                  </a>
                 </li>
                 <li>
                   <a
                     href="#arsitektur"
                     className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors block"
                   >
-                    Peta Jangkauan ODP
+                    Cloud RADIUS CoA &amp; WireGuard
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#ekosistem"
+                    className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors block"
+                  >
+                    Peta Spasial ODP FTTH &amp; OTDR
                   </a>
                 </li>
               </ul>
             </div>
 
-            {/* Column 3: AKSES SISTEM */}
+            {/* Column 3: AKSES SISTEM & PORTAL */}
             <div className="space-y-3">
               <h4 className="text-slate-900 dark:text-white font-mono font-bold uppercase tracking-wider text-xs">
-                AKSES SISTEM
+                AKSES SISTEM &amp; PORTAL
               </h4>
               <ul className="space-y-2.5 font-medium">
                 <li>
-                  <Link
-                    href="/customer"
+                  <a
+                    href="http://localhost:3219"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors flex items-center gap-1"
                   >
-                    <span>Portal Pelanggan</span>
+                    <span>Portal Pelanggan FTTH</span>
                     <ExternalLink className="w-3 h-3 text-slate-400 dark:text-gray-500" />
-                  </Link>
+                  </a>
                 </li>
                 <li>
                   <button
@@ -1370,7 +1370,7 @@ export default function LandingPage() {
                     onClick={() => openAuthModal('LOGIN')}
                     className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors flex items-center gap-1 cursor-pointer text-left"
                   >
-                    <span>Dashboard Admin ISP</span>
+                    <span>Dashboard Admin ISP Cockpit</span>
                     <ExternalLink className="w-3 h-3 text-slate-400 dark:text-gray-500" />
                   </button>
                 </li>
@@ -1379,7 +1379,7 @@ export default function LandingPage() {
                     href="#kalkulator"
                     className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors block"
                   >
-                    Speed Simulator
+                    Kalkulator ROI &amp; Efisiensi
                   </a>
                 </li>
                 <li>
@@ -1387,7 +1387,15 @@ export default function LandingPage() {
                     href="#faq"
                     className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors block"
                   >
-                    Bantuan &amp; FAQ
+                    Pusat Bantuan &amp; Runbook ISP
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#ekosistem"
+                    className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors block"
+                  >
+                    Aplikasi Mobile Teknisi &amp; Kasir
                   </a>
                 </li>
               </ul>

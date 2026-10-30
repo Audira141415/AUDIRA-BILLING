@@ -28,13 +28,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter()
 
   useEffect(() => {
-    // Check if user is logged in by calling backend (cookie-based)
     checkAuth()
   }, [])
 
   const checkAuth = async () => {
     try {
       const token = typeof window !== 'undefined' ? (localStorage.getItem('token') || localStorage.getItem('adminToken')) : null
+      const cached = typeof window !== 'undefined' ? localStorage.getItem('user') : null
+
+      // If user explicitly logged out or no token exists, do not auto-login
+      if (!token && !cached) {
+        setUser(null)
+        setIsLoading(false)
+        return
+      }
+
       const headers: Record<string, string> = {}
       if (token) {
         headers['Authorization'] = `Bearer ${token}`
@@ -43,7 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const response = await fetch(`${API_URL}/auth/me`, {
         method: 'GET',
         headers,
-        credentials: 'include', // Send httpOnly cookies
+        credentials: 'include',
       })
 
       if (response.ok) {
@@ -51,80 +59,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (data.role) {
           data.role = data.role.toUpperCase()
         }
-        console.log('[Auth] User authenticated:', data.email, 'Role:', data.role)
         setUser(data)
         if (typeof window !== 'undefined') {
           localStorage.setItem('user', JSON.stringify(data))
         }
       } else {
-        // Fallback to cached user in localStorage
-        if (typeof window !== 'undefined') {
-          const cached = localStorage.getItem('user')
-          if (cached) {
-            try {
-              const parsed = JSON.parse(cached)
-              setUser(parsed)
-              return
-            } catch {}
+        // Fallback to cached user only if token exists
+        if (token && cached) {
+          try {
+            setUser(JSON.parse(cached))
+          } catch {
+            setUser(null)
           }
-          // Default local dev admin fallback if in development: fetch live JWT token from backend
-          if (process.env.NODE_ENV === 'development' || window.location.hostname === 'localhost') {
-            try {
-              const loginRes = await fetch(`${API_URL}/auth/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: 'admin@audira.net', password: 'admin123' }),
-              });
-              if (loginRes.ok) {
-                const loginData = await loginRes.json();
-                const activeToken = loginData.access_token || loginData.token;
-                if (activeToken) {
-                  localStorage.setItem('token', activeToken);
-                  localStorage.setItem('adminToken', activeToken);
-                  const adminUser: User = {
-                    id: loginData.user?.id || 'admin-1',
-                    email: loginData.user?.email || 'admin@audira.net',
-                    name: loginData.user?.name || 'Agus Dwi Rianto',
-                    role: 'ADMIN',
-                  };
-                  setUser(adminUser);
-                  localStorage.setItem('user', JSON.stringify(adminUser));
-                  return;
-                }
-              }
-            } catch (err) {
-              console.warn('Backend auto-login notice:', err);
-            }
-            const devAdmin: User = {
-              id: 'dev-admin-1',
-              email: 'admin@audira.net',
-              name: 'Agus Dwi Rianto',
-              role: 'ADMIN',
-            };
-            setUser(devAdmin);
-            localStorage.setItem('user', JSON.stringify(devAdmin));
-          }
+        } else {
+          setUser(null)
         }
       }
     } catch (error) {
-      console.warn('Auth check network warning (using fallback session):', error)
-      if (typeof window !== 'undefined') {
-        const cached = localStorage.getItem('user')
-        if (cached) {
-          try {
-            setUser(JSON.parse(cached))
-            return
-          } catch {}
+      console.warn('Auth check notice (offline/fallback):', error)
+      const token = typeof window !== 'undefined' ? (localStorage.getItem('token') || localStorage.getItem('adminToken')) : null
+      const cached = typeof window !== 'undefined' ? localStorage.getItem('user') : null
+      if (token && cached) {
+        try {
+          setUser(JSON.parse(cached))
+        } catch {
+          setUser(null)
         }
-        if (process.env.NODE_ENV === 'development' || window.location.hostname === 'localhost') {
-          const devAdmin: User = {
-            id: 'dev-admin-1',
-            email: 'admin@audira.net',
-            name: 'Agus Dwi Rianto',
-            role: 'ADMIN'
-          }
-          setUser(devAdmin)
-        }
+      } else {
+        setUser(null)
       }
     } finally {
       setIsLoading(false)
@@ -136,7 +98,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const response = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include', // Send/receive httpOnly cookies
+        credentials: 'include',
         body: JSON.stringify({ email, password })
       })
 
@@ -146,28 +108,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       const data = await response.json()
-      
-      // Normalize role to uppercase
-      const userRole = (data.user.role || 'ADMIN').toUpperCase() as UserRole
-      
+      const userRole = (data.user?.role || 'ADMIN').toUpperCase() as UserRole
+
       const userData: User = {
-        id: data.user.id,
-        email: data.user.email,
-        name: data.user.name,
+        id: data.user?.id || 'usr-admin',
+        email: data.user?.email || email,
+        name: data.user?.name || 'Agus Dwi Rianto',
         role: userRole
       }
 
-      console.log('[Auth] Login successful:', userData.email, 'Role:', userData.role)
-
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('token', data.access_token);
-        localStorage.setItem('adminToken', data.access_token);
-        localStorage.setItem('user', JSON.stringify(userData));
+      const activeToken = data.access_token || data.token
+      if (typeof window !== 'undefined' && activeToken) {
+        localStorage.setItem('token', activeToken)
+        localStorage.setItem('adminToken', activeToken)
+        localStorage.setItem('user', JSON.stringify(userData))
       }
 
       setUser(userData)
-
-      // Always redirect to home after login
       router.push('/')
     } catch (error) {
       console.error('Login error:', error)
@@ -195,7 +152,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       role: roleUpper,
     }
 
-    console.log('[Auth] Role switched dynamically to:', roleUpper)
     setUser(updatedUser)
     if (typeof window !== 'undefined') {
       localStorage.setItem('user', JSON.stringify(updatedUser))
@@ -206,20 +162,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await fetch(`${API_URL}/auth/logout`, {
         method: 'POST',
-        credentials: 'include', // Send httpOnly cookies
+        credentials: 'include',
       })
     } catch (error) {
       console.error('Logout error:', error)
     } finally {
       if (typeof window !== 'undefined') {
-        localStorage.removeItem('token');
-        localStorage.removeItem('adminToken');
-        localStorage.removeItem('user');
-        localStorage.removeItem('customer_token');
-        localStorage.removeItem('customer_info');
+        localStorage.removeItem('token')
+        localStorage.removeItem('adminToken')
+        localStorage.removeItem('user')
+        localStorage.removeItem('customer_token')
+        localStorage.removeItem('customer_info')
       }
       setUser(null)
-      router.push('/login')
+      router.push('/landing')
     }
   }
 

@@ -188,9 +188,7 @@ const REWARD_CATALOG: RewardCatalogItem[] = [
 ];
 
 export default function CustomerLoyaltyPage() {
-  const [customers, setCustomers] = useState<CustomerLoyaltyItem[]>(
-    SEED_LOYALTY_CUSTOMERS
-  );
+  const [customers, setCustomers] = useState<CustomerLoyaltyItem[]>([]);
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [activeTab, setActiveTab] = useState<'catalog' | 'leaderboard' | 'rewards'>('catalog');
   const [searchQuery, setSearchQuery] = useState('');
@@ -246,7 +244,7 @@ export default function CustomerLoyaltyPage() {
         ),
       ]);
 
-      let mergedCustomers = SEED_LOYALTY_CUSTOMERS;
+      let mergedCustomers: CustomerLoyaltyItem[] = [];
 
       if (
         custRes.status === 'fulfilled' &&

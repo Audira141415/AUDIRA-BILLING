@@ -144,32 +144,6 @@ export default function CustomerSuspend() {
         }
       })
 
-      // Add a couple of sample demonstration items if database has only 1 or 2 items
-      if (mappedList.length < 3) {
-        mappedList.push({
-          id: 'demo-sample-01',
-          name: 'Budi Kurniawan (Demo)',
-          internetNumber: 'INT-99211',
-          initials: 'BK',
-          colorClass: 'bg-red-500/20 text-red-400 border border-red-500/30',
-          packageName: 'Home 50 Mbps',
-          packageSpeed: '50 Mbps',
-          phone: '0812-3344-5566',
-          email: 'budi.kurniawan@demo.com',
-          salesName: 'Agus Dwi Rianto',
-          suspendReason: 'Tunggakan',
-          suspendType: 'Auto Suspend',
-          suspendDate: '26 Okt 2026',
-          outstandingAmount: 275000,
-          activationDate: '-',
-          activationStatus: 'Auto Suspend',
-          area: 'Cimahi Tengah',
-          isGracePeriod: false,
-          promiseDate: null,
-          graceNotes: null,
-        })
-      }
-
       setCustomers(mappedList)
     } catch (err) {
       console.error(err)
