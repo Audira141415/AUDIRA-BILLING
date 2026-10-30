@@ -9,6 +9,7 @@ export interface PaymentEventData {
   paymentMethod?: string;
   paymentTime?: string;
   customerId?: string;
+  coaLatencyMs?: number;
 }
 
 export interface InvoiceEventData {
