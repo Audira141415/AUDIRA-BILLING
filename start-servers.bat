@@ -1,7 +1,8 @@
 @echo off
 setlocal enabledelayedexpansion
-cls
+title AUDIRA NET ^& BILLING - Server Launcher
 color 0A
+
 echo.
 echo  +========================================================================+
 echo  ^|                                                                        ^|
@@ -24,19 +25,19 @@ echo.
 
 REM Kill any existing processes on ports 3217, 3218, 3219, and 3001
 echo [1/6] Checking for running services...
-for /f "tokens=5" %%a in ('netstat -aon ^| findstr :3217 ^| findstr LISTENING') do (
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":3217 " ^| findstr "LISTENING"') do (
     echo  - Stopping existing frontend on port 3217...
     taskkill /F /PID %%a >nul 2>&1
 )
-for /f "tokens=5" %%a in ('netstat -aon ^| findstr :3218 ^| findstr LISTENING') do (
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":3218 " ^| findstr "LISTENING"') do (
     echo  - Stopping existing backend on port 3218...
     taskkill /F /PID %%a >nul 2>&1
 )
-for /f "tokens=5" %%a in ('netstat -aon ^| findstr :3219 ^| findstr LISTENING') do (
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":3219 " ^| findstr "LISTENING"') do (
     echo  - Stopping existing customer portal on port 3219...
     taskkill /F /PID %%a >nul 2>&1
 )
-for /f "tokens=5" %%a in ('netstat -aon ^| findstr :3001 ^| findstr LISTENING') do (
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":3001 " ^| findstr "LISTENING"') do (
     echo  - Stopping legacy service on port 3001...
     taskkill /F /PID %%a >nul 2>&1
 )
@@ -46,30 +47,30 @@ echo.
 REM Start Backend
 echo [2/6] Starting Backend Server (NestJS)...
 cd /d "%~dp0apps\backend"
-start "AudiraNET Backend" cmd /k "color 0B && echo. && echo  +--------------------------------------------------+ && echo  ^|     AUDIRA BACKEND SERVER - PORT 3218            ^| && echo  +--------------------------------------------------+ && echo. && pnpm run dev"
-timeout /t 3 /nobreak >nul
+start "AUDIRA Backend API" cmd /k "title AUDIRA Backend API - Port 3218 && color 0B && pnpm run dev"
+ping -n 4 127.0.0.1 >nul 2>&1
 echo  [OK] Backend server starting...
 echo.
 
 REM Start Frontend
 echo [3/6] Starting Frontend Web Admin (Next.js)...
 cd /d "%~dp0apps\frontend"
-start "AudiraNET Frontend" cmd /k "color 0E && echo. && echo  +--------------------------------------------------+ && echo  ^|     AUDIRA WEB ADMIN - PORT 3217                 ^| && echo  +--------------------------------------------------+ && echo. && npm run dev"
-timeout /t 2 /nobreak >nul
+start "AUDIRA Web Admin" cmd /k "title AUDIRA Web Admin - Port 3217 && color 0E && npm run dev"
+ping -n 3 127.0.0.1 >nul 2>&1
 echo  [OK] Frontend server starting...
 echo.
 
 REM Start Customer Portal & Landing Page
 echo [4/6] Starting Customer Portal ^& Landing Page (Next.js)...
 cd /d "%~dp0apps\customer-portal"
-start "AudiraNET Customer Portal" cmd /k "color 0A && echo. && echo  +--------------------------------------------------+ && echo  ^|   AUDIRA LANDING ^& CUSTOMER PORTAL - PORT 3219   ^| && echo  +--------------------------------------------------+ && echo. && npm run dev"
-timeout /t 2 /nobreak >nul
+start "AUDIRA Customer Portal" cmd /k "title AUDIRA Customer Portal - Port 3219 && color 0A && npm run dev"
+ping -n 3 127.0.0.1 >nul 2>&1
 echo  [OK] Customer portal starting...
 echo.
 
 REM Wait for servers to initialize
 echo [5/6] Waiting for servers to initialize...
-timeout /t 15 /nobreak >nul
+ping -n 12 127.0.0.1 >nul 2>&1
 echo  [OK] Servers should be ready
 echo.
 
@@ -101,10 +102,10 @@ echo  ========================================================================
 echo.
 echo   SERVER INFORMATION:
 echo   -------------------
-echo   SaaS Product:    http://localhost:3217/landing (Brosur Penjualan Produk)
-echo   Landing Portal:  http://localhost:3219
-echo   Web Admin:       http://localhost:3217
-echo   Backend API:     http://localhost:3218
+echo   SaaS Product:    http://localhost:3217/landing (Brosur Penjualan SaaS BSS/OSS)
+echo   Landing Portal:  http://localhost:3219 (Customer Self-Care)
+echo   Web Admin:       http://localhost:3217 (Cockpit NOC / Admin)
+echo   Backend API:     http://localhost:3218 (REST API Docs)
 echo.
 echo   Press Ctrl+C in server windows to stop servers
 echo   Check server windows for detailed logs
@@ -114,7 +115,7 @@ echo.
 echo  [SUCCESS] All services launched!
 echo  Opening web browser in 3 seconds...
 echo.
-timeout /t 3 /nobreak >nul
+ping -n 4 127.0.0.1 >nul 2>&1
 
 REM Open browser
 start http://localhost:3217/landing
@@ -122,7 +123,8 @@ start http://localhost:3219
 start http://localhost:3217
 
 echo.
-echo  [INFO] Browser opened for Landing Page (3219) ^& Admin Web (3217).
+echo  [INFO] Browser opened for Landing Page (3217/landing), Portal (3219) ^& Admin Web (3217).
 echo  [INFO] Server windows will remain running in background.
 echo.
 pause
+exit /b 0
