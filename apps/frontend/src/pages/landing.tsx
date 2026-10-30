@@ -1244,35 +1244,203 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ─── 10. Corporate Footer ───────────────────────────────────────── */}
-      <footer className="py-8 bg-[var(--app-card)] text-[var(--app-text)] text-xs border-t border-[var(--app-border)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-7 h-7 rounded bg-[var(--primitive-navy-800)] dark:bg-blue-600 flex items-center justify-center text-white">
-              <Network className="w-4 h-4" />
-            </div>
-            <div>
-              <p className="font-bold text-[var(--app-text)]">AUDIRA MULTIMEDIA DIGITAL</p>
-              <p className="text-[10px] text-[var(--app-text-muted)] font-mono">
-                Founder &amp; Author: Agus Dwi Rianto (AUDIRA)
+      {/* ─── 10. Comprehensive Corporate & Operational Footer ─────────── */}
+      <footer className="bg-slate-100 dark:bg-[#05070d] text-slate-600 dark:text-gray-400 text-xs py-14 border-t-2 border-slate-300 dark:border-gray-800 transition-colors">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
+            {/* Brand & Author (Spans 2 columns) */}
+            <div className="lg:col-span-2 space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-cyan-400 border-2 border-black rounded-lg shadow-[2px_2px_0px_#000] flex items-center justify-center text-black font-black">
+                  <Wifi className="w-5 h-5 stroke-[2.5]" />
+                </div>
+                <div>
+                  <span className="text-xl font-black uppercase tracking-tight text-slate-950 dark:text-white">
+                    Audira<span className="text-cyan-600 dark:text-cyan-400">NET</span>
+                  </span>
+                  <span className="block text-[9px] font-mono tracking-widest text-slate-500 dark:text-gray-400 uppercase">
+                    Audira Multimedia Digital
+                  </span>
+                </div>
+              </div>
+
+              <p className="text-slate-600 dark:text-gray-400 leading-relaxed text-xs">
+                AudiraNET adalah ekosistem penyedia layanan internet fiber optik dan sistem manajemen ISP terpadu, dikembangkan di bawah naungan Audira Multimedia Digital / Audira Sukses Mandiri.
               </p>
+
+              <div className="font-mono text-[11px] text-slate-600 dark:text-gray-400 space-y-1">
+                <p>
+                  Founder &amp; Author: <strong className="text-slate-900 dark:text-white font-bold">Agus Dwi Rianto (AUDIRA)</strong>
+                </p>
+                <p>
+                  Official Website:{' '}
+                  <a
+                    href="https://audira.my.id"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-cyan-600 dark:text-cyan-400 hover:underline"
+                  >
+                    https://audira.my.id
+                  </a>
+                </p>
+                <p>
+                  Email:{' '}
+                  <a
+                    href="mailto:agusdwirianto@gmail.com"
+                    className="text-cyan-600 dark:text-cyan-400 hover:underline"
+                  >
+                    agusdwirianto@gmail.com
+                  </a>
+                </p>
+              </div>
+            </div>
+
+            {/* Column 2: LAYANAN INTERNET */}
+            <div className="space-y-3">
+              <h4 className="text-slate-900 dark:text-white font-mono font-bold uppercase tracking-wider text-xs">
+                LAYANAN INTERNET
+              </h4>
+              <ul className="space-y-2 font-medium">
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => openAuthModal('REGISTER', 'starter')}
+                    className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors text-left cursor-pointer"
+                  >
+                    Home Starter 20 Mbps
+                  </button>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => openAuthModal('REGISTER', 'pro')}
+                    className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors text-left cursor-pointer"
+                  >
+                    Gamer Ultra 50 Mbps
+                  </button>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => openAuthModal('REGISTER', 'pro')}
+                    className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors text-left cursor-pointer"
+                  >
+                    Pro Streamer 100 Mbps
+                  </button>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => openAuthModal('REGISTER', 'enterprise')}
+                    className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors text-left cursor-pointer"
+                  >
+                    Dedicated Corporate
+                  </button>
+                </li>
+                <li>
+                  <a
+                    href="#arsitektur"
+                    className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors text-left"
+                  >
+                    Peta Jangkauan ODP
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Column 3: AKSES SISTEM */}
+            <div className="space-y-3">
+              <h4 className="text-slate-900 dark:text-white font-mono font-bold uppercase tracking-wider text-xs">
+                AKSES SISTEM
+              </h4>
+              <ul className="space-y-2 font-medium">
+                <li>
+                  <a
+                    href="http://localhost:3219"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors flex items-center gap-1"
+                  >
+                    <span>Portal Pelanggan</span>
+                    <ExternalLink className="w-3 h-3 text-slate-400 dark:text-gray-500" />
+                  </a>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => openAuthModal('LOGIN')}
+                    className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors flex items-center gap-1 cursor-pointer text-left"
+                  >
+                    <span>Dashboard Admin ISP</span>
+                    <ExternalLink className="w-3 h-3 text-slate-400 dark:text-gray-500" />
+                  </button>
+                </li>
+                <li>
+                  <a href="#kalkulator" className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">
+                    Speed Simulator
+                  </a>
+                </li>
+                <li>
+                  <a href="#faq" className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">
+                    Bantuan &amp; FAQ
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Column 4: KONTAK OPERASIONAL */}
+            <div className="space-y-3">
+              <h4 className="text-slate-900 dark:text-white font-mono font-bold uppercase tracking-wider text-xs">
+                KONTAK OPERASIONAL
+              </h4>
+              <div className="space-y-2.5 font-mono text-[11px] text-slate-600 dark:text-gray-400">
+                <p className="flex items-center gap-2">
+                  <MapPin className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0" />
+                  <span>Jakarta &amp; Bekasi, Indonesia</span>
+                </p>
+                <p className="flex items-center gap-2">
+                  <Phone className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0" />
+                  <span>
+                    Hotline WA:{' '}
+                    <a
+                      href="https://wa.me/6282112001600"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-cyan-600 dark:text-cyan-400 hover:underline font-bold"
+                    >
+                      +62 821-1200-1600
+                    </a>
+                  </span>
+                </p>
+                <p className="flex items-center gap-2">
+                  <Clock className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0" />
+                  <span>Layanan NOC: 24 Jam / 7 Hari</span>
+                </p>
+                <p className="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1.5 pt-1">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                  <span>Network Status: All POP Online</span>
+                </p>
+              </div>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-5 text-[11px] text-[var(--app-text-muted)]">
-            <Link href="/terms" className="hover:text-blue-600 transition">Syarat &amp; Ketentuan</Link>
-            <Link href="/privacy" className="hover:text-blue-600 transition">Kebijakan Privasi</Link>
-            <a href="https://audira.my.id" target="_blank" rel="noopener noreferrer" className="hover:text-blue-600 transition">
-              audira.my.id
-            </a>
-            <a href="https://wa.me/6282112001600" className="hover:text-emerald-600 transition font-mono flex items-center gap-1">
-              <Phone size={12} className="text-emerald-500" />
-              +62 821-1200-1600
-            </a>
+          {/* Bottom Copyright & Compliance Bar */}
+          <div className="mt-12 pt-8 border-t border-slate-300 dark:border-gray-800 flex flex-wrap items-center justify-between gap-4 font-mono text-[11px] text-slate-600 dark:text-gray-400">
+            <p>
+              &copy; {new Date().getFullYear()} AUDIRA. All rights reserved. Proprietary Commercial Software.
+            </p>
+            <div className="flex items-center gap-4">
+              <Link href="/terms" className="hover:text-cyan-600 dark:hover:text-cyan-400 transition">
+                Syarat &amp; Ketentuan
+              </Link>
+              <span>|</span>
+              <Link href="/privacy" className="hover:text-cyan-600 dark:hover:text-cyan-400 transition">
+                Kebijakan Privasi
+              </Link>
+              <span>|</span>
+              <span>Designed with Precision Engineering Standards</span>
+            </div>
           </div>
-        </div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 pt-4 border-t border-[var(--app-border)] text-center text-[10px] text-[var(--app-text-muted)] font-mono">
-          &copy; {new Date().getFullYear()} AUDIRA. Hak Cipta Dilindungi Undang-Undang. Proprietary &amp; Commercial Software.
         </div>
       </footer>
 
