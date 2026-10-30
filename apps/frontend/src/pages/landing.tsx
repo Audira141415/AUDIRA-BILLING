@@ -1245,30 +1245,30 @@ export default function LandingPage() {
       </section>
 
       {/* ─── 10. Comprehensive Corporate & Operational Footer ─────────── */}
-      <footer className="bg-slate-100 dark:bg-[#05070d] text-slate-600 dark:text-gray-400 text-xs py-14 border-t-2 border-slate-300 dark:border-gray-800 transition-colors">
+      <footer className="bg-[#f0f6fa] dark:bg-[#080d19] text-slate-600 dark:text-gray-400 text-xs py-14 border-t border-[#d8e5ef] dark:border-slate-800 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
-            {/* Brand & Product Scope (Spans 2 columns) */}
+            {/* Column 1: Brand & Author (Spans 2 columns) */}
             <div className="lg:col-span-2 space-y-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-cyan-400 border-2 border-black rounded-lg shadow-[2px_2px_0px_#000] flex items-center justify-center text-black font-black">
-                  <Network className="w-5 h-5 stroke-[2.5]" />
+                <div className="w-10 h-10 bg-cyan-500 rounded-xl flex items-center justify-center text-white shadow-sm">
+                  <Wifi className="w-5 h-5 stroke-[2.5]" />
                 </div>
                 <div>
-                  <span className="text-xl font-black uppercase tracking-tight text-slate-950 dark:text-white">
-                    AUDIRA<span className="text-cyan-600 dark:text-cyan-400">-NET</span>
+                  <span className="text-xl font-black uppercase tracking-tight text-slate-900 dark:text-white">
+                    AUDIRANET
                   </span>
                   <span className="block text-[9px] font-mono tracking-widest text-slate-500 dark:text-gray-400 uppercase">
-                    ISP BSS/OSS &amp; BILLING AUTOMATION
+                    AUDIRA MULTIMEDIA DIGITAL
                   </span>
                 </div>
               </div>
 
-              <p className="text-slate-600 dark:text-gray-400 leading-relaxed text-xs">
-                AUDIRA-NET adalah platform BSS/OSS dan otomatisasi billing MikroTik, OLT, RADIUS CoA, dan operasional lapangan terlengkap untuk ISP berlisensi dan pengusaha RT/RW Net di Indonesia.
+              <p className="text-slate-600 dark:text-gray-400 leading-relaxed text-xs max-w-sm">
+                AudiraNET adalah ekosistem penyedia layanan internet fiber optik dan sistem manajemen ISP terpadu, dikembangkan di bawah naungan Audira Multimedia Digital / Audira Sukses Mandiri.
               </p>
 
-              <div className="font-mono text-[11px] text-slate-600 dark:text-gray-400 space-y-1">
+              <div className="font-mono text-[11px] text-slate-600 dark:text-gray-400 space-y-1 pt-1">
                 <p>
                   Founder &amp; Author: <strong className="text-slate-900 dark:text-white font-bold">Agus Dwi Rianto (AUDIRA)</strong>
                 </p>
@@ -1284,7 +1284,7 @@ export default function LandingPage() {
                   </a>
                 </p>
                 <p>
-                  Email Resmi:{' '}
+                  Email:{' '}
                   <a
                     href="mailto:agusdwirianto@gmail.com"
                     className="text-cyan-600 dark:text-cyan-400 hover:underline"
@@ -1292,101 +1292,77 @@ export default function LandingPage() {
                     agusdwirianto@gmail.com
                   </a>
                 </p>
-                <p className="text-[10px] text-slate-500 pt-0.5">
-                  Organisasi: PT Audira Multimedia Digital / Audira Sukses Mandiri
-                </p>
               </div>
             </div>
 
-            {/* Column 2: MODUL & FITUR UTAMA (Tailored for BSS/OSS Software) */}
+            {/* Column 2: LAYANAN INTERNET */}
             <div className="space-y-3">
               <h4 className="text-slate-900 dark:text-white font-mono font-bold uppercase tracking-wider text-xs">
-                MODUL &amp; FITUR SISTEM
+                LAYANAN INTERNET
               </h4>
-              <ul className="space-y-2 font-medium">
-                <li>
-                  <a
-                    href="#arsitektur"
-                    className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors text-left block"
-                  >
-                    MikroTik &amp; RADIUS CoA RFC 3576
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#arsitektur"
-                    className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors text-left block"
-                  >
-                    WireGuard Cloud Auto-Tunnel
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#ekosistem"
-                    className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors text-left block"
-                  >
-                    Peta Spasial ODP &amp; Kabel FTTH
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#ekosistem"
-                    className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors text-left block"
-                  >
-                    Kasir Kolektor Struk Thermal 58mm
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#ekosistem"
-                    className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors text-left block"
-                  >
-                    Pembayaran QRIS Dinamis 24 Jam
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#komparasi"
-                    className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors text-left block"
-                  >
-                    Modul e-Pelaporan Kominfo &amp; PSAK
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            {/* Column 3: PAKET LISENSI & AKSES (Tailored for ISP Buyer) */}
-            <div className="space-y-3">
-              <h4 className="text-slate-900 dark:text-white font-mono font-bold uppercase tracking-wider text-xs">
-                LISENSI &amp; AKSES
-              </h4>
-              <ul className="space-y-2 font-medium">
+              <ul className="space-y-2.5 font-medium">
                 <li>
                   <button
                     type="button"
                     onClick={() => openAuthModal('REGISTER', 'starter')}
-                    className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors text-left cursor-pointer block"
+                    className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors text-left cursor-pointer"
                   >
-                    Paket Starter (RT/RW Net 100 User)
+                    Home Starter 20 Mbps
                   </button>
                 </li>
                 <li>
                   <button
                     type="button"
                     onClick={() => openAuthModal('REGISTER', 'pro')}
-                    className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors text-left cursor-pointer block"
+                    className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors text-left cursor-pointer"
                   >
-                    Paket Pro (Klaster FTTH + ODP GIS)
+                    Gamer Ultra 50 Mbps
                   </button>
                 </li>
                 <li>
                   <button
                     type="button"
                     onClick={() => openAuthModal('REGISTER', 'enterprise')}
-                    className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors text-left cursor-pointer block"
+                    className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors text-left cursor-pointer"
                   >
-                    Paket Enterprise On-Premise
+                    Pro Streamer 100 Mbps
                   </button>
+                </li>
+                <li>
+                  <a
+                    href="https://wa.me/6282112001600?text=Halo%20AUDIRA,%20saya%20tertarik%20dengan%20layanan%20Dedicated%20Corporate"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors block"
+                  >
+                    Dedicated Corporate
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#arsitektur"
+                    className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors block"
+                  >
+                    Peta Jangkauan ODP
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Column 3: AKSES SISTEM */}
+            <div className="space-y-3">
+              <h4 className="text-slate-900 dark:text-white font-mono font-bold uppercase tracking-wider text-xs">
+                AKSES SISTEM
+              </h4>
+              <ul className="space-y-2.5 font-medium">
+                <li>
+                  <Link
+                    href="/customer"
+                    className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors flex items-center gap-1"
+                  >
+                    <span>Portal Pelanggan</span>
+                    <ExternalLink className="w-3 h-3 text-slate-400 dark:text-gray-500" />
+                  </Link>
                 </li>
                 <li>
                   <button
@@ -1394,35 +1370,30 @@ export default function LandingPage() {
                     onClick={() => openAuthModal('LOGIN')}
                     className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors flex items-center gap-1 cursor-pointer text-left"
                   >
-                    <span>Masuk Cockpit Admin ISP</span>
+                    <span>Dashboard Admin ISP</span>
                     <ExternalLink className="w-3 h-3 text-slate-400 dark:text-gray-500" />
                   </button>
                 </li>
                 <li>
                   <a
-                    href="http://localhost:3219"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors flex items-center gap-1"
+                    href="#kalkulator"
+                    className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors block"
                   >
-                    <span>Portal Pelanggan WiFi</span>
-                    <ExternalLink className="w-3 h-3 text-slate-400 dark:text-gray-500" />
+                    Speed Simulator
                   </a>
                 </li>
                 <li>
-                  <a href="#kalkulator" className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors block">
-                    Kalkulator Penghematan ROI
-                  </a>
-                </li>
-                <li>
-                  <a href="#faq" className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors block">
-                    Bantuan &amp; FAQ Implementasi
+                  <a
+                    href="#faq"
+                    className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors block"
+                  >
+                    Bantuan &amp; FAQ
                   </a>
                 </li>
               </ul>
             </div>
 
-            {/* Column 4: KONTAK OPERASIONAL & STATUS SISTEM */}
+            {/* Column 4: KONTAK OPERASIONAL */}
             <div className="space-y-3">
               <h4 className="text-slate-900 dark:text-white font-mono font-bold uppercase tracking-wider text-xs">
                 KONTAK OPERASIONAL
@@ -1435,7 +1406,7 @@ export default function LandingPage() {
                 <p className="flex items-center gap-2">
                   <Phone className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0" />
                   <span>
-                    Hotline Sales &amp; CS:{' '}
+                    Hotline WA:{' '}
                     <a
                       href="https://wa.me/6282112001600"
                       target="_blank"
@@ -1450,23 +1421,18 @@ export default function LandingPage() {
                   <Clock className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0" />
                   <span>Layanan NOC: 24 Jam / 7 Hari</span>
                 </p>
-                <div className="pt-1.5 space-y-1">
-                  <p className="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span>Server Cloud Core: BNG Online</span>
-                  </p>
-                  <p className="text-[10px] text-slate-500 dark:text-gray-500">
-                    RADIUS CoA: Port UDP 3799 Ready
-                  </p>
-                </div>
+                <p className="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1.5 pt-1">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                  <span>Network Status: All POP Online</span>
+                </p>
               </div>
             </div>
           </div>
 
           {/* Bottom Copyright & Compliance Bar */}
-          <div className="mt-12 pt-8 border-t border-slate-300 dark:border-gray-800 flex flex-wrap items-center justify-between gap-4 font-mono text-[11px] text-slate-600 dark:text-gray-400">
+          <div className="mt-12 pt-8 border-t border-[#d8e5ef] dark:border-slate-800 flex flex-wrap items-center justify-between gap-4 font-mono text-[11px] text-slate-600 dark:text-gray-400">
             <p>
-              &copy; {new Date().getFullYear()} AUDIRA-NET. All rights reserved. Proprietary Commercial Software.
+              &copy; {new Date().getFullYear()} AUDIRA. All rights reserved. Proprietary Commercial Software.
             </p>
             <div className="flex items-center gap-4">
               <Link href="/terms" className="hover:text-cyan-600 dark:hover:text-cyan-400 transition">
@@ -1477,11 +1443,14 @@ export default function LandingPage() {
                 Kebijakan Privasi
               </Link>
               <span>|</span>
-              <Link href="/dokumentasi" className="hover:text-cyan-600 dark:hover:text-cyan-400 transition">
-                Dokumentasi API
-              </Link>
-              <span>|</span>
-              <span>MikroTik RouterOS v6 &amp; v7 Compatible</span>
+              <a
+                href="https://audira.my.id"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-cyan-600 dark:hover:text-cyan-400 transition"
+              >
+                audira.my.id
+              </a>
             </div>
           </div>
         </div>

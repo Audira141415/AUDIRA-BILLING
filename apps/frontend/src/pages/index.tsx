@@ -651,6 +651,21 @@ export default function Home() {
   }, [invoices, invoiceFilter, searchQuery])
 
 
+    // Early return if unauthenticated to avoid dashboard flashing before redirect
+  if (!isLoading && !user) {
+    const stored = typeof window !== 'undefined' ? (localStorage.getItem('user') || localStorage.getItem('token')) : null;
+    if (!stored) {
+      return (
+        <div className="min-h-screen bg-[var(--app-bg)] flex items-center justify-center p-4">
+          <div className="flex flex-col items-center gap-3">
+            <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+            <p className="text-xs font-mono text-[var(--app-text-muted)]">Mengalihkan ke portal AUDIRA-NET...</p>
+          </div>
+        </div>
+      );
+    }
+  }
+
   const currentRole = (user?.role || 'ADMIN').toUpperCase()
 
   // ─── ROLE ADAPTIVE VIEW: TEKNISI LAPANGAN ──────────────────────────────

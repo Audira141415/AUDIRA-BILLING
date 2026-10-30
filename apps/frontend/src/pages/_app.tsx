@@ -14,16 +14,29 @@ import RoleSwitcherBar from '@/components/RoleSwitcherBar'
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter()
 
+  const pathname = router.pathname || ''
+  const asPath = (router.asPath || '').split('?')[0].split('#')[0]
+
   const isStandalone =
-    router.pathname === '/landing' ||
-    router.pathname.startsWith('/customer') ||
-    router.pathname.startsWith('/invoice/public') ||
-    router.pathname === '/login' ||
-    router.pathname === '/forgot-password' ||
-    router.pathname === '/register' ||
-    router.pathname === '/terms' ||
-    router.pathname === '/privacy' ||
-    (router.pathname === '/sales/daftar' && (router.query.public === 'true' || router.query.public === '1'))
+    pathname === '/landing' ||
+    asPath === '/landing' ||
+    asPath.startsWith('/landing') ||
+    pathname.startsWith('/customer') ||
+    asPath.startsWith('/customer') ||
+    pathname.startsWith('/invoice/public') ||
+    asPath.startsWith('/invoice/public') ||
+    pathname === '/login' ||
+    asPath === '/login' ||
+    pathname === '/forgot-password' ||
+    asPath === '/forgot-password' ||
+    pathname === '/register' ||
+    asPath === '/register' ||
+    pathname === '/terms' ||
+    asPath === '/terms' ||
+    pathname === '/privacy' ||
+    asPath === '/privacy' ||
+    (pathname === '/sales/daftar' && (router.query.public === 'true' || router.query.public === '1')) ||
+    (asPath === '/sales/daftar' && (router.query.public === 'true' || router.query.public === '1'))
 
   return (
     <>
