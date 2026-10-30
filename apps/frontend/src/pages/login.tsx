@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import { Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react'
+import { Mail, Lock, Eye, EyeOff, ShieldCheck, UserCheck, Activity, ArrowRight } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 
 export default function Login() {
@@ -15,9 +15,8 @@ export default function Login() {
   const [successMessage, setSuccessMessage] = useState('')
 
   useEffect(() => {
-    // Check if user just registered
     if (router.query.registered === 'true') {
-      setSuccessMessage('Registrasi berhasil! Silakan login dengan akun Anda.')
+      setSuccessMessage('Registrasi berhasil. Silakan masuk menggunakan kredensial akun Anda.')
     }
   }, [router.query])
 
@@ -29,7 +28,7 @@ export default function Login() {
     try {
       await login(email, password)
     } catch (err) {
-      setError('Email atau password salah. Silakan coba lagi.')
+      setError('Email atau kata sandi tidak valid. Periksa kembali akun Anda.')
     } finally {
       setLoading(false)
     }
@@ -44,203 +43,191 @@ export default function Login() {
     try {
       await login(selectedEmail, selectedPassword)
     } catch (err) {
-      setError('Email atau password salah. Silakan coba lagi.')
+      setError('Email atau kata sandi tidak valid. Periksa kembali akun Anda.')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-        {/* Left Side - Branding */}
-        <div className="text-center lg:text-left space-y-6 order-2 lg:order-1">
-          <div className="flex items-center justify-center lg:justify-start space-x-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl flex items-center justify-center transform -rotate-12">
-              <div className="w-10 h-10 border-4 border-white rounded-xl transform rotate-12"></div>
+    <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] flex items-center justify-center p-4">
+      <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+        {/* Left Side - Brand Context */}
+        <div className="space-y-6 order-2 lg:order-1 text-center lg:text-left">
+          <div className="flex items-center justify-center lg:justify-start space-x-3">
+            <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-md">
+              <Activity className="w-6 h-6" />
             </div>
             <div>
-              <h1 className="text-4xl font-bold text-gray-900">AudiraNET</h1>
-              <p className="text-sm text-gray-600">Powered by MySemesta</p>
+              <h1 className="text-2xl font-bold tracking-tight text-[var(--app-text)] font-mono">AUDIRA-NET</h1>
+              <p className="text-xs text-[var(--app-text-muted)] font-mono">Carrier-Grade ISP Operations Console</p>
             </div>
           </div>
           
-          <div className="space-y-4">
-            <h2 className="text-5xl font-bold text-gray-900 leading-tight">
-              Era Baru<br />Konektivitas
+          <div className="space-y-3">
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-[var(--app-text)] leading-tight">
+              Sistem Penagihan &<br />Manajemen Jaringan ISP
             </h2>
-            <p className="text-xl text-gray-600">
-              Platform Cerdas untuk ISP Masa Depan.
+            <p className="text-sm text-[var(--app-text-muted)] max-w-md mx-auto lg:mx-0 leading-relaxed">
+              Platform operasional real-time untuk sinkronisasi MikroTik RouterOS, OLT EPON/GPON, penagihan otomatis, dan integrasi WhatsApp Gateway.
             </p>
           </div>
 
-          <div className="pt-8 hidden lg:block">
-            <div className="bg-gradient-to-r from-blue-100 to-purple-100 rounded-2xl p-6">
-              <div className="flex items-center space-x-3 mb-3">
-                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center">
-                  <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
+          <div className="pt-4 hidden lg:block">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4 shadow-xs">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-lg bg-blue-500/10 text-blue-500 flex items-center justify-center">
+                  <ShieldCheck className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-gray-900">Manajemen ISP Terpadu</h3>
-                  <p className="text-sm text-gray-600">Kelola semua aspek bisnis ISP Anda</p>
+                  <h3 className="font-semibold text-xs text-[var(--app-text)]">Akses Terenkripsi & Terisolasi</h3>
+                  <p className="text-[11px] text-[var(--app-text-muted)]">Otorisasi sesi berbasis token JWT dengan kontrol akses granular multi-role.</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Right Side - Login Form */}
+        {/* Right Side - Login Card */}
         <div className="order-1 lg:order-2">
-          <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12">
-            <div className="mb-8">
-              <div className="flex items-center space-x-2 mb-4">
-                <span className="text-4xl">👋🏻</span>
-                <h3 className="text-2xl font-bold text-gray-900">Halo, Selamat Datang!</h3>
-              </div>
-              <p className="text-gray-600">Silahkan masuk untuk melanjutkan</p>
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-xl p-6 md:p-8">
+            <div className="mb-6">
+              <h3 className="text-xl font-bold text-[var(--app-text)]">Autentikasi Akun</h3>
+              <p className="text-xs text-[var(--app-text-muted)] mt-1">Masukkan kredensial resmi untuk mengakses konsol operasional.</p>
             </div>
 
             {successMessage && (
-              <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
+              <div className="mb-5 p-3.5 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-emerald-600 dark:text-emerald-400 text-xs">
                 {successMessage}
               </div>
             )}
 
             {error && (
-              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+              <div className="mb-5 p-3.5 bg-rose-500/10 border border-rose-500/20 rounded-lg text-rose-600 dark:text-rose-400 text-xs">
                 {error}
               </div>
             )}
 
-            <form onSubmit={handleLogin} className="space-y-6">
-              {/* Email Input */}
+            <form onSubmit={handleLogin} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email
+                <label className="block text-xs font-semibold text-[var(--app-text)] mb-1.5">
+                  Alamat Email
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Mail className="text-slate-500" size={20} />
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Mail className="text-[var(--app-text-muted)]" size={16} />
                   </div>
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                    placeholder="nama@email.com"
+                    className="w-full pl-9 pr-3 py-2.5 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-xs text-[var(--app-text)] placeholder-[var(--app-text-muted)] focus:outline-none focus:border-blue-500 focus-visible:ring-2 focus-visible:ring-[var(--app-primary)] transition"
+                    placeholder="admin@audira.net"
                     required
                   />
                 </div>
               </div>
 
-              {/* Password Input */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Password
+                <label className="block text-xs font-semibold text-[var(--app-text)] mb-1.5">
+                  Kata Sandi
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Lock className="text-slate-500" size={20} />
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Lock className="text-[var(--app-text-muted)]" size={16} />
                   </div>
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                    placeholder="Masukkan password"
+                    className="w-full pl-9 pr-10 py-2.5 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-xs text-[var(--app-text)] placeholder-[var(--app-text-muted)] focus:outline-none focus:border-blue-500 focus-visible:ring-2 focus-visible:ring-[var(--app-primary)] transition font-mono"
+                    placeholder="••••••••"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-4 flex items-center"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-[var(--app-text-muted)] hover:text-[var(--app-text)]"
                   >
-                    {showPassword ? (
-                      <EyeOff className="text-slate-500 hover:text-gray-600" size={20} />
-                    ) : (
-                      <Eye className="text-slate-500 hover:text-gray-600" size={20} />
-                    )}
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
               </div>
 
-              {/* Remember & Forgot Password */}
-              <div className="flex items-center justify-between">
-                <label className="flex items-center">
+              <div className="flex items-center justify-between text-xs pt-1">
+                <label className="flex items-center cursor-pointer">
                   <input
                     type="checkbox"
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    className="w-3.5 h-3.5 text-blue-600 border-[var(--app-border)] rounded focus:ring-blue-500"
                   />
-                  <span className="ml-2 text-sm text-gray-600">Ingat saya</span>
+                  <span className="ml-2 text-[var(--app-text-muted)]">Ingat sesi ini</span>
                 </label>
-                <Link href="/forgot-password" className="text-sm text-blue-600 hover:text-blue-700 font-medium">
-                  Lupa password?
+                <Link href="/forgot-password" className="text-blue-500 hover:underline">
+                  Lupa kata sandi?
                 </Link>
               </div>
 
-              {/* Submit Button */}
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 rounded-xl transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg transition text-xs shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 focus-visible:ring-2 focus-visible:ring-blue-400"
               >
                 {loading ? (
-                  <div className="flex items-center justify-center space-x-2">
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    <span>Memproses...</span>
-                  </div>
+                  <span>Memproses Masuk...</span>
                 ) : (
-                  'Masuk'
+                  <>
+                    <span>Masuk ke Konsol</span>
+                    <ArrowRight size={14} />
+                  </>
                 )}
               </button>
             </form>
 
-            {/* Quick Login / Demo Access */}
-            <div className="mt-6 pt-6 border-t border-gray-200">
-              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider text-center mb-3">
-                Akses Cepat (Tinggal Klik)
+            {/* Quick Demo Access Bar */}
+            <div className="mt-6 pt-5 border-t border-[var(--app-border)]">
+              <p className="text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--app-text-muted)] text-center mb-2.5">
+                Akses Cepat Pengujian
               </p>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2">
                 <button
                   type="button"
                   onClick={() => handleQuickLogin('admin@audira.net', 'admin123')}
                   disabled={loading}
-                  className="flex flex-col items-center justify-center p-3 bg-gradient-to-br from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 border border-blue-200 rounded-xl transition-all duration-200 transform hover:scale-[1.02]"
+                  className="flex items-center gap-2 p-2.5 bg-[var(--app-bg)] hover:bg-[var(--app-surface-2)] border border-[var(--app-border)] rounded-lg transition text-left"
                 >
-                  <span className="text-xl mb-1">👑</span>
-                  <span className="text-xs font-bold text-blue-900">Login Admin</span>
-                  <span className="text-[10px] text-blue-600">admin@audira.net</span>
+                  <ShieldCheck className="w-4 h-4 text-blue-500 shrink-0" />
+                  <div className="min-w-0">
+                    <p className="text-[11px] font-bold text-[var(--app-text)] truncate">Admin ISP</p>
+                    <p className="text-[10px] font-mono text-[var(--app-text-muted)] truncate">admin@audira.net</p>
+                  </div>
                 </button>
                 <button
                   type="button"
                   onClick={() => handleQuickLogin('customer@example.com', 'customer123')}
                   disabled={loading}
-                  className="flex flex-col items-center justify-center p-3 bg-gradient-to-br from-purple-50 to-purple-100 hover:from-purple-100 hover:to-purple-200 border border-purple-200 rounded-xl transition-all duration-200 transform hover:scale-[1.02]"
+                  className="flex items-center gap-2 p-2.5 bg-[var(--app-bg)] hover:bg-[var(--app-surface-2)] border border-[var(--app-border)] rounded-lg transition text-left"
                 >
-                  <span className="text-xl mb-1">👤</span>
-                  <span className="text-xs font-bold text-purple-900">Login Customer</span>
-                  <span className="text-[10px] text-purple-600">customer@example.com</span>
+                  <UserCheck className="w-4 h-4 text-purple-500 shrink-0" />
+                  <div className="min-w-0">
+                    <p className="text-[11px] font-bold text-[var(--app-text)] truncate">Pelanggan</p>
+                    <p className="text-[10px] font-mono text-[var(--app-text-muted)] truncate">customer@example.com</p>
+                  </div>
                 </button>
               </div>
             </div>
 
-            {/* Register Link */}
-            <div className="mt-8 text-center">
-              <p className="text-gray-600">
-                Belum punya akun?{' '}
-                <Link href="/register" className="text-blue-600 hover:text-blue-700 font-semibold">
-                  Daftar di sini
-                </Link>
-              </p>
+            <div className="mt-5 text-center text-xs text-[var(--app-text-muted)]">
+              Belum terdaftar sebagai mitra?{' '}
+              <Link href="/register" className="text-blue-500 hover:underline font-semibold">
+                Daftar akun baru
+              </Link>
             </div>
 
-            {/* Footer */}
-            <div className="mt-8 pt-6 border-t border-gray-200 text-center">
-              <p className="text-xs text-slate-400">
-                © 2025 AudiraNET. Platform ISP Management System.
-              </p>
+            <div className="mt-3 pt-3 border-t border-[var(--app-border)] text-center text-xs">
+              <Link href="/landing" className="text-blue-600 dark:text-blue-400 hover:underline font-semibold flex items-center justify-center gap-1">
+                <span>Lihat Brosur Produk &amp; Paket Harga AUDIRA</span>
+                <ArrowRight size={13} />
+              </Link>
             </div>
           </div>
         </div>

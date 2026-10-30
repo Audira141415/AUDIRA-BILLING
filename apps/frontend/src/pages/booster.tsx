@@ -364,7 +364,9 @@ export default function BoosterPage() {
                 <h3 className="font-bold text-sm text-theme-text flex items-center gap-2">
                   <Zap size={16} className="text-blue-500" /> Aktivasi Turbo Booster Instan
                 </h3>
-                <button onClick={() => setShowModal(false)} className="text-theme-muted hover:text-theme-text">✕</button>
+                <button onClick={() => setShowModal(false)} className="p-1 rounded-lg text-theme-muted hover:text-theme-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-primary)]" aria-label="Tutup modal">
+                  <X className="w-4 h-4" />
+                </button>
               </div>
 
               <form onSubmit={handleActivate} className="p-5 space-y-4 text-xs">

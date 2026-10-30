@@ -3,6 +3,8 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import Layout from '@/components/Layout'
 import api from '@/lib/api'
+import { Pagination } from '@/components/Pagination'
+import { useToast } from '@/contexts/ToastContext'
 import {
   Upload, FileText, CheckCircle, AlertTriangle, Download, ArrowRight,
   RefreshCw, X, HelpCircle, ChevronRight, Check, ArrowLeft, Play, Save, Edit2, Calendar
@@ -37,10 +39,13 @@ const INITIAL_MOCK_DATA: CustomerRow[] = []
 
 export default function ImportCustomer() {
   const router = useRouter()
+  const { toast } = useToast()
   const fileRef = useRef<HTMLInputElement>(null)
   
   // Wizard state
   const [currentStep, setCurrentStep] = useState(1)
+  const [previewPage, setPreviewPage] = useState(1)
+  const [previewPageSize, setPreviewPageSize] = useState(10)
   
   // File state
   const [file, setFile] = useState<{ name: string; size: string } | null>(null)
@@ -211,6 +216,7 @@ export default function ImportCustomer() {
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
+    toast.success('Template CSV berhasil diunduh.')
   }
 
   const handleSaveInlineEdit = () => {
@@ -223,6 +229,7 @@ export default function ImportCustomer() {
       setParsedData(updatedParsed)
       setEditingRowIndex(null)
       setEditingRowData(null)
+      toast.success('Perubahan baris berhasil disimpan dan divalidasi ulang.')
     }
   }
 
@@ -271,8 +278,10 @@ export default function ImportCustomer() {
       clearInterval(interval)
       setImportProgress(100)
       setImportResult({ success, failed: failed + (validationResults.length - validRows.length) })
+      toast.success(`Import selesai: ${success} pelanggan berhasil ditambahkan.`)
     } catch (err) {
       console.error(err)
+      toast.error('Terjadi kesalahan saat memproses import pelanggan.')
     } finally {
       setImporting(false)
     }
@@ -314,7 +323,7 @@ export default function ImportCustomer() {
         </div>
 
         {/* Wizard Multi-Step Progress Bar */}
-        <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs p-4">
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:px-8">
             {[
               { stepNum: 1, title: 'Upload File' },
@@ -324,22 +333,22 @@ export default function ImportCustomer() {
               { stepNum: 5, title: 'Konfirmasi' }
             ].map((s, index) => (
               <div key={s.stepNum} className="flex-1 flex items-center gap-3">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-mono font-bold transition-all duration-300 ${
                   currentStep === s.stepNum 
                     ? 'bg-blue-600 text-white shadow-lg ring-4 ring-blue-500/20 border-2 border-blue-400' 
                     : currentStep > s.stepNum
                     ? 'bg-green-600/20 text-green-400 border border-green-500/30'
-                    : 'bg-slate-100 text-slate-400 border border-slate-200'
+                    : 'bg-[var(--app-bg)] text-[var(--app-text-muted)] border border-[var(--app-border)]'
                 }`}>
                   {currentStep > s.stepNum ? <Check size={14} /> : s.stepNum}
                 </div>
                 <div className="flex flex-col">
-                  <span className={`text-xs font-bold leading-none ${currentStep >= s.stepNum ? 'text-white' : 'text-slate-400'}`}>
+                  <span className={`text-xs font-bold leading-none ${currentStep >= s.stepNum ? 'text-[var(--app-text)]' : 'text-[var(--app-text-muted)]'}`}>
                     {s.title}
                   </span>
-                  <span className="text-[9px] text-slate-400 mt-1 hidden md:inline">Langkah {s.stepNum}</span>
+                  <span className="text-[9px] text-[var(--app-text-muted)] mt-1 hidden md:inline">Langkah {s.stepNum}</span>
                 </div>
-                {index < 4 && <ChevronRight size={14} className="text-gray-600 hidden md:block ml-auto mr-4" />}
+                {index < 4 && <ChevronRight size={14} className="text-[var(--app-text-muted)] hidden md:block ml-auto mr-4" />}
               </div>
             ))}
           </div>
@@ -351,10 +360,10 @@ export default function ImportCustomer() {
             <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
               
               {/* Left Column: File Upload Area */}
-              <div className="xl:col-span-5 bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs flex flex-col justify-between space-y-6">
+              <div className="xl:col-span-5 bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-6 shadow-2xs flex flex-col justify-between space-y-6">
                 <div>
-                  <h3 className="text-sm font-bold text-slate-900 mb-1">1. Upload File</h3>
-                  <p className="text-xs text-slate-500 mb-4">Upload file Excel/CSV berisi data customer yang akan diimport</p>
+                  <h3 className="text-sm font-bold text-[var(--app-text)] mb-1">1. Upload File</h3>
+                  <p className="text-xs text-[var(--app-text-muted)] mb-4">Upload file Excel/CSV berisi data customer yang akan diimport</p>
                   
                   <div
                     onDragOver={e => { e.preventDefault(); setDragOver(true) }}
@@ -362,29 +371,38 @@ export default function ImportCustomer() {
                     onDrop={handleDrop}
                     onClick={() => fileRef.current?.click()}
                     className={`border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition-all duration-300 ${
-                      dragOver ? 'border-blue-500 bg-blue-600/10' : 'border-slate-200 hover:border-blue-500/50 hover:bg-slate-50/50'
+                      dragOver ? 'border-blue-500 bg-blue-600/10' : 'border-[var(--app-border)] hover:border-blue-500/50 hover:bg-[var(--app-bg)]'
                     }`}
                   >
                     <input ref={fileRef} type="file" accept=".csv, .xlsx, .xls" className="hidden" onChange={e => e.target.files?.[0] && handleFilePick(e.target.files[0])} />
                     <div className="w-12 h-12 bg-blue-600/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-500/20">
                       <Upload size={20} className="text-blue-400" />
                     </div>
-                    <p className="text-sm font-bold text-slate-800">Drag & drop file Excel/CSV di sini</p>
-                    <p className="text-xs text-slate-400 my-1">atau</p>
-                    <button type="button" onClick={() => alert("Membuka file picker untuk memilih berkas import CSV / Excel...")} className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-xs font-bold text-slate-800 rounded-lg transition">Pilih File</button>
-                    <p className="text-[10px] text-slate-400 mt-4">Format yang didukung: .xlsx, .xls, .csv · Ukuran maksimal file: 10 MB</p>
+                    <p className="text-sm font-bold text-[var(--app-text)]">Drag & drop file Excel/CSV di sini</p>
+                    <p className="text-xs text-[var(--app-text-muted)] my-1">atau</p>
+                    <button
+                      type="button"
+                      onClick={e => {
+                        e.stopPropagation()
+                        fileRef.current?.click()
+                      }}
+                      className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-xs font-bold text-white rounded-lg transition"
+                    >
+                      Pilih File
+                    </button>
+                    <p className="text-[10px] text-[var(--app-text-muted)] mt-4">Format yang didukung: .xlsx, .xls, .csv · Ukuran maksimal file: 10 MB</p>
                   </div>
                 </div>
 
                 {file && (
-                  <div className="bg-slate-100 border border-slate-200 rounded-xl p-4 flex items-center justify-between">
+                  <div className="bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl p-4 flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-green-500/10 rounded-lg border border-green-500/20 flex items-center justify-center">
                         <FileText size={18} className="text-green-400" />
                       </div>
                       <div>
-                        <p className="text-xs font-bold text-slate-800 max-w-[200px] truncate">{file.name}</p>
-                        <p className="text-[10px] text-slate-400 mt-0.5">{file.size}</p>
+                        <p className="text-xs font-bold text-[var(--app-text)] max-w-[200px] truncate">{file.name}</p>
+                        <p className="text-[10px] font-mono text-[var(--app-text-muted)] mt-0.5">{file.size}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
@@ -400,14 +418,14 @@ export default function ImportCustomer() {
               </div>
 
               {/* Middle Column: Format File Column Reference */}
-              <div className="xl:col-span-4 bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs flex flex-col justify-between space-y-6">
+              <div className="xl:col-span-4 bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-6 shadow-2xs flex flex-col justify-between space-y-6">
                 <div>
                   <div className="flex justify-between items-start mb-4">
                     <div>
-                      <h3 className="text-sm font-bold text-slate-900 mb-1">Contoh Format File</h3>
-                      <p className="text-xs text-slate-500">Pastikan susunan kolom file sesuai template</p>
+                      <h3 className="text-sm font-bold text-[var(--app-text)] mb-1">Contoh Format File</h3>
+                      <p className="text-xs text-[var(--app-text-muted)]">Pastikan susunan kolom file sesuai template</p>
                     </div>
-                    <button onClick={downloadTemplate} className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-100 border border-slate-200 rounded-lg text-[10px] text-slate-600 transition">
+                    <button onClick={downloadTemplate} className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--app-bg)] hover:bg-[var(--app-card-hover)] border border-[var(--app-border)] rounded-lg text-[10px] text-[var(--app-text-muted)] hover:text-[var(--app-text)] transition">
                       <Download size={12} /> Download Template Excel
                     </button>
                   </div>
@@ -415,12 +433,12 @@ export default function ImportCustomer() {
                   <div className="overflow-x-auto max-h-[300px] overflow-y-auto pr-1">
                     <table className="w-full text-xs text-left">
                       <thead>
-                        <tr className="border-b border-slate-200 text-[10px] text-slate-400 uppercase tracking-wider font-bold">
+                        <tr className="border-b border-[var(--app-border)] text-[10px] text-[var(--app-text-muted)] uppercase tracking-wider font-bold">
                           <th className="py-2 pr-4">Kolom Wajib</th>
                           <th className="py-2">Deskripsi</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-200/30">
+                      <tbody className="divide-y divide-[var(--app-border)]">
                         {[
                           { name: 'nama', desc: 'Nama lengkap customer' },
                           { name: 'no_ktp', desc: 'Nomor KTP customer' },
@@ -431,8 +449,8 @@ export default function ImportCustomer() {
                           { name: 'tanggal_daftar', desc: 'Tanggal daftar (format: YYYY-MM-DD)' }
                         ].map(col => (
                           <tr key={col.name}>
-                            <td className="py-2.5 font-bold text-blue-400 text-[11px]">{col.name}</td>
-                            <td className="py-2.5 text-slate-500 text-[11px]">{col.desc}</td>
+                            <td className="py-2.5 font-mono font-bold text-blue-400 text-[11px]">{col.name}</td>
+                            <td className="py-2.5 text-[var(--app-text-muted)] text-[11px]">{col.desc}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -442,9 +460,9 @@ export default function ImportCustomer() {
               </div>
 
               {/* Right Column: Tips & Help */}
-              <div className="xl:col-span-3 bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs flex flex-col justify-between space-y-6">
+              <div className="xl:col-span-3 bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-6 shadow-2xs flex flex-col justify-between space-y-6">
                 <div className="space-y-4">
-                  <h3 className="text-sm font-bold text-slate-900">Tips Import</h3>
+                  <h3 className="text-sm font-bold text-[var(--app-text)]">Tips Import</h3>
                   <ul className="space-y-3">
                     {[
                       'Pastikan file tidak memiliki password',
@@ -453,7 +471,7 @@ export default function ImportCustomer() {
                       'Pastikan nama paket sudah tersedia',
                       'Hindari data duplikat (No. KTP/No. HP)'
                     ].map((tip, idx) => (
-                      <li key={idx} className="flex items-start gap-2.5 text-xs text-slate-500">
+                      <li key={idx} className="flex items-start gap-2.5 text-xs text-[var(--app-text-muted)]">
                         <CheckCircle size={14} className="text-green-500 mt-0.5 flex-shrink-0" />
                         <span>{tip}</span>
                       </li>
@@ -461,15 +479,15 @@ export default function ImportCustomer() {
                   </ul>
                 </div>
 
-                <div className="bg-slate-100 border border-slate-200 rounded-xl p-4 space-y-3">
+                <div className="bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl p-4 space-y-3">
                   <div className="flex items-start gap-2.5">
                     <HelpCircle size={18} className="text-blue-400 mt-0.5 flex-shrink-0" />
                     <div>
-                      <h4 className="text-xs font-bold text-slate-800">Butuh bantuan?</h4>
-                      <p className="text-[10px] text-slate-400 mt-0.5">Lihat panduan lengkap cara melakukan import customer</p>
+                      <h4 className="text-xs font-bold text-[var(--app-text)]">Butuh bantuan?</h4>
+                      <p className="text-[10px] text-[var(--app-text-muted)] mt-0.5">Lihat panduan lengkap cara melakukan import customer</p>
                     </div>
                   </div>
-                  <button onClick={() => alert("Panduan Impor Pelanggan: Pastikan format file .xlsx/.csv sesuai template dengan kolom nama, no_hp, alamat, dan paket.")} className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-100 border border-slate-200 rounded-lg text-[10px] text-slate-600 transition font-bold">
+                  <button onClick={() => toast.info("Panduan Impor Pelanggan: Pastikan format file .xlsx/.csv sesuai template dengan kolom nama, no_hp, alamat, dan paket.")} className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-[var(--app-card)] hover:bg-[var(--app-card-hover)] border border-[var(--app-border)] rounded-lg text-[10px] text-[var(--app-text)] transition font-bold">
                     Buka Panduan
                   </button>
                 </div>
@@ -479,17 +497,17 @@ export default function ImportCustomer() {
 
             {/* Bottom Preview Data Table */}
             {parsedData.length > 0 && (
-              <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs space-y-4">
+              <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-6 shadow-2xs space-y-4">
                 <div className="flex justify-between items-center">
-                  <h3 className="text-sm font-bold text-slate-900">Preview Data <span className="text-xs font-normal text-slate-400">(10 baris pertama)</span></h3>
-                  <span className="text-[10px] text-slate-400 font-bold bg-slate-100 px-2 py-1 rounded">Total: {parsedData.length} baris terdeteksi</span>
+                  <h3 className="text-sm font-bold text-[var(--app-text)]">Preview Data <span className="text-xs font-normal text-[var(--app-text-muted)]">(10 baris pertama)</span></h3>
+                  <span className="text-[10px] font-mono text-[var(--app-text-muted)] font-bold bg-[var(--app-bg)] border border-[var(--app-border)] px-2 py-1 rounded">Total: {parsedData.length} baris terdeteksi</span>
                 </div>
 
-                <div className="border border-slate-200 rounded-xl overflow-hidden">
+                <div className="border border-[var(--app-border)] rounded-xl overflow-hidden">
                   <div className="overflow-x-auto">
                     <table className="w-full text-xs text-left">
                       <thead>
-                        <tr className="border-b border-slate-200 bg-slate-100/25 text-slate-400 uppercase tracking-wider font-bold">
+                        <tr className="border-b border-[var(--app-border)] bg-[var(--app-bg)] text-[var(--app-text-muted)] uppercase tracking-wider font-bold">
                           <th className="p-3 w-12 text-center">No</th>
                           <th className="p-3">Nama</th>
                           <th className="p-3">No. KTP</th>
@@ -500,20 +518,20 @@ export default function ImportCustomer() {
                           <th className="p-3">Tanggal Daftar</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-200/35">
-                        {parsedData.slice(0, 10).map((row, i) => (
-                          <tr key={i} className="hover:bg-slate-100/15 transition">
-                            <td className="p-3 text-center text-slate-400 font-semibold flex items-center justify-center gap-1.5">
+                      <tbody className="divide-y divide-[var(--app-border)]">
+                        {parsedData.slice((previewPage - 1) * previewPageSize, previewPage * previewPageSize).map((row, i) => (
+                          <tr key={i} className="hover:bg-[var(--app-card-hover)] transition">
+                            <td className="p-3 text-center text-[var(--app-text-muted)] font-mono font-semibold flex items-center justify-center gap-1.5">
                               <CheckCircle size={12} className="text-green-500" />
-                              <span>{row.no || i + 1}</span>
+                              <span>{row.no || (previewPage - 1) * previewPageSize + i + 1}</span>
                             </td>
-                            <td className="p-3 font-bold text-slate-800">{row.nama || row.name || '-'}</td>
-                            <td className="p-3 text-slate-500 font-semibold">{row.no_ktp || '-'}</td>
-                            <td className="p-3 text-slate-500 font-semibold">{row.no_hp || row.phone || '-'}</td>
-                            <td className="p-3 text-slate-500">{row.email || '-'}</td>
-                            <td className="p-3 text-slate-700 font-semibold">{row.paket || '-'}</td>
-                            <td className="p-3 text-slate-500 truncate max-w-xs">{row.alamat || row.address || '-'}</td>
-                            <td className="p-3 text-slate-500 font-semibold">{row.tanggal_daftar || '-'}</td>
+                            <td className="p-3 font-bold text-[var(--app-text)]">{row.nama || row.name || '-'}</td>
+                            <td className="p-3 text-[var(--app-text-muted)] font-mono font-semibold">{row.no_ktp || '-'}</td>
+                            <td className="p-3 text-[var(--app-text-muted)] font-mono font-semibold">{row.no_hp || row.phone || '-'}</td>
+                            <td className="p-3 text-[var(--app-text-muted)]">{row.email || '-'}</td>
+                            <td className="p-3 text-[var(--app-text)] font-semibold">{row.paket || '-'}</td>
+                            <td className="p-3 text-[var(--app-text-muted)] truncate max-w-xs">{row.alamat || row.address || '-'}</td>
+                            <td className="p-3 text-[var(--app-text-muted)] font-mono font-semibold">{row.tanggal_daftar || '-'}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -521,29 +539,33 @@ export default function ImportCustomer() {
                   </div>
                 </div>
 
-                <div className="flex justify-end gap-1.5">
-                  <button onClick={() => alert("Halaman 1 saat ini aktif.")} className="px-3 py-1 bg-slate-100 border border-slate-200 text-slate-500 hover:text-slate-900 rounded-lg text-xs font-semibold">1</button>
-                  <button onClick={() => alert("Beralih ke halaman 2.")} className="px-3 py-1 bg-slate-100 border border-slate-200/50 text-slate-400 rounded-lg text-xs font-semibold">2</button>
-                  <button onClick={() => alert("Beralih ke halaman 3.")} className="px-3 py-1 bg-slate-100 border border-slate-200/50 text-slate-400 rounded-lg text-xs font-semibold">3</button>
-                  <span className="text-slate-400 px-1 pt-1 text-xs">...</span>
-                  <button onClick={() => alert("Beralih ke halaman selanjutnya.")} className="px-3 py-1 bg-slate-100 border border-slate-200/50 text-slate-500 hover:text-slate-900 rounded-lg text-xs font-semibold">&gt;</button>
-                </div>
+                <Pagination
+                  currentPage={previewPage}
+                  totalPages={Math.max(1, Math.ceil(parsedData.length / previewPageSize))}
+                  totalItems={parsedData.length}
+                  pageSize={previewPageSize}
+                  onPageChange={setPreviewPage}
+                  onPageSizeChange={(newSize) => {
+                    setPreviewPageSize(newSize);
+                    setPreviewPage(1);
+                  }}
+                />
               </div>
             )}
 
             {/* Step 1 Footer Actions */}
-            <div className="flex justify-between items-center border-t border-slate-200 pt-5 mt-4">
-              <button onClick={() => router.push('/pelanggan')} className="px-6 py-2.5 bg-slate-100/50 hover:bg-slate-100 border border-slate-200 text-xs font-bold text-slate-600 hover:text-white rounded-xl transition">
+            <div className="flex justify-between items-center border-t border-[var(--app-border)] pt-5 mt-4">
+              <button onClick={() => router.push('/pelanggan')} className="px-6 py-2.5 bg-[var(--app-card)] hover:bg-[var(--app-card-hover)] border border-[var(--app-border)] text-xs font-bold text-[var(--app-text-muted)] hover:text-[var(--app-text)] rounded-xl transition">
                 Batal
               </button>
               <div className="flex gap-3">
-                <button onClick={() => alert("Draft proses import berhasil disimpan ke penyimpanan lokal!")} className="px-6 py-2.5 bg-slate-100/50 hover:bg-slate-100 border border-slate-200 text-xs font-bold text-slate-600 hover:text-white rounded-xl transition">
+                <button onClick={() => toast.success("Draft proses import berhasil disimpan ke penyimpanan lokal!")} className="px-6 py-2.5 bg-[var(--app-card)] hover:bg-[var(--app-card-hover)] border border-[var(--app-border)] text-xs font-bold text-[var(--app-text-muted)] hover:text-[var(--app-text)] rounded-xl transition">
                   Simpan Draft
                 </button>
                 <button
                   onClick={() => parsedData.length > 0 && setCurrentStep(2)}
                   disabled={parsedData.length === 0}
-                  className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-xs font-bold text-slate-800 rounded-xl shadow-lg transition"
+                  className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-xs font-bold text-white rounded-xl shadow-lg transition"
                 >
                   Lanjut: Pemetaan Data <ArrowRight size={14} />
                 </button>
@@ -557,10 +579,10 @@ export default function ImportCustomer() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
               
               {/* Mapping Controls */}
-              <div className="lg:col-span-7 bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs space-y-6">
+              <div className="lg:col-span-7 bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-6 shadow-2xs space-y-6">
                 <div>
-                  <h3 className="text-sm font-bold text-slate-900 mb-1">Hubungkan Kolom File dengan Field Database</h3>
-                  <p className="text-xs text-slate-500">Sistem mendeteksi kolom otomatis. Anda dapat mengubah pemetaan secara manual jika ada ketidaksesuaian.</p>
+                  <h3 className="text-sm font-bold text-[var(--app-text)] mb-1">Hubungkan Kolom File dengan Field Database</h3>
+                  <p className="text-xs text-[var(--app-text-muted)]">Sistem mendeteksi kolom otomatis. Anda dapat mengubah pemetaan secara manual jika ada ketidaksesuaian.</p>
                 </div>
 
                 <div className="space-y-4">
@@ -573,20 +595,20 @@ export default function ImportCustomer() {
                     { key: 'alamat', label: 'Alamat Lengkap', required: true, description: 'Alamat lengkap lokasi pemasangan' },
                     { key: 'tanggal_daftar', label: 'Tanggal Daftar', required: true, description: 'Tanggal aktif layanan (YYYY-MM-DD)' }
                   ].map(field => (
-                    <div key={field.key} className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center bg-slate-100/15 border border-slate-200/50 p-4 rounded-xl">
+                    <div key={field.key} className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center bg-[var(--app-bg)] border border-[var(--app-border)] p-4 rounded-xl">
                       <div className="md:col-span-5 space-y-1">
-                        <label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                        <label className="text-xs font-bold text-[var(--app-text)] flex items-center gap-1.5">
                           {field.label}
                           {field.required && <span className="text-red-500">*</span>}
                         </label>
-                        <p className="text-[10px] text-slate-400 leading-tight">{field.description}</p>
+                        <p className="text-[10px] text-[var(--app-text-muted)] leading-tight">{field.description}</p>
                       </div>
                       
                       <div className="md:col-span-7">
                         <select
                           value={mappings[field.key] || ''}
                           onChange={e => setMappings({ ...mappings, [field.key]: e.target.value })}
-                          className="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-blue-500 font-semibold"
+                          className="w-full bg-[var(--app-card)] border border-[var(--app-border)] rounded-lg px-3 py-2 text-xs text-[var(--app-text)] focus:outline-none focus:border-blue-500 font-semibold"
                         >
                           <option value="">-- Lewati Field Ini --</option>
                           {rawHeaders.map(header => (
@@ -600,37 +622,37 @@ export default function ImportCustomer() {
               </div>
 
               {/* Visual Helper / Reference Card */}
-              <div className="lg:col-span-5 bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs space-y-6 flex flex-col justify-between">
+              <div className="lg:col-span-5 bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-6 shadow-2xs space-y-6 flex flex-col justify-between">
                 <div className="space-y-4">
-                  <h3 className="text-sm font-bold text-slate-900">Panduan Pemetaan</h3>
-                  <div className="space-y-3.5 text-xs text-slate-500">
-                    <div className="bg-blue-600/5 border border-blue-500/10 p-3.5 rounded-xl space-y-2">
-                      <h4 className="font-bold text-slate-900 flex items-center gap-1.5 text-xs">
+                  <h3 className="text-sm font-bold text-[var(--app-text)]">Panduan Pemetaan</h3>
+                  <div className="space-y-3.5 text-xs text-[var(--app-text-muted)]">
+                    <div className="bg-blue-600/5 border border-blue-500/20 p-3.5 rounded-xl space-y-2">
+                      <h4 className="font-bold text-[var(--app-text)] flex items-center gap-1.5 text-xs">
                         <CheckCircle size={14} className="text-blue-400" /> Deteksi Otomatis Aktif
                       </h4>
-                      <p className="text-[11px] leading-relaxed text-slate-500">
+                      <p className="text-[11px] leading-relaxed text-[var(--app-text-muted)]">
                         Kolom file yang memiliki nama mirip dengan field sistem akan secara otomatis dicocokkan oleh sistem.
                       </p>
                     </div>
 
                     <div className="space-y-2">
-                      <h4 className="font-bold text-slate-900">Ketentuan Tipe Data:</h4>
+                      <h4 className="font-bold text-[var(--app-text)]">Ketentuan Tipe Data:</h4>
                       <ul className="list-disc list-inside space-y-1.5 pl-1 text-[11px]">
-                        <li><strong className="text-slate-600">Nama:</strong> Teks alfanumerik bebas.</li>
-                        <li><strong className="text-slate-600">No. KTP:</strong> Hanya angka, wajib 16 karakter.</li>
-                        <li><strong className="text-slate-600">No. HP:</strong> Format nomor telepon lokal/internasional.</li>
-                        <li><strong className="text-slate-600">Tanggal:</strong> Format ISO-8601 (YYYY-MM-DD).</li>
+                        <li><strong className="text-[var(--app-text)]">Nama:</strong> Teks alfanumerik bebas.</li>
+                        <li><strong className="text-[var(--app-text)]">No. KTP:</strong> Hanya angka, wajib 16 karakter.</li>
+                        <li><strong className="text-[var(--app-text)]">No. HP:</strong> Format nomor telepon lokal/internasional.</li>
+                        <li><strong className="text-[var(--app-text)]">Tanggal:</strong> Format ISO-8601 (YYYY-MM-DD).</li>
                       </ul>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-slate-100 border border-slate-200 rounded-xl p-4 flex items-center justify-between">
+                <div className="bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl p-4 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <FileText size={16} className="text-blue-400" />
-                    <span className="text-[11px] text-slate-700 font-semibold">Total field terhubung:</span>
+                    <span className="text-[11px] text-[var(--app-text)] font-semibold">Total field terhubung:</span>
                   </div>
-                  <span className="text-xs font-bold text-slate-800 bg-blue-600/20 border border-blue-500/20 px-2 py-1 rounded">
+                  <span className="text-xs font-mono font-bold text-[var(--app-text)] bg-blue-600/20 border border-blue-500/20 px-2 py-1 rounded">
                     {Object.values(mappings).filter(Boolean).length} / 7 Field
                   </span>
                 </div>
@@ -639,17 +661,17 @@ export default function ImportCustomer() {
             </div>
 
             {/* Step 2 Footer Actions */}
-            <div className="flex justify-between items-center border-t border-slate-200 pt-5 mt-4">
-              <button onClick={() => setCurrentStep(1)} className="flex items-center gap-1.5 px-6 py-2.5 bg-slate-100/50 hover:bg-slate-100 border border-slate-200 text-xs font-bold text-slate-600 hover:text-white rounded-xl transition">
+            <div className="flex justify-between items-center border-t border-[var(--app-border)] pt-5 mt-4">
+              <button onClick={() => setCurrentStep(1)} className="flex items-center gap-1.5 px-6 py-2.5 bg-[var(--app-card)] hover:bg-[var(--app-card-hover)] border border-[var(--app-border)] text-xs font-bold text-[var(--app-text-muted)] hover:text-[var(--app-text)] rounded-xl transition">
                 <ArrowLeft size={14} /> Kembali
               </button>
               <div className="flex gap-3">
-                <button onClick={() => alert("Draft proses import berhasil disimpan ke penyimpanan lokal!")} className="px-6 py-2.5 bg-slate-100/50 hover:bg-slate-100 border border-slate-200 text-xs font-bold text-slate-600 hover:text-white rounded-xl transition">
+                <button onClick={() => toast.success("Draft proses import berhasil disimpan ke penyimpanan lokal!")} className="px-6 py-2.5 bg-[var(--app-card)] hover:bg-[var(--app-card-hover)] border border-[var(--app-border)] text-xs font-bold text-[var(--app-text-muted)] hover:text-[var(--app-text)] rounded-xl transition">
                   Simpan Draft
                 </button>
                 <button
                   onClick={() => setCurrentStep(3)}
-                  className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-xs font-bold text-slate-800 rounded-xl shadow-lg transition"
+                  className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-xs font-bold text-white rounded-xl shadow-lg transition"
                 >
                   Lanjut: Validasi Data <ArrowRight size={14} />
                 </button>
@@ -663,30 +685,30 @@ export default function ImportCustomer() {
             
             {/* Summary metrics header */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs flex items-center justify-between">
+              <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs flex items-center justify-between">
                 <div>
-                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Total Baris</p>
-                  <p className="text-2xl font-black text-slate-900 mt-1">{validationResults.length}</p>
+                  <p className="text-[10px] text-[var(--app-text-muted)] font-bold uppercase tracking-wider">Total Baris</p>
+                  <p className="text-2xl font-black font-mono text-[var(--app-text)] mt-1">{validationResults.length}</p>
                 </div>
-                <div className="p-3 bg-slate-100 rounded-xl text-slate-500">
+                <div className="p-3 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl text-[var(--app-text-muted)]">
                   <FileText size={20} />
                 </div>
               </div>
 
-              <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs flex items-center justify-between">
+              <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs flex items-center justify-between">
                 <div>
-                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Data Valid</p>
-                  <p className="text-2xl font-black text-green-400 mt-1">{totalValid}</p>
+                  <p className="text-[10px] text-[var(--app-text-muted)] font-bold uppercase tracking-wider">Data Valid</p>
+                  <p className="text-2xl font-black font-mono text-green-400 mt-1">{totalValid}</p>
                 </div>
                 <div className="p-3 bg-green-500/10 rounded-xl text-green-400 border border-green-500/20">
                   <CheckCircle size={20} />
                 </div>
               </div>
 
-              <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs flex items-center justify-between">
+              <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs flex items-center justify-between">
                 <div>
-                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Data Error / Warning</p>
-                  <p className="text-2xl font-black text-red-400 mt-1">{totalErrors}</p>
+                  <p className="text-[10px] text-[var(--app-text-muted)] font-bold uppercase tracking-wider">Data Error / Warning</p>
+                  <p className="text-2xl font-black font-mono text-red-400 mt-1">{totalErrors}</p>
                 </div>
                 <div className="p-3 bg-red-500/10 rounded-xl text-red-400 border border-red-500/20">
                   <AlertTriangle size={20} />
@@ -695,92 +717,92 @@ export default function ImportCustomer() {
             </div>
 
             {/* Validation Table & Inline Editor */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs space-y-4">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-6 shadow-2xs space-y-4">
               <div>
-                <h3 className="text-sm font-bold text-slate-900 mb-1">Hasil Validasi Data Pelanggan</h3>
-                <p className="text-xs text-slate-500">Anda dapat langsung mengoreksi data yang salah dengan mengklik tombol edit di setiap baris.</p>
+                <h3 className="text-sm font-bold text-[var(--app-text)] mb-1">Hasil Validasi Data Pelanggan</h3>
+                <p className="text-xs text-[var(--app-text-muted)]">Anda dapat langsung mengoreksi data yang salah dengan mengklik tombol edit di setiap baris.</p>
               </div>
 
               {/* Inline editor panel if active */}
               {editingRowIndex !== null && editingRowData && (
-                <div className="bg-slate-100 border border-blue-500/40 rounded-xl p-4 space-y-4">
+                <div className="bg-[var(--app-bg)] border border-blue-500/40 rounded-xl p-4 space-y-4">
                   <div className="flex justify-between items-center">
-                    <h4 className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                    <h4 className="text-xs font-bold text-[var(--app-text)] flex items-center gap-1.5">
                       <Edit2 size={12} className="text-blue-400" /> Edit Data Baris ke-{editingRowIndex + 1}
                     </h4>
-                    <button onClick={() => { setEditingRowIndex(null); setEditingRowData(null) }} className="text-slate-500 hover:text-slate-900">
+                    <button onClick={() => { setEditingRowIndex(null); setEditingRowData(null) }} className="text-[var(--app-text-muted)] hover:text-[var(--app-text)]">
                       <X size={14} />
                     </button>
                   </div>
                   
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                     <div className="space-y-1">
-                      <label className="text-[10px] text-slate-500 block font-bold">Nama Lengkap</label>
+                      <label className="text-[10px] text-[var(--app-text-muted)] block font-bold">Nama Lengkap</label>
                       <input
                         type="text"
                         value={editingRowData.nama}
                         onChange={e => setEditingRowData({ ...editingRowData, nama: e.target.value })}
-                        className="w-full bg-slate-100 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-blue-500 font-semibold"
+                        className="w-full bg-[var(--app-card)] border border-[var(--app-border)] rounded-lg px-2.5 py-1.5 text-xs text-[var(--app-text)] focus:outline-none focus:border-blue-500 font-semibold"
                       />
                     </div>
                     
                     <div className="space-y-1">
-                      <label className="text-[10px] text-slate-500 block font-bold">No. KTP</label>
+                      <label className="text-[10px] text-[var(--app-text-muted)] block font-bold">No. KTP</label>
                       <input
                         type="text"
                         value={editingRowData.no_ktp}
                         onChange={e => setEditingRowData({ ...editingRowData, no_ktp: e.target.value })}
-                        className="w-full bg-slate-100 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-blue-500 font-semibold"
+                        className="w-full bg-[var(--app-card)] border border-[var(--app-border)] rounded-lg px-2.5 py-1.5 text-xs font-mono text-[var(--app-text)] focus:outline-none focus:border-blue-500 font-semibold"
                       />
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[10px] text-slate-500 block font-bold">No. HP</label>
+                      <label className="text-[10px] text-[var(--app-text-muted)] block font-bold">No. HP</label>
                       <input
                         type="text"
                         value={editingRowData.no_hp}
                         onChange={e => setEditingRowData({ ...editingRowData, no_hp: e.target.value })}
-                        className="w-full bg-slate-100 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-blue-500 font-semibold"
+                        className="w-full bg-[var(--app-card)] border border-[var(--app-border)] rounded-lg px-2.5 py-1.5 text-xs font-mono text-[var(--app-text)] focus:outline-none focus:border-blue-500 font-semibold"
                       />
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[10px] text-slate-500 block font-bold">Email</label>
+                      <label className="text-[10px] text-[var(--app-text-muted)] block font-bold">Email</label>
                       <input
                         type="text"
                         value={editingRowData.email}
                         onChange={e => setEditingRowData({ ...editingRowData, email: e.target.value })}
-                        className="w-full bg-slate-100 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-blue-500 font-semibold"
+                        className="w-full bg-[var(--app-card)] border border-[var(--app-border)] rounded-lg px-2.5 py-1.5 text-xs text-[var(--app-text)] focus:outline-none focus:border-blue-500 font-semibold"
                       />
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[10px] text-slate-500 block font-bold">Paket</label>
+                      <label className="text-[10px] text-[var(--app-text-muted)] block font-bold">Paket</label>
                       <input
                         type="text"
                         value={editingRowData.paket}
                         onChange={e => setEditingRowData({ ...editingRowData, paket: e.target.value })}
-                        className="w-full bg-slate-100 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-blue-500 font-semibold"
+                        className="w-full bg-[var(--app-card)] border border-[var(--app-border)] rounded-lg px-2.5 py-1.5 text-xs text-[var(--app-text)] focus:outline-none focus:border-blue-500 font-semibold"
                       />
                     </div>
 
                     <div className="space-y-1 sm:col-span-2">
-                      <label className="text-[10px] text-slate-500 block font-bold">Alamat</label>
+                      <label className="text-[10px] text-[var(--app-text-muted)] block font-bold">Alamat</label>
                       <input
                         type="text"
                         value={editingRowData.alamat}
                         onChange={e => setEditingRowData({ ...editingRowData, alamat: e.target.value })}
-                        className="w-full bg-slate-100 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-blue-500 font-semibold"
+                        className="w-full bg-[var(--app-card)] border border-[var(--app-border)] rounded-lg px-2.5 py-1.5 text-xs text-[var(--app-text)] focus:outline-none focus:border-blue-500 font-semibold"
                       />
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[10px] text-slate-500 block font-bold">Tanggal Daftar</label>
+                      <label className="text-[10px] text-[var(--app-text-muted)] block font-bold">Tanggal Daftar</label>
                       <input
                         type="text"
                         value={editingRowData.tanggal_daftar}
                         onChange={e => setEditingRowData({ ...editingRowData, tanggal_daftar: e.target.value })}
-                        className="w-full bg-slate-100 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-blue-500 font-semibold"
+                        className="w-full bg-[var(--app-card)] border border-[var(--app-border)] rounded-lg px-2.5 py-1.5 text-xs font-mono text-[var(--app-text)] focus:outline-none focus:border-blue-500 font-semibold"
                       />
                     </div>
                   </div>
@@ -788,13 +810,13 @@ export default function ImportCustomer() {
                   <div className="flex justify-end gap-2.5">
                     <button
                       onClick={() => { setEditingRowIndex(null); setEditingRowData(null) }}
-                      className="px-4 py-1.5 bg-slate-100 hover:bg-slate-100 border border-slate-200 text-xs font-bold text-slate-500 hover:text-slate-900 rounded-lg transition"
+                      className="px-4 py-1.5 bg-[var(--app-card)] hover:bg-[var(--app-card-hover)] border border-[var(--app-border)] text-xs font-bold text-[var(--app-text-muted)] hover:text-[var(--app-text)] rounded-lg transition"
                     >
                       Batal
                     </button>
                     <button
                       onClick={handleSaveInlineEdit}
-                      className="flex items-center gap-1 px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-xs font-bold text-slate-800 rounded-lg transition"
+                      className="flex items-center gap-1 px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-xs font-bold text-white rounded-lg transition"
                     >
                       <Save size={12} /> Simpan Perubahan
                     </button>
@@ -803,11 +825,11 @@ export default function ImportCustomer() {
               )}
 
               {/* Data Validation Table */}
-              <div className="border border-slate-200 rounded-xl overflow-hidden">
+              <div className="border border-[var(--app-border)] rounded-xl overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-xs text-left">
                     <thead>
-                      <tr className="border-b border-slate-200 bg-slate-100/25 text-slate-400 uppercase tracking-wider font-bold">
+                      <tr className="border-b border-[var(--app-border)] bg-[var(--app-bg)] text-[var(--app-text-muted)] uppercase tracking-wider font-bold">
                         <th className="p-3 w-16 text-center">Status</th>
                         <th className="p-3">Nama</th>
                         <th className="p-3">KTP</th>
@@ -818,11 +840,11 @@ export default function ImportCustomer() {
                         <th className="p-3 text-center">Aksi</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-200/35">
+                    <tbody className="divide-y divide-[var(--app-border)]">
                       {validationResults.map((result, i) => (
                         <tr
                           key={i}
-                          className={`hover:bg-slate-100/15 transition ${
+                          className={`hover:bg-[var(--app-card-hover)] transition ${
                             !result.isValid ? 'bg-red-500/5' : ''
                           }`}
                         >
@@ -837,11 +859,11 @@ export default function ImportCustomer() {
                               </span>
                             )}
                           </td>
-                          <td className="p-3 font-bold text-slate-800">{result.row.nama || '-'}</td>
-                          <td className="p-3 text-slate-500 font-semibold">{result.row.no_ktp || '-'}</td>
-                          <td className="p-3 text-slate-500 font-semibold">{result.row.no_hp || '-'}</td>
-                          <td className="p-3 text-slate-700 font-semibold">{result.row.paket || '-'}</td>
-                          <td className="p-3 text-slate-500 truncate max-w-xs">{result.row.alamat || '-'}</td>
+                          <td className="p-3 font-bold text-[var(--app-text)]">{result.row.nama || '-'}</td>
+                          <td className="p-3 text-[var(--app-text-muted)] font-mono font-semibold">{result.row.no_ktp || '-'}</td>
+                          <td className="p-3 text-[var(--app-text-muted)] font-mono font-semibold">{result.row.no_hp || '-'}</td>
+                          <td className="p-3 text-[var(--app-text)] font-semibold">{result.row.paket || '-'}</td>
+                          <td className="p-3 text-[var(--app-text-muted)] truncate max-w-xs">{result.row.alamat || '-'}</td>
                           <td className="p-3 text-xs">
                             {result.isValid ? (
                               <span className="text-green-400 font-semibold">Siap Diimport</span>
@@ -857,7 +879,7 @@ export default function ImportCustomer() {
                                 setEditingRowIndex(i)
                                 setEditingRowData({ ...result.row })
                               }}
-                              className="p-1 text-slate-500 hover:text-blue-400 hover:bg-slate-100/50 rounded transition"
+                              className="p-1 text-[var(--app-text-muted)] hover:text-blue-400 hover:bg-[var(--app-bg)] rounded transition"
                               title="Edit Baris"
                             >
                               <Edit2 size={12} />
@@ -872,17 +894,17 @@ export default function ImportCustomer() {
             </div>
 
             {/* Step 3 Footer Actions */}
-            <div className="flex justify-between items-center border-t border-slate-200 pt-5 mt-4">
-              <button onClick={() => setCurrentStep(2)} className="flex items-center gap-1.5 px-6 py-2.5 bg-slate-100/50 hover:bg-slate-100 border border-slate-200 text-xs font-bold text-slate-600 hover:text-white rounded-xl transition">
+            <div className="flex justify-between items-center border-t border-[var(--app-border)] pt-5 mt-4">
+              <button onClick={() => setCurrentStep(2)} className="flex items-center gap-1.5 px-6 py-2.5 bg-[var(--app-card)] hover:bg-[var(--app-card-hover)] border border-[var(--app-border)] text-xs font-bold text-[var(--app-text-muted)] hover:text-[var(--app-text)] rounded-xl transition">
                 <ArrowLeft size={14} /> Kembali
               </button>
               <div className="flex gap-3">
-                <button onClick={() => alert("Draft proses import berhasil disimpan ke penyimpanan lokal!")} className="px-6 py-2.5 bg-slate-100/50 hover:bg-slate-100 border border-slate-200 text-xs font-bold text-slate-600 hover:text-white rounded-xl transition">
+                <button onClick={() => toast.success("Draft proses import berhasil disimpan ke penyimpanan lokal!")} className="px-6 py-2.5 bg-[var(--app-card)] hover:bg-[var(--app-card-hover)] border border-[var(--app-border)] text-xs font-bold text-[var(--app-text-muted)] hover:text-[var(--app-text)] rounded-xl transition">
                   Simpan Draft
                 </button>
                 <button
                   onClick={() => setCurrentStep(4)}
-                  className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-xs font-bold text-slate-800 rounded-xl shadow-lg transition"
+                  className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-xs font-bold text-white rounded-xl shadow-lg transition"
                 >
                   Lanjut: Pengaturan <ArrowRight size={14} />
                 </button>
@@ -896,16 +918,16 @@ export default function ImportCustomer() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               
               {/* Configuration Controls */}
-              <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs space-y-6">
+              <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-6 shadow-2xs space-y-6">
                 <div>
-                  <h3 className="text-sm font-bold text-slate-900 mb-1">Pengaturan Import</h3>
-                  <p className="text-xs text-slate-500">Atur preferensi sistem mengenai penanganan data dan aktivasi customer yang akan diunggah.</p>
+                  <h3 className="text-sm font-bold text-[var(--app-text)] mb-1">Pengaturan Import</h3>
+                  <p className="text-xs text-[var(--app-text-muted)]">Atur preferensi sistem mengenai penanganan data dan aktivasi customer yang akan diunggah.</p>
                 </div>
 
                 <div className="space-y-5">
                   <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-800 block">Tindakan untuk Duplikasi Data</label>
-                    <p className="text-[10px] text-slate-400">Gunakan opsi ini jika ditemukan customer dengan No. KTP atau No. HP yang sudah terdaftar di sistem.</p>
+                    <label className="text-xs font-bold text-[var(--app-text)] block">Tindakan untuk Duplikasi Data</label>
+                    <p className="text-[10px] text-[var(--app-text-muted)]">Gunakan opsi ini jika ditemukan customer dengan No. KTP atau No. HP yang sudah terdaftar di sistem.</p>
                     <div className="grid grid-cols-3 gap-3">
                       {[
                         { id: 'skip', title: 'Lewati (Skip)', desc: 'Jangan import data' },
@@ -917,33 +939,33 @@ export default function ImportCustomer() {
                           onClick={() => setDuplicateAction(opt.id)}
                           className={`p-3 border rounded-xl cursor-pointer transition text-center ${
                             duplicateAction === opt.id
-                              ? 'border-blue-500 bg-blue-500/10 text-white'
-                              : 'border-slate-200 bg-slate-50 text-slate-500 hover:border-slate-200'
+                              ? 'border-blue-500 bg-blue-500/10 text-[var(--app-text)]'
+                              : 'border-[var(--app-border)] bg-[var(--app-bg)] text-[var(--app-text-muted)] hover:border-blue-400/50'
                           }`}
                         >
                           <p className="text-xs font-bold">{opt.title}</p>
-                          <p className="text-[9px] text-slate-400 mt-1 leading-tight">{opt.desc}</p>
+                          <p className="text-[9px] text-[var(--app-text-muted)] mt-1 leading-tight">{opt.desc}</p>
                         </div>
                       ))}
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-800 block">Status Awal Customer Baru</label>
+                    <label className="text-xs font-bold text-[var(--app-text)] block">Status Awal Customer Baru</label>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                       {[
                         { id: 'active', title: 'Aktif', color: 'text-green-400' },
                         { id: 'pending', title: 'Pending', color: 'text-yellow-400' },
                         { id: 'trial', title: 'Trial', color: 'text-blue-400' },
-                        { id: 'inactive', title: 'Nonaktif', color: 'text-slate-500' }
+                        { id: 'inactive', title: 'Nonaktif', color: 'text-[var(--app-text-muted)]' }
                       ].map(opt => (
                         <div
                           key={opt.id}
                           onClick={() => setInitialStatus(opt.id)}
                           className={`p-2.5 border rounded-xl cursor-pointer transition text-center ${
                             initialStatus === opt.id
-                              ? 'border-blue-500 bg-blue-500/10 text-white'
-                              : 'border-slate-200 bg-slate-50 text-slate-500 hover:border-slate-200'
+                              ? 'border-blue-500 bg-blue-500/10 text-[var(--app-text)]'
+                              : 'border-[var(--app-border)] bg-[var(--app-bg)] text-[var(--app-text-muted)] hover:border-blue-400/50'
                           }`}
                         >
                           <p className={`text-xs font-bold ${opt.color}`}>{opt.title}</p>
@@ -952,10 +974,10 @@ export default function ImportCustomer() {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between p-4 bg-slate-100/15 border border-slate-200/50 rounded-xl">
+                  <div className="flex items-center justify-between p-4 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl">
                     <div className="space-y-0.5 max-w-[80%]">
-                      <label className="text-xs font-bold text-slate-800 block">Kirim Notifikasi Aktivasi WhatsApp</label>
-                      <p className="text-[10px] text-slate-400 leading-normal">
+                      <label className="text-xs font-bold text-[var(--app-text)] block">Kirim Notifikasi Aktivasi WhatsApp</label>
+                      <p className="text-[10px] text-[var(--app-text-muted)] leading-normal">
                         Kirim pesan otomatis via WhatsApp web/gateway kepada nomor HP customer yang valid begitu proses import selesai.
                       </p>
                     </div>
@@ -966,39 +988,39 @@ export default function ImportCustomer() {
                         onChange={e => setSendWelcomeWA(e.target.checked)}
                         className="sr-only peer"
                       />
-                      <div className="w-9 h-5 bg-slate-100 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-gray-400 after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600 peer-checked:after:bg-white"></div>
+                      <div className="w-9 h-5 bg-[var(--app-border)] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white dark:after:bg-slate-200 after:border-gray-300 dark:after:border-slate-600 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
                     </label>
                   </div>
                 </div>
               </div>
 
               {/* Status Reference Info */}
-              <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs space-y-6 flex flex-col justify-between">
+              <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-6 shadow-2xs space-y-6 flex flex-col justify-between">
                 <div className="space-y-4">
-                  <h3 className="text-sm font-bold text-slate-900">Panduan Pengaturan</h3>
-                  <div className="space-y-3.5 text-xs text-slate-500 leading-relaxed">
+                  <h3 className="text-sm font-bold text-[var(--app-text)]">Panduan Pengaturan</h3>
+                  <div className="space-y-3.5 text-xs text-[var(--app-text-muted)] leading-relaxed">
                     <div className="space-y-2">
-                      <h4 className="font-bold text-slate-900 text-xs">Penanganan Duplikat</h4>
+                      <h4 className="font-bold text-[var(--app-text)] text-xs">Penanganan Duplikat</h4>
                       <p className="text-[11px]">
-                        Sistem mencocokkan field No. KTP dan No. HP dengan database. Jika memilih <strong>Lewati</strong>, baris duplikat akan dilewati dengan status error. Jika memilih <strong>Perbarui</strong>, data lama customer di database akan ditimpa dengan data baru dari file Excel/CSV.
+                        Sistem mencocokkan field No. KTP dan No. HP dengan database. Jika memilih <strong className="text-[var(--app-text)]">Lewati</strong>, baris duplikat akan dilewati dengan status error. Jika memilih <strong className="text-[var(--app-text)]">Perbarui</strong>, data lama customer di database akan ditimpa dengan data baru dari file Excel/CSV.
                       </p>
                     </div>
 
                     <div className="space-y-2">
-                      <h4 className="font-bold text-slate-900 text-xs">Status Customer</h4>
+                      <h4 className="font-bold text-[var(--app-text)] text-xs">Status Customer</h4>
                       <p className="text-[11px]">
-                        Customer baru yang dibuat dapat langsung diset menjadi <strong>Aktif</strong> agar langsung mendapat invoice aktif berikutnya, atau diset <strong>Pending</strong> jika masih membutuhkan aktivasi fisik/teknisi lapangan di lokasi.
+                        Customer baru yang dibuat dapat langsung diset menjadi <strong className="text-[var(--app-text)]">Aktif</strong> agar langsung mendapat invoice aktif berikutnya, atau diset <strong className="text-[var(--app-text)]">Pending</strong> jika masih membutuhkan aktivasi fisik/teknisi lapangan di lokasi.
                       </p>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-slate-100 border border-slate-200 rounded-xl p-4 flex items-center justify-between">
+                <div className="bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl p-4 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <CheckCircle size={16} className="text-blue-400" />
-                    <span className="text-[11px] text-slate-700 font-semibold">Tindakan duplikat disetel ke:</span>
+                    <span className="text-[11px] text-[var(--app-text)] font-semibold">Tindakan duplikat disetel ke:</span>
                   </div>
-                  <span className="text-xs font-bold text-slate-800 uppercase bg-blue-600/20 border border-blue-500/20 px-2.5 py-1 rounded">
+                  <span className="text-xs font-mono font-bold text-[var(--app-text)] uppercase bg-blue-600/20 border border-blue-500/20 px-2.5 py-1 rounded">
                     {duplicateAction}
                   </span>
                 </div>
@@ -1007,17 +1029,17 @@ export default function ImportCustomer() {
             </div>
 
             {/* Step 4 Footer Actions */}
-            <div className="flex justify-between items-center border-t border-slate-200 pt-5 mt-4">
-              <button onClick={() => setCurrentStep(3)} className="flex items-center gap-1.5 px-6 py-2.5 bg-slate-100/50 hover:bg-slate-100 border border-slate-200 text-xs font-bold text-slate-600 hover:text-white rounded-xl transition">
+            <div className="flex justify-between items-center border-t border-[var(--app-border)] pt-5 mt-4">
+              <button onClick={() => setCurrentStep(3)} className="flex items-center gap-1.5 px-6 py-2.5 bg-[var(--app-card)] hover:bg-[var(--app-card-hover)] border border-[var(--app-border)] text-xs font-bold text-[var(--app-text-muted)] hover:text-[var(--app-text)] rounded-xl transition">
                 <ArrowLeft size={14} /> Kembali
               </button>
               <div className="flex gap-3">
-                <button onClick={() => alert("Draft proses import berhasil disimpan ke penyimpanan lokal!")} className="px-6 py-2.5 bg-slate-100/50 hover:bg-slate-100 border border-slate-200 text-xs font-bold text-slate-600 hover:text-white rounded-xl transition">
+                <button onClick={() => toast.success("Draft proses import berhasil disimpan ke penyimpanan lokal!")} className="px-6 py-2.5 bg-[var(--app-card)] hover:bg-[var(--app-card-hover)] border border-[var(--app-border)] text-xs font-bold text-[var(--app-text-muted)] hover:text-[var(--app-text)] rounded-xl transition">
                   Simpan Draft
                 </button>
                 <button
                   onClick={() => setCurrentStep(5)}
-                  className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-xs font-bold text-slate-800 rounded-xl shadow-lg transition"
+                  className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-xs font-bold text-white rounded-xl shadow-lg transition"
                 >
                   Lanjut: Konfirmasi <ArrowRight size={14} />
                 </button>
@@ -1029,47 +1051,47 @@ export default function ImportCustomer() {
         {currentStep === 5 && (
           <div className="space-y-6">
             {!importResult ? (
-              <div className="max-w-2xl mx-auto bg-white border border-slate-200 rounded-2xl shadow-2xs p-8 space-y-6 text-center">
+              <div className="max-w-2xl mx-auto bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-8 space-y-6 text-center">
                 <div className="w-16 h-16 bg-blue-600/10 rounded-full border border-blue-500/25 flex items-center justify-center mx-auto">
                   <Play size={24} className="text-blue-500 ml-1" />
                 </div>
                 
                 <div className="space-y-2">
-                  <h3 className="text-base font-bold text-slate-800">Konfirmasi & Mulai Proses Import</h3>
-                  <p className="text-xs text-slate-500">
+                  <h3 className="text-base font-bold text-[var(--app-text)]">Konfirmasi & Mulai Proses Import</h3>
+                  <p className="text-xs text-[var(--app-text-muted)]">
                     Mohon tinjau ringkasan di bawah ini sebelum memproses data ke database. Tindakan ini tidak dapat dibatalkan secara otomatis.
                   </p>
                 </div>
 
                 {/* Configuration Summary Card */}
-                <div className="grid grid-cols-2 gap-4 text-left border-y border-slate-200 py-5 my-2">
+                <div className="grid grid-cols-2 gap-4 text-left border-y border-[var(--app-border)] py-5 my-2">
                   <div className="space-y-3 pl-4">
                     <div className="space-y-1">
-                      <span className="text-[10px] text-slate-400 block">Total Data Terdeteksi</span>
-                      <span className="text-sm font-bold text-slate-800">{validationResults.length} Baris</span>
+                      <span className="text-[10px] text-[var(--app-text-muted)] block">Total Data Terdeteksi</span>
+                      <span className="text-sm font-mono font-bold text-[var(--app-text)]">{validationResults.length} Baris</span>
                     </div>
                     <div className="space-y-1">
-                      <span className="text-[10px] text-slate-400 block">Data Valid (Akan Diproses)</span>
-                      <span className="text-sm font-bold text-green-400">{totalValid} Customer</span>
+                      <span className="text-[10px] text-[var(--app-text-muted)] block">Data Valid (Akan Diproses)</span>
+                      <span className="text-sm font-mono font-bold text-green-400">{totalValid} Customer</span>
                     </div>
                     <div className="space-y-1">
-                      <span className="text-[10px] text-slate-400 block">Data Error (Akan Dilewati)</span>
-                      <span className="text-sm font-bold text-red-400">{totalErrors} Customer</span>
+                      <span className="text-[10px] text-[var(--app-text-muted)] block">Data Error (Akan Dilewati)</span>
+                      <span className="text-sm font-mono font-bold text-red-400">{totalErrors} Customer</span>
                     </div>
                   </div>
 
-                  <div className="space-y-3 pl-4 border-l border-slate-200">
+                  <div className="space-y-3 pl-4 border-l border-[var(--app-border)]">
                     <div className="space-y-1">
-                      <span className="text-[10px] text-slate-400 block">Status Awal Customer</span>
-                      <span className="text-sm font-bold text-slate-800 capitalize">{initialStatus}</span>
+                      <span className="text-[10px] text-[var(--app-text-muted)] block">Status Awal Customer</span>
+                      <span className="text-sm font-bold text-[var(--app-text)] capitalize">{initialStatus}</span>
                     </div>
                     <div className="space-y-1">
-                      <span className="text-[10px] text-slate-400 block">Penanganan Duplikat</span>
-                      <span className="text-sm font-bold text-slate-800 capitalize">{duplicateAction === 'skip' ? 'Lewati (Skip)' : duplicateAction === 'overwrite' ? 'Perbarui (Update)' : 'Buat Baru'}</span>
+                      <span className="text-[10px] text-[var(--app-text-muted)] block">Penanganan Duplikat</span>
+                      <span className="text-sm font-bold text-[var(--app-text)] capitalize">{duplicateAction === 'skip' ? 'Lewati (Skip)' : duplicateAction === 'overwrite' ? 'Perbarui (Update)' : 'Buat Baru'}</span>
                     </div>
                     <div className="space-y-1">
-                      <span className="text-[10px] text-slate-400 block">Notifikasi WhatsApp</span>
-                      <span className="text-sm font-bold text-slate-800">{sendWelcomeWA ? 'Aktif' : 'Nonaktif'}</span>
+                      <span className="text-[10px] text-[var(--app-text-muted)] block">Notifikasi WhatsApp</span>
+                      <span className="text-sm font-bold text-[var(--app-text)]">{sendWelcomeWA ? 'Aktif' : 'Nonaktif'}</span>
                     </div>
                   </div>
                 </div>
@@ -1077,10 +1099,10 @@ export default function ImportCustomer() {
                 {importing ? (
                   <div className="space-y-3.5 py-4">
                     <div className="flex justify-between items-center text-xs">
-                      <span className="text-slate-500 font-semibold">Mengimpor data customer...</span>
-                      <span className="text-blue-400 font-bold">{importProgress}%</span>
+                      <span className="text-[var(--app-text-muted)] font-semibold">Mengimpor data customer...</span>
+                      <span className="text-blue-400 font-mono font-bold">{importProgress}%</span>
                     </div>
-                    <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                    <div className="w-full bg-[var(--app-bg)] h-2.5 rounded-full overflow-hidden">
                       <div
                         className="bg-gradient-to-r from-blue-500 to-indigo-600 h-full rounded-full transition-all duration-300"
                         style={{ width: `${importProgress}%` }}
@@ -1091,13 +1113,13 @@ export default function ImportCustomer() {
                   <div className="flex justify-center gap-4 pt-4">
                     <button
                       onClick={() => setCurrentStep(4)}
-                      className="px-6 py-2.5 bg-slate-100 hover:bg-slate-100 border border-slate-200 text-xs font-bold text-slate-600 hover:text-white rounded-xl transition"
+                      className="px-6 py-2.5 bg-[var(--app-bg)] hover:bg-[var(--app-card-hover)] border border-[var(--app-border)] text-xs font-bold text-[var(--app-text-muted)] hover:text-[var(--app-text)] rounded-xl transition"
                     >
                       Batal
                     </button>
                     <button
                       onClick={startImportProcess}
-                      className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-xs font-bold text-slate-800 rounded-xl shadow-lg transition"
+                      className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-xs font-bold text-white rounded-xl shadow-lg transition"
                     >
                       Mulai Import Data ({totalValid} Valid)
                     </button>
@@ -1106,26 +1128,26 @@ export default function ImportCustomer() {
               </div>
             ) : (
               /* Success / Result Screen */
-              <div className="max-w-md mx-auto bg-white border border-slate-200 rounded-2xl shadow-2xs p-8 text-center space-y-6">
+              <div className="max-w-md mx-auto bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-8 text-center space-y-6">
                 <div className="w-16 h-16 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center mx-auto">
                   <CheckCircle size={32} className="text-green-400" />
                 </div>
                 
                 <div>
-                  <h3 className="text-lg font-bold text-slate-800">Import Selesai!</h3>
-                  <p className="text-slate-500 text-xs mt-1.5 leading-relaxed">
+                  <h3 className="text-lg font-bold text-[var(--app-text)]">Import Selesai!</h3>
+                  <p className="text-[var(--app-text-muted)] text-xs mt-1.5 leading-relaxed">
                     Proses import massal data pelanggan Anda telah selesai diproses oleh sistem.
                   </p>
                 </div>
 
-                <div className="bg-slate-100/25 border border-slate-200 rounded-xl p-4 divide-y divide-slate-200 text-xs">
+                <div className="bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl p-4 divide-y divide-[var(--app-border)] text-xs">
                   <div className="flex justify-between py-2">
-                    <span className="text-slate-500">Total Berhasil di-import:</span>
-                    <span className="font-bold text-green-400">{importResult.success} Customer</span>
+                    <span className="text-[var(--app-text-muted)]">Total Berhasil di-import:</span>
+                    <span className="font-bold font-mono text-green-400">{importResult.success} Customer</span>
                   </div>
                   <div className="flex justify-between py-2">
-                    <span className="text-slate-500">Total Gagal / Dilewati:</span>
-                    <span className="font-bold text-red-400">{importResult.failed} Customer</span>
+                    <span className="text-[var(--app-text-muted)]">Total Gagal / Dilewati:</span>
+                    <span className="font-bold font-mono text-red-400">{importResult.failed} Customer</span>
                   </div>
                 </div>
 
@@ -1137,7 +1159,7 @@ export default function ImportCustomer() {
                       setParsedData([])
                       setImportResult(null)
                     }}
-                    className="flex-1 px-4 py-2.5 bg-slate-100 hover:bg-slate-100 text-slate-600 text-xs font-bold rounded-xl border border-slate-200 transition"
+                    className="flex-1 px-4 py-2.5 bg-[var(--app-bg)] hover:bg-[var(--app-card-hover)] text-[var(--app-text)] text-xs font-bold rounded-xl border border-[var(--app-border)] transition"
                   >
                     Import Lagi
                   </button>

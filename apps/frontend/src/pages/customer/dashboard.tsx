@@ -14,7 +14,6 @@ import {
   X,
   Cpu,
   Layers,
-  Sparkles,
   Server
 } from 'lucide-react';
 
@@ -218,21 +217,21 @@ export default function CustomerDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard Pelanggan</h1>
-          <p className="mt-2 text-gray-600">Selamat datang, {data.customer.name}!</p>
+          <h1 className="text-3xl font-bold text-[var(--app-text)]">Dashboard Pelanggan</h1>
+          <p className="mt-2 text-[var(--app-text-muted)]">Selamat datang, {data.customer.name}!</p>
         </div>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {/* Package Info */}
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Paket Internet</p>
+                <p className="text-sm text-[var(--app-text-muted)]">Paket Internet</p>
                 <p className="text-2xl font-bold text-blue-600">
                   {data.package ? data.package.name : 'Tidak ada'}
                 </p>
@@ -240,8 +239,8 @@ export default function CustomerDashboard() {
                   <p className="text-sm text-slate-400">{data.package.speed}</p>
                 )}
               </div>
-              <div className="p-3 bg-blue-100 rounded-full">
-                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="p-3 bg-blue-100 dark:bg-blue-900/40 rounded-full">
+                <svg className="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
               </div>
@@ -249,17 +248,17 @@ export default function CustomerDashboard() {
           </div>
 
           {/* Unpaid Invoices */}
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Tagihan Belum Bayar</p>
+                <p className="text-sm text-[var(--app-text-muted)]">Tagihan Belum Bayar</p>
                 <p className="text-2xl font-bold text-red-600">{data.invoices.unpaid}</p>
                 <p className="text-sm text-slate-400">
                   {formatRupiah(data.invoices.totalUnpaidAmount)}
                 </p>
               </div>
-              <div className="p-3 bg-red-100 rounded-full">
-                <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="p-3 bg-red-100 dark:bg-red-900/40 rounded-full">
+                <svg className="w-6 h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
@@ -267,15 +266,15 @@ export default function CustomerDashboard() {
           </div>
 
           {/* Total Invoices */}
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Tagihan</p>
+                <p className="text-sm text-[var(--app-text-muted)]">Total Tagihan</p>
                 <p className="text-2xl font-bold text-green-600">{data.invoices.total}</p>
                 <p className="text-sm text-slate-400">Semua periode</p>
               </div>
-              <div className="p-3 bg-green-100 rounded-full">
-                <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="p-3 bg-green-100 dark:bg-green-900/40 rounded-full">
+                <svg className="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
@@ -283,15 +282,15 @@ export default function CustomerDashboard() {
           </div>
 
           {/* Open Tickets */}
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Tiket Aktif</p>
+                <p className="text-sm text-[var(--app-text-muted)]">Tiket Aktif</p>
                 <p className="text-2xl font-bold text-orange-600">{data.tickets.open}</p>
                 <p className="text-sm text-slate-400">dari {data.tickets.total} total</p>
               </div>
-              <div className="p-3 bg-orange-100 rounded-full">
-                <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="p-3 bg-orange-100 dark:bg-orange-900/40 rounded-full">
+                <svg className="w-6 h-6 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
                 </svg>
               </div>
@@ -303,16 +302,16 @@ export default function CustomerDashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <button
             onClick={() => router.push('/customer/invoices')}
-            className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow text-left"
+            className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-6 hover:border-blue-500/40 transition-colors text-left"
           >
             <div className="flex items-center space-x-4">
-              <div className="p-3 bg-blue-100 rounded-lg">
-                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="p-3 bg-blue-100 dark:bg-blue-900/40 rounded-lg">
+                <svg className="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Lihat Tagihan</h3>
+                <h3 className="text-lg font-semibold text-[var(--app-text)]">Lihat Tagihan</h3>
                 <p className="text-sm text-slate-400">Riwayat & pembayaran</p>
               </div>
             </div>
@@ -320,16 +319,16 @@ export default function CustomerDashboard() {
 
           <button
             onClick={() => router.push('/customer/tickets')}
-            className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow text-left"
+            className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-6 hover:border-green-500/40 transition-colors text-left"
           >
             <div className="flex items-center space-x-4">
-              <div className="p-3 bg-green-100 rounded-lg">
-                <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="p-3 bg-green-100 dark:bg-green-900/40 rounded-lg">
+                <svg className="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                 </svg>
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Buat Tiket</h3>
+                <h3 className="text-lg font-semibold text-[var(--app-text)]">Buat Tiket</h3>
                 <p className="text-sm text-slate-400">Laporan keluhan</p>
               </div>
             </div>
@@ -337,16 +336,16 @@ export default function CustomerDashboard() {
 
           <button
             onClick={() => router.push('/customer/profile')}
-            className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow text-left"
+            className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-6 hover:border-purple-500/40 transition-colors text-left"
           >
             <div className="flex items-center space-x-4">
-              <div className="p-3 bg-purple-100 rounded-lg">
-                <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="p-3 bg-purple-100 dark:bg-purple-900/40 rounded-lg">
+                <svg className="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Profil Saya</h3>
+                <h3 className="text-lg font-semibold text-[var(--app-text)]">Profil Saya</h3>
                 <p className="text-sm text-slate-400">Kelola akun</p>
               </div>
             </div>
@@ -357,18 +356,18 @@ export default function CustomerDashboard() {
               setShowDiagnosticModal(true);
               setRebootSuccess(null);
             }}
-            className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow text-left border-2 border-cyan-500/40 relative overflow-hidden group"
+            className="bg-[var(--app-card)] rounded-xl p-6 hover:border-cyan-500 transition-colors text-left border-2 border-cyan-500/40 relative overflow-hidden group"
           >
-            <div className="absolute top-2 right-2 flex items-center gap-1 bg-cyan-100 text-cyan-800 text-[10px] font-bold px-2 py-0.5 rounded-full">
+            <div className="absolute top-2 right-2 flex items-center gap-1 bg-cyan-100 dark:bg-cyan-900/40 text-cyan-800 dark:text-cyan-300 text-[10px] font-bold px-2 py-0.5 rounded-full">
               <span className="w-1.5 h-1.5 rounded-full bg-cyan-600 animate-pulse"></span>
               TR-069 LIVE
             </div>
             <div className="flex items-center space-x-4">
-              <div className="p-3 bg-cyan-100 text-cyan-700 rounded-lg group-hover:bg-cyan-600 group-hover:text-white transition-colors">
+              <div className="p-3 bg-cyan-100 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-300 rounded-lg group-hover:bg-cyan-600 group-hover:text-white transition-colors">
                 <Activity className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Diagnostik Sinyal</h3>
+                <h3 className="text-lg font-semibold text-[var(--app-text)]">Diagnostik Sinyal</h3>
                 <p className="text-sm text-slate-400">Cek redaman & reboot ONT</p>
               </div>
             </div>
@@ -376,7 +375,7 @@ export default function CustomerDashboard() {
         </div>
 
         {/* Recent Invoices */}
-        <div className="bg-white rounded-lg shadow mb-8">
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl mb-8">
           <div className="p-6 border-b border-gray-200">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold text-gray-900">Tagihan Terbaru</h2>
@@ -389,8 +388,8 @@ export default function CustomerDashboard() {
             </div>
           </div>
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-[var(--app-border)]">
+              <thead className="bg-[var(--app-card-subtle)]">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
                     Tanggal
@@ -406,16 +405,16 @@ export default function CustomerDashboard() {
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-[var(--app-card)] divide-y divide-[var(--app-border)]">
                 {data.invoices.recent.map((invoice) => (
-                  <tr key={invoice.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <tr key={invoice.id} className="hover:bg-[var(--app-card-subtle)]">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--app-text)]">
                       {formatDate(invoice.createdAt)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--app-text)]">
                       {formatDate(invoice.dueDate)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--app-text)]">
                       {formatRupiah(invoice.amount)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -446,10 +445,10 @@ export default function CustomerDashboard() {
         </div>
 
         {/* Recent Tickets */}
-        <div className="bg-white rounded-lg shadow">
-          <div className="p-6 border-b border-gray-200">
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl">
+          <div className="p-6 border-b border-[var(--app-border)]">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-gray-900">Tiket Terbaru</h2>
+              <h2 className="text-xl font-semibold text-[var(--app-text)]">Tiket Terbaru</h2>
               <button
                 onClick={() => router.push('/customer/tickets')}
                 className="text-blue-600 hover:text-blue-700 text-sm font-medium"
@@ -459,8 +458,8 @@ export default function CustomerDashboard() {
             </div>
           </div>
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-[var(--app-border)]">
+              <thead className="bg-[var(--app-card-subtle)]">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
                     Judul
@@ -476,10 +475,10 @@ export default function CustomerDashboard() {
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-[var(--app-card)] divide-y divide-[var(--app-border)]">
                 {data.tickets.recent.map((ticket) => (
-                  <tr key={ticket.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <tr key={ticket.id} className="hover:bg-[var(--app-card-subtle)]">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--app-text)]">
                       {ticket.title}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
@@ -528,7 +527,7 @@ export default function CustomerDashboard() {
         {/* Modal Diagnostik Mandiri ONT & TR-069 */}
         {showDiagnosticModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-            <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-200">
+            <div className="bg-[var(--app-card)] rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[var(--app-border)]">
               {/* Modal Header */}
               <div className="p-6 border-b border-gray-200 flex items-center justify-between bg-gradient-to-r from-slate-900 to-slate-800 text-white rounded-t-2xl">
                 <div className="flex items-center space-x-3">
@@ -609,42 +608,42 @@ export default function CustomerDashboard() {
 
                 {/* Telemetry Grid */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  <div className="p-3 bg-white rounded-xl border border-gray-200 text-center shadow-sm">
+                  <div className="p-3 bg-[var(--app-card)] rounded-xl border border-[var(--app-border)] text-center shadow-sm">
                     <span className="text-[11px] text-slate-500 block">Daya Pancar (TX)</span>
-                    <span className="text-lg font-bold text-gray-900 font-mono">+{diagnosticData.txPower} dBm</span>
+                    <span className="text-lg font-bold text-[var(--app-text)] font-mono">+{diagnosticData.txPower} dBm</span>
                     <span className="text-[10px] text-emerald-600 block mt-0.5 font-medium">Normal</span>
                   </div>
-                  <div className="p-3 bg-white rounded-xl border border-gray-200 text-center shadow-sm">
+                  <div className="p-3 bg-[var(--app-card)] rounded-xl border border-[var(--app-border)] text-center shadow-sm">
                     <span className="text-[11px] text-slate-500 block">Suhu Modem</span>
-                    <span className="text-lg font-bold text-gray-900 font-mono">{diagnosticData.temperature}</span>
+                    <span className="text-lg font-bold text-[var(--app-text)] font-mono">{diagnosticData.temperature}</span>
                     <span className="text-[10px] text-emerald-600 block mt-0.5 font-medium">Dingin & Aman</span>
                   </div>
-                  <div className="p-3 bg-white rounded-xl border border-gray-200 text-center shadow-sm">
+                  <div className="p-3 bg-[var(--app-card)] rounded-xl border border-[var(--app-border)] text-center shadow-sm">
                     <span className="text-[11px] text-slate-500 block">Latensi Gateway</span>
-                    <span className="text-lg font-bold text-gray-900 font-mono">{diagnosticData.latency}</span>
+                    <span className="text-lg font-bold text-[var(--app-text)] font-mono">{diagnosticData.latency}</span>
                     <span className="text-[10px] text-emerald-600 block mt-0.5 font-medium">Sangat Stabil</span>
                   </div>
-                  <div className="p-3 bg-white rounded-xl border border-gray-200 text-center shadow-sm">
+                  <div className="p-3 bg-[var(--app-card)] rounded-xl border border-[var(--app-border)] text-center shadow-sm">
                     <span className="text-[11px] text-slate-500 block">Packet Loss</span>
-                    <span className="text-lg font-bold text-gray-900 font-mono">{diagnosticData.packetLoss}</span>
+                    <span className="text-lg font-bold text-[var(--app-text)] font-mono">{diagnosticData.packetLoss}</span>
                     <span className="text-[10px] text-emerald-600 block mt-0.5 font-medium">0% Loss</span>
                   </div>
                 </div>
 
                 {/* WiFi Configuration Status */}
-                <div className="p-4 bg-purple-50 rounded-xl border border-purple-200">
+                <div className="p-4 bg-purple-50 dark:bg-purple-950/20 rounded-xl border border-purple-200 dark:border-purple-800">
                   <div className="flex items-center space-x-2 mb-2">
                     <Wifi className="w-5 h-5 text-purple-600" />
-                    <span className="text-sm font-bold text-purple-950">Konfigurasi WiFi Terkoneksi</span>
+                    <span className="text-sm font-bold text-purple-950 dark:text-purple-300">Konfigurasi WiFi Terkoneksi</span>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                    <div className="p-2.5 bg-white rounded-lg border border-purple-100 flex items-center justify-between">
-                      <span className="text-slate-600 font-medium">Frekuensi 2.4 GHz:</span>
-                      <span className="font-bold text-gray-900 font-mono">{diagnosticData.wifi24Ssid}</span>
+                    <div className="p-2.5 bg-[var(--app-card)] rounded-lg border border-[var(--app-border)] flex items-center justify-between">
+                      <span className="text-[var(--app-text-muted)] font-medium">Frekuensi 2.4 GHz:</span>
+                      <span className="font-bold text-[var(--app-text)] font-mono">{diagnosticData.wifi24Ssid}</span>
                     </div>
-                    <div className="p-2.5 bg-white rounded-lg border border-purple-100 flex items-center justify-between">
-                      <span className="text-slate-600 font-medium">Frekuensi 5.0 GHz AC:</span>
-                      <span className="font-bold text-gray-900 font-mono">{diagnosticData.wifi5Ssid}</span>
+                    <div className="p-2.5 bg-[var(--app-card)] rounded-lg border border-[var(--app-border)] flex items-center justify-between">
+                      <span className="text-[var(--app-text-muted)] font-medium">Frekuensi 5.0 GHz AC:</span>
+                      <span className="font-bold text-[var(--app-text)] font-mono">{diagnosticData.wifi5Ssid}</span>
                     </div>
                   </div>
                 </div>

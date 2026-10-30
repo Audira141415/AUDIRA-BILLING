@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import Layout from '@/components/Layout'
 import { Activity, Plus, Search, Edit, Trash2, Eye, User, AlertCircle, CheckCircle, Clock, XCircle, X, Phone, Mail, MapPin, Package, Calendar, FileText, Loader2 } from 'lucide-react'
 import api from '@/lib/api'
+import { useToast } from '@/contexts/ToastContext'
 
 interface Ticket {
   id: string
@@ -37,6 +38,7 @@ interface TicketDetail extends Ticket {
 }
 
 export default function Operational() {
+  const { toast } = useToast()
   const [tickets, setTickets] = useState<Ticket[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -83,38 +85,41 @@ export default function Operational() {
     description: ''
   })
 
+  const todayIso = new Date().toISOString().slice(0, 10)
+  const currentYear = new Date().getFullYear()
+
   // Mock data untuk fallback
   const mockTickets: Ticket[] = [
     {
       id: '1',
-      ticketNumber: 'TKT-2024-001',
+      ticketNumber: `TKT-${currentYear}-001`,
       title: 'Internet Lambat',
       customer: 'Budi Santoso',
       priority: 'high',
       status: 'in-progress',
       technician: 'Andi Wijaya',
-      createdDate: '28 Nov 2024',
+      createdDate: todayIso,
       description: 'Kecepatan internet di bawah standar paket'
     },
     {
       id: '2',
-      ticketNumber: 'TKT-2024-002',
+      ticketNumber: `TKT-${currentYear}-002`,
       title: 'Koneksi Terputus',
       customer: 'Siti Aminah',
       priority: 'urgent',
       status: 'open',
-      createdDate: '29 Nov 2024',
+      createdDate: todayIso,
       description: 'Tidak bisa terhubung ke internet sama sekali'
     },
     {
       id: '3',
-      ticketNumber: 'TKT-2024-003',
+      ticketNumber: `TKT-${currentYear}-003`,
       title: 'Ganti Password WiFi',
       customer: 'Ahmad Hidayat',
       priority: 'low',
       status: 'resolved',
       technician: 'Rudi Hermawan',
-      createdDate: '25 Nov 2024',
+      createdDate: todayIso,
       description: 'Request perubahan password WiFi'
     }
   ]
@@ -145,8 +150,9 @@ export default function Operational() {
       setShowCreateModal(false)
       setFormData({ title: '', customer: '', priority: 'medium', description: '' })
       await fetchTickets()
+      toast.success('Tiket support baru berhasil dibuat', 'Tiket Tersimpan')
     } catch (err: any) {
-      alert(err.message || 'Gagal membuat tiket')
+      toast.error(err.message || 'Gagal membuat tiket', 'Gagal Membuat Tiket')
     }
   }
 
@@ -156,8 +162,9 @@ export default function Operational() {
     try {
       await api.operational.deleteTicket(id)
       await fetchTickets()
+      toast.success('Tiket berhasil dihapus', 'Tiket Dihapus')
     } catch (err: any) {
-      alert(err.message || 'Gagal menghapus tiket')
+      toast.error(err.message || 'Gagal menghapus tiket', 'Gagal Menghapus')
     }
   }
 
@@ -174,9 +181,9 @@ export default function Operational() {
       setShowEditModal(false)
       setEditingTicket(null)
       await fetchTickets()
-      alert('Tiket berhasil diupdate')
+      toast.success('Tiket berhasil diperbarui', 'Perubahan Disimpan')
     } catch (err: any) {
-      alert(err.message || 'Gagal mengupdate tiket')
+      toast.error(err.message || 'Gagal mengupdate tiket', 'Gagal Menyimpan')
     }
   }
 
@@ -200,14 +207,16 @@ export default function Operational() {
       }
     }
 
+    const baseDate = ticket.createdDate || todayIso
+
     return {
       ...ticket,
       ...customerData[ticket.customer],
       history: [
-        { date: '28 Nov 2024 10:30', action: 'Tiket dibuat', by: ticket.customer },
-        { date: '28 Nov 2024 11:00', action: 'Ditugaskan ke teknisi', by: 'System' },
-        ...(ticket.technician ? [{ date: '28 Nov 2024 11:15', action: 'Teknisi menerima tugas', by: ticket.technician }] : []),
-        ...(ticket.status === 'in-progress' ? [{ date: '28 Nov 2024 14:00', action: 'Dalam penanganan', by: ticket.technician || 'Teknisi' }] : [])
+        { date: `${baseDate} 10:30`, action: 'Tiket dibuat', by: ticket.customer },
+        { date: `${baseDate} 11:00`, action: 'Ditugaskan ke teknisi', by: 'System' },
+        ...(ticket.technician ? [{ date: `${baseDate} 11:15`, action: 'Teknisi menerima tugas', by: ticket.technician }] : []),
+        ...(ticket.status === 'in-progress' ? [{ date: `${baseDate} 14:00`, action: 'Dalam penanganan', by: ticket.technician || 'Teknisi' }] : [])
       ]
     }
   }
@@ -238,43 +247,43 @@ export default function Operational() {
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'urgent':
-        return 'bg-red-100 text-red-700'
+        return 'bg-red-500/15 text-red-500 border border-red-500/30'
       case 'high':
-        return 'bg-orange-100 text-orange-700'
+        return 'bg-orange-500/15 text-orange-500 border border-orange-500/30'
       case 'medium':
-        return 'bg-yellow-100 text-yellow-700'
+        return 'bg-amber-500/15 text-amber-500 border border-amber-500/30'
       case 'low':
-        return 'bg-blue-100 text-blue-700'
+        return 'bg-blue-500/15 text-blue-500 border border-blue-500/30'
       default:
-        return 'bg-gray-100 text-gray-700'
+        return 'bg-[var(--app-card-subtle)] text-[var(--app-text-muted)] border border-[var(--app-border)]'
     }
   }
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'open':
-        return 'bg-blue-100 text-blue-700'
+        return 'bg-blue-500/15 text-blue-500 border border-blue-500/30'
       case 'in-progress':
-        return 'bg-yellow-100 text-yellow-700'
+        return 'bg-amber-500/15 text-amber-500 border border-amber-500/30'
       case 'resolved':
-        return 'bg-green-100 text-green-700'
+        return 'bg-emerald-500/15 text-emerald-500 border border-emerald-500/30'
       case 'rejected':
-        return 'bg-red-100 text-red-700'
+        return 'bg-red-500/15 text-red-500 border border-red-500/30'
       default:
-        return 'bg-gray-100 text-gray-700'
+        return 'bg-[var(--app-card-subtle)] text-[var(--app-text-muted)] border border-[var(--app-border)]'
     }
   }
 
   const getTechnicianStatusColor = (status: string) => {
     switch (status) {
       case 'available':
-        return 'bg-green-100 text-green-700'
+        return 'bg-emerald-500/15 text-emerald-500 border border-emerald-500/30'
       case 'busy':
-        return 'bg-yellow-100 text-yellow-700'
+        return 'bg-amber-500/15 text-amber-500 border border-amber-500/30'
       case 'offline':
-        return 'bg-gray-100 text-gray-700'
+        return 'bg-[var(--app-card-subtle)] text-[var(--app-text-muted)] border border-[var(--app-border)]'
       default:
-        return 'bg-gray-100 text-gray-700'
+        return 'bg-[var(--app-card-subtle)] text-[var(--app-text-muted)] border border-[var(--app-border)]'
     }
   }
 
@@ -306,7 +315,7 @@ export default function Operational() {
 
         {/* Error State */}
         {error && (
-          <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-3 rounded-lg mb-4">
+          <div className="bg-amber-500/10 border border-amber-500/30 text-amber-500 px-4 py-3 rounded-lg mb-4">
             <p className="font-semibold">Menggunakan data demo</p>
             <p className="text-sm">{error}</p>
           </div>
@@ -315,9 +324,10 @@ export default function Operational() {
         {!loading && (
           <>
             {/* Header */}
-            <div className="flex items-center justify-between mb-8">\n              <div>
+            <div className="flex items-center justify-between mb-8">
+              <div>
                 <h1 className="text-3xl font-bold text-[var(--app-text)]">Operational Management</h1>
-                <p className="text-[var(--app-muted)] mt-1">Kelola tiket dan teknisi lapangan</p>
+                <p className="text-[var(--app-text-muted)] mt-1">Kelola tiket dan teknisi lapangan</p>
               </div>
               <button 
                 onClick={() => setShowCreateModal(true)}
@@ -333,23 +343,11 @@ export default function Operational() {
           <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl shadow-xs p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-[var(--app-muted)] text-sm">Tiket Terbuka</p>
-                <p className="text-3xl font-bold text-blue-600 mt-1">{openTickets}</p>
+                <p className="text-[var(--app-text-muted)] text-sm">Tiket Terbuka</p>
+                <p className="text-3xl font-bold text-blue-500 mt-1">{openTickets}</p>
               </div>
-              <div className="bg-blue-100 p-3 rounded-lg">
-                <AlertCircle className="text-blue-600" size={24} />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl shadow-xs p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-[var(--app-muted)] text-sm">Dalam Progress</p>
-                <p className="text-3xl font-bold text-yellow-600 mt-1">{inProgressTickets}</p>
-              </div>
-              <div className="bg-yellow-100 p-3 rounded-lg">
-                <Clock className="text-yellow-600" size={24} />
+              <div className="bg-blue-500/15 p-3 rounded-lg">
+                <AlertCircle className="text-blue-500" size={24} />
               </div>
             </div>
           </div>
@@ -357,11 +355,11 @@ export default function Operational() {
           <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl shadow-xs p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-[var(--app-muted)] text-sm">Terselesaikan</p>
-                <p className="text-3xl font-bold text-green-600 mt-1">{resolvedTickets}</p>
+                <p className="text-[var(--app-text-muted)] text-sm">Dalam Progress</p>
+                <p className="text-3xl font-bold text-amber-500 mt-1">{inProgressTickets}</p>
               </div>
-              <div className="bg-green-100 p-3 rounded-lg">
-                <CheckCircle className="text-green-600" size={24} />
+              <div className="bg-amber-500/15 p-3 rounded-lg">
+                <Clock className="text-amber-500" size={24} />
               </div>
             </div>
           </div>
@@ -369,11 +367,23 @@ export default function Operational() {
           <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl shadow-xs p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-[var(--app-muted)] text-sm">Teknisi Tersedia</p>
+                <p className="text-[var(--app-text-muted)] text-sm">Terselesaikan</p>
+                <p className="text-3xl font-bold text-emerald-500 mt-1">{resolvedTickets}</p>
+              </div>
+              <div className="bg-emerald-500/15 p-3 rounded-lg">
+                <CheckCircle className="text-emerald-500" size={24} />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl shadow-xs p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-[var(--app-text-muted)] text-sm">Teknisi Tersedia</p>
                 <p className="text-3xl font-bold text-[var(--app-text)] mt-1">{availableTechnicians}</p>
               </div>
-              <div className="bg-purple-100 p-3 rounded-lg">
-                <User className="text-purple-600" size={24} />
+              <div className="bg-purple-500/15 p-3 rounded-lg">
+                <User className="text-purple-500" size={24} />
               </div>
             </div>
           </div>
@@ -381,14 +391,14 @@ export default function Operational() {
 
         {/* Tabs */}
         <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl shadow-xs mb-6">
-          <div className="border-b border-gray-200">
+          <div className="border-b border-[var(--app-border)]">
             <div className="flex">
               <button
                 onClick={() => setActiveTab('tickets')}
                 className={`px-6 py-4 font-medium transition-colors ${
                   activeTab === 'tickets'
-                    ? 'border-b-2 border-blue-600 text-blue-600'
-                    : 'text-[var(--app-muted)] hover:text-[var(--app-text)]'
+                    ? 'border-b-2 border-blue-500 text-blue-500'
+                    : 'text-[var(--app-text-muted)] hover:text-[var(--app-text)]'
                 }`}
               >
                 Tiket Support
@@ -397,8 +407,8 @@ export default function Operational() {
                 onClick={() => setActiveTab('technicians')}
                 className={`px-6 py-4 font-medium transition-colors ${
                   activeTab === 'technicians'
-                    ? 'border-b-2 border-blue-600 text-blue-600'
-                    : 'text-[var(--app-muted)] hover:text-[var(--app-text)]'
+                    ? 'border-b-2 border-blue-500 text-blue-500'
+                    : 'text-[var(--app-text-muted)] hover:text-[var(--app-text)]'
                 }`}
               >
                 Teknisi
@@ -413,11 +423,11 @@ export default function Operational() {
             <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl shadow-xs p-4 mb-6">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
                 <div className="relative flex-1 md:mr-4">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--app-muted)]" size={20} />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--app-text-muted)]" size={20} />
                   <input
                     type="text"
                     placeholder="Cari berdasarkan nomor tiket, judul, atau pelanggan..."
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-3 bg-[var(--app-bg)] text-[var(--app-text)] placeholder:text-[var(--app-text-muted)] border border-[var(--app-border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
@@ -426,7 +436,7 @@ export default function Operational() {
                   <button
                     onClick={() => setStatusFilter('all')}
                     className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                      statusFilter === 'all' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      statusFilter === 'all' ? 'bg-blue-600 text-white' : 'bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-[var(--app-text-muted)] hover:text-[var(--app-text)]'
                     }`}
                   >
                     Semua
@@ -434,7 +444,7 @@ export default function Operational() {
                   <button
                     onClick={() => setStatusFilter('open')}
                     className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                      statusFilter === 'open' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      statusFilter === 'open' ? 'bg-blue-600 text-white' : 'bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-[var(--app-text-muted)] hover:text-[var(--app-text)]'
                     }`}
                   >
                     Open
@@ -442,7 +452,7 @@ export default function Operational() {
                   <button
                     onClick={() => setStatusFilter('in-progress')}
                     className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                      statusFilter === 'in-progress' ? 'bg-yellow-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      statusFilter === 'in-progress' ? 'bg-amber-600 text-white' : 'bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-[var(--app-text-muted)] hover:text-[var(--app-text)]'
                     }`}
                   >
                     Progress
@@ -450,7 +460,7 @@ export default function Operational() {
                   <button
                     onClick={() => setStatusFilter('resolved')}
                     className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                      statusFilter === 'resolved' ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      statusFilter === 'resolved' ? 'bg-emerald-600 text-white' : 'bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-[var(--app-text-muted)] hover:text-[var(--app-text)]'
                     }`}
                   >
                     Resolved
@@ -463,40 +473,40 @@ export default function Operational() {
             <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl shadow-xs overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-200">
+                  <thead className="bg-[var(--app-card-subtle)] border-b border-[var(--app-border)]">
                     <tr>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--app-muted)] uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--app-text-muted)] uppercase tracking-wider">
                         No. Tiket
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--app-muted)] uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--app-text-muted)] uppercase tracking-wider">
                         Judul
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--app-muted)] uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--app-text-muted)] uppercase tracking-wider">
                         Pelanggan
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--app-muted)] uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--app-text-muted)] uppercase tracking-wider">
                         Prioritas
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--app-muted)] uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--app-text-muted)] uppercase tracking-wider">
                         Status
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--app-muted)] uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--app-text-muted)] uppercase tracking-wider">
                         Teknisi
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--app-muted)] uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--app-text-muted)] uppercase tracking-wider">
                         Tanggal
                       </th>
-                      <th className="px-6 py-4 text-right text-xs font-semibold text-[var(--app-muted)] uppercase tracking-wider">
+                      <th className="px-6 py-4 text-right text-xs font-semibold text-[var(--app-text-muted)] uppercase tracking-wider">
                         Aksi
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-200">
+                  <tbody className="divide-y divide-[var(--app-border)]">
                     {filteredTickets.map((ticket) => (
                       <tr 
                         key={ticket.id} 
                         onClick={() => handleTicketClick(ticket)}
-                        className="hover:bg-rose-50 transition-colors cursor-pointer"
+                        className="hover:bg-[var(--app-card-subtle)] transition-colors cursor-pointer"
                       >
                         <td className="px-6 py-4">
                           <span className="font-mono font-semibold text-[var(--app-text)]">{ticket.ticketNumber}</span>
@@ -504,7 +514,7 @@ export default function Operational() {
                         <td className="px-6 py-4">
                           <div>
                             <p className="font-semibold text-[var(--app-text)]">{ticket.title}</p>
-                            <p className="text-sm text-[var(--app-muted)]">{ticket.description}</p>
+                            <p className="text-sm text-[var(--app-text-muted)]">{ticket.description}</p>
                           </div>
                         </td>
                         <td className="px-6 py-4">
@@ -526,32 +536,32 @@ export default function Operational() {
                           </div>
                         </td>
                         <td className="px-6 py-4">
-                          <span className="text-sm text-[var(--app-muted)]">
+                          <span className="text-sm text-[var(--app-text-muted)]">
                             {typeof ticket.technician === 'string' ? ticket.technician : (ticket.technician as any)?.name || '-'}
                           </span>
                         </td>
                         <td className="px-6 py-4">
-                          <span className="text-sm text-[var(--app-muted)]">{ticket.createdDate}</span>
+                          <span className="text-sm text-[var(--app-text-muted)]">{ticket.createdDate}</span>
                         </td>
                         <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
                           <div className="flex items-center justify-end space-x-2">
                             <button 
                               onClick={() => handleTicketClick(ticket)}
-                              className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                              className="p-2 text-blue-500 hover:bg-blue-500/10 rounded-lg transition-colors"
                               title="Lihat Detail"
                             >
                               <Eye size={18} />
                             </button>
                             <button 
                               onClick={() => handleEditClick(ticket)}
-                              className="p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+                              className="p-2 text-orange-500 hover:bg-orange-500/10 rounded-lg transition-colors"
                               title="Edit Tiket"
                             >
                               <Edit size={18} />
                             </button>
                             <button 
                               onClick={() => handleDeleteTicket(ticket.id)}
-                              className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                              className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
                             >
                               <Trash2 size={18} />
                             </button>
@@ -572,12 +582,12 @@ export default function Operational() {
               <div key={tech.id} className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl shadow-xs p-6 hover:shadow-md transition-shadow">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center space-x-3">
-                    <div className="bg-blue-100 p-3 rounded-full">
-                      <User className="text-blue-600" size={24} />
+                    <div className="bg-blue-500/15 p-3 rounded-full">
+                      <User className="text-blue-500" size={24} />
                     </div>
                     <div>
                       <h3 className="font-bold text-[var(--app-text)]">{tech.name}</h3>
-                      <p className="text-sm text-[var(--app-muted)]">{tech.phone}</p>
+                      <p className="text-sm text-[var(--app-text-muted)]">{tech.phone}</p>
                     </div>
                   </div>
                   <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getTechnicianStatusColor(tech.status)}`}>
@@ -586,10 +596,10 @@ export default function Operational() {
                 </div>
                 
                 <div className="mb-4">
-                  <p className="text-sm text-[var(--app-muted)] mb-2">Active Tickets: <span className="font-semibold text-[var(--app-text)]">{tech.activeTickets}</span></p>
+                  <p className="text-sm text-[var(--app-text-muted)] mb-2">Active Tickets: <span className="font-semibold text-[var(--app-text)]">{tech.activeTickets}</span></p>
                   <div className="flex flex-wrap gap-2">
                     {tech.skills.map((skill, idx) => (
-                      <span key={idx} className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">
+                      <span key={idx} className="px-2 py-1 bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-[var(--app-text-muted)] text-xs rounded">
                         {skill}
                       </span>
                     ))}
@@ -597,10 +607,22 @@ export default function Operational() {
                 </div>
 
                 <div className="flex space-x-2">
-                  <button onClick={() => { alert(`Tugaskan tiket ke teknisi ${tech.name}`); setShowTicketModal(true); }} className="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-600 px-4 py-2 rounded-lg font-medium transition-colors">
+                  <button
+                    onClick={() => {
+                      toast.info(`Menyiapkan penugasan tiket ke teknisi ${tech.name}`, 'Penugasan Teknisi');
+                      if (!selectedTicket && displayTickets.length > 0) {
+                        setSelectedTicket(getTicketDetails(displayTickets[0]));
+                      }
+                      setShowTicketModal(true);
+                    }}
+                    className="flex-1 bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 px-4 py-2 rounded-lg font-medium transition-colors"
+                  >
                     Assign Ticket
                   </button>
-                  <button onClick={() => alert(`Edit profil teknisi ${tech.name}`)} className="p-2 text-[var(--app-muted)] hover:bg-gray-50 rounded-lg transition-colors">
+                  <button
+                    onClick={() => toast.info(`Membuka profil teknisi ${tech.name}`, 'Profil Teknisi')}
+                    className="p-2 text-[var(--app-text-muted)] hover:bg-[var(--app-card-subtle)] rounded-lg transition-colors"
+                  >
                     <Edit size={18} />
                   </button>
                 </div>
@@ -614,18 +636,18 @@ export default function Operational() {
 
       {/* Create Ticket Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full">
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)] rounded-2xl shadow-2xl max-w-2xl w-full overflow-hidden">
             {/* Header */}
-            <div className="bg-gradient-to-r from-rose-600 to-pink-700 text-white p-6 rounded-t-2xl relative">
+            <div className="bg-gradient-to-r from-rose-600 to-pink-700 text-white p-6 relative">
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="absolute top-4 right-4 p-2 hover:bg-white/20 rounded-lg transition-colors"
+                className="absolute top-4 right-4 p-2 hover:bg-black/20 rounded-lg transition-colors"
               >
                 <X size={24} />
               </button>
               <div className="flex items-center space-x-4">
-                <div className="bg-white/20 p-3 rounded-lg backdrop-blur-sm">
+                <div className="bg-black/20 p-3 rounded-lg backdrop-blur-sm">
                   <Plus size={32} />
                 </div>
                 <div>
@@ -638,33 +660,33 @@ export default function Operational() {
             {/* Content */}
             <div className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Judul Tiket</label>
+                <label className="block text-sm font-semibold text-[var(--app-text)] mb-2">Judul Tiket</label>
                 <input
                   type="text"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-[var(--app-bg)] text-[var(--app-text)] placeholder:text-[var(--app-text-muted)] border border-[var(--app-border)] rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   placeholder="Masukkan judul tiket"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Nama Pelanggan</label>
+                <label className="block text-sm font-semibold text-[var(--app-text)] mb-2">Nama Pelanggan</label>
                 <input
                   type="text"
                   value={formData.customer}
                   onChange={(e) => setFormData({ ...formData, customer: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-[var(--app-bg)] text-[var(--app-text)] placeholder:text-[var(--app-text-muted)] border border-[var(--app-border)] rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   placeholder="Nama pelanggan"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Prioritas</label>
+                <label className="block text-sm font-semibold text-[var(--app-text)] mb-2">Prioritas</label>
                 <select
                   value={formData.priority}
                   onChange={(e) => setFormData({ ...formData, priority: e.target.value as any })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-[var(--app-bg)] text-[var(--app-text)] border border-[var(--app-border)] rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                 >
                   <option value="low">Low</option>
                   <option value="medium">Medium</option>
@@ -674,27 +696,27 @@ export default function Operational() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Deskripsi</label>
+                <label className="block text-sm font-semibold text-[var(--app-text)] mb-2">Deskripsi</label>
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-[var(--app-bg)] text-[var(--app-text)] placeholder:text-[var(--app-text-muted)] border border-[var(--app-border)] rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   rows={4}
                   placeholder="Jelaskan masalah atau permintaan"
                 />
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center justify-end space-x-3 pt-4 border-t">
+              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-[var(--app-border)]">
                 <button
                   onClick={() => setShowCreateModal(false)}
-                  className="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-lg transition-colors"
+                  className="px-6 py-2.5 bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-card-subtle)] text-[var(--app-text)] font-semibold rounded-lg transition-colors"
                 >
                   Batal
                 </button>
                 <button 
                   onClick={handleCreateTicket}
-                  className="px-6 py-2.5 bg-gradient-to-r from-rose-600 to-pink-700 hover:from-rose-700 hover:to-pink-800 text-[var(--app-text)] font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl"
+                  className="px-6 py-2.5 bg-gradient-to-r from-rose-600 to-pink-700 hover:from-rose-700 hover:to-pink-800 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl"
                 >
                   Buat Tiket
                 </button>
@@ -706,18 +728,18 @@ export default function Operational() {
 
       {/* Ticket Detail Modal */}
       {showTicketModal && selectedTicket && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)] rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
             {/* Header */}
             <div className="bg-gradient-to-r from-rose-600 to-pink-700 text-white p-6 rounded-t-2xl relative">
               <button
                 onClick={() => setShowTicketModal(false)}
-                className="absolute top-4 right-4 p-2 hover:bg-white/20 rounded-lg transition-colors"
+                className="absolute top-4 right-4 p-2 hover:bg-black/20 rounded-lg transition-colors"
               >
                 <X size={24} />
               </button>
               <div className="flex items-center space-x-4">
-                <div className="bg-white/20 p-3 rounded-lg backdrop-blur-sm">
+                <div className="bg-black/20 p-3 rounded-lg backdrop-blur-sm">
                   <FileText size={32} />
                 </div>
                 <div>
@@ -730,7 +752,7 @@ export default function Operational() {
             {/* Content */}
             <div className="p-6 space-y-6">
               {/* Status and Priority */}
-              <div className="flex items-center justify-between pb-4 border-b">
+              <div className="flex items-center justify-between pb-4 border-b border-[var(--app-border)]">
                 <div className="flex items-center space-x-3">
                   {getStatusIcon(selectedTicket.status)}
                   <span className={`px-4 py-2 rounded-full text-sm font-semibold ${getStatusColor(selectedTicket.status)}`}>
@@ -746,21 +768,21 @@ export default function Operational() {
               <div className="space-y-4">
                 <div>
                   <h3 className="text-lg font-bold text-[var(--app-text)]">{selectedTicket.title}</h3>
-                  <p className="text-[var(--app-muted)] mt-1">{selectedTicket.description}</p>
+                  <p className="text-[var(--app-text-muted)] mt-1">{selectedTicket.description}</p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="flex items-center space-x-3 text-gray-700">
-                    <Calendar className="text-blue-600" size={20} />
+                  <div className="flex items-center space-x-3 text-[var(--app-text)]">
+                    <Calendar className="text-blue-500" size={20} />
                     <div>
-                      <p className="text-xs text-[var(--app-muted)]">Created Date</p>
+                      <p className="text-xs text-[var(--app-text-muted)]">Created Date</p>
                       <p className="font-semibold">{selectedTicket.createdDate}</p>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-3 text-gray-700">
-                    <User className="text-blue-600" size={20} />
+                  <div className="flex items-center space-x-3 text-[var(--app-text)]">
+                    <User className="text-blue-500" size={20} />
                     <div>
-                      <p className="text-xs text-[var(--app-muted)]">Assigned Technician</p>
+                      <p className="text-xs text-[var(--app-text-muted)]">Assigned Technician</p>
                       <p className="font-semibold">
                         {typeof selectedTicket.technician === 'string' 
                           ? selectedTicket.technician 
@@ -772,42 +794,42 @@ export default function Operational() {
               </div>
 
               {/* Customer Information */}
-              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 space-y-3">
+              <div className="bg-[var(--app-card-subtle)] border border-[var(--app-border)] rounded-xl p-5 space-y-3">
                 <h3 className="font-bold text-[var(--app-text)] flex items-center space-x-2">
-                  <User className="text-blue-600" size={20} />
+                  <User className="text-blue-500" size={20} />
                   <span>Customer Information</span>
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="flex items-start space-x-3">
-                    <User className="text-blue-600 mt-1" size={18} />
+                    <User className="text-blue-500 mt-1" size={18} />
                     <div>
-                      <p className="text-xs text-[var(--app-muted)]">Name</p>
+                      <p className="text-xs text-[var(--app-text-muted)]">Name</p>
                       <p className="font-semibold text-[var(--app-text)]">{selectedTicket.customer}</p>
                     </div>
                   </div>
                   {selectedTicket.customerEmail && (
                     <div className="flex items-start space-x-3">
-                      <Mail className="text-blue-600 mt-1" size={18} />
+                      <Mail className="text-blue-500 mt-1" size={18} />
                       <div>
-                        <p className="text-xs text-[var(--app-muted)]">Email</p>
+                        <p className="text-xs text-[var(--app-text-muted)]">Email</p>
                         <p className="font-semibold text-[var(--app-text)]">{selectedTicket.customerEmail}</p>
                       </div>
                     </div>
                   )}
                   {selectedTicket.customerPhone && (
                     <div className="flex items-start space-x-3">
-                      <Phone className="text-blue-600 mt-1" size={18} />
+                      <Phone className="text-blue-500 mt-1" size={18} />
                       <div>
-                        <p className="text-xs text-[var(--app-muted)]">Phone</p>
+                        <p className="text-xs text-[var(--app-text-muted)]">Phone</p>
                         <p className="font-semibold text-[var(--app-text)]">{selectedTicket.customerPhone}</p>
                       </div>
                     </div>
                   )}
                   {selectedTicket.customerAddress && (
                     <div className="flex items-start space-x-3">
-                      <MapPin className="text-blue-600 mt-1" size={18} />
+                      <MapPin className="text-blue-500 mt-1" size={18} />
                       <div>
-                        <p className="text-xs text-[var(--app-muted)]">Address</p>
+                        <p className="text-xs text-[var(--app-text-muted)]">Address</p>
                         <p className="font-semibold text-[var(--app-text)]">{selectedTicket.customerAddress}</p>
                       </div>
                     </div>
@@ -819,16 +841,16 @@ export default function Operational() {
               {selectedTicket.history && selectedTicket.history.length > 0 && (
                 <div className="space-y-3">
                   <h3 className="font-bold text-[var(--app-text)] flex items-center space-x-2">
-                    <Clock className="text-blue-600" size={20} />
+                    <Clock className="text-blue-500" size={20} />
                     <span>Ticket History</span>
                   </h3>
                   <div className="space-y-2">
                     {selectedTicket.history.map((item, index) => (
-                      <div key={index} className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
-                        <div className="w-2 h-2 bg-blue-600 rounded-full mt-2"></div>
+                      <div key={index} className="flex items-start space-x-3 p-3 bg-[var(--app-card-subtle)] border border-[var(--app-border)] rounded-lg">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
                         <div className="flex-1">
                           <p className="text-sm font-semibold text-[var(--app-text)]">{item.action}</p>
-                          <p className="text-xs text-[var(--app-muted)]">by {item.by} • {item.date}</p>
+                          <p className="text-xs text-[var(--app-text-muted)]">by {item.by} • {item.date}</p>
                         </div>
                       </div>
                     ))}
@@ -837,14 +859,20 @@ export default function Operational() {
               )}
 
               {/* Action Buttons */}
-              <div className="flex items-center justify-end space-x-3 pt-4 border-t">
+              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-[var(--app-border)]">
                 <button
                   onClick={() => setShowTicketModal(false)}
-                  className="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-lg transition-colors"
+                  className="px-6 py-2.5 bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-card-subtle)] text-[var(--app-text)] font-semibold rounded-lg transition-colors"
                 >
                   Tutup
                 </button>
-                <button onClick={() => { alert('Teknisi berhasil ditugaskan ke tiket ini!'); setShowTicketModal(false); }} className="px-6 py-2.5 bg-gradient-to-r from-rose-600 to-pink-700 hover:from-rose-700 hover:to-pink-800 text-[var(--app-text)] font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl">
+                <button
+                  onClick={() => {
+                    toast.success('Teknisi berhasil ditugaskan ke tiket ini!', 'Penugasan Berhasil');
+                    setShowTicketModal(false);
+                  }}
+                  className="px-6 py-2.5 bg-gradient-to-r from-rose-600 to-pink-700 hover:from-rose-700 hover:to-pink-800 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl"
+                >
                   Assign Technician
                 </button>
               </div>
@@ -855,16 +883,16 @@ export default function Operational() {
 
       {/* Edit Ticket Modal */}
       {showEditModal && editingTicket && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b flex justify-between items-center">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)] rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-[var(--app-border)] flex justify-between items-center">
               <h3 className="text-xl font-bold text-[var(--app-text)]">Edit Tiket</h3>
               <button
                 onClick={() => {
                   setShowEditModal(false);
                   setEditingTicket(null);
                 }}
-                className="p-2 hover:bg-gray-100 rounded"
+                className="p-2 text-[var(--app-text-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-card-subtle)] rounded-lg transition-colors"
               >
                 <X size={20} />
               </button>
@@ -872,38 +900,38 @@ export default function Operational() {
 
             <div className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[var(--app-text)] mb-2">
                   Judul Tiket
                 </label>
                 <input
                   type="text"
                   value={editingTicket.title}
                   onChange={(e) => setEditingTicket({...editingTicket, title: e.target.value})}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 bg-[var(--app-bg)] text-[var(--app-text)] border border-[var(--app-border)] rounded-lg focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[var(--app-text)] mb-2">
                   Deskripsi
                 </label>
                 <textarea
                   value={editingTicket.description || ''}
                   onChange={(e) => setEditingTicket({...editingTicket, description: e.target.value})}
                   rows={4}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 bg-[var(--app-bg)] text-[var(--app-text)] border border-[var(--app-border)] rounded-lg focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-[var(--app-text)] mb-2">
                     Prioritas
                   </label>
                   <select
                     value={editingTicket.priority}
                     onChange={(e) => setEditingTicket({...editingTicket, priority: e.target.value as any})}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 bg-[var(--app-bg)] text-[var(--app-text)] border border-[var(--app-border)] rounded-lg focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="low">Low</option>
                     <option value="medium">Medium</option>
@@ -913,13 +941,13 @@ export default function Operational() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-[var(--app-text)] mb-2">
                     Status
                   </label>
                   <select
                     value={editingTicket.status}
                     onChange={(e) => setEditingTicket({...editingTicket, status: e.target.value as any})}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 bg-[var(--app-bg)] text-[var(--app-text)] border border-[var(--app-border)] rounded-lg focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="open">Open</option>
                     <option value="in-progress">In Progress</option>
@@ -929,44 +957,44 @@ export default function Operational() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-[var(--app-text)] mb-2">
                     Customer
                   </label>
                   <input
                     type="text"
                     value={editingTicket.customer}
                     onChange={(e) => setEditingTicket({...editingTicket, customer: e.target.value})}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 bg-[var(--app-bg)] text-[var(--app-text)] border border-[var(--app-border)] rounded-lg focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-[var(--app-text)] mb-2">
                     Teknisi
                   </label>
                   <input
                     type="text"
                     value={editingTicket.technician || ''}
                     onChange={(e) => setEditingTicket({...editingTicket, technician: e.target.value})}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 bg-[var(--app-bg)] text-[var(--app-text)] placeholder:text-[var(--app-text-muted)] border border-[var(--app-border)] rounded-lg focus:ring-2 focus:ring-blue-500"
                     placeholder="Belum ditugaskan"
                   />
                 </div>
               </div>
 
-              <div className="flex gap-3 pt-4 border-t">
+              <div className="flex gap-3 pt-4 border-t border-[var(--app-border)]">
                 <button
                   onClick={() => {
                     setShowEditModal(false);
                     setEditingTicket(null);
                   }}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                  className="flex-1 px-4 py-2 bg-[var(--app-bg)] border border-[var(--app-border)] text-[var(--app-text)] rounded-lg hover:bg-[var(--app-card-subtle)] transition-colors"
                 >
                   Batal
                 </button>
                 <button
                   onClick={handleSaveEdit}
-                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   Simpan Perubahan
                 </button>

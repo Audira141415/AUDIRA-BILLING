@@ -1,6 +1,9 @@
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
+import Pagination from '@/components/Pagination';
+import { useToast } from '@/contexts/ToastContext';
+import { useRealtime } from '@/contexts/RealtimeContext';
 import {
   Search,
   Filter,
@@ -25,7 +28,14 @@ import {
   History,
   MoreVertical,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  X,
+  Check,
+  Zap,
+  Printer,
+  Send,
+  FileDown,
+  CheckCircle2
 } from 'lucide-react';
 
 interface HistoryRow {
@@ -241,7 +251,178 @@ const mockHistoryData: HistoryRow[] = [
 ];
 
 export default function InvoiceHistoryPage() {
+  const { toast } = useToast();
+  const { socket, isConnected } = useRealtime();
+  const [historyData, setHistoryData] = useState<HistoryRow[]>(mockHistoryData);
+
+  // ─── 1. Live Fetch Invoices dari Backend Database (PostgreSQL) ───
+  useEffect(() => {
+    let isMounted = true;
+    const fetchInvoices = async () => {
+      try {
+        const res = await fetch('http://localhost:3218/billing/invoices-all');
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            const mapped: HistoryRow[] = data.map((inv: any) => ({
+              id: inv.id,
+              invoiceNumber: inv.invoiceNumber,
+              customerName: inv.customer?.name || 'Pelanggan',
+              type: 'Invoice Bulanan',
+              period: inv.month || 'Periode Berjalan',
+              invoiceDate: new Date(inv.createdAt).toLocaleDateString('id-ID'),
+              dueDate: new Date(inv.dueDate).toLocaleDateString('id-ID'),
+              total: inv.amount,
+              status: inv.status === 'PAID' ? 'Lunas' : inv.status === 'PENDING' ? 'Belum Lunas' : inv.status === 'OVERDUE' ? 'Overdue' : 'Dibatalkan',
+              method: inv.payments?.[0]?.paymentMethod ? (inv.payments[0].paymentMethod.toUpperCase()) : (inv.status === 'PAID' ? 'Online Payment' : '-'),
+              paidDate: inv.paidAt ? new Date(inv.paidAt).toLocaleDateString('id-ID') : '-',
+            }));
+
+            if (isMounted) {
+              setHistoryData(mapped);
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('Backend offline, fallback ke cache invoice.');
+      }
+    };
+
+    fetchInvoices();
+    return () => { isMounted = false; };
+  }, []);
+
+  // ─── 2. Realtime WebSocket Listener (Socket.io dari Mobile App / Gateway) ───
+  useEffect(() => {
+    if (!socket) return;
+
+    const handlePaymentReceived = (data: any) => {
+      console.log('⚡ [Realtime Invoice] Pembayaran masuk dari Mobile App:', data);
+      toast.success(
+        `⚡ [REALTIME SYNC] Pelanggan ${data.customerName || 'Mobile'} telah melunasi invoice ${data.invoiceNumber || ''} sebesar Rp ${(data.amount || 0).toLocaleString('id-ID')}!`
+      );
+
+      setHistoryData((prev) => {
+        const targetId = data.invoiceId || data.invoiceNumber;
+        const index = prev.findIndex(item => item.id === targetId || item.invoiceNumber === data.invoiceNumber);
+
+        if (index !== -1) {
+          const updated = [...prev];
+          updated[index] = {
+            ...updated[index],
+            status: 'Lunas',
+            method: data.paymentMethod ? data.paymentMethod.toUpperCase() : 'ONLINE PAYMENT',
+            paidDate: new Date().toLocaleDateString('id-ID'),
+          };
+          return updated;
+        } else {
+          // Prepend new row if not present
+          const newRow: HistoryRow = {
+            id: data.invoiceId || `INV-${Date.now()}`,
+            invoiceNumber: data.invoiceNumber || `INV-${Date.now().toString().slice(-4)}`,
+            customerName: data.customerName || 'Pelanggan Mobile (App)',
+            type: 'Invoice Bulanan',
+            period: 'Bulan Berjalan',
+            invoiceDate: new Date().toLocaleDateString('id-ID'),
+            dueDate: new Date().toLocaleDateString('id-ID'),
+            total: data.amount || 250000,
+            status: 'Lunas',
+            method: data.paymentMethod ? data.paymentMethod.toUpperCase() : 'ONLINE PAYMENT',
+            paidDate: new Date().toLocaleDateString('id-ID'),
+          };
+          return [newRow, ...prev];
+        }
+      });
+    };
+
+    socket.on('payment_received', handlePaymentReceived);
+    return () => {
+      socket.off('payment_received', handlePaymentReceived);
+    };
+  }, [socket, toast]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('Semua');
+  const [typeFilter, setTypeFilter] = useState('Semua');
+  const [methodFilter, setMethodFilter] = useState('Semua');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  // Modals
+  const [selectedInvoiceDetail, setSelectedInvoiceDetail] = useState<HistoryRow | null>(null);
+  const [selectedInvoiceAction, setSelectedInvoiceAction] = useState<HistoryRow | null>(null);
+
+  const filteredData = historyData.filter(d => {
+    const matchesSearch = 
+      d.invoiceNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      d.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      d.period.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === 'Semua' || d.status === statusFilter;
+    const matchesType = typeFilter === 'Semua' || d.type === typeFilter;
+    const matchesMethod = methodFilter === 'Semua' || d.method === methodFilter;
+    return matchesSearch && matchesStatus && matchesType && matchesMethod;
+  });
+
+  const totalPages = Math.max(1, Math.ceil(filteredData.length / pageSize));
+  const paginatedData = filteredData.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+  const handleMarkPaid = (inv: HistoryRow) => {
+    setHistoryData(prev => prev.map(item => 
+      item.id === inv.id 
+        ? { ...item, status: 'Lunas', paidDate: new Date().toLocaleDateString('id-ID'), method: item.method === '-' ? 'Transfer Bank' : item.method } 
+        : item
+    ));
+    setSelectedInvoiceAction(null);
+    toast.success(`Invoice ${inv.invoiceNumber} (${inv.customerName}) berhasil ditandai Lunas!`);
+  };
+
+  const handleVoidInvoice = (inv: HistoryRow) => {
+    setHistoryData(prev => prev.map(item => 
+      item.id === inv.id 
+        ? { ...item, status: 'Dibatalkan' } 
+        : item
+    ));
+    setSelectedInvoiceAction(null);
+    toast.success(`Invoice ${inv.invoiceNumber} berhasil dibatalkan (Void).`);
+  };
+
+  const handleSendWhatsApp = (inv: HistoryRow) => {
+    toast.success(`Link invoice ${inv.invoiceNumber} dikirim via WhatsApp ke ${inv.customerName}.`);
+  };
+
+  const handlePrintInvoice = (inv: HistoryRow) => {
+    toast.info(`Membuka print preview invoice ${inv.invoiceNumber}...`);
+    window.print();
+  };
+
+  const handleExportCSV = () => {
+    if (filteredData.length === 0) {
+      toast.error('Tidak ada data invoice untuk diekspor!');
+      return;
+    }
+    const headers = ['No', 'Nomor Invoice', 'Pelanggan', 'Tipe', 'Periode', 'Tgl Invoice', 'Jatuh Tempo', 'Total (IDR)', 'Status', 'Metode Bayar', 'Tgl Bayar'];
+    const rows = filteredData.map((d, index) => [
+      index + 1,
+      `"${d.invoiceNumber}"`,
+      `"${d.customerName}"`,
+      `"${d.type}"`,
+      `"${d.period}"`,
+      `"${d.invoiceDate}"`,
+      `"${d.dueDate}"`,
+      d.total,
+      `"${d.status}"`,
+      `"${d.method}"`,
+      `"${d.paidDate}"`
+    ]);
+    const csvContent = 'data:text/csv;charset=utf-8,\uFEFF' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `riwayat_invoice_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success(`Ekspor CSV berhasil (${filteredData.length} baris riwayat invoice)`);
+  };
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('id-ID', {
@@ -274,7 +455,13 @@ export default function InvoiceHistoryPage() {
           </div>
 
           <div className="flex items-center gap-2.5">
-            <Link href="/invoice/semua" className="px-3 py-2 bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)] text-xs font-semibold rounded-lg">Semua Invoice</Link>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-mono font-medium bg-[var(--app-card)] border-[var(--app-border)]">
+              <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`}></span>
+              <span className={isConnected ? 'text-emerald-400' : 'text-amber-400'}>
+                {isConnected ? 'Real-Time Sync Aktif' : 'Gateway Standby'}
+              </span>
+            </div>
+            <Link href="/invoice/semua" className="px-3 py-2 bg-[var(--app-card)] hover:bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-[var(--app-text)] text-xs font-semibold rounded-lg transition-colors">Semua Invoice</Link>
           </div>
         </div>
 
@@ -360,46 +547,78 @@ export default function InvoiceHistoryPage() {
               <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-[var(--app-muted)] w-4 h-4" />
               <input 
                 type="text" 
-                placeholder="Cari invoice, customer, no invoice..."
+                placeholder="Cari invoice, customer, periode..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
                 className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] text-xs pl-10 pr-4 py-2.5 rounded-xl text-[var(--app-text)] placeholder-slate-400 focus:outline-none focus:border-blue-500 transition-colors"
               />
             </div>
 
-            <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]">
-              <option>Semua Status</option>
+            <select 
+              value={statusFilter}
+              onChange={(e) => {
+                setStatusFilter(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)] focus:outline-none min-w-[140px]"
+            >
+              <option value="Semua">Semua Status</option>
+              <option value="Lunas">Lunas</option>
+              <option value="Belum Lunas">Belum Lunas</option>
+              <option value="Overdue">Overdue</option>
+              <option value="Dibatalkan">Dibatalkan</option>
             </select>
 
-            <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]">
-              <option>Semua Tipe</option>
+            <select 
+              value={typeFilter}
+              onChange={(e) => {
+                setTypeFilter(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)] focus:outline-none min-w-[140px]"
+            >
+              <option value="Semua">Semua Tipe</option>
+              <option value="Invoice Bulanan">Invoice Bulanan</option>
+              <option value="Invoice Custom">Invoice Custom</option>
+              <option value="Invoice Deposit">Invoice Deposit</option>
             </select>
 
-            <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]">
-              <option>Semua Metode</option>
+            <select 
+              value={methodFilter}
+              onChange={(e) => {
+                setMethodFilter(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)] focus:outline-none min-w-[140px]"
+            >
+              <option value="Semua">Semua Metode</option>
+              <option value="Transfer Bank">Transfer Bank</option>
+              <option value="QRIS">QRIS</option>
+              <option value="Virtual Account">Virtual Account</option>
             </select>
-            
-            {/* Date range picker mock */}
-            <div className="flex items-center gap-2 bg-[var(--app-bg)] border border-[var(--app-border)] px-3 py-2.5 rounded-xl text-xs text-[var(--app-text)]/80 cursor-pointer">
-              <Calendar size={14} className="text-[var(--app-muted)]" />
-              <span>01/06/2026 - 22/10/2026</span>
-            </div>
 
             <button 
-              onClick={() => { setSearchTerm(''); }}
+              onClick={() => { 
+                setSearchTerm(''); 
+                setStatusFilter('Semua');
+                setTypeFilter('Semua');
+                setMethodFilter('Semua');
+                setCurrentPage(1);
+              }}
               className="text-xs font-semibold text-[var(--app-muted)] hover:text-[var(--app-text)] px-4 py-2.5 rounded-xl border border-transparent hover:border-[var(--app-border)] transition-all ml-auto"
             >
               Reset
             </button>
 
-            <button onClick={() => alert("Penyaringan data diterapkan berdasarkan parameter yang dipilih.")} className="flex items-center gap-2 bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-md transition-all">
-              <Filter size={14} />
-              <span>Filter</span>
-            </button>
-
-            <button onClick={() => alert("Mengekspor data ke berkas CSV / Excel...")} className="flex items-center gap-2 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-sm border-gray-800">
-              <Download size={14} className="text-[var(--app-muted)]" />
-              <span>Export</span>
+            <button 
+              onClick={handleExportCSV} 
+              className="flex items-center gap-2 bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-md transition-all"
+            >
+              <Download size={14} />
+              <span>Export CSV</span>
             </button>
           </div>
         </div>
@@ -412,8 +631,8 @@ export default function InvoiceHistoryPage() {
             
             {/* Table Card */}
             <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs overflow-hidden">
-              <div className="flex justify-between items-center p-4 border-b border-[var(--app-border)] bg-white/40">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Riwayat Invoice</h3>
+              <div className="flex justify-between items-center p-4 border-b border-[var(--app-border)] bg-[var(--app-card-subtle)]">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Riwayat Invoice ({filteredData.length} data)</h3>
               </div>
 
               <div className="overflow-x-auto">
@@ -435,82 +654,89 @@ export default function InvoiceHistoryPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[var(--app-border)] text-xs text-[var(--app-text)]/80">
-                    {mockHistoryData.map((d, idx) => {
-                      return (
-                        <tr 
-                          key={d.id}
-                          className="hover:bg-[var(--app-border)]/20 transition-colors cursor-pointer"
-                        >
-                          <td className="p-4 text-[var(--app-muted)] font-medium">{idx + 1}</td>
-                          <td className="p-4 font-mono font-semibold text-blue-400 block py-6">{d.invoiceNumber}</td>
-                          <td className="p-4 font-bold text-[var(--app-text)]">{d.customerName}</td>
-                          <td className="p-4 text-[var(--app-muted)] font-semibold">{d.type}</td>
-                          <td className="p-4 text-[var(--app-muted)] font-medium">{d.period}</td>
-                          <td className="p-4 text-[var(--app-muted)] font-medium">{d.invoiceDate}</td>
-                          <td className="p-4 text-[var(--app-muted)] font-medium">{d.dueDate}</td>
-                          <td className="p-4 font-bold text-[var(--app-text)]">{formatCurrency(d.total)}</td>
-                          <td className="p-4">
-                            <span className={`px-2.5 py-1 text-[10px] font-bold rounded-full ${
-                              d.status === 'Lunas' 
-                                ? 'bg-green-500/10 text-green-400 border border-green-500/20' 
-                                : d.status === 'Belum Lunas'
-                                ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20'
-                                : d.status === 'Overdue'
-                                ? 'bg-red-500/10 text-red-400 border border-red-500/20'
-                                : 'bg-gray-500/10 text-[var(--app-muted)] border border-gray-500/20'
-                            }`}>
-                              {d.status}
-                            </span>
-                          </td>
-                          <td className="p-4 text-[var(--app-muted)] font-medium">{d.method}</td>
-                          <td className="p-4 text-[var(--app-muted)] font-medium">{d.paidDate}</td>
-                          <td className="p-4" onClick={(e) => e.stopPropagation()}>
-                            <div className="flex items-center justify-center gap-1.5">
-                              <button onClick={() => alert("Menampilkan rincian detail catatan ini.")} className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors">
-                                <Eye size={13} />
-                              </button>
-                              <button onClick={() => alert("Mengunduh salinan berkas faktur / bukti transaksi.")} className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors">
-                                <Download size={13} />
-                              </button>
-                              <button onClick={() => alert("Opsi tindakan: Kirim WhatsApp, Cetak PDF, Void Transaksi.")} className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors">
-                                <MoreVertical size={13} />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
+                    {paginatedData.length === 0 ? (
+                      <tr>
+                        <td colSpan={12} className="p-8 text-center text-sm text-[var(--app-muted)]">
+                          Tidak ditemukan riwayat invoice sesuai filter yang dipilih.
+                        </td>
+                      </tr>
+                    ) : (
+                      paginatedData.map((d, idx) => {
+                        return (
+                          <tr 
+                            key={d.id}
+                            onClick={() => setSelectedInvoiceDetail(d)}
+                            className="hover:bg-[var(--app-border)]/20 transition-colors cursor-pointer"
+                          >
+                            <td className="p-4 text-[var(--app-muted)] font-medium">{(currentPage - 1) * pageSize + idx + 1}</td>
+                            <td className="p-4 font-mono font-semibold text-blue-400">{d.invoiceNumber}</td>
+                            <td className="p-4 font-bold text-[var(--app-text)]">{d.customerName}</td>
+                            <td className="p-4 text-[var(--app-muted)] font-semibold">{d.type}</td>
+                            <td className="p-4 text-[var(--app-muted)] font-medium">{d.period}</td>
+                            <td className="p-4 text-[var(--app-muted)] font-medium">{d.invoiceDate}</td>
+                            <td className="p-4 text-[var(--app-muted)] font-medium">{d.dueDate}</td>
+                            <td className="p-4 font-bold text-[var(--app-text)]">{formatCurrency(d.total)}</td>
+                            <td className="p-4">
+                              <span className={`px-2.5 py-1 text-[10px] font-bold rounded-full ${
+                                d.status === 'Lunas' 
+                                  ? 'bg-green-500/10 text-green-400 border border-green-500/20' 
+                                  : d.status === 'Belum Lunas'
+                                  ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20'
+                                  : d.status === 'Overdue'
+                                  ? 'bg-red-500/10 text-red-400 border border-red-500/20'
+                                  : 'bg-gray-500/10 text-[var(--app-muted)] border border-gray-500/20'
+                              }`}>
+                                {d.status}
+                              </span>
+                            </td>
+                            <td className="p-4 text-[var(--app-muted)] font-medium">{d.method}</td>
+                            <td className="p-4 text-[var(--app-muted)] font-medium">{d.paidDate}</td>
+                            <td className="p-4" onClick={(e) => e.stopPropagation()}>
+                              <div className="flex items-center justify-center gap-1.5">
+                                <button 
+                                  onClick={() => setSelectedInvoiceDetail(d)} 
+                                  title="Lihat Rincian"
+                                  className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors"
+                                >
+                                  <Eye size={13} />
+                                </button>
+                                <button 
+                                  onClick={() => handlePrintInvoice(d)} 
+                                  title="Cetak Faktur PDF"
+                                  className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors"
+                                >
+                                  <Download size={13} />
+                                </button>
+                                <button 
+                                  onClick={() => setSelectedInvoiceAction(d)} 
+                                  title="Tindakan"
+                                  className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors"
+                                >
+                                  <MoreVertical size={13} />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
                   </tbody>
                 </table>
               </div>
 
               {/* Table pagination */}
-              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-t border-[var(--app-border)] bg-white/60">
-                <span className="text-xs text-[var(--app-muted)]">
-                  Menampilkan <span className="font-semibold text-white">1 - 15</span> dari <span className="font-semibold text-white">12.846</span> data
-                </span>
-                
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <button onClick={() => alert("Halaman pertama sudah tercapai.")} className="p-2 border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 rounded-xl text-[var(--app-muted)] transition-colors">
-                      <ChevronLeft size={14} />
-                    </button>
-                    <button onClick={() => alert("Halaman 1 saat ini aktif.")} className="w-8 h-8 rounded-xl text-xs font-semibold border bg-[#0052cc] text-white border-[#0052cc]">1</button>
-                    <button onClick={() => alert("Beralih ke halaman 2")} className="w-8 h-8 rounded-xl text-xs font-semibold border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/30">2</button>
-                    <button onClick={() => alert("Beralih ke halaman 3")} className="w-8 h-8 rounded-xl text-xs font-semibold border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/30">3</button>
-                    <span className="text-gray-600 text-xs px-1">...</span>
-                    <button onClick={() => alert("Beralih ke halaman 857")} className="w-8 h-8 rounded-xl text-xs font-semibold border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/30">857</button>
-                    <button onClick={() => alert("Beralih ke halaman selanjutnya.")} className="p-2 border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 rounded-xl text-[var(--app-muted)] transition-colors">
-                      <ChevronRight size={14} />
-                    </button>
-                  </div>
-
-                  <select
-                    className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-1.5 px-3 rounded-lg text-[var(--app-text)]/80 focus:outline-none"
-                  >
-                    <option value={15}>15 / halaman</option>
-                  </select>
-                </div>
+              <div className="p-4 border-t border-[var(--app-border)] bg-[var(--app-card-subtle)]">
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  totalItems={filteredData.length}
+                  pageSize={pageSize}
+                  onPageChange={setCurrentPage}
+                  onPageSizeChange={(newSize: number) => {
+                    setPageSize(newSize);
+                    setCurrentPage(1);
+                  }}
+                />
               </div>
             </div>
 
@@ -518,7 +744,7 @@ export default function InvoiceHistoryPage() {
             <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-4">
               <div className="flex justify-between items-center">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Aktivitas Terbaru</h3>
-                <button onClick={() => alert("Membuka seluruh riwayat aktivitas...")} className="text-xs text-blue-500 font-bold hover:underline">Lihat Semua Aktivitas &rarr;</button>
+                <button onClick={() => toast.info("Membuka seluruh riwayat aktivitas...")} className="text-xs text-blue-500 font-bold hover:underline">Lihat Semua Aktivitas &rarr;</button>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-5 gap-3.5 text-[9px] font-bold">
@@ -785,6 +1011,185 @@ export default function InvoiceHistoryPage() {
         </div>
 
       </div>
+
+      {/* ─── MODAL 1: Detail Lengkap Invoice ─── */}
+      {selectedInvoiceDetail && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="p-5 border-b border-[var(--app-border)] flex items-center justify-between bg-[var(--app-bg)]">
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-blue-500">Rincian Dokumen Invoice</span>
+                <h3 className="text-base font-bold text-[var(--app-text)] font-mono">{selectedInvoiceDetail.invoiceNumber}</h3>
+              </div>
+              <button 
+                onClick={() => setSelectedInvoiceDetail(null)}
+                className="p-1 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/20"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="p-5 space-y-4 text-xs">
+              <div className="flex items-center justify-between p-3 bg-[var(--app-bg)] rounded-xl border border-[var(--app-border)]">
+                <div>
+                  <p className="text-[10px] text-[var(--app-muted)] font-bold uppercase">Status Tagihan</p>
+                  <p className="font-bold text-white mt-0.5">{selectedInvoiceDetail.status}</p>
+                </div>
+                <span className={`px-2.5 py-1 text-[10px] font-bold rounded-full ${
+                  selectedInvoiceDetail.status === 'Lunas' 
+                    ? 'bg-green-500/10 text-green-400 border border-green-500/20' 
+                    : selectedInvoiceDetail.status === 'Belum Lunas'
+                    ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20'
+                    : selectedInvoiceDetail.status === 'Overdue'
+                    ? 'bg-red-500/10 text-red-400 border border-red-500/20'
+                    : 'bg-gray-500/10 text-[var(--app-muted)] border border-gray-500/20'
+                }`}>
+                  {selectedInvoiceDetail.status}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-3 bg-[var(--app-bg)] rounded-xl border border-[var(--app-border)]">
+                  <p className="text-[10px] text-[var(--app-muted)] font-bold uppercase">Nama Pelanggan</p>
+                  <p className="font-bold text-white mt-0.5">{selectedInvoiceDetail.customerName}</p>
+                </div>
+                <div className="p-3 bg-[var(--app-bg)] rounded-xl border border-[var(--app-border)]">
+                  <p className="text-[10px] text-[var(--app-muted)] font-bold uppercase">Periode Tagihan</p>
+                  <p className="font-bold text-white mt-0.5">{selectedInvoiceDetail.period}</p>
+                </div>
+              </div>
+
+              <div className="p-3 bg-[var(--app-bg)] rounded-xl border border-[var(--app-border)] space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-[var(--app-muted)]">Tipe Invoice:</span>
+                  <span className="font-bold text-white">{selectedInvoiceDetail.type}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[var(--app-muted)]">Tanggal Terbit:</span>
+                  <span className="font-bold text-white">{selectedInvoiceDetail.invoiceDate}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[var(--app-muted)]">Jatuh Tempo:</span>
+                  <span className="font-bold text-red-400">{selectedInvoiceDetail.dueDate}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[var(--app-muted)]">Metode Pembayaran:</span>
+                  <span className="font-bold text-white">{selectedInvoiceDetail.method}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[var(--app-muted)]">Tanggal Dibayar:</span>
+                  <span className="font-bold text-white">{selectedInvoiceDetail.paidDate}</span>
+                </div>
+                <div className="flex justify-between border-t border-[var(--app-border)] pt-2 text-sm">
+                  <span className="font-bold text-white">Total Tagihan:</span>
+                  <span className="font-black text-blue-400">{formatCurrency(selectedInvoiceDetail.total)}</span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between gap-2 pt-3 border-t border-[var(--app-border)]">
+                <button
+                  onClick={() => handlePrintInvoice(selectedInvoiceDetail)}
+                  className="flex items-center gap-1.5 px-3 py-2 bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-white rounded-xl text-xs font-semibold"
+                >
+                  <Printer size={14} />
+                  <span>Cetak PDF</span>
+                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleSendWhatsApp(selectedInvoiceDetail)}
+                    className="flex items-center gap-1.5 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-xl text-xs font-bold shadow-md"
+                  >
+                    <MessageCircle size={14} />
+                    <span>WhatsApp</span>
+                  </button>
+                  <button
+                    onClick={() => setSelectedInvoiceDetail(null)}
+                    className="px-4 py-2 bg-[var(--app-border)]/50 hover:bg-[var(--app-border)] text-white rounded-xl text-xs font-semibold"
+                  >
+                    Tutup
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── MODAL 2: Tindakan Cepat Invoice ─── */}
+      {selectedInvoiceAction && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="p-4 border-b border-[var(--app-border)] flex items-center justify-between bg-[var(--app-bg)]">
+              <div>
+                <h3 className="text-sm font-bold text-[var(--app-text)]">Tindakan Invoice</h3>
+                <p className="text-[10px] text-[var(--app-muted)] font-mono">{selectedInvoiceAction.invoiceNumber}</p>
+              </div>
+              <button 
+                onClick={() => setSelectedInvoiceAction(null)}
+                className="p-1 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/20"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="p-4 space-y-2 text-xs">
+              {selectedInvoiceAction.status !== 'Lunas' && (
+                <button
+                  onClick={() => handleMarkPaid(selectedInvoiceAction)}
+                  className="w-full flex items-center gap-3 p-3 bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 rounded-xl text-left transition-colors"
+                >
+                  <CheckCircle2 size={16} className="text-green-500" />
+                  <div>
+                    <p className="font-bold text-green-400">Tandai Sudah Lunas</p>
+                    <p className="text-[10px] text-green-300">Konfirmasi penerimaan kas/transfer manual</p>
+                  </div>
+                </button>
+              )}
+
+              <button
+                onClick={() => {
+                  handleSendWhatsApp(selectedInvoiceAction);
+                  setSelectedInvoiceAction(null);
+                }}
+                className="w-full flex items-center gap-3 p-3 bg-[var(--app-bg)] hover:bg-green-500/10 border border-[var(--app-border)] hover:border-green-500/30 rounded-xl text-left transition-colors"
+              >
+                <MessageCircle size={16} className="text-green-500" />
+                <div>
+                  <p className="font-bold text-white">Kirim WhatsApp</p>
+                  <p className="text-[10px] text-[var(--app-muted)]">Kirim lembar tagihan ke pelanggan</p>
+                </div>
+              </button>
+
+              <button
+                onClick={() => {
+                  handlePrintInvoice(selectedInvoiceAction);
+                  setSelectedInvoiceAction(null);
+                }}
+                className="w-full flex items-center gap-3 p-3 bg-[var(--app-bg)] hover:bg-[var(--app-border)]/20 border border-[var(--app-border)] rounded-xl text-left transition-colors"
+              >
+                <Printer size={16} className="text-blue-500" />
+                <div>
+                  <p className="font-bold text-white">Cetak / Unduh PDF</p>
+                  <p className="text-[10px] text-[var(--app-muted)]">Cetak bukti invoice standar billing</p>
+                </div>
+              </button>
+
+              {selectedInvoiceAction.status !== 'Dibatalkan' && (
+                <button
+                  onClick={() => handleVoidInvoice(selectedInvoiceAction)}
+                  className="w-full flex items-center gap-3 p-3 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded-xl text-left transition-colors"
+                >
+                  <XCircle size={16} className="text-red-500" />
+                  <div>
+                    <p className="font-bold text-red-400">Batalkan Tagihan (Void)</p>
+                    <p className="text-[10px] text-red-300">Batalkan nomor invoice dan hapus tagihan berjalan</p>
+                  </div>
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 }

@@ -2,6 +2,8 @@ import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import ReportSubTabDetail from '@/components/ReportSubTabDetail';
+import { Pagination } from '@/components/Pagination';
+import { useToast } from '@/contexts/ToastContext';
 import {
   Download, Calendar, RefreshCw, Filter, ChevronDown, FileDown,
   FileSpreadsheet, FileText, BarChart2, TrendingUp,
@@ -155,13 +157,22 @@ function KpiCard({ icon: Icon, iconColor, iconBg, label, value, change, up }: {
 // ─── Main Tab ────────────────────────────────────────────────────────────────
 
 function TabRingkasan() {
+  const { toast } = useToast();
   const [search, setSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const filtered = transaksiData.filter(r =>
     r.deskripsi.toLowerCase().includes(search.toLowerCase()) ||
     r.kategori.toLowerCase().includes(search.toLowerCase()) ||
     r.noDoc.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const safeCurrentPage = Math.min(currentPage, totalPages);
+  const paginatedData = filtered.slice(
+    (safeCurrentPage - 1) * pageSize,
+    safeCurrentPage * pageSize
   );
 
   return (
@@ -256,7 +267,7 @@ function TabRingkasan() {
                   <div key={i} className="space-y-0.5">
                     <div className="flex justify-between text-[8px]">
                       <span className="text-[var(--app-muted)]">{p.kategori}</span>
-                      <span className="font-bold text-[var(--app-text)]">{p.pct}% — {fmtRpCompact(p.nilai)}</span>
+                      <span className="font-bold text-[var(--app-text)]">{p.pct}% - {fmtRpCompact(p.nilai)}</span>
                     </div>
                     <div className="h-1.5 bg-[var(--app-border)]/20 rounded-full overflow-hidden">
                       <div className="h-full rounded-full bg-gradient-to-r from-red-500 to-red-400" style={{ width: `${p.pct / 30 * 100}%` }} />
@@ -382,11 +393,11 @@ function TabRingkasan() {
                     value={search} onChange={e => setSearch(e.target.value)}
                     className="bg-[var(--app-bg)] border border-[var(--app-border)] text-[9px] pl-7 pr-3 py-1.5 rounded-lg text-[var(--app-text)] focus:outline-none focus:border-blue-500 w-48" />
                 </div>
-                <button onClick={() => alert("Penyaringan data diterapkan berdasarkan parameter yang dipilih.")} className="flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white text-[9px] font-bold px-2.5 py-1.5 rounded-lg transition-colors">
+                <button onClick={() => toast.success("Penyaringan data diterapkan berdasarkan parameter yang dipilih.")} className="flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white text-[9px] font-bold px-2.5 py-1.5 rounded-lg transition-colors">
                   <Filter size={10} /> Filter
                 </button>
-                <button onClick={() => alert("Beralih ke mode visualisasi grafik / diagram analitik.")} className="p-1.5 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-[var(--app-muted)] hover:bg-[var(--app-border)]/30"><BarChart2 size={12} /></button>
-                <button onClick={() => alert("Beralih ke tampilan tabel ringkas.")} className="p-1.5 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-[var(--app-muted)] hover:bg-[var(--app-border)]/30"><FileText size={12} /></button>
+                <button onClick={() => toast.info("Beralih ke mode visualisasi grafik / diagram analitik.")} className="p-1.5 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-[var(--app-muted)] hover:bg-[var(--app-border)]/30"><BarChart2 size={12} /></button>
+                <button onClick={() => toast.info("Beralih ke tampilan tabel ringkas.")} className="p-1.5 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-[var(--app-muted)] hover:bg-[var(--app-border)]/30"><FileText size={12} /></button>
               </div>
             </div>
 
@@ -409,7 +420,7 @@ function TabRingkasan() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[var(--app-border)]">
-                  {filtered.map(row => (
+                  {paginatedData.map(row => (
                     <tr key={row.no} className="hover:bg-[var(--app-border)]/20 transition-colors">
                       <td className="px-3 py-2.5 text-[var(--app-muted)] font-bold">{row.no}</td>
                       <td className="px-3 py-2.5 text-[var(--app-muted)]">{row.tanggal}</td>
@@ -426,9 +437,9 @@ function TabRingkasan() {
                       <td className="px-3 py-2.5"><StatusBadge status={row.status} /></td>
                       <td className="px-3 py-2.5">
                         <div className="flex items-center justify-center gap-1.5">
-                          <button onClick={() => alert("Menampilkan rincian detail catatan laporan ini.")} className="p-1 hover:bg-[var(--app-border)]/30 rounded text-[var(--app-muted)] hover:text-blue-400 transition-colors"><Eye size={11} /></button>
-                          <button onClick={() => alert("Mengunduh salinan berkas laporan baris terpilih...")} className="p-1 hover:bg-[var(--app-border)]/30 rounded text-[var(--app-muted)] hover:text-green-400 transition-colors"><Download size={11} /></button>
-                          <button onClick={() => alert("Opsi tindakan: Kirim WhatsApp, Cetak Salinan, Lihat Log Audit.")} className="p-1 hover:bg-[var(--app-border)]/30 rounded text-[var(--app-muted)] transition-colors"><MoreVertical size={11} /></button>
+                          <button onClick={() => toast.info("Menampilkan rincian detail catatan laporan ini.")} className="p-1 hover:bg-[var(--app-border)]/30 rounded text-[var(--app-muted)] hover:text-blue-400 transition-colors"><Eye size={11} /></button>
+                          <button onClick={() => toast.success("Mengunduh salinan berkas laporan baris terpilih...")} className="p-1 hover:bg-[var(--app-border)]/30 rounded text-[var(--app-muted)] hover:text-green-400 transition-colors"><Download size={11} /></button>
+                          <button onClick={() => toast.info("Opsi tindakan: Kirim WhatsApp, Cetak Salinan, Lihat Log Audit.")} className="p-1 hover:bg-[var(--app-border)]/30 rounded text-[var(--app-muted)] transition-colors"><MoreVertical size={11} /></button>
                         </div>
                       </td>
                     </tr>
@@ -438,25 +449,17 @@ function TabRingkasan() {
             </div>
 
             {/* Pagination */}
-            <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
-              <p className="text-[9px] text-[var(--app-muted)]">Menampilkan 1 - {filtered.length} dari 245 data</p>
-              <div className="flex items-center gap-1.5">
-                <button onClick={() => alert("Kembali ke halaman sebelumnya.")} className="p-1.5 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-[var(--app-muted)]"><ChevronLeft size={11} /></button>
-                {[1, 2, 3, 4, 5].map(p => (
-                  <button key={p} onClick={() => setCurrentPage(p)}
-                    className={`w-6 h-6 text-[9px] rounded-md font-bold transition-all ${currentPage === p ? 'bg-blue-600 text-white' : 'bg-[var(--app-bg)] border border-[var(--app-border)] text-[var(--app-muted)] hover:bg-[var(--app-border)]/30'}`}>
-                    {p}
-                  </button>
-                ))}
-                <span className="text-gray-600 text-[9px]">...</span>
-                <button onClick={() => alert("Beralih ke halaman 49")} className="w-8 h-6 text-[9px] rounded-md font-bold bg-[var(--app-bg)] border border-[var(--app-border)] text-[var(--app-muted)] hover:bg-[var(--app-border)]/30">49</button>
-                <button onClick={() => alert("Beralih ke halaman selanjutnya.")} className="p-1.5 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-[var(--app-muted)]"><ChevronRight size={11} /></button>
-                <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-[9px] py-1.5 px-2 rounded-lg text-[var(--app-text)]/80 focus:outline-none">
-                  <option>10 / halaman</option>
-                  <option>25 / halaman</option>
-                </select>
-              </div>
-            </div>
+            <Pagination
+              currentPage={safeCurrentPage}
+              totalPages={totalPages}
+              totalItems={filtered.length}
+              pageSize={pageSize}
+              onPageChange={setCurrentPage}
+              onPageSizeChange={(newSize) => {
+                setPageSize(newSize);
+                setCurrentPage(1);
+              }}
+            />
           </div>
         </div>
 
@@ -467,7 +470,7 @@ function TabRingkasan() {
             <h4 className="text-[9px] font-bold uppercase tracking-wider text-[var(--app-muted)]">Filter Cepat</h4>
             <div className="grid grid-cols-3 gap-1">
               {['Hari Ini', '7 Hari', '30 Hari', '3 Bulan', '6 Bulan', 'Tahun Ini'].map((t, i) => (
-                <button key={t} onClick={() => alert(`Memfilter periode: ${t}`)} className={`text-[7px] font-bold py-1.5 px-1 rounded-lg border transition-all text-center ${i === 4 ? 'bg-blue-600 border-blue-500 text-white' : 'bg-[var(--app-bg)] border-[var(--app-border)] text-[var(--app-muted)] hover:bg-[var(--app-border)]/30'}`}>
+                <button key={t} onClick={() => toast.info(`Memfilter periode: ${t}`)} className={`text-[7px] font-bold py-1.5 px-1 rounded-lg border transition-all text-center ${i === 4 ? 'bg-blue-600 border-blue-500 text-white' : 'bg-[var(--app-bg)] border-[var(--app-border)] text-[var(--app-muted)] hover:bg-[var(--app-border)]/30'}`}>
                   {t}
                 </button>
               ))}
@@ -488,7 +491,7 @@ function TabRingkasan() {
                 </div>
               ))}
             </div>
-            <button onClick={() => alert("Filter multi-kriteria laporan berhasil diterapkan.")} className="w-full bg-blue-600 hover:bg-blue-700 text-white text-[9px] font-bold py-2 rounded-lg transition-colors">
+            <button onClick={() => toast.success("Filter multi-kriteria laporan berhasil diterapkan.")} className="w-full bg-blue-600 hover:bg-blue-700 text-white text-[9px] font-bold py-2 rounded-lg transition-colors">
               Terapkan Filter
             </button>
           </div>
@@ -505,7 +508,7 @@ function TabRingkasan() {
               { label: 'Export Ledger Summary', icon: FileText, color: 'text-cyan-400' },
               { label: 'Rekonsiliasi Bank', icon: RefreshCcw, color: 'text-orange-400' },
             ].map(a => (
-              <button key={a.label} onClick={() => alert(`Mengeksekusi aksi: ${a.label}`)} className="w-full flex items-center justify-between gap-2 bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 p-2 rounded-lg text-[8px] font-semibold text-[var(--app-text)]/80 transition-all group">
+              <button key={a.label} onClick={() => toast.info(`Mengeksekusi aksi: ${a.label}`)} className="w-full flex items-center justify-between gap-2 bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 p-2 rounded-lg text-[8px] font-semibold text-[var(--app-text)]/80 transition-all group">
                 <span className="flex items-center gap-2">
                   <a.icon size={11} className={a.color} />
                   <span className="text-left">{a.label}</span>
@@ -529,7 +532,7 @@ function TabRingkasan() {
                 </div>
               ))}
             </div>
-            <button onClick={() => alert("Insight Lengkap AI: Berdasarkan analisis churn dan margin laba, retensi pelanggan segmen korporat meningkat 14.2% setelah optimalisasi SLA bandwidth.")} className="w-full text-center text-[9px] font-bold text-blue-400 hover:text-blue-300 mt-1 flex items-center justify-center gap-1 border-t border-[var(--app-border)] pt-2">
+            <button onClick={() => toast.info("Insight Lengkap AI: Berdasarkan analisis churn dan margin laba, retensi pelanggan segmen korporat meningkat 14.2% setelah optimalisasi SLA bandwidth.")} className="w-full text-center text-[9px] font-bold text-blue-400 hover:text-blue-300 mt-1 flex items-center justify-center gap-1 border-t border-[var(--app-border)] pt-2">
               Lihat Insight Lengkap <ArrowUpRight size={10} />
             </button>
           </div>
@@ -544,6 +547,7 @@ function TabRingkasan() {
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function FinanceReportPage() {
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('Ringkasan');
   const [autoUpdate, setAutoUpdate] = useState(true);
   const [showExport, setShowExport] = useState(false);
@@ -597,17 +601,17 @@ export default function FinanceReportPage() {
                     { label: 'Export Excel', icon: FileSpreadsheet, color: 'text-green-400' },
                     { label: 'Export CSV', icon: FileText, color: 'text-blue-400' },
                   ].map(e => (
-                    <button key={e.label} onClick={() => { if (e.label === "Export PDF") { window.print(); } else { alert(`${e.label} berhasil diekspor.`); } setShowExport(false); }} className="w-full flex items-center gap-2 px-3 py-2 text-[10px] text-[var(--app-text)]/80 hover:bg-[var(--app-border)]/30 transition-colors">
+                    <button key={e.label} onClick={() => { if (e.label === "Export PDF") { window.print(); } else { toast.success(`${e.label} berhasil diekspor.`); } setShowExport(false); }} className="w-full flex items-center gap-2 px-3 py-2 text-[10px] text-[var(--app-text)]/80 hover:bg-[var(--app-border)]/30 transition-colors">
                       <e.icon size={12} className={e.color} />{e.label}
                     </button>
                   ))}
                 </div>
               )}
             </div>
-            <button onClick={() => alert("Jadwal pengiriman laporan otomatis via Email dan WhatsApp (mingguan/bulanan) telah diaktifkan untuk admin@audira.my.id.")} className="flex items-center gap-1.5 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg transition-colors">
+            <button onClick={() => toast.success("Jadwal pengiriman laporan otomatis via Email dan WhatsApp (mingguan/bulanan) telah diaktifkan untuk admin@audira.my.id.")} className="flex items-center gap-1.5 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg transition-colors">
               <Calendar size={11} className="text-blue-400" /> Jadwalkan Laporan
             </button>
-            <button onClick={() => alert("Opsi Laporan: Salin Link URL, Cetak Layar Penuh, Sinkronisasi Cloud Drive.")} className="p-1.5 bg-[var(--app-card)] border border-[var(--app-border)] rounded-lg hover:bg-[var(--app-border)]/30 text-[var(--app-muted)]"><MoreVertical size={13} /></button>
+            <button onClick={() => toast.info("Opsi Laporan: Salin Link URL, Cetak Layar Penuh, Sinkronisasi Cloud Drive.")} className="p-1.5 bg-[var(--app-card)] border border-[var(--app-border)] rounded-lg hover:bg-[var(--app-border)]/30 text-[var(--app-muted)]"><MoreVertical size={13} /></button>
           </div>
           <div className="flex items-center gap-2 text-[9px] text-[var(--app-muted)]">
             <RefreshCw size={11} className="text-[var(--app-muted)]" />
@@ -651,7 +655,7 @@ export default function FinanceReportPage() {
             </div>
           ))}
           <div className="flex gap-1.5 self-end">
-            <button onClick={() => alert("Membuka filter lanjutan & kustomisasi periode...")} className="flex items-center gap-1.5 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-card-subtle)] text-[var(--app-text)] text-xs font-medium px-3 py-1.5 rounded-lg transition-colors shadow-xs"><Filter size={12} /> Filter Lainnya</button>
+            <button onClick={() => toast.info("Membuka filter lanjutan & kustomisasi periode...")} className="flex items-center gap-1.5 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-card-subtle)] text-[var(--app-text)] text-xs font-medium px-3 py-1.5 rounded-lg transition-colors shadow-xs"><Filter size={12} /> Filter Lainnya</button>
             <button onClick={() => window.location.reload()} className="text-xs font-medium text-[var(--app-text-muted)] hover:text-[var(--app-text)] px-2.5 py-1.5 border border-[var(--app-border)] rounded-lg hover:bg-[var(--app-card-subtle)] bg-[var(--app-card)] transition-colors shadow-xs">
               Reset
             </button>

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
+import { useToast } from '@/contexts/ToastContext';
 import {
   TrendingUp,
   TrendingDown,
@@ -57,6 +58,7 @@ const COLORS_METODE = ['#1D4ED8', '#10B981', '#F59E0B', '#EC4899', '#8B5CF6'];
 
 export default function LabaRugiDashboard() {
   const router = useRouter();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('Ringkasan Laba Rugi');
   const [filterPeriod, setFilterPeriod] = useState('25 Juni 2026 - 22 Oktober 2026');
   const [searchTerm, setSearchTerm] = useState('');
@@ -240,12 +242,12 @@ export default function LabaRugiDashboard() {
               <option>18 Juni 2026 - 24 Juni 2026</option>
               <option>11 Juni 2026 - 17 Juni 2026</option>
             </select>
-            <button onClick={() => alert(`Menerapkan filter periode: ${filterPeriod}`)} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white transition-colors">
+            <button onClick={() => toast.info(`Menerapkan filter periode: ${filterPeriod}`)} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white transition-colors">
               <Filter className="w-3.5 h-3.5" />
               <span>Filter</span>
             </button>
             <button 
-              onClick={() => alert('Mengekspor laporan laba rugi...')}
+              onClick={() => toast.success('Mengekspor laporan laba rugi...')}
               className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--app-card)] hover:bg-[var(--app-card-subtle)] text-xs font-semibold text-[var(--app-text)] border border-[var(--app-border)] shadow-xs transition-colors"
             >
               <Download className="w-3.5 h-3.5" />
@@ -689,7 +691,7 @@ export default function LabaRugiDashboard() {
                   </div>
                   
                   <button 
-                    onClick={() => alert('Membuka analisis finansial lengkap...')}
+                    onClick={() => toast.info('Membuka analisis finansial lengkap...')}
                     className="w-full text-center text-xs text-cyan-400 hover:text-cyan-300 pt-2 border-t border-[var(--app-border)]/80 block"
                   >
                     Lihat Analisis Lengkap →

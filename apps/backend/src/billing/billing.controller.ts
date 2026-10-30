@@ -5,6 +5,7 @@ import { BillingCronService } from './billing.cron.service';
 import { PaymentGatewayService } from './payment-gateway.service';
 import { ReceiptPdfService } from './receipt-pdf.service';
 import { WhatsAppService } from '../whatsapp/whatsapp.service';
+import { WhatsAppBotService } from '../whatsapp/whatsapp-bot.service';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Controller('billing')
@@ -16,6 +17,7 @@ export class BillingController {
     private readonly receiptPdfService: ReceiptPdfService,
     private readonly whatsappService: WhatsAppService,
     private readonly prisma: PrismaService,
+    private readonly whatsappBotService: WhatsAppBotService,
   ) {}
 
   /**
@@ -44,6 +46,32 @@ export class BillingController {
       take: 100,
     });
   }
+
+  /**
+   * 📊 Seluruh Transaksi Keuangan & Penerimaan Real-time
+   * Dipakai oleh halaman Web Admin Keuangan (/finance/pendapatan)
+   */
+  @Get('transactions-all')
+  async getAllTransactions() {
+    return this.prisma.transaction.findMany({
+      include: {
+        customer: {
+          select: {
+            id: true,
+            name: true,
+            phone: true,
+            email: true,
+            internetNumber: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: 100,
+    });
+  }
+
 
   /**
    * 🤖 Ringkasan Metrik Pelanggan untuk Scheduler
@@ -270,6 +298,39 @@ export class BillingController {
   }
 
   /**
+   * 📋 Daftar Pelanggan yang Terisolir (Suspended) & Memerlukan Janji Bayar
+   */
+  @Get('suspended-customers')
+  async getSuspendedCustomers() {
+    return this.prisma.customer.findMany({
+      where: {
+        OR: [
+          { status: 'suspended' },
+          { isGracePeriod: true },
+        ],
+      },
+      include: {
+        packages: true,
+        invoices: {
+          where: {
+            status: { in: ['UNPAID', 'OVERDUE', 'PENDING'] },
+          },
+          orderBy: { dueDate: 'asc' },
+        },
+      },
+      orderBy: { updatedAt: 'desc' },
+    });
+  }
+
+  /**
+   * 📋 Daftar Pelanggan yang Sedang Mendapatkan Dispensasi Janji Bayar (Grace Period)
+   */
+  @Get('grace-period/active')
+  async getActiveGracePeriods() {
+    return this.billingService.getActiveGracePeriods();
+  }
+
+  /**
    * Set Janji Bayar / Dispensasi Isolir Sementara
    */
   @Post('grace-period/:customerId')
@@ -317,6 +378,190 @@ export class BillingController {
       ...body,
       idempotencyKey,
     });
+  }
+
+  /**
+   * 🤖 Kirim Reminder WhatsApp Masal / Spesifik ke Pelanggan Jatuh Tempo
+   */
+  @Post('remind-due-customers')
+  async remindDueCustomers(
+    @Body()
+    body: {
+      date?: string;
+      customerIds?: string[];
+      invoiceIds?: string[];
+      customMessage?: string;
+      mode?: 'HARI_H' | 'H3' | 'CUSTOM';
+      items?: Array<{
+        customerName: string;
+        phone: string;
+        internetNumber: string;
+        amount: number;
+        invoiceNumber: string;
+        dueDate: string;
+      }>;
+    },
+  ) {
+    const results = [];
+    let sentCount = 0;
+    let failedCount = 0;
+
+    // 1. Process items directly if provided from frontend calendar
+    if (body.items && Array.isArray(body.items) && body.items.length > 0) {
+      for (const item of body.items) {
+        try {
+          const fakeCustomer = {
+            name: item.customerName,
+            phone: item.phone,
+            internetNumber: item.internetNumber,
+          };
+          const fakeInvoice = {
+            invoiceNumber: item.invoiceNumber,
+            amount: item.amount,
+            dueDate: item.dueDate,
+          };
+
+          if (body.customMessage) {
+            let msg = body.customMessage
+              .replace(/{nama}/g, item.customerName)
+              .replace(/{internetNumber}/g, item.internetNumber)
+              .replace(/{nominal}/g, Number(item.amount).toLocaleString('id-ID'))
+              .replace(/{tanggal}/g, item.dueDate);
+            await this.whatsappService.sendMessage({ phone: item.phone, message: msg });
+          } else if (body.mode === 'H3') {
+            await this.whatsappService.sendHMinus3Reminder(fakeCustomer, fakeInvoice);
+          } else {
+            await this.whatsappService.sendHariHReminder(fakeCustomer, fakeInvoice);
+          }
+
+          sentCount++;
+          results.push({ name: item.customerName, phone: item.phone, status: 'SENT' });
+        } catch (err: any) {
+          failedCount++;
+          results.push({ name: item.customerName, phone: item.phone, status: 'FAILED', error: err.message });
+        }
+      }
+    } else {
+      // 2. Query from Prisma DB
+      const whereClause: any = {
+        status: { in: ['PENDING', 'OVERDUE'] },
+      };
+
+      if (body.invoiceIds && body.invoiceIds.length > 0) {
+        whereClause.id = { in: body.invoiceIds };
+      } else if (body.customerIds && body.customerIds.length > 0) {
+        whereClause.customerId = { in: body.customerIds };
+      }
+
+      const dbInvoices = await this.prisma.invoice.findMany({
+        where: whereClause,
+        include: { customer: true },
+      });
+
+      for (const inv of dbInvoices) {
+        if (!inv.customer?.phone) continue;
+        try {
+          if (body.customMessage) {
+            let msg = body.customMessage
+              .replace(/{nama}/g, inv.customer.name)
+              .replace(/{internetNumber}/g, inv.customer.internetNumber || '-')
+              .replace(/{nominal}/g, Number(inv.amount).toLocaleString('id-ID'))
+              .replace(/{tanggal}/g, inv.dueDate ? new Date(inv.dueDate).toLocaleDateString('id-ID') : '-');
+            await this.whatsappService.sendMessage({ phone: inv.customer.phone, message: msg });
+          } else if (body.mode === 'H3') {
+            await this.whatsappService.sendHMinus3Reminder(inv.customer, inv);
+          } else {
+            await this.whatsappService.sendHariHReminder(inv.customer, inv);
+          }
+          sentCount++;
+          results.push({ name: inv.customer.name, phone: inv.customer.phone, status: 'SENT' });
+        } catch (err: any) {
+          failedCount++;
+          results.push({ name: inv.customer.name, phone: inv.customer.phone, status: 'FAILED', error: err.message });
+        }
+      }
+    }
+
+    return {
+      success: true,
+      total: sentCount + failedCount,
+      sentCount,
+      failedCount,
+      results,
+    };
+  }
+
+  /**
+   * 🤖 Kirim Reminder WhatsApp Single Customer
+   */
+  @Post('send-single-reminder')
+  async sendSingleReminder(
+    @Body()
+    body: {
+      phone: string;
+      customerName: string;
+      internetNumber?: string;
+      amount?: number;
+      invoiceNumber?: string;
+      dueDate?: string;
+      customMessage?: string;
+      mode?: 'HARI_H' | 'H3' | 'CUSTOM';
+    },
+  ) {
+    try {
+      const customer = {
+        name: body.customerName,
+        phone: body.phone,
+        internetNumber: body.internetNumber || '-',
+      };
+      const invoice = {
+        invoiceNumber: body.invoiceNumber || 'INV-AUDIRA',
+        amount: body.amount || 250000,
+        dueDate: body.dueDate || new Date().toISOString(),
+      };
+
+      if (body.customMessage) {
+        let msg = body.customMessage
+          .replace(/{nama}/g, body.customerName)
+          .replace(/{internetNumber}/g, body.internetNumber || '-')
+          .replace(/{nominal}/g, Number(body.amount || 0).toLocaleString('id-ID'))
+          .replace(/{tanggal}/g, body.dueDate || '-');
+        await this.whatsappService.sendMessage({ phone: body.phone, message: msg });
+        return { success: true, message: 'Pesan kustom berhasil dikirim via WhatsApp Gateway' };
+      } else if (body.mode === 'H3') {
+        return await this.whatsappService.sendHMinus3Reminder(customer, invoice);
+      } else {
+        return await this.whatsappService.sendHariHReminder(customer, invoice);
+      }
+    } catch (err: any) {
+      return { success: false, error: err.message };
+    }
+  }
+
+  /**
+   * 🤖 Manual Trigger Rutinitas Cron Pengingat Harian (H-3, H-1, Hari H, Overdue)
+   */
+  @Post('run-daily-reminders')
+  async runDailyReminders() {
+    await this.billingCron.sendPaymentReminders();
+    return { success: true, message: 'Rutinitas pengingat tagihan harian berhasil dieksekusi di server!' };
+  }
+
+  /**
+   * 🤖 Simulasi Chatbot WhatsApp Pelanggan (!tagihan, !ceksinyal, menu)
+   */
+  @Post('bot-simulate')
+  async botSimulate(
+    @Body()
+    body: {
+      phone: string;
+      message: string;
+      senderName?: string;
+    },
+  ) {
+    const sender = body.phone || '08123456789';
+    const text = body.message || '!tagihan';
+    return this.whatsappBotService.handleIncomingMessage(sender, text, body.senderName);
   }
 }
 

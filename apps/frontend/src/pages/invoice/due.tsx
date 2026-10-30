@@ -529,6 +529,13 @@ export default function DueInvoicePage() {
           </div>
 
           <div className="flex items-center gap-2.5">
+            <Link
+              href="/payment/calendar"
+              className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-400 hover:to-teal-400 text-slate-950 text-xs font-bold rounded-lg transition-all flex items-center gap-2 shadow-sm"
+            >
+              <Calendar size={14} />
+              <span>Mode Kalender</span>
+            </Link>
             <button
               onClick={handleOpenBulkReminder}
               className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-lg transition-all flex items-center gap-2 shadow-sm cursor-pointer"

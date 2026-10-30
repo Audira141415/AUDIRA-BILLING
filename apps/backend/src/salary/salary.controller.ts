@@ -15,7 +15,7 @@ import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 
 
-@Controller('salary')
+@Controller(['salary', 'salaries'])
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class SalaryController {
   constructor(private readonly salaryService: SalaryService) {}

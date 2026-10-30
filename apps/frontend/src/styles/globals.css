@@ -4,73 +4,99 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ==========================================================================
-   AUDIRA NET & BILLING — ENTERPRISE B2B DESIGN SYSTEM
-   Standardized from F:\AUDIRA-DESAIN-UI-UX (UI/UX Pro Max)
-   Focus: Zero AI-Slop, High Data Density, Precision Typography & WCAG Contrast
-   ========================================================================== */
+/*
+  AUDIRA NET & BILLING: ENTERPRISE B2B DESIGN SYSTEM (v2.6.0)
+  Design Read: ISP BSS/OSS & NOC Operations Console (Dial: ENERGY 2 / RHYTHM 2 / MOTION 1, Density: 8/10)
+  R-31 Decisions:
+  - Palette: Slate Navy + Royal/Cyan + Semantic Emerald/Amber/Crimson for 24/7 NOC anti-glare & WCAG AA contrast.
+  - Typography: Plus Jakarta Sans for UI clarity; JetBrains Mono (tabular-nums) for IPs, MACs, dBm, and Rupiah.
+  - Surfaces: 1px solid structural borders (--app-border) and matte surfaces (--app-card) without neon glow slop.
+*/
 
 :root {
-  /* ☀️ Light Mode: Navy Professional + High Legibility */
-  --app-bg: #f8fafc;
+  /* Layer 1: Primitive Tokens */
+  --primitive-navy-950: #090d16;
+  --primitive-navy-900: #0f172a;
+  --primitive-navy-850: #131c31;
+  --primitive-navy-800: #1e3a5f;
+  --primitive-slate-50: #f8fafc;
+  --primitive-slate-100: #f1f5f9;
+  --primitive-slate-200: #e2e8f0;
+  --primitive-slate-300: #cbd5e1;
+  --primitive-slate-600: #475569;
+  --primitive-slate-700: #334155;
+  --primitive-blue-600: #2563eb;
+  --primitive-cyan-400: #38bdf8;
+  --primitive-emerald-600: #059669;
+  --primitive-emerald-500: #10b981;
+  --primitive-amber-600: #d97706;
+  --primitive-amber-500: #f59e0b;
+  --primitive-rose-600: #dc2626;
+  --primitive-rose-500: #ef4444;
+
+  /* Layer 2: Semantic Tokens (Light Mode — WCAG AA Verified: #0f172a on #f8fafc = 17.06:1, #475569 on #ffffff = 7.58:1) */
+  --app-bg: var(--primitive-slate-50);
   --app-surface: #ffffff;
+  --app-surface-2: var(--primitive-slate-100);
   --app-card: #ffffff;
-  --app-card-subtle: #f8fafc;
+  --app-card-subtle: var(--primitive-slate-100);
   --app-card-hover: #ffffff;
-  --app-border: #e2e8f0;
-  --app-border-strong: #cbd5e1;
-  --app-border-focus: #2563eb;
-  --app-text: #0f172a;
-  --app-text-muted: #64748b;
-  --app-text-dim: #94a3b8;
-  --app-muted: #64748b;
-  --app-primary: #1e3a5f;
+  --app-border: var(--primitive-slate-200);
+  --app-border-strong: var(--primitive-slate-300);
+  --app-border-focus: var(--primitive-blue-600);
+  --app-text: var(--primitive-navy-900);
+  --app-text-muted: var(--primitive-slate-600);
+  --app-text-dim: #64748b;
+  --app-muted: var(--primitive-slate-600);
+  --app-primary: var(--primitive-navy-800);
   --app-primary-hover: #172d4a;
-  --app-primary-light: #2563eb;
+  --app-primary-light: var(--primitive-blue-600);
   --app-primary-text: #ffffff;
   --app-primary-soft: #eff6ff;
   --app-primary-border: #bfdbfe;
-  --app-accent: #059669;
+  --app-accent: var(--primitive-emerald-600);
   --app-accent-soft: #ecfdf5;
-  --app-warning: #d97706;
-  --app-danger: #dc2626;
-  --app-radius: 12px;
-  --app-radius-sm: 8px;
-  --app-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.04), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
-  --app-shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.03);
+  --app-warning: var(--primitive-amber-600);
+  --app-danger: var(--primitive-rose-600);
+
+  /* Layer 3: Component & Density Tokens (Enterprise Density 8/10) */
+  --app-radius: 10px;
+  --app-radius-sm: 6px;
+  --app-shadow: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
+  --app-shadow-md: 0 2px 6px -1px rgba(15, 23, 42, 0.06);
   --app-font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --app-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 .dark, [data-theme="dark"] {
-  /* 🌙 Dark Mode: Enterprise Slate Navy (Clean, Zero-Glare, Dev-Friendly) */
-  --app-bg: #090d16;
-  --app-surface: #0f172a;
-  --app-card: #131c31;
+  /* Layer 2: Semantic Tokens (Dark Mode — WCAG AA Verified: #f8fafc on #090d16 = 18.57:1, #94a3b8 on #131c31 = 6.61:1) */
+  --app-bg: var(--primitive-navy-950);
+  --app-surface: var(--primitive-navy-900);
+  --app-surface-2: #17223b;
+  --app-card: var(--primitive-navy-850);
   --app-card-subtle: #0c1322;
   --app-card-hover: #17223b;
   --app-border: #1e293b;
-  --app-border-strong: #334155;
-  --app-border-focus: #38bdf8;
-  --app-text: #f8fafc;
+  --app-border-strong: var(--primitive-slate-700);
+  --app-border-focus: var(--primitive-cyan-400);
+  --app-text: var(--primitive-slate-50);
   --app-text-muted: #94a3b8;
-  --app-text-dim: #64748b;
+  --app-text-dim: #94a3b8;
   --app-muted: #94a3b8;
-  --app-primary: #38bdf8;
+  --app-primary: var(--primitive-cyan-400);
   --app-primary-hover: #0ea5e9;
-  --app-primary-light: #38bdf8;
-  --app-primary-text: #090d16;
-  --app-primary-soft: rgba(56, 189, 248, 0.1);
-  --app-primary-border: rgba(56, 189, 248, 0.25);
-  --app-accent: #10b981;
-  --app-accent-soft: rgba(16, 185, 129, 0.1);
-  --app-warning: #f59e0b;
-  --app-danger: #ef4444;
-  --app-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.35);
-  --app-shadow-md: 0 4px 12px 0 rgba(0, 0, 0, 0.45);
+  --app-primary-light: var(--primitive-cyan-400);
+  --app-primary-text: var(--primitive-navy-950);
+  --app-primary-soft: rgba(56, 189, 248, 0.12);
+  --app-primary-border: rgba(56, 189, 248, 0.28);
+  --app-accent: var(--primitive-emerald-500);
+  --app-accent-soft: rgba(16, 185, 129, 0.12);
+  --app-warning: var(--primitive-amber-500);
+  --app-danger: var(--primitive-rose-500);
+  --app-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+  --app-shadow-md: 0 4px 10px 0 rgba(0, 0, 0, 0.5);
 }
 
-/* Universal Font Enforcement — Ensures Inputs, Buttons, & Controls Inherit Plus Jakarta Sans */
 *, ::before, ::after {
   box-sizing: border-box;
 }
@@ -85,19 +111,28 @@ button, input, select, textarea {
   font-family: inherit;
 }
 
-/* Base Body Styles */
 body {
   background-color: var(--app-bg);
   color: var(--app-text);
   font-family: var(--app-font-sans);
   line-height: 1.5;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
-/* Typography Standards & Utilities */
+/* R-32 Keyboard Accessibility: High-contrast visible focus indicator (3:1+ ratio in Light & Dark modes) */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--app-border-focus) !important;
+  outline-offset: 1px !important;
+}
+
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--app-font-sans);
-  letter-spacing: -0.025em;
+  letter-spacing: -0.02em;
   font-weight: 700;
 }
 
@@ -107,23 +142,21 @@ h1, h2, h3, h4, h5, h6 {
 
 .font-heading, .font-display {
   font-family: var(--app-font-sans) !important;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.02em;
 }
 
 .font-mono, code, kbd, samp, pre {
   font-family: var(--app-font-mono) !important;
   font-feature-settings: "tnum" 1, "zero" 1;
+  font-variant-numeric: tabular-nums;
 }
 
 .tabular-nums {
   font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
 }
 
-/* ==========================================================================
-   ENTERPRISE DATA-DENSE COMPONENT UTILITIES (NO AI-SLOP)
-   ========================================================================== */
-
-/* Standardized Card Container */
+/* Standardized Data Card Container (Matter Surface, Crisp 1px Hairline Border) */
 .bento-card, .data-card {
   background-color: var(--app-card);
   border: 1px solid var(--app-border);
@@ -137,7 +170,7 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: var(--app-shadow-md);
 }
 
-/* Clean Dark Mode Class Adaptations */
+/* Dark Mode Class Adaptations */
 .dark .bg-white {
   background-color: var(--app-card) !important;
   color: var(--app-text) !important;
@@ -179,16 +212,20 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: var(--app-shadow) !important;
 }
 
-/* ==========================================================================
-   CLEAN LIGHT MODE CLASS ADAPTATIONS
-   Eliminates pitch-black blocks, harsh black borders, and invisible white text
-   ========================================================================== */
-
-/* 1. Normalize un-prefixed bg-slate-900 / bg-slate-950 in Light Mode */
-html:not(.dark) [class*="bg-slate-900"]:not([class*="dark:bg-slate-900"]):not(pre):not(code):not([class*="terminal"]):not([class*="console"]):not([class*="font-mono"]) {
+/* Light Mode Class Adaptations (R-34 Both Themes Must Work) */
+html:not(.dark) [class*="bg-slate-900"]:not([class*="dark:bg-slate-900"]):not(pre):not(code):not([class*="terminal"]):not([class*="console"]):not([class*="font-mono"]),
+html:not(.dark) [class*="bg-slate-950"]:not([class*="dark:bg-slate-950"]):not(pre):not(code):not([class*="terminal"]):not([class*="console"]):not([class*="font-mono"]) {
   background-color: var(--app-card) !important;
+  background-image: none !important;
   border-color: var(--app-border) !important;
   color: var(--app-text) !important;
+}
+
+html:not(.dark) [class*="bg-gradient-"][class*="from-slate-9"]:not([class*="dark:from-slate-9"]),
+html:not(.dark) [class*="bg-gradient-"][class*="from-emerald-9"]:not([class*="dark:from-emerald-9"]) {
+  background-color: var(--app-card) !important;
+  background-image: none !important;
+  border-color: var(--app-border) !important;
 }
 
 html:not(.dark) [class*="border-slate-800"]:not([class*="dark:border-slate-800"]),
@@ -196,7 +233,6 @@ html:not(.dark) [class*="border-slate-700"]:not([class*="dark:border-slate-700"]
   border-color: var(--app-border) !important;
 }
 
-/* 2. Normalize pure-black borders & shadows in Light Mode */
 html:not(.dark) .border-black {
   border-color: var(--app-border) !important;
 }
@@ -210,7 +246,6 @@ html:not(.dark) [class*="shadow-"][class*="#000"] {
   box-shadow: var(--app-shadow) !important;
 }
 
-/* 3. Normalize input & select text colors in Light Mode */
 html:not(.dark) input.text-white,
 html:not(.dark) select.text-white,
 html:not(.dark) textarea.text-white {
@@ -218,17 +253,16 @@ html:not(.dark) textarea.text-white {
   background-color: var(--app-surface) !important;
 }
 
-/* 4. Normalize standalone headings and labels that had hardcoded text-white */
-html:not(.dark) h1.text-white:not(button *),
-html:not(.dark) h2.text-white:not(button *),
-html:not(.dark) h3.text-white:not(button *),
-html:not(.dark) h4.text-white:not(button *),
-html:not(.dark) p.text-white:not(button *):not([class*="bg-"]),
+html:not(.dark) h1.text-white:not(button *):not([class*="bg-"]):not([class*="badge"]),
+html:not(.dark) h2.text-white:not(button *):not([class*="bg-"]):not([class*="badge"]),
+html:not(.dark) h3.text-white:not(button *):not([class*="bg-"]):not([class*="badge"]),
+html:not(.dark) h4.text-white:not(button *):not([class*="bg-"]):not([class*="badge"]),
+html:not(.dark) p.text-white:not(button *):not([class*="bg-"]):not([class*="badge"]),
 html:not(.dark) span.text-white:not(button *):not([class*="bg-"]):not([class*="badge"]) {
   color: var(--app-text) !important;
 }
 
-/* Minimal Custom Scrollbar */
+/* Minimal Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -247,10 +281,7 @@ html:not(.dark) span.text-white:not(button *):not([class*="bg-"]):not([class*="b
   background: var(--app-text-dim);
 }
 
-/* ==========================================================================
-   SMOOTH TRANSITIONS & MICRO-INTERACTIONS FOR SUB-MENUS & ROUTING
-   ========================================================================== */
-
+/* Motion Dial 1: Subtle Route Transition & Reduced Motion Support (R-19) */
 html {
   scroll-behavior: smooth;
 }
@@ -258,7 +289,7 @@ html {
 @keyframes fadeInSmooth {
   0% {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(4px);
   }
   100% {
     opacity: 1;
@@ -267,21 +298,14 @@ html {
 }
 
 .animate-fade-in-smooth {
-  animation: fadeInSmooth 0.24s cubic-bezier(0.16, 1, 0.3, 1) both;
-  will-change: opacity, transform;
-  transform: translateZ(0);
-  backface-visibility: hidden;
+  animation: fadeInSmooth 0.18s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-@keyframes pulseBarGlow {
-  0%, 100% {
-    box-shadow: 0 0 10px rgba(56, 189, 248, 0.7), 0 0 20px rgba(37, 99, 235, 0.4);
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
-  50% {
-    box-shadow: 0 0 16px rgba(56, 189, 248, 1), 0 0 28px rgba(37, 99, 235, 0.7);
-  }
-}
-
-.nav-progress-glow {
-  animation: pulseBarGlow 1s ease-in-out infinite;
 }

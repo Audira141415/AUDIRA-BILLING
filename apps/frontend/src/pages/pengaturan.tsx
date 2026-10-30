@@ -332,7 +332,7 @@ export default function Pengaturan() {
     setWaStatusMsg(null)
     setTimeout(() => {
       setTestingWa(false)
-      setWaStatusMsg('✓ Gateway WhatsApp Fonnte Berhasil Terhubung (200 OK • Ping 18ms)')
+      setWaStatusMsg('Gateway WhatsApp Fonnte Berhasil Terhubung (200 OK • Ping 18ms)')
     }, 1200)
   }
 
@@ -342,7 +342,7 @@ export default function Pengaturan() {
     setTelegramStatusMsg(null)
     setTimeout(() => {
       setTestingTelegram(false)
-      setTelegramStatusMsg('✓ Pesan Uji Coba Berhasil Terkirim ke Telegram Grup NOC!')
+      setTelegramStatusMsg('Pesan Uji Coba Berhasil Terkirim ke Telegram Grup NOC!')
     }, 1400)
   }
 
@@ -352,7 +352,7 @@ export default function Pengaturan() {
     setSmtpStatusMsg(null)
     setTimeout(() => {
       setTestingSmtp(false)
-      setSmtpStatusMsg('✓ Handshake TLS Berhasil • Email Uji Coba Terkirim ke ' + smtpConfig.fromEmail)
+      setSmtpStatusMsg('Handshake TLS Berhasil • Email Uji Coba Terkirim ke ' + smtpConfig.fromEmail)
     }, 1500)
   }
 
@@ -362,7 +362,7 @@ export default function Pengaturan() {
     setGatewayStatusMsg(null)
     setTimeout(() => {
       setTestingGateway(false)
-      setGatewayStatusMsg('✓ Handshake Midtrans API Production Sukses (Merchant Verified • QRIS Ready)')
+      setGatewayStatusMsg('Handshake Midtrans API Production Sukses (Merchant Verified • QRIS Ready)')
     }, 1300)
   }
 
@@ -373,7 +373,7 @@ export default function Pengaturan() {
     setTimeout(() => {
       setBackingUp(false)
       setBackupSuccessMsg(
-        `✓ Snapshot PostgreSQL Berhasil Dibuat: backup_audira_${new Date().toISOString().slice(0, 10)}_manual.dump.gz (42.8 MB)`
+        `Snapshot PostgreSQL Berhasil Dibuat: backup_audira_${new Date().toISOString().slice(0, 10)}_manual.dump.gz (42.8 MB)`
       )
     }, 2000)
   }

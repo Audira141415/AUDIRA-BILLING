@@ -1,7 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
-import { Wifi, Globe, Plus, Edit, Trash2, Search, Filter, Activity, UserCheck, UserX, PauseCircle, Server, Package as PackageIcon } from 'lucide-react';
+import { useToast } from '@/contexts/ToastContext';
+import api from '@/lib/api';
+import {
+  Wifi,
+  Globe,
+  Plus,
+  Edit,
+  Trash2,
+  Search,
+  UserCheck,
+  UserX,
+  PauseCircle,
+  Server,
+} from 'lucide-react';
 
 interface Service {
   id: string;
@@ -63,6 +76,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3218';
 
 export default function ServiceManagementPage() {
   const router = useRouter();
+  const { toast } = useToast();
   const [services, setServices] = useState<Service[]>([]);
   const [statistics, setStatistics] = useState<Statistics | null>(null);
   const [customers, setCustomers] = useState<Customer[]>([]);
@@ -79,14 +93,12 @@ export default function ServiceManagementPage() {
   const [packageFilter, setPackageFilter] = useState('all');
   const [sortBy, setSortBy] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
-  
-  // Modal states
+
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
-  
-  // Form states
+
   const [formData, setFormData] = useState<ServiceFormData>({
     name: '',
     type: 'pppoe',
@@ -101,25 +113,20 @@ export default function ServiceManagementPage() {
   const [formLoading, setFormLoading] = useState(false);
 
   useEffect(() => {
-    checkAuth();
     fetchStatistics();
     fetchServices();
     fetchCustomers();
     fetchPackages();
   }, [page, limit, search, typeFilter, statusFilter, customerFilter, packageFilter, sortBy, sortOrder]);
 
-  const checkAuth = () => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      router.push('/login');
-    }
-  };
-
   const getAuthHeaders = () => {
-    const token = localStorage.getItem('token');
+    const token =
+      typeof window !== 'undefined'
+        ? localStorage.getItem('token') || localStorage.getItem('adminToken')
+        : null;
     return {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
   };
 
@@ -146,7 +153,7 @@ export default function ServiceManagementPage() {
         sortBy,
         sortOrder,
       });
-      
+
       if (search) params.append('search', search);
       if (typeFilter !== 'all') params.append('type', typeFilter);
       if (statusFilter !== 'all') params.append('status', statusFilter);
@@ -159,11 +166,9 @@ export default function ServiceManagementPage() {
 
       if (response.ok) {
         const data = await response.json();
-        setServices(data.data);
-        setTotal(data.pagination.total);
-        setTotalPages(data.pagination.totalPages);
-      } else if (response.status === 401) {
-        router.push('/login');
+        setServices(data.data || []);
+        setTotal(data.pagination?.total || 0);
+        setTotalPages(data.pagination?.totalPages || 1);
       }
     } catch (error) {
       console.error('Error fetching services:', error);
@@ -179,10 +184,25 @@ export default function ServiceManagementPage() {
       });
       if (response.ok) {
         const data = await response.json();
-        setCustomers(data.data);
+        setCustomers(Array.isArray(data) ? data : data.data || []);
+        return;
+      }
+    } catch {
+      // Fallback below
+    }
+    try {
+      const fallbackList = await api.pelanggan.getAll();
+      if (Array.isArray(fallbackList)) {
+        setCustomers(
+          fallbackList.map((c: any) => ({
+            id: c.id,
+            name: c.name,
+            email: c.email || c.phone || '-',
+          }))
+        );
       }
     } catch (error) {
-      console.error('Error fetching customers:', error);
+      console.error('Error fetching fallback customers:', error);
     }
   };
 
@@ -193,36 +213,11 @@ export default function ServiceManagementPage() {
       });
       if (response.ok) {
         const data = await response.json();
-        setPackages(data.data);
+        setPackages(Array.isArray(data) ? data : data.data || []);
       }
     } catch (error) {
       console.error('Error fetching packages:', error);
     }
-  };
-
-  const handleSearch = (value: string) => {
-    setSearch(value);
-    setPage(1);
-  };
-
-  const handleTypeFilter = (value: string) => {
-    setTypeFilter(value);
-    setPage(1);
-  };
-
-  const handleStatusFilter = (value: string) => {
-    setStatusFilter(value);
-    setPage(1);
-  };
-
-  const handleCustomerFilter = (value: string) => {
-    setCustomerFilter(value);
-    setPage(1);
-  };
-
-  const handlePackageFilter = (value: string) => {
-    setPackageFilter(value);
-    setPage(1);
   };
 
   const handleSort = (field: string) => {
@@ -256,7 +251,7 @@ export default function ServiceManagementPage() {
       name: service.name,
       type: service.type,
       username: service.username,
-      password: '', // Don't show password for security
+      password: '',
       description: service.description || '',
       customerId: service.customerId,
       packageId: service.packageId || '',
@@ -273,19 +268,16 @@ export default function ServiceManagementPage() {
 
   const validateForm = (): boolean => {
     const errors: Record<string, string> = {};
-
-    if (!formData.name.trim()) errors.name = 'Name is required';
-    if (!formData.username.trim()) errors.username = 'Username is required';
-    if (!showEditModal && !formData.password.trim()) errors.password = 'Password is required';
-    if (!formData.customerId) errors.customerId = 'Customer is required';
-
+    if (!formData.name.trim()) errors.name = 'Nama layanan wajib diisi';
+    if (!formData.username.trim()) errors.username = 'Username wajib diisi';
+    if (!showEditModal && !formData.password.trim()) errors.password = 'Password wajib diisi';
+    if (!formData.customerId) errors.customerId = 'Pelanggan wajib dipilih';
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
   const handleCreateService = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!validateForm()) return;
 
     setFormLoading(true);
@@ -297,17 +289,16 @@ export default function ServiceManagementPage() {
       });
 
       if (response.ok) {
-        alert('Service created successfully!');
+        toast.success('Layanan PPPoE/Hotspot baru berhasil dibuat!');
         setShowCreateModal(false);
         fetchServices();
         fetchStatistics();
       } else {
-        const error = await response.json();
-        alert(`Error: ${error.message || 'Failed to create service'}`);
+        const error = await response.json().catch(() => ({}));
+        toast.error(error.message || 'Gagal membuat layanan baru');
       }
-    } catch (error) {
-      console.error('Error creating service:', error);
-      alert('Failed to create service');
+    } catch {
+      toast.error('Gagal menghubungi server layanan');
     } finally {
       setFormLoading(false);
     }
@@ -315,12 +306,10 @@ export default function ServiceManagementPage() {
 
   const handleUpdateService = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!validateForm() || !selectedService) return;
 
     setFormLoading(true);
     try {
-      // Don't send password if it's empty (means not changing it)
       const updateData = { ...formData };
       if (!updateData.password) {
         delete (updateData as any).password;
@@ -333,17 +322,16 @@ export default function ServiceManagementPage() {
       });
 
       if (response.ok) {
-        alert('Service updated successfully!');
+        toast.success(`Layanan ${selectedService.name} berhasil diperbarui!`);
         setShowEditModal(false);
         fetchServices();
         fetchStatistics();
       } else {
-        const error = await response.json();
-        alert(`Error: ${error.message || 'Failed to update service'}`);
+        const error = await response.json().catch(() => ({}));
+        toast.error(error.message || 'Gagal memperbarui layanan');
       }
-    } catch (error) {
-      console.error('Error updating service:', error);
-      alert('Failed to update service');
+    } catch {
+      toast.error('Gagal memperbarui layanan');
     } finally {
       setFormLoading(false);
     }
@@ -360,17 +348,16 @@ export default function ServiceManagementPage() {
       });
 
       if (response.ok) {
-        alert('Service deleted successfully!');
+        toast.success(`Layanan ${selectedService.name} berhasil dinonaktifkan.`);
         setShowDeleteModal(false);
         fetchServices();
         fetchStatistics();
       } else {
-        const error = await response.json();
-        alert(`Error: ${error.message || 'Failed to delete service'}`);
+        const error = await response.json().catch(() => ({}));
+        toast.error(error.message || 'Gagal menghapus layanan');
       }
-    } catch (error) {
-      console.error('Error deleting service:', error);
-      alert('Failed to delete service');
+    } catch {
+      toast.error('Gagal menghapus layanan');
     } finally {
       setFormLoading(false);
     }
@@ -378,154 +365,191 @@ export default function ServiceManagementPage() {
 
   const getStatusBadgeClass = (status: string) => {
     switch (status) {
-      case 'active': return 'bg-green-100 text-green-800';
-      case 'inactive': return 'bg-gray-100 text-gray-800';
-      case 'suspended': return 'bg-yellow-100 text-yellow-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'active':
+        return 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20';
+      case 'inactive':
+        return 'bg-slate-500/10 text-[var(--app-text-muted)] border border-[var(--app-border)]';
+      case 'suspended':
+        return 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20';
+      default:
+        return 'bg-slate-500/10 text-[var(--app-text-muted)] border border-[var(--app-border)]';
     }
   };
 
   const getTypeBadgeClass = (type: string) => {
     switch (type) {
-      case 'pppoe': return 'bg-blue-100 text-blue-800';
-      case 'hotspot': return 'bg-purple-100 text-purple-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'pppoe':
+        return 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20';
+      case 'hotspot':
+        return 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20';
+      default:
+        return 'bg-slate-500/10 text-[var(--app-text-muted)]';
     }
   };
 
-  const getTypeIcon = (type: string) => {
-    return type === 'pppoe' ? <Wifi className="w-4 h-4" /> : <Globe className="w-4 h-4" />;
-  };
+  const getTypeIcon = (type: string) =>
+    type === 'pppoe' ? <Wifi className="w-3.5 h-3.5" /> : <Globe className="w-3.5 h-3.5" />;
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('id-ID', {
+  const formatDate = (dateString: string) =>
+    new Date(dateString).toLocaleDateString('id-ID', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
     });
-  };
 
   return (
     <Layout>
-      <div className="container mx-auto px-4 py-8">
+      <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] p-4 md:p-6 lg:p-8 space-y-6">
         {/* Header */}
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-[var(--app-border)] pb-5">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Service Management</h1>
-            <p className="text-gray-600 mt-1">Manage PPPoE and Hotspot services</p>
+            <h1 className="text-xl md:text-2xl font-bold text-[var(--app-text)]">
+              Manajemen Layanan PPPoE &amp; Hotspot
+            </h1>
+            <p className="text-xs text-[var(--app-text-muted)] mt-1">
+              Kelola kredensial autentikasi FreeRADIUS, profil paket, dan status koneksi pelanggan.
+            </p>
           </div>
           <button
+            type="button"
             onClick={openCreateModal}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition-colors shadow-md"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg text-xs font-bold flex items-center gap-2 transition-colors shadow-sm"
           >
-            <Plus className="w-5 h-5" />
-            Add Service
+            <Plus className="w-4 h-4" />
+            <span>Tambah Layanan</span>
           </button>
         </div>
 
         {/* Statistics Cards */}
         {statistics && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 mb-8">
-            <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-500">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div className="bg-[var(--app-card)] rounded-xl p-4 border border-[var(--app-border)]">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-slate-400 text-sm font-medium">Total Services</p>
-                  <p className="text-3xl font-bold text-gray-900 mt-2">{statistics.total}</p>
+                  <p className="text-[var(--app-text-muted)] text-xs font-semibold">Total Layanan</p>
+                  <p className="text-2xl font-bold font-mono text-[var(--app-text)] mt-1">
+                    {statistics.total}
+                  </p>
                 </div>
-                <Server className="w-12 h-12 text-blue-500 opacity-20" />
+                <Server className="w-8 h-8 text-blue-500 opacity-40" />
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-green-500">
+            <div className="bg-[var(--app-card)] rounded-xl p-4 border border-[var(--app-border)]">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-slate-400 text-sm font-medium">Active</p>
-                  <p className="text-3xl font-bold text-green-600 mt-2">{statistics.active}</p>
+                  <p className="text-[var(--app-text-muted)] text-xs font-semibold">Aktif</p>
+                  <p className="text-2xl font-bold font-mono text-emerald-500 mt-1">
+                    {statistics.active}
+                  </p>
                 </div>
-                <UserCheck className="w-12 h-12 text-green-500 opacity-20" />
+                <UserCheck className="w-8 h-8 text-emerald-500 opacity-40" />
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-gray-500">
+            <div className="bg-[var(--app-card)] rounded-xl p-4 border border-[var(--app-border)]">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-slate-400 text-sm font-medium">Inactive</p>
-                  <p className="text-3xl font-bold text-gray-600 mt-2">{statistics.inactive}</p>
+                  <p className="text-[var(--app-text-muted)] text-xs font-semibold">Non-Aktif</p>
+                  <p className="text-2xl font-bold font-mono text-[var(--app-text-muted)] mt-1">
+                    {statistics.inactive}
+                  </p>
                 </div>
-                <UserX className="w-12 h-12 text-slate-400 opacity-20" />
+                <UserX className="w-8 h-8 text-slate-400 opacity-40" />
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-yellow-500">
+            <div className="bg-[var(--app-card)] rounded-xl p-4 border border-[var(--app-border)]">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-slate-400 text-sm font-medium">Suspended</p>
-                  <p className="text-3xl font-bold text-yellow-600 mt-2">{statistics.suspended}</p>
+                  <p className="text-[var(--app-text-muted)] text-xs font-semibold">Suspended</p>
+                  <p className="text-2xl font-bold font-mono text-amber-500 mt-1">
+                    {statistics.suspended}
+                  </p>
                 </div>
-                <PauseCircle className="w-12 h-12 text-yellow-500 opacity-20" />
+                <PauseCircle className="w-8 h-8 text-amber-500 opacity-40" />
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-500">
+            <div className="bg-[var(--app-card)] rounded-xl p-4 border border-[var(--app-border)]">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-slate-400 text-sm font-medium">PPPoE</p>
-                  <p className="text-3xl font-bold text-blue-600 mt-2">{statistics.pppoeCount}</p>
+                  <p className="text-[var(--app-text-muted)] text-xs font-semibold">PPPoE</p>
+                  <p className="text-2xl font-bold font-mono text-blue-500 mt-1">
+                    {statistics.pppoeCount}
+                  </p>
                 </div>
-                <Wifi className="w-12 h-12 text-blue-500 opacity-20" />
+                <Wifi className="w-8 h-8 text-blue-500 opacity-40" />
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-purple-500">
+            <div className="bg-[var(--app-card)] rounded-xl p-4 border border-[var(--app-border)]">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-slate-400 text-sm font-medium">Hotspot</p>
-                  <p className="text-3xl font-bold text-purple-600 mt-2">{statistics.hotspotCount}</p>
+                  <p className="text-[var(--app-text-muted)] text-xs font-semibold">Hotspot</p>
+                  <p className="text-2xl font-bold font-mono text-purple-500 mt-1">
+                    {statistics.hotspotCount}
+                  </p>
                 </div>
-                <Globe className="w-12 h-12 text-purple-500 opacity-20" />
+                <Globe className="w-8 h-8 text-purple-500 opacity-40" />
               </div>
             </div>
           </div>
         )}
 
         {/* Filters & Search */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-5">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
             <div className="lg:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
+              <label className="block text-xs font-semibold text-[var(--app-text-muted)] mb-1.5">
+                Cari Layanan
+              </label>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 w-5 h-5" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--app-text-muted)] w-4 h-4" />
                 <input
                   type="text"
                   value={search}
-                  onChange={(e) => handleSearch(e.target.value)}
-                  placeholder="Search by name, username..."
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  onChange={(e) => {
+                    setSearch(e.target.value);
+                    setPage(1);
+                  }}
+                  placeholder="Cari nama layanan, username PPPoE..."
+                  className="w-full pl-9 pr-4 py-2 text-xs bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-[var(--app-text)] focus:border-blue-500 focus:outline-none"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Type</label>
+              <label className="block text-xs font-semibold text-[var(--app-text-muted)] mb-1.5">
+                Tipe
+              </label>
               <select
                 value={typeFilter}
-                onChange={(e) => handleTypeFilter(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                onChange={(e) => {
+                  setTypeFilter(e.target.value);
+                  setPage(1);
+                }}
+                className="w-full px-3 py-2 text-xs bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-[var(--app-text)] focus:border-blue-500 focus:outline-none"
               >
-                <option value="all">All Types</option>
+                <option value="all">Semua Tipe</option>
                 <option value="pppoe">PPPoE</option>
                 <option value="hotspot">Hotspot</option>
               </select>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+              <label className="block text-xs font-semibold text-[var(--app-text-muted)] mb-1.5">
+                Status
+              </label>
               <select
                 value={statusFilter}
-                onChange={(e) => handleStatusFilter(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                onChange={(e) => {
+                  setStatusFilter(e.target.value);
+                  setPage(1);
+                }}
+                className="w-full px-3 py-2 text-xs bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-[var(--app-text)] focus:border-blue-500 focus:outline-none"
               >
-                <option value="all">All Status</option>
+                <option value="all">Semua Status</option>
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
                 <option value="suspended">Suspended</option>
@@ -533,13 +557,18 @@ export default function ServiceManagementPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Customer</label>
+              <label className="block text-xs font-semibold text-[var(--app-text-muted)] mb-1.5">
+                Pelanggan
+              </label>
               <select
                 value={customerFilter}
-                onChange={(e) => handleCustomerFilter(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                onChange={(e) => {
+                  setCustomerFilter(e.target.value);
+                  setPage(1);
+                }}
+                className="w-full px-3 py-2 text-xs bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-[var(--app-text)] focus:border-blue-500 focus:outline-none"
               >
-                <option value="all">All Customers</option>
+                <option value="all">Semua Pelanggan</option>
                 {customers.map((customer) => (
                   <option key={customer.id} value={customer.id}>
                     {customer.name}
@@ -549,13 +578,18 @@ export default function ServiceManagementPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Package</label>
+              <label className="block text-xs font-semibold text-[var(--app-text-muted)] mb-1.5">
+                Paket
+              </label>
               <select
                 value={packageFilter}
-                onChange={(e) => handlePackageFilter(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                onChange={(e) => {
+                  setPackageFilter(e.target.value);
+                  setPage(1);
+                }}
+                className="w-full px-3 py-2 text-xs bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-[var(--app-text)] focus:border-blue-500 focus:outline-none"
               >
-                <option value="all">All Packages</option>
+                <option value="all">Semua Paket</option>
                 {packages.map((pkg) => (
                   <option key={pkg.id} value={pkg.id}>
                     {pkg.name} ({pkg.speed})
@@ -567,103 +601,132 @@ export default function ServiceManagementPage() {
         </div>
 
         {/* Services Table */}
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead className="bg-[var(--app-bg)] border-b border-[var(--app-border)]">
                 <tr>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-slate-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onClick={() => handleSort('name')}>
-                    Service Name {sortBy === 'name' && (sortOrder === 'asc' ? '↑' : '↓')}
+                  <th
+                    className="px-5 py-3.5 text-left text-[11px] font-bold text-[var(--app-text-muted)] uppercase tracking-wider cursor-pointer"
+                    onClick={() => handleSort('name')}
+                  >
+                    Nama Layanan {sortBy === 'name' && (sortOrder === 'asc' ? '↑' : '↓')}
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-slate-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onClick={() => handleSort('type')}>
-                    Type {sortBy === 'type' && (sortOrder === 'asc' ? '↑' : '↓')}
+                  <th
+                    className="px-5 py-3.5 text-left text-[11px] font-bold text-[var(--app-text-muted)] uppercase tracking-wider cursor-pointer"
+                    onClick={() => handleSort('type')}
+                  >
+                    Tipe {sortBy === 'type' && (sortOrder === 'asc' ? '↑' : '↓')}
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                  <th className="px-5 py-3.5 text-left text-[11px] font-bold text-[var(--app-text-muted)] uppercase tracking-wider">
                     Username
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
-                    Customer
+                  <th className="px-5 py-3.5 text-left text-[11px] font-bold text-[var(--app-text-muted)] uppercase tracking-wider">
+                    Pelanggan
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
-                    Package
+                  <th className="px-5 py-3.5 text-left text-[11px] font-bold text-[var(--app-text-muted)] uppercase tracking-wider">
+                    Paket
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                  <th className="px-5 py-3.5 text-left text-[11px] font-bold text-[var(--app-text-muted)] uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-slate-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onClick={() => handleSort('createdAt')}>
-                    Created {sortBy === 'createdAt' && (sortOrder === 'asc' ? '↑' : '↓')}
+                  <th
+                    className="px-5 py-3.5 text-left text-[11px] font-bold text-[var(--app-text-muted)] uppercase tracking-wider cursor-pointer"
+                    onClick={() => handleSort('createdAt')}
+                  >
+                    Dibuat {sortBy === 'createdAt' && (sortOrder === 'asc' ? '↑' : '↓')}
                   </th>
-                  <th className="px-6 py-4 text-right text-xs font-medium text-slate-400 uppercase tracking-wider">
-                    Actions
+                  <th className="px-5 py-3.5 text-right text-[11px] font-bold text-[var(--app-text-muted)] uppercase tracking-wider">
+                    Aksi
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="divide-y divide-[var(--app-border)] text-xs">
                 {loading ? (
                   <tr>
-                    <td colSpan={8} className="px-6 py-8 text-center text-slate-400">
-                      Loading...
+                    <td colSpan={8} className="px-6 py-8 text-center text-[var(--app-text-muted)]">
+                      Memuat daftar layanan...
                     </td>
                   </tr>
                 ) : services.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="px-6 py-8 text-center text-slate-400">
-                      No services found
+                    <td colSpan={8} className="px-6 py-8 text-center text-[var(--app-text-muted)]">
+                      Belum ada layanan PPPoE/Hotspot yang sesuai filter.
                     </td>
                   </tr>
                 ) : (
                   services.map((service) => (
-                    <tr key={service.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="font-medium text-gray-900">{service.name}</div>
+                    <tr key={service.id} className="hover:bg-[var(--app-surface-2)] transition-colors">
+                      <td className="px-5 py-3.5 whitespace-nowrap">
+                        <div className="font-bold text-[var(--app-text)]">{service.name}</div>
                         {service.description && (
-                          <div className="text-sm text-slate-400">{service.description.substring(0, 50)}{service.description.length > 50 ? '...' : ''}</div>
+                          <div className="text-[11px] text-[var(--app-text-muted)]">
+                            {service.description.substring(0, 50)}
+                          </div>
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${getTypeBadgeClass(service.type)}`}>
+                      <td className="px-5 py-3.5 whitespace-nowrap">
+                        <span
+                          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold ${getTypeBadgeClass(
+                            service.type
+                          )}`}
+                        >
                           {getTypeIcon(service.type)}
                           {service.type.toUpperCase()}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-mono text-gray-900">{service.username}</div>
+                      <td className="px-5 py-3.5 whitespace-nowrap">
+                        <div className="font-mono text-[var(--app-text)]">{service.username}</div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{service.customer.name}</div>
-                        <div className="text-xs text-slate-400">{service.customer.email}</div>
+                      <td className="px-5 py-3.5 whitespace-nowrap">
+                        <div className="font-semibold text-[var(--app-text)]">
+                          {service.customer?.name || '-'}
+                        </div>
+                        <div className="text-[11px] text-[var(--app-text-muted)]">
+                          {service.customer?.email || ''}
+                        </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-5 py-3.5 whitespace-nowrap">
                         {service.package ? (
                           <div>
-                            <div className="text-sm font-medium text-gray-900">{service.package.name}</div>
-                            <div className="text-xs text-slate-400">{service.package.speed}</div>
+                            <div className="font-semibold text-[var(--app-text)]">
+                              {service.package.name}
+                            </div>
+                            <div className="text-[11px] font-mono text-[var(--app-text-muted)]">
+                              {service.package.speed}
+                            </div>
                           </div>
                         ) : (
-                          <span className="text-sm text-slate-500">No package</span>
+                          <span className="text-[var(--app-text-muted)]">Tanpa paket</span>
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusBadgeClass(service.status)}`}>
+                      <td className="px-5 py-3.5 whitespace-nowrap">
+                        <span
+                          className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${getStatusBadgeClass(
+                            service.status
+                          )}`}
+                        >
                           {service.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
+                      <td className="px-5 py-3.5 whitespace-nowrap font-mono text-[var(--app-text-muted)]">
                         {formatDate(service.createdAt)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <div className="flex justify-end gap-2">
+                      <td className="px-5 py-3.5 whitespace-nowrap text-right">
+                        <div className="flex justify-end gap-1.5">
                           <button
+                            type="button"
                             onClick={() => openEditModal(service)}
-                            className="text-blue-600 hover:text-blue-900 p-2 hover:bg-blue-50 rounded-lg transition-colors"
+                            className="text-blue-500 hover:bg-blue-500/10 p-1.5 rounded-lg transition-colors"
                             title="Edit"
                           >
                             <Edit className="w-4 h-4" />
                           </button>
                           <button
+                            type="button"
                             onClick={() => openDeleteModal(service)}
-                            className="text-red-600 hover:text-red-900 p-2 hover:bg-red-50 rounded-lg transition-colors"
-                            title="Delete"
+                            className="text-rose-500 hover:bg-rose-500/10 p-1.5 rounded-lg transition-colors"
+                            title="Hapus"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -678,10 +741,10 @@ export default function ServiceManagementPage() {
 
           {/* Pagination */}
           {!loading && services.length > 0 && (
-            <div className="bg-white px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <span className="text-sm text-gray-700">
-                  Showing {((page - 1) * limit) + 1} to {Math.min(page * limit, total)} of {total} results
+            <div className="bg-[var(--app-bg)] px-5 py-3.5 border-t border-[var(--app-border)] flex items-center justify-between text-xs">
+              <div className="flex items-center gap-3">
+                <span className="text-[var(--app-text-muted)]">
+                  Menampilkan {(page - 1) * limit + 1} - {Math.min(page * limit, total)} dari {total}
                 </span>
                 <select
                   value={limit}
@@ -689,46 +752,30 @@ export default function ServiceManagementPage() {
                     setLimit(Number(e.target.value));
                     setPage(1);
                   }}
-                  className="px-3 py-1 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="px-2.5 py-1 bg-[var(--app-card)] border border-[var(--app-border)] rounded-lg text-xs text-[var(--app-text)]"
                 >
-                  <option value={10}>10 per page</option>
-                  <option value={25}>25 per page</option>
-                  <option value={50}>50 per page</option>
+                  <option value={10}>10 / halaman</option>
+                  <option value={25}>25 / halaman</option>
+                  <option value={50}>50 / halaman</option>
                 </select>
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex gap-1.5">
                 <button
+                  type="button"
                   onClick={() => setPage(Math.max(1, page - 1))}
                   disabled={page === 1}
-                  className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="px-3 py-1.5 border border-[var(--app-border)] rounded-lg text-[var(--app-text)] disabled:opacity-40"
                 >
-                  Previous
+                  Sebelumnya
                 </button>
-                
-                {[...Array(Math.min(5, totalPages))].map((_, i) => {
-                  const pageNum = i + 1;
-                  return (
-                    <button
-                      key={pageNum}
-                      onClick={() => setPage(pageNum)}
-                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                        page === pageNum
-                          ? 'bg-blue-600 text-white'
-                          : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
-                      }`}
-                    >
-                      {pageNum}
-                    </button>
-                  );
-                })}
-
                 <button
+                  type="button"
                   onClick={() => setPage(Math.min(totalPages, page + 1))}
                   disabled={page === totalPages}
-                  className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="px-3 py-1.5 border border-[var(--app-border)] rounded-lg text-[var(--app-text)] disabled:opacity-40"
                 >
-                  Next
+                  Berikutnya
                 </button>
               </div>
             </div>
@@ -737,36 +784,36 @@ export default function ServiceManagementPage() {
 
         {/* Create Modal */}
         {showCreateModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="p-6 border-b border-gray-200">
-                <h2 className="text-2xl font-bold text-gray-900">Create New Service</h2>
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="p-5 border-b border-[var(--app-border)]">
+                <h2 className="text-lg font-bold text-[var(--app-text)]">Tambah Layanan Baru</h2>
               </div>
-              
-              <form onSubmit={handleCreateService} className="p-6 space-y-4">
+
+              <form onSubmit={handleCreateService} className="p-5 space-y-4 text-xs">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Service Name <span className="text-red-500">*</span>
+                    <label className="block font-semibold text-[var(--app-text-muted)] mb-1.5">
+                      Nama Layanan *
                     </label>
                     <input
                       type="text"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${formErrors.name ? 'border-red-500' : 'border-gray-300'}`}
-                      placeholder="e.g., Internet Service - John Doe"
+                      className="w-full px-3 py-2 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-[var(--app-text)]"
+                      placeholder="Mis. FTTH Home - Budi Santoso"
                     />
-                    {formErrors.name && <p className="mt-1 text-sm text-red-500">{formErrors.name}</p>}
+                    {formErrors.name && <p className="mt-1 text-rose-500">{formErrors.name}</p>}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Type <span className="text-red-500">*</span>
+                    <label className="block font-semibold text-[var(--app-text-muted)] mb-1.5">
+                      Tipe *
                     </label>
                     <select
                       value={formData.type}
                       onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-3 py-2 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-[var(--app-text)]"
                     >
                       <option value="pppoe">PPPoE</option>
                       <option value="hotspot">Hotspot</option>
@@ -774,113 +821,101 @@ export default function ServiceManagementPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Username <span className="text-red-500">*</span>
+                    <label className="block font-semibold text-[var(--app-text-muted)] mb-1.5">
+                      Username *
                     </label>
                     <input
                       type="text"
                       value={formData.username}
                       onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${formErrors.username ? 'border-red-500' : 'border-gray-300'}`}
-                      placeholder="Username for authentication"
+                      className="w-full px-3 py-2 font-mono bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-[var(--app-text)]"
                     />
-                    {formErrors.username && <p className="mt-1 text-sm text-red-500">{formErrors.username}</p>}
+                    {formErrors.username && (
+                      <p className="mt-1 text-rose-500">{formErrors.username}</p>
+                    )}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Password <span className="text-red-500">*</span>
+                    <label className="block font-semibold text-[var(--app-text-muted)] mb-1.5">
+                      Password *
                     </label>
                     <input
                       type="password"
                       value={formData.password}
                       onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${formErrors.password ? 'border-red-500' : 'border-gray-300'}`}
-                      placeholder="Password for authentication"
+                      className="w-full px-3 py-2 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-[var(--app-text)]"
                     />
-                    {formErrors.password && <p className="mt-1 text-sm text-red-500">{formErrors.password}</p>}
+                    {formErrors.password && (
+                      <p className="mt-1 text-rose-500">{formErrors.password}</p>
+                    )}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Customer <span className="text-red-500">*</span>
+                    <label className="block font-semibold text-[var(--app-text-muted)] mb-1.5">
+                      Pelanggan *
                     </label>
                     <select
                       value={formData.customerId}
                       onChange={(e) => setFormData({ ...formData, customerId: e.target.value })}
-                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${formErrors.customerId ? 'border-red-500' : 'border-gray-300'}`}
+                      className="w-full px-3 py-2 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-[var(--app-text)]"
                     >
-                      <option value="">Select Customer</option>
+                      <option value="">Pilih Pelanggan</option>
                       {customers.map((customer) => (
                         <option key={customer.id} value={customer.id}>
                           {customer.name} ({customer.email})
                         </option>
                       ))}
                     </select>
-                    {formErrors.customerId && <p className="mt-1 text-sm text-red-500">{formErrors.customerId}</p>}
+                    {formErrors.customerId && (
+                      <p className="mt-1 text-rose-500">{formErrors.customerId}</p>
+                    )}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Package
+                    <label className="block font-semibold text-[var(--app-text-muted)] mb-1.5">
+                      Paket Internet
                     </label>
                     <select
                       value={formData.packageId}
                       onChange={(e) => setFormData({ ...formData, packageId: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-3 py-2 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-[var(--app-text)]"
                     >
-                      <option value="">No Package</option>
+                      <option value="">Tanpa Paket</option>
                       {packages.map((pkg) => (
                         <option key={pkg.id} value={pkg.id}>
-                          {pkg.name} - {pkg.speed} - Rp{pkg.price.toLocaleString()}
+                          {pkg.name} - {pkg.speed}
                         </option>
                       ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Status
-                    </label>
-                    <select
-                      value={formData.status}
-                      onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    >
-                      <option value="active">Active</option>
-                      <option value="inactive">Inactive</option>
-                      <option value="suspended">Suspended</option>
                     </select>
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Description
+                  <label className="block font-semibold text-[var(--app-text-muted)] mb-1.5">
+                    Catatan / Deskripsi
                   </label>
                   <textarea
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     rows={3}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Optional description or notes"
+                    className="w-full px-3 py-2 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-[var(--app-text)]"
                   />
                 </div>
 
-                <div className="flex justify-end gap-3 pt-4">
+                <div className="flex justify-end gap-2.5 pt-3">
                   <button
                     type="button"
                     onClick={() => setShowCreateModal(false)}
-                    className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                    className="px-4 py-2 border border-[var(--app-border)] rounded-lg text-[var(--app-text)]"
                   >
-                    Cancel
+                    Batal
                   </button>
                   <button
                     type="submit"
                     disabled={formLoading}
-                    className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg disabled:opacity-50"
                   >
-                    {formLoading ? 'Creating...' : 'Create Service'}
+                    {formLoading ? 'Menyimpan...' : 'Simpan Layanan'}
                   </button>
                 </div>
               </form>
@@ -890,114 +925,34 @@ export default function ServiceManagementPage() {
 
         {/* Edit Modal */}
         {showEditModal && selectedService && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="p-6 border-b border-gray-200">
-                <h2 className="text-2xl font-bold text-gray-900">Edit Service</h2>
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="p-5 border-b border-[var(--app-border)]">
+                <h2 className="text-lg font-bold text-[var(--app-text)]">Edit Layanan</h2>
               </div>
-              
-              <form onSubmit={handleUpdateService} className="p-6 space-y-4">
+
+              <form onSubmit={handleUpdateService} className="p-5 space-y-4 text-xs">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Service Name <span className="text-red-500">*</span>
+                    <label className="block font-semibold text-[var(--app-text-muted)] mb-1.5">
+                      Nama Layanan *
                     </label>
                     <input
                       type="text"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${formErrors.name ? 'border-red-500' : 'border-gray-300'}`}
-                      placeholder="e.g., Internet Service - John Doe"
-                    />
-                    {formErrors.name && <p className="mt-1 text-sm text-red-500">{formErrors.name}</p>}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Type <span className="text-red-500">*</span>
-                    </label>
-                    <select
-                      value={formData.type}
-                      onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    >
-                      <option value="pppoe">PPPoE</option>
-                      <option value="hotspot">Hotspot</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Username <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.username}
-                      onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${formErrors.username ? 'border-red-500' : 'border-gray-300'}`}
-                      placeholder="Username for authentication"
-                    />
-                    {formErrors.username && <p className="mt-1 text-sm text-red-500">{formErrors.username}</p>}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Password <span className="text-slate-400">(leave empty to keep current)</span>
-                    </label>
-                    <input
-                      type="password"
-                      value={formData.password}
-                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="New password (optional)"
+                      className="w-full px-3 py-2 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-[var(--app-text)]"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Customer <span className="text-red-500">*</span>
-                    </label>
-                    <select
-                      value={formData.customerId}
-                      onChange={(e) => setFormData({ ...formData, customerId: e.target.value })}
-                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${formErrors.customerId ? 'border-red-500' : 'border-gray-300'}`}
-                    >
-                      <option value="">Select Customer</option>
-                      {customers.map((customer) => (
-                        <option key={customer.id} value={customer.id}>
-                          {customer.name} ({customer.email})
-                        </option>
-                      ))}
-                    </select>
-                    {formErrors.customerId && <p className="mt-1 text-sm text-red-500">{formErrors.customerId}</p>}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Package
-                    </label>
-                    <select
-                      value={formData.packageId}
-                      onChange={(e) => setFormData({ ...formData, packageId: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    >
-                      <option value="">No Package</option>
-                      {packages.map((pkg) => (
-                        <option key={pkg.id} value={pkg.id}>
-                          {pkg.name} - {pkg.speed} - Rp{pkg.price.toLocaleString()}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block font-semibold text-[var(--app-text-muted)] mb-1.5">
                       Status
                     </label>
                     <select
                       value={formData.status}
                       onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-3 py-2 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-[var(--app-text)]"
                     >
                       <option value="active">Active</option>
                       <option value="inactive">Inactive</option>
@@ -1006,33 +961,20 @@ export default function ServiceManagementPage() {
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Description
-                  </label>
-                  <textarea
-                    value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    rows={3}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Optional description or notes"
-                  />
-                </div>
-
-                <div className="flex justify-end gap-3 pt-4">
+                <div className="flex justify-end gap-2.5 pt-3">
                   <button
                     type="button"
                     onClick={() => setShowEditModal(false)}
-                    className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                    className="px-4 py-2 border border-[var(--app-border)] rounded-lg text-[var(--app-text)]"
                   >
-                    Cancel
+                    Batal
                   </button>
                   <button
                     type="submit"
                     disabled={formLoading}
-                    className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg disabled:opacity-50"
                   >
-                    {formLoading ? 'Updating...' : 'Update Service'}
+                    {formLoading ? 'Memperbarui...' : 'Simpan Perubahan'}
                   </button>
                 </div>
               </form>
@@ -1042,31 +984,31 @@ export default function ServiceManagementPage() {
 
         {/* Delete Confirmation Modal */}
         {showDeleteModal && selectedService && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-xl shadow-2xl max-w-md w-full">
-              <div className="p-6">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">Confirm Delete</h2>
-                <p className="text-gray-600 mb-6">
-                  Are you sure you want to delete service <strong>{selectedService.name}</strong>? This action will set the status to inactive.
-                </p>
-                
-                <div className="flex justify-end gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setShowDeleteModal(false)}
-                    disabled={formLoading}
-                    className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleDeleteService}
-                    disabled={formLoading}
-                    className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {formLoading ? 'Deleting...' : 'Delete Service'}
-                  </button>
-                </div>
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4">
+              <h2 className="text-base font-bold text-[var(--app-text)]">Nonaktifkan Layanan?</h2>
+              <p className="text-xs text-[var(--app-text-muted)]">
+                Apakah Anda yakin ingin menonaktifkan layanan{' '}
+                <strong className="text-[var(--app-text)]">{selectedService.name}</strong>?
+              </p>
+
+              <div className="flex justify-end gap-2.5 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowDeleteModal(false)}
+                  disabled={formLoading}
+                  className="px-4 py-2 border border-[var(--app-border)] rounded-lg text-xs text-[var(--app-text)]"
+                >
+                  Batal
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDeleteService}
+                  disabled={formLoading}
+                  className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-bold disabled:opacity-50"
+                >
+                  {formLoading ? 'Memproses...' : 'Ya, Nonaktifkan'}
+                </button>
               </div>
             </div>
           </div>

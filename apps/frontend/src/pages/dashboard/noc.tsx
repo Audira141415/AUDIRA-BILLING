@@ -1,68 +1,70 @@
 import { useState, useEffect } from 'react'
+import Head from 'next/head'
 import Layout from '@/components/Layout'
 import { useAuth } from '@/contexts/AuthContext'
+import { useToast } from '@/contexts/ToastContext'
 import { useRouter } from 'next/router'
-import { 
-  Server, 
-  Wifi, 
-  Activity, 
+import {
+  Server,
+  Wifi,
+  Activity,
   AlertTriangle,
-  CheckCircle,
-  Users,
+  CheckCircle2,
   HardDrive,
   RefreshCcw,
-  Radio,
-  CheckCircle2,
   Wrench,
   MapPin,
-  Send,
   ExternalLink,
   ShieldAlert,
-  Sparkles
+  Radio,
+  Network,
+  Cpu,
+  ArrowUpRight,
 } from 'lucide-react'
 
 export default function NOCDashboard() {
   const { user } = useAuth()
+  const { toast } = useToast()
   const router = useRouter()
 
   useEffect(() => {
-    // Redirect if not NOC role
-    if (user && user.role !== 'NOC' && user.role !== 'TECHNICIAN' && user.role !== 'ADMIN') {
+    const roleUpper = (user?.role || '').toUpperCase();
+    if (user && roleUpper !== 'NOC' && roleUpper !== 'TECHNICIAN' && roleUpper !== 'ADMIN' && roleUpper !== 'OWNER' && roleUpper !== 'SUPERADMIN') {
       router.push('/dashboard/billing')
     }
   }, [user, router])
 
   const [stats] = useState({
     network: {
-      status: 'online',
-      uptime: '99.8%',
+      status: 'ONLINE',
+      uptime: '99.94%',
       totalDevices: 24,
-      activeDevices: 22
+      activeDevices: 23,
     },
     mikrotik: {
       total: 8,
       online: 7,
-      offline: 1
+      offline: 1,
     },
     ont: {
       total: 156,
-      online: 142,
-      offline: 14
+      online: 144,
+      offline: 12,
     },
     tickets: {
       total: 28,
-      open: 8,
-      inProgress: 12,
-      closed: 8
+      open: 6,
+      inProgress: 10,
+      closed: 12,
     },
     bandwidth: {
       total: '10 Gbps',
-      used: '6.5 Gbps',
-      percentage: 65
-    }
+      used: '4.82 Gbps',
+      p95: '4.15 Gbps',
+      percentage: 48,
+    },
   })
 
-  // Proactive TR-069 & OLT Optical Loss Alerts State
   const [opticalAlerts, setOpticalAlerts] = useState([
     {
       id: 'ONT-ALERT-01',
@@ -73,10 +75,11 @@ export default function NOCDashboard() {
       odpLocation: 'ODP-BTM-03 Port 4',
       cluster: 'Cluster Batam Centre',
       rxPower: -28.45,
-      txPower: 2.10,
+      txPower: 2.1,
       threshold: -27.0,
       severity: 'CRITICAL',
-      aiDiagnostic: 'Dropcore fiber tertekuk tajam atau konektor SC/UPC kotor di adaptor ODP. Degradasi redaman terdeteksi 2 jam terakhir.',
+      aiDiagnostic:
+        'Dropcore fiber tertekuk tajam (macro-bending) atau konektor SC/UPC kotor di adaptor ODP. Degradasi redaman > 3.2 dBm dalam 2 jam terakhir.',
       lastPolled: '1 menit yang lalu via GenieACS TR-069',
       ticketCreated: false,
     },
@@ -88,174 +91,189 @@ export default function NOCDashboard() {
       ontSerial: 'HWTC8812A904',
       odpLocation: 'ODP-SKP-08 Port 2',
       cluster: 'Cluster Sekupang',
-      rxPower: -27.60,
+      rxPower: -27.6,
       txPower: 2.35,
       threshold: -27.0,
       severity: 'WARNING',
-      aiDiagnostic: 'Splice core loss tinggi pada joint closure pasca pekerjaan drainase jalan di dekat Tiang T-04.',
+      aiDiagnostic:
+        'Splice core loss tinggi pada joint closure pasca pekerjaan drainase jalan di dekat Tiang T-04.',
       lastPolled: '4 menit yang lalu via GenieACS TR-069',
       ticketCreated: false,
     },
-  ]);
-  const [alertFeedback, setAlertFeedback] = useState<string | null>(null);
-  const [queryingOnt, setQueryingOnt] = useState<string | null>(null);
+  ])
+
+  const [queryingOnt, setQueryingOnt] = useState<string | null>(null)
 
   const handleCreateWorkOrder = (alertId: string, customerName: string) => {
-    setAlertFeedback(`✅ Tiket & Surat Perintah Kerja (SPK) Teknisi Lapangan berhasil dibuat untuk perbaikan redaman ${customerName}! Notifikasi telah dikirim ke WhatsApp tim patroli.`);
     setOpticalAlerts((prev) =>
       prev.map((item) => (item.id === alertId ? { ...item, ticketCreated: true } : item))
-    );
-    setTimeout(() => setAlertFeedback(null), 5000);
-  };
+    )
+    toast.success(
+      `SPK Teknisi Lapangan diterbitkan untuk perbaikan redaman optik ${customerName}! Notifikasi dikirim ke tim patroli.`
+    )
+  }
 
   const handleQueryOntLive = (alertId: string, ontSerial: string) => {
-    setQueryingOnt(alertId);
+    setQueryingOnt(alertId)
     setTimeout(() => {
-      setQueryingOnt(null);
-      setAlertFeedback(`📡 Berhasil melakukan polling TR-069 ulang ke ONT ${ontSerial}. Parameter RX/TX terverifikasi.`);
-      setTimeout(() => setAlertFeedback(null), 4000);
-    }, 1200);
-  };
+      setQueryingOnt(null)
+      toast.info(`Polling TR-069 selesai untuk ONT ${ontSerial}. Parameter Rx/Tx dBm terverifikasi.`)
+    }, 900)
+  }
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gray-50 p-4 md:p-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard NOC</h1>
-          <p className="text-gray-600 mt-1">Selamat datang, {user?.name} (Admin NOC)</p>
-        </div>
+      <Head>
+        <title>NOC Engineer Cockpit - AUDIRA NET</title>
+      </Head>
 
-        {/* Network Status Banner */}
-        <div className="bg-gradient-to-r from-green-500 to-green-700 text-white rounded-xl shadow-lg p-6 mb-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                <CheckCircle size={32} />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold">Network Status: ONLINE</h2>
-                <p className="text-green-100">Uptime: {stats.network.uptime} | {stats.network.activeDevices}/{stats.network.totalDevices} devices active</p>
-              </div>
+      <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] p-4 md:p-6 lg:p-8 space-y-6">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[var(--app-border)] pb-5">
+          <div>
+            <div className="flex items-center gap-2.5">
+              <h1 className="text-xl md:text-2xl font-bold tracking-tight text-[var(--app-text)]">
+                NOC Engineering Cockpit
+              </h1>
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                CORE {stats.network.status} • {stats.network.uptime}
+              </span>
             </div>
-            <Activity size={48} className="opacity-50" />
+            <p className="text-xs text-[var(--app-text-muted)] mt-1">
+              Operator bertugas: <span className="font-semibold text-[var(--app-text)]">{user?.name || 'NOC Engineer'}</span>: Pemantauan BNG MikroTik, OLT GPON, redaman optik TR-069, dan utilisasi uplink.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2.5">
+            <button
+              type="button"
+              onClick={() => router.push('/noc/incidents')}
+              className="px-3.5 py-2 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition-colors"
+            >
+              <Radio className="w-3.5 h-3.5" />
+              <span>Mass Outage Broadcast</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => router.push('/infrastruktur/otdr')}
+              className="px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition-colors"
+            >
+              <Network className="w-3.5 h-3.5" />
+              <span>Kalkulator OTDR</span>
+            </button>
           </div>
         </div>
 
-        {/* Proactive High Optical Loss Warning Banner (GenieACS TR-069 + OLT Telemetry) */}
-        <div className="bg-gradient-to-br from-rose-50 to-orange-50 border-2 border-rose-300 rounded-2xl p-6 shadow-md mb-8">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-rose-200">
-            <div className="flex items-start sm:items-center space-x-3">
-              <div className="w-10 h-10 rounded-xl bg-rose-600 text-white flex items-center justify-center shadow-md shrink-0">
-                <ShieldAlert className="w-6 h-6 animate-pulse" />
+        {/* Proactive High Optical Loss Warning Panel */}
+        <div className="bg-[var(--app-card)] border border-rose-500/40 rounded-xl p-5 shadow-sm space-y-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-[var(--app-border)]">
+            <div className="flex items-start sm:items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-500 flex items-center justify-center shrink-0">
+                <ShieldAlert className="w-5 h-5 animate-pulse" />
               </div>
               <div>
-                <div className="flex items-center gap-2">
-                  <h2 className="text-lg font-bold text-rose-950">
-                    PERINGATAN REDAMAN TINGGI (&gt; -27.0 dBm) — 2 ONT KRITIS
+                <div className="flex flex-wrap items-center gap-2">
+                  <h2 className="text-sm md:text-base font-bold text-[var(--app-text)]">
+                    Peringatan Redaman Optik Tinggi (&lt; -27.0 dBm) : {opticalAlerts.length} ONT Kritis
                   </h2>
-                  <span className="text-[10px] bg-rose-600 text-white font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
-                    PROAKTIF
+                  <span className="text-[10px] font-mono bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30 font-bold px-2 py-0.5 rounded-full uppercase">
+                    PROAKTIF TR-069
                   </span>
                 </div>
-                <p className="text-xs text-rose-800 mt-0.5">
-                  Telemetri TR-069 GenieACS mendeteksi sinyal optik mendekati batas putus. Intervensi lapangan disarankan sebelum komplain pelanggan.
+                <p className="text-xs text-[var(--app-text-muted)] mt-0.5">
+                  GenieACS mendeteksi sinyal optik mendekati ambang LOS (-29 dBm). Terbitkan SPK sebelum pelanggan melapor putus.
                 </p>
               </div>
             </div>
-            <div className="flex items-center space-x-2 shrink-0">
+
+            <div className="flex items-center gap-2 shrink-0">
               <button
-                onClick={() => router.push('/genieacs')}
-                className="text-xs font-semibold text-rose-800 hover:text-rose-950 bg-white/80 hover:bg-white border border-rose-300 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors"
+                type="button"
+                onClick={() => router.push('/modem-monitor')}
+                className="text-xs font-semibold text-[var(--app-text)] bg-[var(--app-bg)] hover:bg-[var(--app-surface-2)] border border-[var(--app-border)] px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors"
               >
-                <span>Buka GenieACS</span>
-                <ExternalLink className="w-3.5 h-3.5" />
+                <span>Modem Monitor</span>
+                <ExternalLink className="w-3.5 h-3.5 text-blue-500" />
               </button>
               <button
-                onClick={() => router.push('/infrastruktur/odp')}
-                className="text-xs font-semibold text-rose-800 hover:text-rose-950 bg-white/80 hover:bg-white border border-rose-300 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors"
+                type="button"
+                onClick={() => router.push('/infrastruktur/map')}
+                className="text-xs font-semibold text-[var(--app-text)] bg-[var(--app-bg)] hover:bg-[var(--app-surface-2)] border border-[var(--app-border)] px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors"
               >
-                <span>Peta ODP / GIS</span>
-                <MapPin className="w-3.5 h-3.5" />
+                <span>Peta GIS ODP</span>
+                <MapPin className="w-3.5 h-3.5 text-emerald-500" />
               </button>
             </div>
           </div>
 
-          {/* Feedback Toast Banner */}
-          {alertFeedback && (
-            <div className="mt-4 p-3 bg-emerald-50 border border-emerald-300 rounded-xl text-xs text-emerald-900 font-medium flex items-center gap-2 animate-fade-in">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span>{alertFeedback}</span>
-            </div>
-          )}
-
-          {/* Critical Optical Alerts List */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {opticalAlerts.map((alert) => (
               <div
                 key={alert.id}
-                className="p-4 bg-white rounded-xl border border-rose-200 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between"
+                className="p-4 bg-[var(--app-bg)] rounded-xl border border-[var(--app-border)] flex flex-col justify-between gap-3"
               >
                 <div>
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="font-bold text-gray-900 text-sm">{alert.customerName}</span>
-                        <span className="text-[10px] font-mono bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded">
+                        <span className="font-bold text-[var(--app-text)] text-sm">{alert.customerName}</span>
+                        <span className="text-[10px] font-mono bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text-muted)] px-1.5 py-0.5 rounded">
                           {alert.inetNumber}
                         </span>
                       </div>
-                      <p className="text-xs text-slate-500 font-mono mt-0.5">
+                      <p className="text-xs text-[var(--app-text-muted)] font-mono mt-0.5">
                         {alert.odpLocation} • {alert.cluster} (SN: {alert.ontSerial})
                       </p>
                     </div>
 
                     <div className="text-right shrink-0">
-                      <div className="flex items-baseline space-x-1">
-                        <span className="text-xl font-extrabold text-red-600 font-mono">
+                      <div className="flex items-baseline justify-end gap-1">
+                        <span className="text-lg font-extrabold text-rose-500 font-mono">
                           {alert.rxPower.toFixed(2)}
                         </span>
-                        <span className="text-xs text-slate-500 font-bold">dBm</span>
+                        <span className="text-[11px] text-[var(--app-text-muted)] font-mono">dBm</span>
                       </div>
-                      <span className="text-[10px] font-bold text-red-700 bg-red-100 px-2 py-0.5 rounded-full inline-block mt-0.5">
-                        {alert.severity === 'CRITICAL' ? 'KRITIS (&gt; -28 dBm)' : 'WASPADA (&gt; -27 dBm)'}
+                      <span className="text-[10px] font-mono font-bold text-rose-600 dark:text-rose-400 bg-rose-500/10 border border-rose-500/20 px-2 py-0.5 rounded-full inline-block mt-0.5">
+                        {alert.severity === 'CRITICAL' ? 'KRITIS (< -28 dBm)' : 'WASPADA (< -27 dBm)'}
                       </span>
                     </div>
                   </div>
 
-                  {/* AI Root Cause Diagnostic Chip */}
-                  <div className="p-2.5 bg-amber-50/70 border border-amber-200 rounded-lg text-xs text-amber-950 my-2 flex items-start gap-2">
-                    <Sparkles className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                  <div className="p-2.5 bg-amber-500/10 border border-amber-500/20 rounded-lg text-xs my-2 flex items-start gap-2">
+                    <Cpu className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
                     <div>
-                      <strong className="font-semibold block text-[11px] text-amber-900 mb-0.5">AI Root Cause Suggestion:</strong>
-                      <p className="text-[11px] leading-relaxed text-amber-900/90">{alert.aiDiagnostic}</p>
+                      <strong className="font-semibold block text-[11px] text-amber-600 dark:text-amber-400 mb-0.5">
+                        AI Root Cause Suggestion:
+                      </strong>
+                      <p className="text-[11px] leading-relaxed text-[var(--app-text)]">{alert.aiDiagnostic}</p>
                     </div>
                   </div>
                 </div>
 
-                {/* Card Actions */}
-                <div className="flex items-center justify-between pt-3 border-t border-slate-100 mt-2 gap-2">
-                  <span className="text-[10px] text-slate-600 font-mono">
-                    {alert.lastPolled}
-                  </span>
+                <div className="flex items-center justify-between pt-3 border-t border-[var(--app-border)] gap-2">
+                  <span className="text-[10px] text-[var(--app-text-muted)] font-mono">{alert.lastPolled}</span>
                   <div className="flex items-center gap-2">
                     <button
+                      type="button"
                       onClick={() => handleQueryOntLive(alert.id, alert.ontSerial)}
                       disabled={queryingOnt === alert.id}
-                      className="px-2.5 py-1 text-xs font-medium text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 rounded-lg flex items-center gap-1 transition-colors disabled:opacity-50"
-                      title="Polling ulang status TR-069"
+                      className="px-2.5 py-1.5 text-xs font-medium text-[var(--app-text)] bg-[var(--app-card)] hover:bg-[var(--app-surface-2)] border border-[var(--app-border)] rounded-lg flex items-center gap-1 transition-colors disabled:opacity-50"
                     >
-                      <RefreshCcw className={`w-3.5 h-3.5 ${queryingOnt === alert.id ? 'animate-spin text-blue-600' : ''}`} />
-                      <span>{queryingOnt === alert.id ? 'Querying...' : 'Poll TR-069'}</span>
+                      <RefreshCcw
+                        className={`w-3.5 h-3.5 ${queryingOnt === alert.id ? 'animate-spin text-blue-500' : ''}`}
+                      />
+                      <span>{queryingOnt === alert.id ? 'Polling...' : 'Poll TR-069'}</span>
                     </button>
 
                     <button
+                      type="button"
                       onClick={() => handleCreateWorkOrder(alert.id, alert.customerName)}
                       disabled={alert.ticketCreated}
-                      className={`px-3 py-1 text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-all ${
+                      className={`px-3 py-1.5 text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-all ${
                         alert.ticketCreated
-                          ? 'bg-emerald-100 text-emerald-800 cursor-default'
-                          : 'bg-rose-600 hover:bg-rose-700 text-white shadow-sm hover:shadow'
+                          ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 cursor-default'
+                          : 'bg-rose-600 hover:bg-rose-700 text-white shadow-sm'
                       }`}
                     >
                       {alert.ticketCreated ? (
@@ -278,152 +296,110 @@ export default function NOCDashboard() {
         </div>
 
         {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {/* MikroTik Devices */}
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-medium text-gray-600">MikroTik Routers</h3>
-              <Server className="text-blue-500" size={24} />
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-5">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--app-text-muted)]">
+                MikroTik Core &amp; BNG
+              </span>
+              <Server className="w-5 h-5 text-blue-500" />
             </div>
-            <p className="text-3xl font-bold text-gray-900 mb-2">{stats.mikrotik.online}/{stats.mikrotik.total}</p>
-            <div className="flex items-center space-x-2">
-              <div className="flex-1 bg-gray-200 rounded-full h-2">
-                <div 
-                  className="bg-blue-500 h-2 rounded-full" 
+            <p className="text-2xl font-bold font-mono text-[var(--app-text)] mb-2">
+              {stats.mikrotik.online}/{stats.mikrotik.total}
+            </p>
+            <div className="flex items-center gap-2">
+              <div className="flex-1 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-full h-2 overflow-hidden">
+                <div
+                  className="bg-blue-500 h-full rounded-full"
                   style={{ width: `${(stats.mikrotik.online / stats.mikrotik.total) * 100}%` }}
-                ></div>
+                />
               </div>
-              <span className="text-xs text-slate-400">
+              <span className="text-xs font-mono text-[var(--app-text-muted)]">
                 {Math.round((stats.mikrotik.online / stats.mikrotik.total) * 100)}%
               </span>
             </div>
           </div>
 
-          {/* ONT Devices */}
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-medium text-gray-600">ONT Devices</h3>
-              <Wifi className="text-green-500" size={24} />
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-5">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--app-text-muted)]">
+                ONT Pelanggan Online
+              </span>
+              <Wifi className="w-5 h-5 text-emerald-500" />
             </div>
-            <p className="text-3xl font-bold text-gray-900 mb-2">{stats.ont.online}/{stats.ont.total}</p>
-            <div className="flex items-center space-x-2">
-              <div className="flex-1 bg-gray-200 rounded-full h-2">
-                <div 
-                  className="bg-green-500 h-2 rounded-full" 
+            <p className="text-2xl font-bold font-mono text-[var(--app-text)] mb-2">
+              {stats.ont.online}/{stats.ont.total}
+            </p>
+            <div className="flex items-center gap-2">
+              <div className="flex-1 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-full h-2 overflow-hidden">
+                <div
+                  className="bg-emerald-500 h-full rounded-full"
                   style={{ width: `${(stats.ont.online / stats.ont.total) * 100}%` }}
-                ></div>
+                />
               </div>
-              <span className="text-xs text-slate-400">
+              <span className="text-xs font-mono text-[var(--app-text-muted)]">
                 {Math.round((stats.ont.online / stats.ont.total) * 100)}%
               </span>
             </div>
           </div>
 
-          {/* Open Tickets */}
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-medium text-gray-600">Tiket Terbuka</h3>
-              <AlertTriangle className="text-orange-500" size={24} />
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-5">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--app-text-muted)]">
+                Tiket Gangguan SLA
+              </span>
+              <AlertTriangle className="w-5 h-5 text-amber-500" />
             </div>
-            <p className="text-3xl font-bold text-gray-900 mb-2">{stats.tickets.open}</p>
-            <p className="text-sm text-slate-400">Perlu segera ditangani</p>
+            <p className="text-2xl font-bold font-mono text-amber-500 mb-1">{stats.tickets.open} Open</p>
+            <p className="text-xs text-[var(--app-text-muted)] font-mono">
+              {stats.tickets.inProgress} In-Progress • {stats.tickets.closed} Closed
+            </p>
           </div>
 
-          {/* Bandwidth Usage */}
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-medium text-gray-600">Bandwidth Usage</h3>
-              <Activity className="text-purple-500" size={24} />
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-5">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--app-text-muted)]">
+                Uplink MRTG Utilisasi
+              </span>
+              <Activity className="w-5 h-5 text-indigo-500" />
             </div>
-            <p className="text-3xl font-bold text-gray-900 mb-2">{stats.bandwidth.percentage}%</p>
-            <p className="text-sm text-slate-400">{stats.bandwidth.used} / {stats.bandwidth.total}</p>
-          </div>
-        </div>
-
-        {/* Device Status */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          {/* MikroTik Status */}
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Status MikroTik</h3>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="font-medium text-gray-900">Online</span>
-                </div>
-                <span className="text-2xl font-bold text-green-600">{stats.mikrotik.online}</span>
-              </div>
-              <div className="flex items-center justify-between p-4 bg-red-50 rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                  <span className="font-medium text-gray-900">Offline</span>
-                </div>
-                <span className="text-2xl font-bold text-red-600">{stats.mikrotik.offline}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Ticket Status */}
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Status Tiket</h3>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between p-4 bg-orange-50 rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <AlertTriangle className="text-orange-500" size={20} />
-                  <span className="font-medium text-gray-900">Terbuka</span>
-                </div>
-                <span className="text-2xl font-bold text-orange-600">{stats.tickets.open}</span>
-              </div>
-              <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <RefreshCcw className="text-blue-500" size={20} />
-                  <span className="font-medium text-gray-900">Dalam Proses</span>
-                </div>
-                <span className="text-2xl font-bold text-blue-600">{stats.tickets.inProgress}</span>
-              </div>
-              <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <CheckCircle className="text-green-500" size={20} />
-                  <span className="font-medium text-gray-900">Selesai</span>
-                </div>
-                <span className="text-2xl font-bold text-green-600">{stats.tickets.closed}</span>
-              </div>
-            </div>
+            <p className="text-2xl font-bold font-mono text-[var(--app-text)] mb-1">
+              {stats.bandwidth.used}
+            </p>
+            <p className="text-xs font-mono text-[var(--app-text-muted)]">
+              Kap. {stats.bandwidth.total} • 95th: {stats.bandwidth.p95}
+            </p>
           </div>
         </div>
 
-        {/* Quick Actions */}
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <h3 className="text-lg font-bold text-gray-900 mb-4">Aksi Cepat</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <button
-              onClick={() => router.push('/mikrotik')}
-              className="p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors text-center"
-            >
-              <Server className="mx-auto mb-2 text-blue-600" size={32} />
-              <p className="text-sm font-medium text-gray-900">MikroTik</p>
-            </button>
-            <button
-              onClick={() => router.push('/genieacs')}
-              className="p-4 bg-green-50 hover:bg-green-100 rounded-lg transition-colors text-center"
-            >
-              <Wifi className="mx-auto mb-2 text-green-600" size={32} />
-              <p className="text-sm font-medium text-gray-900">GenieACS</p>
-            </button>
-            <button
-              onClick={() => router.push('/infrastruktur/olt')}
-              className="p-4 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors text-center"
-            >
-              <HardDrive className="mx-auto mb-2 text-purple-600" size={32} />
-              <p className="text-sm font-medium text-gray-900">Infrastruktur</p>
-            </button>
-            <button
-              onClick={() => router.push('/operational')}
-              className="p-4 bg-orange-50 hover:bg-orange-100 rounded-lg transition-colors text-center"
-            >
-              <Activity className="mx-auto mb-2 text-orange-600" size={32} />
-              <p className="text-sm font-medium text-gray-900">Operational</p>
-            </button>
+        {/* Carrier-Grade NOC Quick Navigation */}
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-5">
+          <h3 className="text-sm font-bold text-[var(--app-text)] mb-4">Modul Teknis NOC &amp; Fiber Optik</h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+            {[
+              { label: 'Live MRTG Traffic', href: '/infrastruktur/traffic', icon: Activity, color: 'text-emerald-500' },
+              { label: 'ZTP Auto-ONU', href: '/infrastruktur/ztp', icon: Cpu, color: 'text-blue-500' },
+              { label: 'IPAM & CGNAT', href: '/infrastruktur/ipam', icon: Server, color: 'text-indigo-500' },
+              { label: 'Kalkulator OTDR', href: '/infrastruktur/otdr', icon: Network, color: 'text-amber-500' },
+              { label: 'OLT GPON Matrix', href: '/infrastruktur/olt', icon: HardDrive, color: 'text-purple-500' },
+              { label: 'Router MikroTik', href: '/mikrotik', icon: Wifi, color: 'text-cyan-500' },
+            ].map((item) => {
+              const Icon = item.icon
+              return (
+                <button
+                  key={item.href}
+                  type="button"
+                  onClick={() => router.push(item.href)}
+                  className="p-3.5 rounded-xl bg-[var(--app-bg)] hover:bg-[var(--app-surface-2)] border border-[var(--app-border)] hover:border-blue-500/40 transition-all text-left group"
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <Icon className={`w-5 h-5 ${item.color}`} />
+                    <ArrowUpRight className="w-3.5 h-3.5 text-[var(--app-text-muted)] group-hover:text-[var(--app-text)]" />
+                  </div>
+                  <p className="text-xs font-bold text-[var(--app-text)]">{item.label}</p>
+                </button>
+              )
+            })}
           </div>
         </div>
       </div>

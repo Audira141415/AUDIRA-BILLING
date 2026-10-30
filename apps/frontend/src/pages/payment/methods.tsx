@@ -1,6 +1,8 @@
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Layout from '@/components/Layout';
+import { useToast } from '@/contexts/ToastContext';
+import { Pagination } from '@/components/Pagination';
 import {
   Search,
   Filter,
@@ -29,7 +31,9 @@ import {
   Settings,
   RefreshCw,
   Info,
-  Edit2
+  Edit2,
+  X,
+  Check
 } from 'lucide-react';
 
 interface MethodRow {
@@ -55,7 +59,35 @@ const mockMethods: MethodRow[] = [
 ];
 
 export default function PaymentMethodsPage() {
+  const { toast } = useToast();
+  const [methods, setMethods] = useState<MethodRow[]>(mockMethods);
   const [selectedMethodId, setSelectedMethodId] = useState('1');
+
+  // Search & Filter state
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('Semua Status');
+  const [channelFilter, setChannelFilter] = useState('Semua Channel');
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  // Modals state
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [editingMethod, setEditingMethod] = useState<MethodRow | null>(null);
+  const [detailModalItem, setDetailModalItem] = useState<MethodRow | null>(null);
+
+  // Form state
+  const [formData, setFormData] = useState({
+    name: '',
+    subName: '',
+    channel: 'Transfer Bank',
+    type: 'Otomatis',
+    adminFee: 0,
+    minPayment: 10000,
+    status: 'Aktif' as 'Aktif' | 'Non Aktif'
+  });
+
   const [channelSwitches, setChannelSwitches] = useState({
     active: true,
     showInInvoice: true,
@@ -69,6 +101,111 @@ export default function PaymentMethodsPage() {
       currency: 'IDR',
       minimumFractionDigits: 0,
     }).format(amount);
+  };
+
+  // Filtered list
+  const filteredMethods = useMemo(() => {
+    return methods.filter((item) => {
+      const matchSearch =
+        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.subName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.channel.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      const matchStatus = statusFilter === 'Semua Status' || item.status === statusFilter;
+      const matchChannel = channelFilter === 'Semua Channel' || item.channel === channelFilter;
+
+      return matchSearch && matchStatus && matchChannel;
+    });
+  }, [methods, searchQuery, statusFilter, channelFilter]);
+
+  const totalPages = Math.ceil(filteredMethods.length / pageSize) || 1;
+  const safeCurrentPage = Math.min(Math.max(1, currentPage), totalPages);
+  const paginatedMethods = filteredMethods.slice((safeCurrentPage - 1) * pageSize, safeCurrentPage * pageSize);
+
+  const selectedMethod = methods.find(m => m.id === selectedMethodId) || methods[0] || mockMethods[0];
+
+  // Actions
+  const handleToggleStatus = (id: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setMethods(prev => prev.map(m => {
+      if (m.id === id) {
+        const nextStatus = m.status === 'Aktif' ? 'Non Aktif' : 'Aktif';
+        toast.success(`Kanal pembayaran "${m.name}" kini ${nextStatus}.`);
+        return { ...m, status: nextStatus };
+      }
+      return m;
+    }));
+  };
+
+  const handleOpenAddModal = () => {
+    setFormData({
+      name: '',
+      subName: '',
+      channel: 'Transfer Bank',
+      type: 'Otomatis',
+      adminFee: 0,
+      minPayment: 10000,
+      status: 'Aktif'
+    });
+    setShowAddModal(true);
+  };
+
+  const handleSaveAdd = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.name.trim()) {
+      toast.warning('Nama metode pembayaran wajib diisi.');
+      return;
+    }
+    const newMethod: MethodRow = {
+      id: `method-${Date.now()}`,
+      name: formData.name,
+      subName: formData.subName || formData.name,
+      channel: formData.channel,
+      type: formData.type,
+      adminFee: Number(formData.adminFee) || 0,
+      minPayment: Number(formData.minPayment) || 0,
+      status: formData.status
+    };
+    setMethods(prev => [newMethod, ...prev]);
+    setSelectedMethodId(newMethod.id);
+    setShowAddModal(false);
+    toast.success(`Kanal ${newMethod.name} berhasil ditambahkan!`);
+  };
+
+  const handleOpenEditModal = (method: MethodRow, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setEditingMethod(method);
+    setFormData({
+      name: method.name,
+      subName: method.subName,
+      channel: method.channel,
+      type: method.type,
+      adminFee: method.adminFee,
+      minPayment: method.minPayment,
+      status: method.status
+    });
+  };
+
+  const handleSaveEdit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingMethod) return;
+    setMethods(prev => prev.map(m => {
+      if (m.id === editingMethod.id) {
+        return {
+          ...m,
+          name: formData.name,
+          subName: formData.subName,
+          channel: formData.channel,
+          type: formData.type,
+          adminFee: Number(formData.adminFee) || 0,
+          minPayment: Number(formData.minPayment) || 0,
+          status: formData.status
+        };
+      }
+      return m;
+    }));
+    toast.success(`Konfigurasi kanal "${formData.name}" berhasil diperbarui.`);
+    setEditingMethod(null);
   };
 
   return (
@@ -171,7 +308,7 @@ export default function PaymentMethodsPage() {
             <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs overflow-hidden">
               
               {/* Header inside */}
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-4 border-b border-[var(--app-border)] bg-white/40">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-4 border-b border-[var(--app-border)] bg-[var(--app-card-subtle)]">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Daftar Metode Pembayaran</h3>
                 
                 <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
@@ -179,20 +316,37 @@ export default function PaymentMethodsPage() {
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--app-muted)] w-3.5 h-3.5" />
                     <input 
                       type="text" 
+                      value={searchQuery}
+                      onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
                       placeholder="Cari metode pembayaran..."
                       className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] text-xs pl-9 pr-3 py-2 rounded-xl text-[var(--app-text)] placeholder-slate-400 focus:outline-none"
                     />
                   </div>
 
-                  <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2 px-3 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[120px]">
-                    <option>Semua Status</option>
+                  <select
+                    value={statusFilter}
+                    onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
+                    className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2 px-3 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[120px]"
+                  >
+                    <option value="Semua Status">Semua Status</option>
+                    <option value="Aktif">Aktif</option>
+                    <option value="Non Aktif">Non Aktif</option>
                   </select>
 
-                  <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2 px-3 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[120px]">
-                    <option>Semua Channel</option>
+                  <select
+                    value={channelFilter}
+                    onChange={(e) => { setChannelFilter(e.target.value); setCurrentPage(1); }}
+                    className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2 px-3 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[120px]"
+                  >
+                    <option value="Semua Channel">Semua Channel</option>
+                    <option value="Transfer Bank">Transfer Bank</option>
+                    <option value="QRIS">QRIS</option>
+                    <option value="Virtual Account">Virtual Account</option>
+                    <option value="E-Wallet">E-Wallet</option>
+                    <option value="Retail">Retail</option>
                   </select>
 
-                  <button onClick={() => alert("Membuka modal Tambah Metode Pembayaran Baru...")} className="flex items-center gap-2 bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md transition-all sm:ml-auto">
+                  <button onClick={handleOpenAddModal} className="flex items-center gap-2 bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md transition-all sm:ml-auto">
                     <Plus size={14} />
                     <span>Tambah Metode</span>
                   </button>
@@ -215,87 +369,106 @@ export default function PaymentMethodsPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[var(--app-border)]">
-                    {mockMethods.map((d, idx) => {
-                      const isSelected = selectedMethodId === d.id;
-                      return (
-                        <tr 
-                          key={d.id} 
-                          onClick={() => setSelectedMethodId(d.id)}
-                          className={`hover:bg-[var(--app-border)]/20 transition-colors cursor-pointer ${
-                            isSelected ? 'bg-[#0052cc]/5 border-l-2 border-l-blue-500' : ''
-                          }`}
-                        >
-                          <td className="p-4 text-[var(--app-muted)] font-medium">{idx + 1}</td>
-                          <td className="p-4 font-bold text-[var(--app-text)]">
-                            <div className="flex items-center gap-2.5">
-                              <div className="w-8 h-8 rounded bg-white flex items-center justify-center text-[9px] font-black text-blue-900 border border-gray-100 overflow-hidden">
-                                {d.name.split(' ')[0][0]}{d.name.split(' ').pop()?.[0]}
+                    {paginatedMethods.length === 0 ? (
+                      <tr>
+                        <td colSpan={8} className="p-8 text-center text-xs text-[var(--app-muted)]">
+                          Tidak ditemukan metode pembayaran yang sesuai filter pencarian.
+                        </td>
+                      </tr>
+                    ) : (
+                      paginatedMethods.map((d, idx) => {
+                        const isSelected = selectedMethodId === d.id;
+                        return (
+                          <tr 
+                            key={d.id} 
+                            onClick={() => setSelectedMethodId(d.id)}
+                            className={`hover:bg-[var(--app-border)]/20 transition-colors cursor-pointer ${
+                              isSelected ? 'bg-[#0052cc]/5 border-l-2 border-l-blue-500' : ''
+                            }`}
+                          >
+                            <td className="p-4 text-[var(--app-muted)] font-medium">{(safeCurrentPage - 1) * pageSize + idx + 1}</td>
+                            <td className="p-4 font-bold text-[var(--app-text)]">
+                              <div className="flex items-center gap-2.5">
+                                <div className="w-8 h-8 rounded bg-[var(--app-card)] flex items-center justify-center text-[9px] font-black text-blue-500 border border-[var(--app-border)] overflow-hidden">
+                                  {d.name.split(' ')[0][0]}{d.name.split(' ').pop()?.[0]}
+                                </div>
+                                <div className="space-y-0.5">
+                                  <p className="text-[var(--app-text)] leading-tight font-semibold">{d.name}</p>
+                                  <p className="text-[9px] text-[var(--app-muted)] font-medium">{d.subName}</p>
+                                </div>
                               </div>
-                              <div className="space-y-0.5">
-                                <p className="text-white leading-tight font-semibold">{d.name}</p>
-                                <p className="text-[9px] text-[var(--app-muted)] font-medium">{d.subName}</p>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="p-4 font-semibold text-[var(--app-text)]/80">
-                            <span className="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded text-[10px] font-bold">
-                              {d.channel}
-                            </span>
-                          </td>
-                          <td className="p-4 text-[var(--app-muted)] font-medium">{d.type}</td>
-                          <td className="p-4 text-[var(--app-muted)] font-medium">{formatCurrency(d.adminFee)}</td>
-                          <td className="p-4 text-[var(--app-muted)] font-medium">{formatCurrency(d.minPayment)}</td>
-                          <td className="p-4">
-                            <span className={`px-2 py-0.5 text-[9px] font-bold rounded-full ${
-                              d.status === 'Aktif' 
-                                ? 'bg-green-500/10 text-green-400 border border-green-500/20' 
-                                : 'bg-red-500/10 text-red-400 border border-red-500/20'
-                            }`}>
-                              {d.status}
-                            </span>
-                          </td>
-                          <td className="p-4" onClick={(e) => e.stopPropagation()}>
-                            <div className="flex items-center justify-center gap-1.5">
-                              <button onClick={() => alert("Membuka modal edit...")} className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors"><Edit2 size={13} /></button>
-                              <button onClick={() => alert("Membuka tampilan detail...")} className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors"><Eye size={13} /></button>
-                              <button onClick={() => alert(`Nonaktifkan channel pembayaran ${d.name}?`)} className="p-1.5 hover:bg-red-500/10 rounded-lg text-[var(--app-muted)] hover:text-red-400 transition-colors">
-                                <XCircle size={13} />
+                            </td>
+                            <td className="p-4 font-semibold text-[var(--app-text)]/80">
+                              <span className="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded text-[10px] font-bold">
+                                {d.channel}
+                              </span>
+                            </td>
+                            <td className="p-4 text-[var(--app-muted)] font-medium">{d.type}</td>
+                            <td className="p-4 text-[var(--app-muted)] font-medium">{formatCurrency(d.adminFee)}</td>
+                            <td className="p-4 text-[var(--app-muted)] font-medium">{formatCurrency(d.minPayment)}</td>
+                            <td className="p-4">
+                              <button
+                                onClick={(e) => handleToggleStatus(d.id, e)}
+                                title="Klik untuk mengubah status"
+                                className={`px-2 py-0.5 text-[9px] font-bold rounded-full transition hover:opacity-80 ${
+                                  d.status === 'Aktif' 
+                                    ? 'bg-green-500/10 text-green-400 border border-green-500/20' 
+                                    : 'bg-red-500/10 text-red-400 border border-red-500/20'
+                                }`}
+                              >
+                                {d.status}
                               </button>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
+                            </td>
+                            <td className="p-4" onClick={(e) => e.stopPropagation()}>
+                              <div className="flex items-center justify-center gap-1.5">
+                                <button
+                                  onClick={(e) => handleOpenEditModal(d, e)}
+                                  title="Edit Konfigurasi"
+                                  className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors"
+                                >
+                                  <Edit2 size={13} />
+                                </button>
+                                <button
+                                  onClick={() => setDetailModalItem(d)}
+                                  title="Lihat Detail Channel"
+                                  className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors"
+                                >
+                                  <Eye size={13} />
+                                </button>
+                                <button
+                                  onClick={(e) => handleToggleStatus(d.id, e)}
+                                  title={d.status === 'Aktif' ? 'Nonaktifkan Kanal' : 'Aktifkan Kanal'}
+                                  className={`p-1.5 rounded-lg transition-colors ${
+                                    d.status === 'Aktif'
+                                      ? 'hover:bg-red-500/10 text-[var(--app-muted)] hover:text-red-400'
+                                      : 'hover:bg-green-500/10 text-[var(--app-muted)] hover:text-green-400'
+                                  }`}
+                                >
+                                  {d.status === 'Aktif' ? <XCircle size={13} /> : <CheckCircle size={13} />}
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
                   </tbody>
                 </table>
               </div>
 
               {/* Table pagination */}
-              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-t border-[var(--app-border)] bg-white/60">
-                <span className="text-xs text-[var(--app-muted)]">
-                  Menampilkan <span className="font-semibold text-white">1 - 8</span> dari <span className="font-semibold text-white">8</span> data
-                </span>
-                
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <button 
-                      disabled
-                      className="p-2 border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 rounded-xl text-[var(--app-muted)] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                    >
-                      <ChevronLeft size={14} />
-                    </button>
-                    <button onClick={() => alert("Halaman 1 saat ini aktif.")} className="w-8 h-8 rounded-xl text-xs font-semibold border bg-[#0052cc] text-white border-[#0052cc]">1</button>
-                    <button className="p-2 border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 rounded-xl text-[var(--app-muted)] transition-colors" disabled>
-                      <ChevronRight size={14} />
-                    </button>
-                  </div>
-
-                  <select
-                    className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-1.5 px-3 rounded-lg text-[var(--app-text)]/80 focus:outline-none"
-                  >
-                    <option value={10}>10 / halaman</option>
-                  </select>
-                </div>
+              <div className="p-4 border-t border-[var(--app-border)] bg-[var(--app-card-subtle)]">
+                <Pagination
+                  currentPage={safeCurrentPage}
+                  totalPages={totalPages}
+                  totalItems={filteredMethods.length}
+                  pageSize={pageSize}
+                  onPageChange={setCurrentPage}
+                  onPageSizeChange={(newSize) => {
+                    setPageSize(newSize);
+                    setCurrentPage(1);
+                  }}
+                />
               </div>
             </div>
 
@@ -416,19 +589,23 @@ export default function PaymentMethodsPage() {
               
               <div className="flex justify-between items-center">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)] font-sans">Detail Metode Pembayaran</h3>
-                <span className="bg-green-500/10 text-green-400 border border-green-500/20 px-1.5 py-0.5 rounded text-[8px] font-bold">
-                  Aktif
+                <span className={`px-2 py-0.5 rounded text-[9px] font-bold ${
+                  selectedMethod.status === 'Aktif'
+                    ? 'bg-green-500/10 text-green-400 border border-green-500/20'
+                    : 'bg-red-500/10 text-red-400 border border-red-500/20'
+                }`}>
+                  {selectedMethod.status}
                 </span>
               </div>
 
               {/* Logo & Bank */}
               <div className="flex items-center gap-3 bg-[var(--app-bg)] border border-[var(--app-border)] p-3 rounded-xl">
-                <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center text-blue-900 font-black text-xs border border-gray-100 overflow-hidden">
-                  BCA
+                <div className="w-12 h-12 bg-[var(--app-card)] rounded-lg flex items-center justify-center text-blue-500 font-black text-xs border border-[var(--app-border)] overflow-hidden">
+                  {selectedMethod.name.split(' ')[0][0]}{selectedMethod.name.split(' ').pop()?.[0]}
                 </div>
                 <div className="space-y-0.5">
-                  <p className="text-xs font-bold text-[var(--app-text)] leading-tight">Transfer Bank - BCA</p>
-                  <p className="text-[9px] text-[var(--app-muted)] font-semibold">Bank Central Asia</p>
+                  <p className="text-xs font-bold text-[var(--app-text)] leading-tight">{selectedMethod.name}</p>
+                  <p className="text-[9px] text-[var(--app-muted)] font-semibold">{selectedMethod.subName}</p>
                 </div>
               </div>
 
@@ -436,70 +613,42 @@ export default function PaymentMethodsPage() {
               <div className="text-[11px] text-[var(--app-muted)] font-semibold space-y-3 border-b border-[var(--app-border)] pb-4">
                 <div className="flex justify-between">
                   <span>Channel</span>
-                  <span className="text-white">Transfer Bank</span>
+                  <span className="text-[var(--app-text)]">{selectedMethod.channel}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Tipe</span>
-                  <span className="text-white">Otomatis</span>
+                  <span className="text-[var(--app-text)]">{selectedMethod.type}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Biaya Admin</span>
-                  <span className="text-white">Rp 0</span>
+                  <span className="text-[var(--app-text)]">{formatCurrency(selectedMethod.adminFee)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Minimum Pembayaran</span>
-                  <span className="text-white">Rp 10.000</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Maksimum Pembayaran</span>
-                  <span className="text-white">Rp 50.000.000</span>
+                  <span className="text-[var(--app-text)]">{formatCurrency(selectedMethod.minPayment)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Waktu Proses</span>
-                  <span className="text-white">Real-time</span>
+                  <span className="text-green-400">Real-time / Instant</span>
                 </div>
                 <div className="space-y-1">
-                  <span>Deskripsi</span>
-                  <p className="text-white text-[10px] leading-relaxed font-normal">
-                    Pembayaran melalui transfer bank BCA.
+                  <span>Deskripsi Kanal</span>
+                  <p className="text-[var(--app-text)] text-[10px] leading-relaxed font-normal">
+                    Penerimaan otomatis pembayaran tagihan internet pelanggan melalui {selectedMethod.name}.
                   </p>
-                </div>
-              </div>
-
-              {/* Informasi Rekening */}
-              <div className="space-y-3.5 border-b border-[var(--app-border)] pb-4">
-                <h4 className="text-[11px] font-bold text-[var(--app-text)] uppercase tracking-wider">Informasi Rekening</h4>
-                
-                <div className="text-[11px] text-[var(--app-muted)] font-semibold space-y-2.5">
-                  <div className="flex justify-between">
-                    <span>Bank</span>
-                    <span className="text-white">BCA (Bank Central Asia)</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Nama Pemilik</span>
-                    <span className="text-white">PT. Audira NET Indonesia</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>No. Rekening</span>
-                    <span className="text-white font-mono">1234 5678 9012</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Cabang</span>
-                    <span className="text-white">Jakarta Pusat</span>
-                  </div>
                 </div>
               </div>
 
               {/* Pengaturan Channel */}
               <div className="space-y-3.5">
-                <h4 className="text-[11px] font-bold text-[var(--app-text)] uppercase tracking-wider">Pengaturan Channel</h4>
+                <h4 className="text-[11px] font-bold text-[var(--app-text)] uppercase tracking-wider">Pengaturan Integrasi</h4>
                 
                 <div className="space-y-3 text-[11px] font-semibold text-[var(--app-muted)]">
                   <div className="flex items-center justify-between">
-                    <span>Aktifkan metode ini</span>
+                    <span>Aktifkan kanal ini</span>
                     <label className="relative inline-flex items-center cursor-pointer">
-                      <input type="checkbox" checked={channelSwitches.active} onChange={() => setChannelSwitches(p => ({ ...p, active: !p.active }))} className="sr-only peer" />
-                      <div className="w-9 h-5 bg-[var(--app-bg)] rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+                      <input type="checkbox" checked={selectedMethod.status === 'Aktif'} onChange={() => handleToggleStatus(selectedMethod.id)} className="sr-only peer" />
+                      <div className="w-9 h-5 bg-[var(--app-bg)] rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[var(--app-card)] after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
                     </label>
                   </div>
 
@@ -507,23 +656,15 @@ export default function PaymentMethodsPage() {
                     <span>Tampilkan di invoice</span>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input type="checkbox" checked={channelSwitches.showInInvoice} onChange={() => setChannelSwitches(p => ({ ...p, showInInvoice: !p.showInInvoice }))} className="sr-only peer" />
-                      <div className="w-9 h-5 bg-[var(--app-bg)] rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+                      <div className="w-9 h-5 bg-[var(--app-bg)] rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[var(--app-card)] after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
                     </label>
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span>Verifikasi otomatis</span>
+                    <span>Verifikasi callback otomatis</span>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input type="checkbox" checked={channelSwitches.autoVerify} onChange={() => setChannelSwitches(p => ({ ...p, autoVerify: !p.autoVerify }))} className="sr-only peer" />
-                      <div className="w-9 h-5 bg-[var(--app-bg)] rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
-                    </label>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <span>Kirim notifikasi otomatis</span>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input type="checkbox" checked={channelSwitches.autoNotify} onChange={() => setChannelSwitches(p => ({ ...p, autoNotify: !p.autoNotify }))} className="sr-only peer" />
-                      <div className="w-9 h-5 bg-[var(--app-bg)] rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+                      <div className="w-9 h-5 bg-[var(--app-bg)] rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[var(--app-card)] after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
                     </label>
                   </div>
                 </div>
@@ -531,13 +672,32 @@ export default function PaymentMethodsPage() {
 
               {/* Action Buttons */}
               <div className="grid grid-cols-2 gap-3 pt-3">
-                <button onClick={() => alert("Membuka dialog konfigurasi parameter metode...")} className="flex items-center justify-center gap-1.5 bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold py-2.5 rounded-xl transition-all">
+                <button
+                  onClick={() => handleOpenEditModal(selectedMethod)}
+                  className="flex items-center justify-center gap-1.5 bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold py-2.5 rounded-xl transition-all"
+                >
                   <Edit2 size={13} />
                   <span>Edit Metode</span>
                 </button>
-                <button onClick={() => alert("Status metode pembayaran dinonaktifkan.")} className="flex items-center justify-center gap-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-2.5 rounded-xl transition-all">
-                  <XCircle size={13} />
-                  <span>Non Aktifkan</span>
+                <button
+                  onClick={() => handleToggleStatus(selectedMethod.id)}
+                  className={`flex items-center justify-center gap-1.5 text-white text-xs font-bold py-2.5 rounded-xl transition-all ${
+                    selectedMethod.status === 'Aktif'
+                      ? 'bg-red-600 hover:bg-red-700'
+                      : 'bg-green-600 hover:bg-green-700'
+                  }`}
+                >
+                  {selectedMethod.status === 'Aktif' ? (
+                    <>
+                      <XCircle size={13} />
+                      <span>Non Aktifkan</span>
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle size={13} />
+                      <span>Aktifkan</span>
+                    </>
+                  )}
                 </button>
               </div>
 
@@ -546,6 +706,299 @@ export default function PaymentMethodsPage() {
           </div>
 
         </div>
+
+        {/* Modal: Tambah Metode Pembayaran Baru */}
+        {showAddModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
+              <div className="flex items-center justify-between border-b border-[var(--app-border)] pb-3">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 rounded-xl bg-blue-500/10 text-blue-500 border border-blue-500/20">
+                    <Plus size={18} />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-[var(--app-text)]">Tambah Kanal Pembayaran</h3>
+                    <p className="text-[10px] text-[var(--app-muted)]">Integrasi kanal baru untuk kasir & invoice</p>
+                  </div>
+                </div>
+                <button onClick={() => setShowAddModal(false)} className="p-1 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)]">
+                  <X size={16} />
+                </button>
+              </div>
+
+              <form onSubmit={handleSaveAdd} className="space-y-3.5 text-xs">
+                <div>
+                  <label className="block text-[11px] font-semibold text-[var(--app-text)] mb-1">Nama Kanal</label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.name}
+                    onChange={(e) => setFormData(p => ({ ...p, name: e.target.value }))}
+                    placeholder="Contoh: Virtual Account BRI / GoPay"
+                    className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2 text-[var(--app-text)] focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-semibold text-[var(--app-text)] mb-1">Keterangan / Sub Nama</label>
+                  <input
+                    type="text"
+                    value={formData.subName}
+                    onChange={(e) => setFormData(p => ({ ...p, subName: e.target.value }))}
+                    placeholder="Contoh: BRI Virtual Account Online"
+                    className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2 text-[var(--app-text)] focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-semibold text-[var(--app-text)] mb-1">Channel</label>
+                    <select
+                      value={formData.channel}
+                      onChange={(e) => setFormData(p => ({ ...p, channel: e.target.value }))}
+                      className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2 text-[var(--app-text)] focus:outline-none"
+                    >
+                      <option value="Transfer Bank">Transfer Bank</option>
+                      <option value="QRIS">QRIS</option>
+                      <option value="Virtual Account">Virtual Account</option>
+                      <option value="E-Wallet">E-Wallet</option>
+                      <option value="Retail">Retail</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-semibold text-[var(--app-text)] mb-1">Tipe Verifikasi</label>
+                    <select
+                      value={formData.type}
+                      onChange={(e) => setFormData(p => ({ ...p, type: e.target.value }))}
+                      className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2 text-[var(--app-text)] focus:outline-none"
+                    >
+                      <option value="Otomatis">Otomatis</option>
+                      <option value="Manual">Manual</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-semibold text-[var(--app-text)] mb-1">Biaya Admin (Rp)</label>
+                    <input
+                      type="number"
+                      value={formData.adminFee}
+                      onChange={(e) => setFormData(p => ({ ...p, adminFee: Number(e.target.value) }))}
+                      className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2 text-[var(--app-text)] font-mono focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-semibold text-[var(--app-text)] mb-1">Min. Bayar (Rp)</label>
+                    <input
+                      type="number"
+                      value={formData.minPayment}
+                      onChange={(e) => setFormData(p => ({ ...p, minPayment: Number(e.target.value) }))}
+                      className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2 text-[var(--app-text)] font-mono focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-semibold text-[var(--app-text)] mb-1">Status Awal</label>
+                  <select
+                    value={formData.status}
+                    onChange={(e) => setFormData(p => ({ ...p, status: e.target.value as any }))}
+                    className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2 text-[var(--app-text)] focus:outline-none"
+                  >
+                    <option value="Aktif">Aktif</option>
+                    <option value="Non Aktif">Non Aktif</option>
+                  </select>
+                </div>
+
+                <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[var(--app-border)]">
+                  <button
+                    type="button"
+                    onClick={() => setShowAddModal(false)}
+                    className="px-4 py-2 rounded-xl border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] text-xs font-semibold"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md"
+                  >
+                    Simpan Kanal
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Modal: Edit Metode Pembayaran */}
+        {editingMethod && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
+              <div className="flex items-center justify-between border-b border-[var(--app-border)] pb-3">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 rounded-xl bg-blue-500/10 text-blue-500 border border-blue-500/20">
+                    <Edit2 size={18} />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-[var(--app-text)]">Edit Konfigurasi Kanal</h3>
+                    <p className="text-[10px] text-[var(--app-muted)]">{editingMethod.name}</p>
+                  </div>
+                </div>
+                <button onClick={() => setEditingMethod(null)} className="p-1 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)]">
+                  <X size={16} />
+                </button>
+              </div>
+
+              <form onSubmit={handleSaveEdit} className="space-y-3.5 text-xs">
+                <div>
+                  <label className="block text-[11px] font-semibold text-[var(--app-text)] mb-1">Nama Kanal</label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.name}
+                    onChange={(e) => setFormData(p => ({ ...p, name: e.target.value }))}
+                    className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2 text-[var(--app-text)] focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-semibold text-[var(--app-text)] mb-1">Keterangan / Sub Nama</label>
+                  <input
+                    type="text"
+                    value={formData.subName}
+                    onChange={(e) => setFormData(p => ({ ...p, subName: e.target.value }))}
+                    className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2 text-[var(--app-text)] focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-semibold text-[var(--app-text)] mb-1">Channel</label>
+                    <select
+                      value={formData.channel}
+                      onChange={(e) => setFormData(p => ({ ...p, channel: e.target.value }))}
+                      className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2 text-[var(--app-text)] focus:outline-none"
+                    >
+                      <option value="Transfer Bank">Transfer Bank</option>
+                      <option value="QRIS">QRIS</option>
+                      <option value="Virtual Account">Virtual Account</option>
+                      <option value="E-Wallet">E-Wallet</option>
+                      <option value="Retail">Retail</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-semibold text-[var(--app-text)] mb-1">Tipe Verifikasi</label>
+                    <select
+                      value={formData.type}
+                      onChange={(e) => setFormData(p => ({ ...p, type: e.target.value }))}
+                      className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2 text-[var(--app-text)] focus:outline-none"
+                    >
+                      <option value="Otomatis">Otomatis</option>
+                      <option value="Manual">Manual</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-semibold text-[var(--app-text)] mb-1">Biaya Admin (Rp)</label>
+                    <input
+                      type="number"
+                      value={formData.adminFee}
+                      onChange={(e) => setFormData(p => ({ ...p, adminFee: Number(e.target.value) }))}
+                      className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2 text-[var(--app-text)] font-mono focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-semibold text-[var(--app-text)] mb-1">Min. Bayar (Rp)</label>
+                    <input
+                      type="number"
+                      value={formData.minPayment}
+                      onChange={(e) => setFormData(p => ({ ...p, minPayment: Number(e.target.value) }))}
+                      className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2 text-[var(--app-text)] font-mono focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[var(--app-border)]">
+                  <button
+                    type="button"
+                    onClick={() => setEditingMethod(null)}
+                    className="px-4 py-2 rounded-xl border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] text-xs font-semibold"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md"
+                  >
+                    Simpan Perubahan
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Modal: Detail Channel */}
+        {detailModalItem && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4">
+              <div className="flex items-center justify-between border-b border-[var(--app-border)] pb-3">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 rounded-xl bg-blue-500/10 text-blue-500 border border-blue-500/20">
+                    <Eye size={18} />
+                  </div>
+                  <h3 className="text-sm font-bold text-[var(--app-text)]">Rincian Kanal</h3>
+                </div>
+                <button onClick={() => setDetailModalItem(null)} className="p-1 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)]">
+                  <X size={16} />
+                </button>
+              </div>
+
+              <div className="bg-[var(--app-bg)] border border-[var(--app-border)] rounded-2xl p-4 space-y-2.5 text-xs">
+                <div className="flex justify-between items-center pb-2 border-b border-[var(--app-border)]">
+                  <span className="text-[var(--app-muted)] font-medium">Metode</span>
+                  <span className="font-bold text-[var(--app-text)]">{detailModalItem.name}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-[var(--app-muted)] font-medium">Channel</span>
+                  <span className="text-blue-400 font-semibold">{detailModalItem.channel}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-[var(--app-muted)] font-medium">Tipe</span>
+                  <span className="text-[var(--app-text)]">{detailModalItem.type}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-[var(--app-muted)] font-medium">Biaya Admin</span>
+                  <span className="text-[var(--app-text)] font-mono">{formatCurrency(detailModalItem.adminFee)}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-[var(--app-muted)] font-medium">Min. Pembayaran</span>
+                  <span className="text-[var(--app-text)] font-mono">{formatCurrency(detailModalItem.minPayment)}</span>
+                </div>
+                <div className="flex justify-between items-center pt-2 border-t border-[var(--app-border)]">
+                  <span className="text-[var(--app-muted)] font-medium">Status Operasional</span>
+                  <span className={`px-2 py-0.5 text-[9px] font-bold rounded-full ${
+                    detailModalItem.status === 'Aktif'
+                      ? 'bg-green-500/10 text-green-400 border border-green-500/20'
+                      : 'bg-red-500/10 text-red-400 border border-red-500/20'
+                  }`}>
+                    {detailModalItem.status}
+                  </span>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setDetailModalItem(null)}
+                className="w-full py-2.5 bg-[var(--app-bg)] hover:bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-xs font-semibold rounded-xl text-[var(--app-text)] transition"
+              >
+                Tutup
+              </button>
+            </div>
+          </div>
+        )}
 
       </div>
     </Layout>

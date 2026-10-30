@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import Layout from '@/components/Layout'
+import { useToast } from '@/contexts/ToastContext'
 import { 
   Server, Plus, Search, Edit, Trash2, Power, RefreshCw, Wifi, AlertCircle,
   Cpu, HardDrive, Network, ArrowLeft, X, Loader2, CheckCircle, AlertTriangle,
@@ -153,6 +154,7 @@ const mikrotikModels: MikrotikModel[] = [
 ]
 
 export default function Mikrotik() {
+  const { toast } = useToast()
   const [devices, setDevices] = useState<MikrotikDevice[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedDevice, setSelectedDevice] = useState<MikrotikDevice | null>(null)
@@ -173,7 +175,6 @@ export default function Mikrotik() {
   const [loading, setLoading] = useState(true)
   const [loadingInterfaces, setLoadingInterfaces] = useState(false)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
-  const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
   
   const [formData, setFormData] = useState({
     name: '',
@@ -188,8 +189,11 @@ export default function Mikrotik() {
   })
 
   const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
-    setNotification({ message, type })
-    setTimeout(() => setNotification(null), 4000)
+    if (type === 'error') {
+      toast.error(message)
+    } else {
+      toast.success(message)
+    }
   }
 
   const fetchDevices = useCallback(async () => {
@@ -388,19 +392,6 @@ export default function Mikrotik() {
     return (
       <Layout>
         <div className="min-h-screen bg-theme-bg text-theme-text p-4 md:p-6 space-y-6">
-          
-          {/* Toast */}
-          {notification && (
-            <div className={`fixed top-5 right-5 z-50 px-4 py-3 rounded-xl shadow-lg border flex items-center gap-3 text-sm font-medium ${
-              notification.type === 'success' 
-                ? 'bg-emerald-50 dark:bg-emerald-950/80 border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200' 
-                : 'bg-rose-50 dark:bg-rose-950/80 border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-200'
-            }`}>
-              {notification.type === 'success' ? <CheckCircle size={18} className="text-emerald-600 dark:text-emerald-400" /> : <AlertTriangle size={18} className="text-rose-600 dark:text-rose-400" />}
-              <span>{notification.message}</span>
-            </div>
-          )}
-
           {/* Top Bar Header */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-theme-border pb-5">
             <div className="flex items-center gap-3">
@@ -651,18 +642,6 @@ export default function Mikrotik() {
     <Layout>
       <div className="min-h-screen bg-theme-bg text-theme-text p-4 md:p-6 space-y-6">
 
-        {/* Toast */}
-        {notification && (
-          <div className={`fixed top-5 right-5 z-50 px-4 py-3 rounded-xl shadow-lg border flex items-center gap-3 text-sm font-medium ${
-            notification.type === 'success' 
-              ? 'bg-emerald-50 dark:bg-emerald-950/80 border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200' 
-              : 'bg-rose-50 dark:bg-rose-950/80 border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-200'
-          }`}>
-            {notification.type === 'success' ? <CheckCircle size={18} className="text-emerald-600 dark:text-emerald-400" /> : <AlertTriangle size={18} className="text-rose-600 dark:text-rose-400" />}
-            <span>{notification.message}</span>
-          </div>
-        )}
-
         {/* Top Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-theme-border pb-5">
           <div className="space-y-1">
@@ -855,7 +834,13 @@ export default function Mikrotik() {
                 <h3 className="font-bold text-base text-theme-text flex items-center gap-2">
                   <Plus size={18} className="text-theme-primary" /> Tambah Router MikroTik Baru
                 </h3>
-                <button onClick={() => setShowAddModal(false)} className="text-theme-muted hover:text-theme-text">✕</button>
+                <button 
+                  onClick={() => setShowAddModal(false)} 
+                  className="p-1 rounded-lg text-theme-muted hover:text-theme-text hover:bg-slate-100 dark:hover:bg-slate-800 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                  aria-label="Tutup modal"
+                >
+                  <X size={18} />
+                </button>
               </div>
 
               <form onSubmit={handleAddRouter} className="p-5 space-y-4">
@@ -979,7 +964,13 @@ export default function Mikrotik() {
                     <p className="text-[10px] text-theme-muted font-mono">{routerToEdit.name}</p>
                   </div>
                 </div>
-                <button onClick={() => setShowEditModal(false)} className="text-theme-muted hover:text-theme-text">✕</button>
+                <button 
+                  onClick={() => setShowEditModal(false)} 
+                  className="p-1 rounded-lg text-theme-muted hover:text-theme-text hover:bg-slate-100 dark:hover:bg-slate-800 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                  aria-label="Tutup modal"
+                >
+                  <X size={18} />
+                </button>
               </div>
 
               <form onSubmit={handleSaveEditRouter} className="p-5 space-y-4 text-xs">

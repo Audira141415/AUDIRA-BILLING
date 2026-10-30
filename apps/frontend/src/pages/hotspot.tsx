@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Layout from '@/components/Layout'
+import { useToast } from '@/contexts/ToastContext'
 import { 
   Wifi, 
   Printer, 
@@ -18,7 +19,8 @@ import {
   Receipt,
   Check,
   Zap,
-  Tag
+  Tag,
+  X
 } from 'lucide-react'
 import { QRCodeSVG } from 'qrcode.react'
 
@@ -63,6 +65,7 @@ interface Stats {
 
 export default function HotspotStudioPage() {
   const router = useRouter()
+  const { addToast } = useToast()
   const [stats, setStats] = useState<Stats>({
     total: 0,
     active: 0,
@@ -164,12 +167,13 @@ export default function HotspotStudioPage() {
           await loadBatch(result.batchCode)
           setActiveTab('studio')
         }
+        addToast('success', 'Batch voucher hotspot berhasil dibuat.')
       } else {
-        alert('Gagal membuat batch voucher hotspot')
+        addToast('error', 'Gagal membuat batch voucher hotspot')
       }
     } catch (err) {
       console.error('Error generating vouchers:', err)
-      alert('Terjadi kesalahan jaringan')
+      addToast('error', 'Terjadi kesalahan jaringan saat membuat voucher')
     } finally {
       setIsGenerating(false)
     }
@@ -486,7 +490,7 @@ export default function HotspotStudioPage() {
                   {filteredVouchers.map(v => (
                     <div
                       key={v.id}
-                      className="voucher-a4-card bg-white border border-slate-300 rounded-xl p-3.5 text-slate-800 space-y-2 flex flex-col justify-between"
+                      className="voucher-a4-card bg-white dark:bg-white border border-slate-300 rounded-xl p-3.5 text-slate-800 space-y-2 flex flex-col justify-between print:bg-white print:text-slate-800"
                     >
                       <div className="flex justify-between items-start border-b border-slate-200 pb-2">
                         <div>
@@ -518,7 +522,7 @@ export default function HotspotStudioPage() {
                   {filteredVouchers.map(v => (
                     <div
                       key={v.id}
-                      className="voucher-thermal-receipt bg-white border border-slate-300 rounded-lg p-4 text-slate-900 font-mono text-center space-y-2"
+                      className="voucher-thermal-receipt bg-white dark:bg-white border border-slate-300 rounded-lg p-4 text-slate-900 font-mono text-center space-y-2 print:bg-white print:text-slate-900"
                     >
                       <div className="font-black text-sm">AUDIRA NET HOTSPOT</div>
                       <div className="text-[10px] text-slate-500">Jl. Telekomunikasi No. 1 • 0821-1200-1600</div>
@@ -548,7 +552,13 @@ export default function HotspotStudioPage() {
                 <h3 className="font-bold text-sm text-theme-text flex items-center gap-2">
                   <Plus size={16} className="text-theme-primary" /> Generate Batch Voucher Hotspot
                 </h3>
-                <button onClick={() => setShowGenerateModal(false)} className="text-theme-muted hover:text-theme-text">✕</button>
+                <button 
+                  onClick={() => setShowGenerateModal(false)} 
+                  className="p-1 rounded-lg text-theme-muted hover:text-theme-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-primary)]"
+                  aria-label="Tutup modal"
+                >
+                  <X className="w-4 h-4" />
+                </button>
               </div>
 
               <form onSubmit={handleGenerate} className="p-5 space-y-3.5 text-xs">

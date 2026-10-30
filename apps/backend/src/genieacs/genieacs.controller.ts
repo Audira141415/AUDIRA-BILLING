@@ -42,6 +42,16 @@ export class GenieacsController {
     return this.genieacsService.updateWifi(id, data);
   }
 
+  @Get('devices/:id/clients')
+  async getClients(@Param('id') id: string) {
+    return this.genieacsService.getConnectedClients(id);
+  }
+
+  @Post('devices/:id/self-heal')
+  async selfHeal(@Param('id') id: string) {
+    return this.genieacsService.selfHeal(id);
+  }
+
   @Post('devices/:id/factory-reset')
   async factoryReset(@Param('id') id: string) {
     return this.genieacsService.factoryReset(id);
@@ -79,4 +89,36 @@ export class GenieacsController {
   async deletePreset(@Param('name') name: string) {
     return this.genieacsService.deletePreset(name);
   }
+
+  // --- FIRMWARE & BATCH CAMPAIGNS ---
+  @Get('firmware/list')
+  async getFirmwares() {
+    return this.genieacsService.getFirmwares();
+  }
+
+  @Get('campaigns')
+  async getCampaigns() {
+    return this.genieacsService.getCampaigns();
+  }
+
+  @Post('campaigns/create')
+  async createCampaign(@Body() data: any) {
+    return this.genieacsService.createCampaign(data);
+  }
+
+  @Post('campaigns/:id/start')
+  async startCampaign(@Param('id') id: string) {
+    return this.genieacsService.startCampaign(id);
+  }
+
+  @Post('campaigns/:id/pause')
+  async pauseCampaign(@Param('id') id: string) {
+    return this.genieacsService.pauseCampaign(id);
+  }
+
+  @Post('campaigns/:id/rollback')
+  async rollbackCampaign(@Param('id') id: string) {
+    return this.genieacsService.rollbackCampaign(id);
+  }
 }
+

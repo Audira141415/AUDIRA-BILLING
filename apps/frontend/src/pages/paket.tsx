@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Layout from '@/components/Layout'
+import { useToast } from '@/contexts/ToastContext'
 import { Zap, Star, Check, Crown, MessageCircle, Mail, Play, User, X, Info } from 'lucide-react'
 
 interface PackageItem {
@@ -18,6 +19,7 @@ interface PackageItem {
 }
 
 export default function Paket() {
+  const { toast } = useToast();
   const [showPackageModal, setShowPackageModal] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState<PackageItem | null>(null);
 
@@ -36,7 +38,7 @@ export default function Paket() {
       color: 'purple',
       bgGradient: 'from-purple-600 to-purple-800',
       ctaText: 'Coba Gratis',
-      ctaColor: 'bg-white text-purple-600 hover:bg-gray-100',
+      ctaColor: 'bg-[var(--app-card)] text-purple-600 hover:bg-[var(--app-card-subtle)] border border-[var(--app-border)]',
       features: [
         'Hingga 50 pelanggan aktif',
         'Aktif selama 14 hari',
@@ -60,7 +62,7 @@ export default function Paket() {
       color: 'pink',
       bgGradient: 'from-pink-500 to-pink-700',
       ctaText: 'Berlangganan',
-      ctaColor: 'bg-white text-pink-600 hover:bg-gray-100',
+      ctaColor: 'bg-[var(--app-card)] text-pink-600 hover:bg-[var(--app-card-subtle)] border border-[var(--app-border)]',
       features: [
         'Hingga 500 pelanggan aktif',
         'Integrasi Mikrotik via API',
@@ -83,7 +85,7 @@ export default function Paket() {
       color: 'teal',
       bgGradient: 'from-teal-500 to-teal-700',
       ctaText: 'Berlangganan',
-      ctaColor: 'bg-white text-teal-600 hover:bg-gray-100',
+      ctaColor: 'bg-[var(--app-card)] text-teal-600 hover:bg-[var(--app-card-subtle)] border border-[var(--app-border)]',
       features: [
         'Hingga 200 pelanggan aktif',
         'Integrasi Mikrotik via API',
@@ -107,7 +109,7 @@ export default function Paket() {
       color: 'blue',
       bgGradient: 'from-blue-600 to-blue-800',
       ctaText: 'Berlangganan',
-      ctaColor: 'bg-white text-blue-600 hover:bg-gray-100',
+      ctaColor: 'bg-[var(--app-card)] text-blue-600 hover:bg-[var(--app-card-subtle)] border border-[var(--app-border)]',
       isBadge: true,
       badgeText: 'TERLARIS',
       features: [
@@ -133,7 +135,7 @@ export default function Paket() {
       color: 'purple',
       bgGradient: 'from-purple-600 to-purple-800',
       ctaText: 'Berlangganan',
-      ctaColor: 'bg-white text-purple-600 hover:bg-gray-100',
+      ctaColor: 'bg-[var(--app-card)] text-purple-600 hover:bg-[var(--app-card-subtle)] border border-[var(--app-border)]',
       features: [
         'Hingga 2.500 pelanggan aktif',
         'Integrasi Mikrotik via API',
@@ -171,7 +173,7 @@ export default function Paket() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 p-4 md:p-8">
+      <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] p-4 md:p-8">
         {/* Header */}
         <div className="max-w-7xl mx-auto mb-12">
           <div className="text-white mb-6">
@@ -286,7 +288,7 @@ export default function Paket() {
       {/* Package Detail Modal */}
       {showPackageModal && selectedPackage && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             {/* Header */}
             <div className={`bg-gradient-to-r ${selectedPackage.bgGradient} text-white p-6 rounded-t-2xl relative`}>
               <button
@@ -312,49 +314,49 @@ export default function Paket() {
             {/* Content */}
             <div className="p-6 space-y-6">
               {/* Price */}
-              <div className="text-center pb-4 border-b">
-                <p className="text-5xl font-bold text-gray-900">{selectedPackage.priceText}</p>
-                {selectedPackage.price > 0 && <p className="text-gray-600 mt-1">per Bulan</p>}
-                {selectedPackage.price === 0 && <p className="text-green-600 font-semibold mt-1">Gratis selama 14 hari</p>}
+              <div className="text-center pb-4 border-b border-[var(--app-border)]">
+                <p className="text-5xl font-bold text-[var(--app-text)]">{selectedPackage.priceText}</p>
+                {selectedPackage.price > 0 && <p className="text-[var(--app-text-muted)] mt-1">per Bulan</p>}
+                {selectedPackage.price === 0 && <p className="text-emerald-500 font-semibold mt-1">Gratis selama 14 hari</p>}
               </div>
 
               {/* Features List */}
               <div className="space-y-3">
-                <h3 className="font-bold text-gray-900 flex items-center space-x-2">
-                  <Info className="text-blue-600" size={20} />
+                <h3 className="font-bold text-[var(--app-text)] flex items-center space-x-2">
+                  <Info className="text-blue-500" size={20} />
                   <span>Fitur yang Termasuk</span>
                 </h3>
                 <ul className="space-y-2">
                   {selectedPackage.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
-                      <Check size={20} className="text-green-600 mt-0.5 flex-shrink-0" />
-                      <span className="text-gray-700">{feature}</span>
+                    <li key={idx} className="flex items-start space-x-3 p-3 bg-[var(--app-card-subtle)] border border-[var(--app-border)] rounded-lg">
+                      <Check size={20} className="text-emerald-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-[var(--app-text)]">{feature}</span>
                     </li>
                   ))}
                 </ul>
               </div>
 
               {/* Benefits */}
-              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5">
-                <h3 className="font-bold text-gray-900 mb-3">Keuntungan Berlangganan</h3>
-                <div className="space-y-2 text-sm text-gray-700">
-                  <p>✓ Setup dan implementasi gratis</p>
-                  <p>✓ Training penggunaan sistem</p>
-                  <p>✓ Support teknis 24/7</p>
-                  <p>✓ Update fitur secara berkala</p>
-                  <p>✓ Data aman dan backup otomatis</p>
+              <div className="bg-[var(--app-card-subtle)] border border-[var(--app-border)] rounded-xl p-5">
+                <h3 className="font-bold text-[var(--app-text)] mb-3">Keuntungan Berlangganan</h3>
+                <div className="space-y-2 text-sm text-[var(--app-text-muted)]">
+                  <p className="flex items-center gap-2"><Check size={16} className="text-emerald-500 shrink-0" /> Setup dan implementasi gratis</p>
+                  <p className="flex items-center gap-2"><Check size={16} className="text-emerald-500 shrink-0" /> Training penggunaan sistem</p>
+                  <p className="flex items-center gap-2"><Check size={16} className="text-emerald-500 shrink-0" /> Support teknis 24/7</p>
+                  <p className="flex items-center gap-2"><Check size={16} className="text-emerald-500 shrink-0" /> Update fitur secara berkala</p>
+                  <p className="flex items-center gap-2"><Check size={16} className="text-emerald-500 shrink-0" /> Data aman dan backup otomatis</p>
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center justify-end space-x-3 pt-4 border-t">
+              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-[var(--app-border)]">
                 <button
                   onClick={() => setShowPackageModal(false)}
-                  className="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-lg transition-colors"
+                  className="px-6 py-2.5 bg-[var(--app-card-subtle)] hover:bg-[var(--app-border)] text-[var(--app-text)] font-semibold rounded-lg transition-colors"
                 >
                   Tutup
                 </button>
-                <button onClick={() => { alert(`Pesanan untuk paket ${selectedPackage.name} berhasil diajukan! Tim kami akan segera menghubungi Anda.`); setShowPackageModal(false); }} className={`px-6 py-2.5 ${selectedPackage.ctaColor} font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl`}>
+                <button onClick={() => { toast.success(`Pesanan untuk paket ${selectedPackage.name} berhasil diajukan! Tim kami akan segera menghubungi Anda.`); setShowPackageModal(false); }} className={`px-6 py-2.5 ${selectedPackage.ctaColor} font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl`}>
                   {selectedPackage.ctaText}
                 </button>
               </div>

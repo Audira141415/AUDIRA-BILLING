@@ -195,6 +195,14 @@ export default function PaymentDashboardPage() {
               <RefreshCw size={14} className={loading ? 'animate-spin text-blue-600' : ''} />
             </button>
 
+            {/* Quick Action: Kalender Jatuh Tempo */}
+            <button
+              onClick={() => router.push('/payment/calendar')}
+              className="px-3.5 py-1.5 bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-400 hover:to-teal-400 text-slate-950 font-bold rounded-lg text-xs transition-colors flex items-center gap-1.5 shadow-sm cursor-pointer"
+            >
+              <Calendar size={14} /> Kalender Jatuh Tempo
+            </button>
+
             {/* Quick Action: Transaksi Masuk */}
             <button
               onClick={() => router.push('/transaksi')}

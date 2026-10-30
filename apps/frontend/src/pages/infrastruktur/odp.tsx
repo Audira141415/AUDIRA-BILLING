@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Layout from '@/components/Layout'
+import { useToast } from '@/contexts/ToastContext'
 import { 
   HardDrive, 
   Plus, 
@@ -49,10 +50,10 @@ interface ODP {
 const DEFAULT_ODPS: ODP[] = []
 
 export default function ODPManagement() {
+  const { toast } = useToast()
   const [odps, setOdps] = useState<ODP[]>(DEFAULT_ODPS)
   const [searchTerm, setSearchTerm] = useState('')
   const [loading, setLoading] = useState(false)
-  const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
 
   // Selected ODP for Port Matrix Modal
   const [selectedOdp, setSelectedOdp] = useState<ODP | null>(null)
@@ -77,8 +78,11 @@ export default function ODPManagement() {
   const [isSearchingNearest, setIsSearchingNearest] = useState(false)
 
   const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
-    setNotification({ message, type })
-    setTimeout(() => setNotification(null), 4000)
+    if (type === 'error') {
+      toast.error(message)
+    } else {
+      toast.success(message)
+    }
   }
 
   const loadOdps = async () => {
@@ -237,18 +241,6 @@ export default function ODPManagement() {
   return (
     <Layout>
       <div className="min-h-screen bg-theme-bg text-theme-text p-4 md:p-6 space-y-6">
-
-        {/* Toast */}
-        {notification && (
-          <div className={`fixed top-5 right-5 z-50 px-4 py-3 rounded-xl shadow-lg border flex items-center gap-3 text-sm font-medium ${
-            notification.type === 'success' 
-              ? 'bg-emerald-50 dark:bg-emerald-950/80 border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200' 
-              : 'bg-rose-50 dark:bg-rose-950/80 border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-200'
-          }`}>
-            {notification.type === 'success' ? <CheckCircle2 size={18} className="text-emerald-600 dark:text-emerald-400" /> : <AlertTriangle size={18} className="text-rose-600 dark:text-rose-400" />}
-            <span>{notification.message}</span>
-          </div>
-        )}
 
         {/* Top Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-theme-border pb-5">
@@ -609,7 +601,13 @@ export default function ODPManagement() {
                   <Compass size={16} className="text-blue-500" />
                   Cari ODP Terdekat Berdasarkan Titik Rumah
                 </h3>
-                <button onClick={() => setShowNearestModal(false)} className="text-theme-muted hover:text-theme-text">✕</button>
+                <button 
+                  onClick={() => setShowNearestModal(false)} 
+                  className="p-1 rounded-lg text-theme-muted hover:text-theme-text hover:bg-theme-bg transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                  aria-label="Tutup modal"
+                >
+                  <X className="w-4 h-4" />
+                </button>
               </div>
 
               <div className="space-y-3 pt-3 text-xs">

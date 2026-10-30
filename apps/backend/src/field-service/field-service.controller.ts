@@ -15,6 +15,24 @@ export class FieldServiceController {
     return await this.fieldServiceService.createWorkOrder(data);
   }
 
+  // Create emergency splicing work order (OTDR Dispatch)
+  @Post('emergency-splicing-spk')
+  async createEmergencySplicingSpk(@Body() data: any) {
+    return await this.fieldServiceService.createEmergencySplicingSpk(data);
+  }
+
+  // Get Splicing Matrix
+  @Get('splicing-matrix')
+  async getSplicingMatrix(@Query('tubeId') tubeId?: number) {
+    return this.fieldServiceService.getSplicingMatrix(Number(tubeId) || 1);
+  }
+
+  // Update Splicing Matrix
+  @Post('splicing-matrix')
+  async updateSplicingMatrix(@Body('cores') cores: any[]) {
+    return this.fieldServiceService.updateSplicingMatrix(cores);
+  }
+
   // Get all work orders with filters
   @Get('jobs')
   async getAllWorkOrders(
@@ -111,6 +129,14 @@ export class FieldServiceController {
     @Body('feedback') feedback: string,
   ) {
     return await this.fieldServiceService.addFeedback(id, rating, feedback);
+  }
+
+  // Update live GPS location of technician
+  @Post('technician/location')
+  async updateTechnicianLocation(
+    @Body() body: { technicianId: string; technicianName?: string; latitude: number; longitude: number; status?: string },
+  ) {
+    return this.fieldServiceService.broadcastTechnicianLocation(body);
   }
 
   // Get technician's work orders

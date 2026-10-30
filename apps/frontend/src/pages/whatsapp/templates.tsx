@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import Layout from '@/components/Layout';
+import { useToast } from '@/contexts/ToastContext';
 import {
   Search,
   Filter,
@@ -164,11 +165,16 @@ export default function WhatsappTemplatesPage() {
   const [showImportModal, setShowImportModal] = useState(false);
   const [importText, setImportText] = useState('');
 
-  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
+  const { toast } = useToast();
 
   const showToast = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
-    setToast({ message, type });
-    setTimeout(() => setToast(null), 4000);
+    if (type === 'success') {
+      toast.success(message);
+    } else if (type === 'error') {
+      toast.error(message);
+    } else {
+      toast.info(message);
+    }
   };
 
   // Selected template object
@@ -354,20 +360,6 @@ export default function WhatsappTemplatesPage() {
   return (
     <Layout>
       <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] p-4 md:p-6 space-y-6">
-
-        {/* ─── Toast ─────────────────────────────────────────────────────── */}
-        {toast && (
-          <div className={`fixed bottom-5 right-5 z-50 px-4 py-3 rounded-xl shadow-xl flex items-center gap-3 border text-xs font-semibold animate-in fade-in slide-in-from-bottom-2 ${
-            toast.type === 'success'
-              ? 'bg-emerald-950/90 text-emerald-200 border-emerald-800'
-              : toast.type === 'error'
-              ? 'bg-red-950/90 text-red-200 border-red-800'
-              : 'bg-blue-950/90 text-blue-200 border-blue-800'
-          }`}>
-            {toast.type === 'success' ? <CheckCircle size={16} /> : <AlertCircle size={16} />}
-            <span>{toast.message}</span>
-          </div>
-        )}
         
         {/* ─── Top Header bar ────────────────────────────────────────────── */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-[var(--app-border)] pb-5">

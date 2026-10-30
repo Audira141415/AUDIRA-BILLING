@@ -1,6 +1,8 @@
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Layout from '@/components/Layout';
+import { useToast } from '@/contexts/ToastContext';
+import { Pagination } from '@/components/Pagination';
 import {
   Search,
   Filter,
@@ -21,7 +23,11 @@ import {
   Clock,
   CheckCircle,
   XCircle,
-  HelpCircle
+  HelpCircle,
+  X,
+  Check,
+  Zap,
+  Trash2
 } from 'lucide-react';
 
 interface RecurringRow {
@@ -183,8 +189,32 @@ const mockRecurring: RecurringRow[] = [
 ];
 
 export default function RecurringInvoicePage() {
+  const { toast } = useToast();
+  const [recurringList, setRecurringList] = useState<RecurringRow[]>(mockRecurring);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('Semua Status');
+  const [cycleFilter, setCycleFilter] = useState('Semua Periode');
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  // Modals state
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [editingItem, setEditingItem] = useState<RecurringRow | null>(null);
+  const [actionModalItem, setActionModalItem] = useState<RecurringRow | null>(null);
+
+  // Form state
+  const [formData, setFormData] = useState({
+    customerName: '',
+    customerNo: '',
+    packageName: 'Home 50 Mbps',
+    cycle: 'Bulanan',
+    total: 375000,
+    nextGenerate: '01/11/2026',
+    status: 'Aktif' as 'Aktif' | 'Dijeda' | 'Gagal'
+  });
 
   const handleSelectRow = (id: string) => {
     setSelectedIds(prev =>
@@ -193,10 +223,10 @@ export default function RecurringInvoicePage() {
   };
 
   const handleSelectAll = () => {
-    if (selectedIds.length === mockRecurring.length) {
+    if (selectedIds.length === filteredList.length) {
       setSelectedIds([]);
     } else {
-      setSelectedIds(mockRecurring.map(r => r.id));
+      setSelectedIds(filteredList.map(r => r.id));
     }
   };
 
@@ -207,6 +237,164 @@ export default function RecurringInvoicePage() {
       minimumFractionDigits: 0,
     }).format(amount);
   };
+
+  // Toggle pause/play
+  const handleTogglePause = (id: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setRecurringList(prev => prev.map(item => {
+      if (item.id === id) {
+        const nextStatus = item.status === 'Aktif' ? 'Dijeda' : 'Aktif';
+        toast.success(`Jadwal recurring "${item.name}" kini ${nextStatus}.`);
+        return { ...item, status: nextStatus };
+      }
+      return item;
+    }));
+  };
+
+  // Generate now
+  const handleGenerateNow = (item: RecurringRow) => {
+    toast.success(`Invoice untuk ${item.customerName} (${formatCurrency(item.total)}) berhasil digenerate seketika! Tagihan dikirim ke WhatsApp.`);
+    setActionModalItem(null);
+  };
+
+  // Delete recurring
+  const handleDeleteRecurring = (id: string) => {
+    if (!confirm('Hapus jadwal tagihan berulang ini? Pelanggan tidak akan menerima tagihan otomatis lagi.')) return;
+    setRecurringList(prev => prev.filter(item => item.id !== id));
+    setSelectedIds(prev => prev.filter(x => x !== id));
+    toast.success('Jadwal tagihan berulang berhasil dihapus.');
+    setActionModalItem(null);
+  };
+
+  // Export CSV
+  const handleExportCSV = () => {
+    if (filteredList.length === 0) {
+      toast.warning('Tidak ada data tagihan berulang untuk diekspor.');
+      return;
+    }
+    const headers = ['No', 'Kode Recurring', 'Nama Profil', 'Nama Pelanggan', 'No Pelanggan', 'Paket', 'Periode', 'Siklus', 'Next Generate', 'Total', 'Status'];
+    const rows = filteredList.map((r, idx) => [
+      idx + 1,
+      `"${r.code}"`,
+      `"${r.name.replace(/"/g, '""')}"`,
+      `"${r.customerName.replace(/"/g, '""')}"`,
+      `"${r.customerNo}"`,
+      `"${r.packageName}"`,
+      `"${r.period}"`,
+      `"${r.cycle}"`,
+      `"${r.nextGenerate}"`,
+      r.total,
+      `"${r.status}"`
+    ]);
+    const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `recurring_billing_audira_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success(`Berhasil mengunduh jadwal recurring (${filteredList.length} baris).`);
+  };
+
+  // Add Recurring Handler
+  const handleOpenAddModal = () => {
+    setFormData({
+      customerName: '',
+      customerNo: `CUST-${String(recurringList.length + 1).padStart(4, '0')}`,
+      packageName: 'Home 50 Mbps',
+      cycle: 'Bulanan',
+      total: 375000,
+      nextGenerate: '01/11/2026',
+      status: 'Aktif'
+    });
+    setShowAddModal(true);
+  };
+
+  const handleSaveAdd = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.customerName.trim()) {
+      toast.warning('Nama pelanggan wajib diisi.');
+      return;
+    }
+    const newItem: RecurringRow = {
+      id: `rec-${Date.now()}`,
+      code: `INV-REC-2026-${String(recurringList.length + 1).padStart(4, '0')}`,
+      name: `${formData.customerName} - ${formData.packageName}`,
+      customerName: formData.customerName,
+      customerNo: formData.customerNo || `CUST-00${recurringList.length + 1}`,
+      packageName: formData.packageName,
+      period: '01/11/2026 - 30/11/2026',
+      cycle: formData.cycle,
+      nextGenerate: formData.nextGenerate,
+      nextGenerateDesc: '1 Nov 2026',
+      total: Number(formData.total) || 0,
+      status: formData.status
+    };
+    setRecurringList(prev => [newItem, ...prev]);
+    setShowAddModal(false);
+    toast.success(`Jadwal recurring baru untuk "${newItem.customerName}" berhasil dibuat!`);
+  };
+
+  // Edit Recurring Handler
+  const handleOpenEditModal = (item: RecurringRow, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setEditingItem(item);
+    setFormData({
+      customerName: item.customerName,
+      customerNo: item.customerNo,
+      packageName: item.packageName,
+      cycle: item.cycle,
+      total: item.total,
+      nextGenerate: item.nextGenerate,
+      status: item.status
+    });
+  };
+
+  const handleSaveEdit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingItem) return;
+    setRecurringList(prev => prev.map(item => {
+      if (item.id === editingItem.id) {
+        return {
+          ...item,
+          customerName: formData.customerName,
+          packageName: formData.packageName,
+          name: `${formData.customerName} - ${formData.packageName}`,
+          cycle: formData.cycle,
+          total: Number(formData.total) || 0,
+          nextGenerate: formData.nextGenerate,
+          status: formData.status
+        };
+      }
+      return item;
+    }));
+    toast.success(`Jadwal recurring "${formData.customerName}" berhasil diperbarui.`);
+    setEditingItem(null);
+  };
+
+  // Filtering
+  const filteredList = useMemo(() => {
+    return recurringList.filter((item) => {
+      if (searchTerm) {
+        const query = searchTerm.toLowerCase();
+        const matchName = item.name.toLowerCase().includes(query);
+        const matchCustomer = item.customerName.toLowerCase().includes(query);
+        const matchCode = item.code.toLowerCase().includes(query);
+        const matchPkg = item.packageName.toLowerCase().includes(query);
+        if (!matchName && !matchCustomer && !matchCode && !matchPkg) return false;
+      }
+      if (statusFilter !== 'Semua Status' && item.status !== statusFilter) return false;
+      if (cycleFilter !== 'Semua Periode' && item.cycle !== cycleFilter) return false;
+
+      return true;
+    });
+  }, [recurringList, searchTerm, statusFilter, cycleFilter]);
+
+  const totalPages = Math.ceil(filteredList.length / pageSize) || 1;
+  const safeCurrentPage = Math.min(Math.max(1, currentPage), totalPages);
+  const paginatedList = filteredList.slice((safeCurrentPage - 1) * pageSize, safeCurrentPage * pageSize);
 
   return (
     <Layout>
@@ -310,7 +498,7 @@ export default function RecurringInvoicePage() {
           </div>
         </div>
 
-        {/* ─── Filter Bar ────────────────────────────────────────────────── */}
+        {/* Filter Bar */}
         <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4">
           <div className="flex flex-wrap items-center gap-4">
             <div className="relative flex-1 min-w-[240px]">
@@ -319,47 +507,56 @@ export default function RecurringInvoicePage() {
                 type="text" 
                 placeholder="Cari nama, package, atau customer..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
                 className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] text-xs pl-10 pr-4 py-2.5 rounded-xl text-[var(--app-text)] placeholder-slate-400 focus:outline-none focus:border-blue-500 transition-colors"
               />
             </div>
 
-            <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]">
-              <option>Semua Status</option>
-            </select>
-
-            <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]">
-              <option>Semua Periode</option>
-            </select>
-
-            <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]">
-              <option>Semua Sales</option>
-            </select>
-
-            <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]">
-              <option>Semua Area</option>
-            </select>
-
-            <button 
-              onClick={() => { setSearchTerm(''); }}
-              className="text-xs font-semibold text-[var(--app-muted)] hover:text-[var(--app-text)] px-4 py-2.5 rounded-xl border border-transparent hover:border-[var(--app-border)] transition-all ml-auto"
+            <select
+              value={statusFilter}
+              onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
+              className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]"
             >
-              Reset
-            </button>
+              <option value="Semua Status">Semua Status</option>
+              <option value="Aktif">Aktif</option>
+              <option value="Dijeda">Dijeda</option>
+              <option value="Gagal">Gagal</option>
+            </select>
 
-            <button onClick={() => alert("Penyaringan data diterapkan berdasarkan parameter yang dipilih.")} className="flex items-center gap-2 bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-md transition-all">
-              <Filter size={14} />
-              <span>Filter</span>
-            </button>
+            <select
+              value={cycleFilter}
+              onChange={(e) => { setCycleFilter(e.target.value); setCurrentPage(1); }}
+              className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]"
+            >
+              <option value="Semua Periode">Semua Siklus</option>
+              <option value="Bulanan">Bulanan</option>
+              <option value="Mingguan">Mingguan</option>
+              <option value="Tahunan">Tahunan</option>
+            </select>
 
-            <button onClick={() => alert("Membuka formulir Tambah Tagihan Berulang...")} className="flex items-center gap-2 bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-md transition-all">
+            {(searchTerm || statusFilter !== 'Semua Status' || cycleFilter !== 'Semua Periode') && (
+              <button 
+                onClick={() => {
+                  setSearchTerm('');
+                  setStatusFilter('Semua Status');
+                  setCycleFilter('Semua Periode');
+                  setCurrentPage(1);
+                  toast.info('Filter tagihan berulang direset.');
+                }}
+                className="text-xs font-semibold text-[var(--app-muted)] hover:text-[var(--app-text)] px-4 py-2.5 rounded-xl border border-[var(--app-border)] transition-all"
+              >
+                Reset
+              </button>
+            )}
+
+            <button onClick={handleOpenAddModal} className="flex items-center gap-2 bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-md transition-all ml-auto">
               <Plus size={14} />
               <span>Tambah Berulang</span>
             </button>
 
-            <button onClick={() => alert("Mengekspor data ke berkas CSV / Excel...")} className="flex items-center gap-2 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-sm border-gray-800">
+            <button onClick={handleExportCSV} className="flex items-center gap-2 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-sm border-gray-800">
               <Download size={14} className="text-[var(--app-muted)]" />
-              <span>Export</span>
+              <span>Export CSV</span>
             </button>
           </div>
         </div>
@@ -395,105 +592,113 @@ export default function RecurringInvoicePage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[var(--app-border)] text-xs text-[var(--app-text)]/80">
-                    {mockRecurring.map((r, idx) => {
-                      const isSelected = selectedIds.includes(r.id);
-                      return (
-                        <tr 
-                          key={r.id}
-                          onClick={() => handleSelectRow(r.id)}
-                          className={`hover:bg-[var(--app-border)]/20 transition-colors cursor-pointer ${isSelected ? 'bg-[var(--app-border)]/20/50' : ''}`}
-                        >
-                          <td className="p-4" onClick={(e) => e.stopPropagation()}>
-                            <input 
-                              type="checkbox" 
-                              checked={isSelected}
-                              onChange={() => handleSelectRow(r.id)}
-                              className="rounded bg-[var(--app-bg)] border-[var(--app-border)] text-blue-600 focus:ring-0" 
-                            />
-                          </td>
-                          <td className="p-4 text-[var(--app-muted)] font-medium">{idx + 1}</td>
-                          <td className="p-4">
-                            <div className="space-y-1">
-                              <span className="font-bold text-[var(--app-text)] block">{r.name}</span>
-                              <span className="font-mono text-[9px] text-[var(--app-muted)] block font-semibold">{r.code}</span>
-                            </div>
-                          </td>
-                          <td className="p-4">
-                            <div className="space-y-0.5">
-                              <span className="font-bold text-[var(--app-text)] block">{r.customerName}</span>
-                              <span className="text-[10px] text-[var(--app-muted)] block font-semibold">{r.customerNo}</span>
-                            </div>
-                          </td>
-                          <td className="p-4 font-medium text-[var(--app-text)]/80">{r.packageName}</td>
-                          <td className="p-4 text-[var(--app-muted)] font-medium">{r.period}</td>
-                          <td className="p-4 text-[var(--app-muted)] font-medium">{r.cycle}</td>
-                          <td className="p-4">
-                            <span className="block text-slate-700 font-semibold">{r.nextGenerate}</span>
-                            <span className={`text-[10px] block mt-0.5 ${r.nextGenerateDesc === 'Hari ini' ? 'text-orange-400 font-bold' : 'text-green-500'}`}>
-                              {r.nextGenerateDesc}
-                            </span>
-                          </td>
-                          <td className="p-4 font-bold text-[var(--app-text)]">{formatCurrency(r.total)}</td>
-                          <td className="p-4">
-                            <span className={`px-2.5 py-1 text-[10px] font-bold rounded-full ${
-                              r.status === 'Aktif' 
-                                ? 'bg-green-500/10 text-green-400 border border-green-500/20' 
-                                : r.status === 'Dijeda'
-                                ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20'
-                                : 'bg-red-500/10 text-red-400 border border-red-500/20'
-                            }`}>
-                              {r.status}
-                            </span>
-                          </td>
-                          <td className="p-4" onClick={(e) => e.stopPropagation()}>
-                            <div className="flex items-center justify-center gap-1.5">
-                              <button onClick={() => alert("Membuka modal penyuntingan data...")} className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors">
-                                <Edit2 size={13} />
+                    {paginatedList.length === 0 ? (
+                      <tr>
+                        <td colSpan={11} className="p-8 text-center text-xs text-[var(--app-muted)]">
+                          Tidak ditemukan tagihan berulang yang sesuai parameter filter.
+                        </td>
+                      </tr>
+                    ) : (
+                      paginatedList.map((r, idx) => {
+                        const isSelected = selectedIds.includes(r.id);
+                        return (
+                          <tr 
+                            key={r.id}
+                            onClick={() => handleSelectRow(r.id)}
+                            className={`hover:bg-[var(--app-border)]/20 transition-colors cursor-pointer ${isSelected ? 'bg-[var(--app-border)]/20/50' : ''}`}
+                          >
+                            <td className="p-4" onClick={(e) => e.stopPropagation()}>
+                              <input 
+                                type="checkbox" 
+                                checked={isSelected}
+                                onChange={() => handleSelectRow(r.id)}
+                                className="rounded bg-[var(--app-bg)] border-[var(--app-border)] text-blue-600 focus:ring-0" 
+                              />
+                            </td>
+                            <td className="p-4 text-[var(--app-muted)] font-medium">{(safeCurrentPage - 1) * pageSize + idx + 1}</td>
+                            <td className="p-4">
+                              <div className="space-y-1">
+                                <span className="font-bold text-[var(--app-text)] block">{r.name}</span>
+                                <span className="font-mono text-[9px] text-[var(--app-muted)] block font-semibold">{r.code}</span>
+                              </div>
+                            </td>
+                            <td className="p-4">
+                              <div className="space-y-0.5">
+                                <span className="font-bold text-[var(--app-text)] block">{r.customerName}</span>
+                                <span className="text-[10px] text-[var(--app-muted)] block font-semibold">{r.customerNo}</span>
+                              </div>
+                            </td>
+                            <td className="p-4 font-medium text-[var(--app-text)]/80">{r.packageName}</td>
+                            <td className="p-4 text-[var(--app-muted)] font-medium">{r.period}</td>
+                            <td className="p-4 text-[var(--app-muted)] font-medium">{r.cycle}</td>
+                            <td className="p-4">
+                              <span className="block text-slate-700 font-semibold">{r.nextGenerate}</span>
+                              <span className={`text-[10px] block mt-0.5 ${r.nextGenerateDesc === 'Hari ini' ? 'text-orange-400 font-bold' : 'text-green-500'}`}>
+                                {r.nextGenerateDesc}
+                              </span>
+                            </td>
+                            <td className="p-4 font-bold text-[var(--app-text)]">{formatCurrency(r.total)}</td>
+                            <td className="p-4">
+                              <button
+                                onClick={(e) => handleTogglePause(r.id, e)}
+                                title="Klik untuk mengubah status aktif/jeda"
+                                className={`px-2.5 py-1 text-[10px] font-bold rounded-full transition hover:opacity-80 ${
+                                  r.status === 'Aktif' 
+                                    ? 'bg-green-500/10 text-green-400 border border-green-500/20' 
+                                    : r.status === 'Dijeda'
+                                    ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20'
+                                    : 'bg-red-500/10 text-red-400 border border-red-500/20'
+                                }`}
+                              >
+                                {r.status}
                               </button>
-                              <button onClick={() => alert("Mengubah status langganan/tagihan aktif atau jeda.")} className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors">
-                                {r.status === 'Aktif' ? <Pause size={13} /> : <Play size={13} />}
-                              </button>
-                              <button onClick={() => alert("Opsi tindakan: Kirim WhatsApp, Cetak PDF, Void Transaksi.")} className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors">
-                                <MoreVertical size={13} />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
+                            </td>
+                            <td className="p-4" onClick={(e) => e.stopPropagation()}>
+                              <div className="flex items-center justify-center gap-1.5">
+                                <button
+                                  onClick={(e) => handleOpenEditModal(r, e)}
+                                  title="Edit Jadwal Recurring"
+                                  className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors"
+                                >
+                                  <Edit2 size={13} />
+                                </button>
+                                <button
+                                  onClick={(e) => handleTogglePause(r.id, e)}
+                                  title={r.status === 'Aktif' ? 'Jeda Jadwal Recurring' : 'Aktifkan Kembali'}
+                                  className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors"
+                                >
+                                  {r.status === 'Aktif' ? <Pause size={13} /> : <Play size={13} />}
+                                </button>
+                                <button
+                                  onClick={() => setActionModalItem(r)}
+                                  title="Tindakan Tagihan Lainnya"
+                                  className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors"
+                                >
+                                  <MoreVertical size={13} />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
                   </tbody>
                 </table>
               </div>
 
               {/* Table pagination */}
-              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-t border-[var(--app-border)] bg-white/60">
-                <span className="text-xs text-[var(--app-muted)]">
-                  Menampilkan <span className="font-semibold text-white">1 - 10</span> dari <span className="font-semibold text-white">86</span> data
-                </span>
-                
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <button onClick={() => alert("Halaman pertama sudah tercapai.")} className="p-2 border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 rounded-xl text-[var(--app-muted)] transition-colors">
-                      <ChevronLeft size={14} />
-                    </button>
-                    <button onClick={() => alert("Halaman 1 saat ini aktif.")} className="w-8 h-8 rounded-xl text-xs font-semibold border bg-[#0052cc] text-white border-[#0052cc]">1</button>
-                    <button onClick={() => alert("Beralih ke halaman 2")} className="w-8 h-8 rounded-xl text-xs font-semibold border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/30">2</button>
-                    <button onClick={() => alert("Beralih ke halaman 3")} className="w-8 h-8 rounded-xl text-xs font-semibold border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/30">3</button>
-                    <button onClick={() => alert("Beralih ke halaman 4")} className="w-8 h-8 rounded-xl text-xs font-semibold border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/30">4</button>
-                    <button onClick={() => alert("Beralih ke halaman 5")} className="w-8 h-8 rounded-xl text-xs font-semibold border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/30">5</button>
-                    <span className="text-gray-600 text-xs px-1">...</span>
-                    <button onClick={() => alert("Beralih ke halaman 9")} className="w-8 h-8 rounded-xl text-xs font-semibold border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/30">9</button>
-                    <button onClick={() => alert("Beralih ke halaman selanjutnya.")} className="p-2 border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 rounded-xl text-[var(--app-muted)] transition-colors">
-                      <ChevronRight size={14} />
-                    </button>
-                  </div>
-
-                  <select
-                    className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-1.5 px-3 rounded-lg text-[var(--app-text)]/80 focus:outline-none"
-                  >
-                    <option value={10}>10 / halaman</option>
-                  </select>
-                </div>
+              <div className="p-4 border-t border-[var(--app-border)] bg-[var(--app-card-subtle)]">
+                <Pagination
+                  currentPage={safeCurrentPage}
+                  totalPages={totalPages}
+                  totalItems={filteredList.length}
+                  pageSize={pageSize}
+                  onPageChange={setCurrentPage}
+                  onPageSizeChange={(newSize) => {
+                    setPageSize(newSize);
+                    setCurrentPage(1);
+                  }}
+                />
               </div>
             </div>
 
@@ -685,6 +890,290 @@ export default function RecurringInvoicePage() {
           </div>
 
         </div>
+
+        {/* Modal: Tambah Tagihan Berulang Baru */}
+        {showAddModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
+              <div className="flex items-center justify-between border-b border-[var(--app-border)] pb-3">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 rounded-xl bg-blue-500/10 text-blue-500 border border-blue-500/20">
+                    <Plus size={18} />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-[var(--app-text)]">Tambah Tagihan Berulang</h3>
+                    <p className="text-[10px] text-[var(--app-muted)]">Buat jadwal penerbitan invoice otomatis</p>
+                  </div>
+                </div>
+                <button onClick={() => setShowAddModal(false)} className="p-1 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)]">
+                  <X size={16} />
+                </button>
+              </div>
+
+              <form onSubmit={handleSaveAdd} className="space-y-3.5 text-xs">
+                <div>
+                  <label className="block text-[11px] font-semibold text-[var(--app-text)] mb-1">Nama Pelanggan</label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.customerName}
+                    onChange={(e) => setFormData(p => ({ ...p, customerName: e.target.value }))}
+                    placeholder="Contoh: Ahmad Fauzi"
+                    className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2 text-[var(--app-text)] focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-semibold text-[var(--app-text)] mb-1">ID / No. Pelanggan</label>
+                    <input
+                      type="text"
+                      value={formData.customerNo}
+                      onChange={(e) => setFormData(p => ({ ...p, customerNo: e.target.value }))}
+                      placeholder="CUST-0099"
+                      className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2 text-[var(--app-text)] font-mono focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-semibold text-[var(--app-text)] mb-1">Paket Internet</label>
+                    <select
+                      value={formData.packageName}
+                      onChange={(e) => setFormData(p => ({ ...p, packageName: e.target.value }))}
+                      className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2 text-[var(--app-text)] focus:outline-none"
+                    >
+                      <option value="Home 20 Mbps">Home 20 Mbps</option>
+                      <option value="Home 50 Mbps">Home 50 Mbps</option>
+                      <option value="Home 100 Mbps">Home 100 Mbps</option>
+                      <option value="Corporate 200 Mbps">Corporate 200 Mbps</option>
+                      <option value="Corporate 500 Mbps">Corporate 500 Mbps</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-semibold text-[var(--app-text)] mb-1">Siklus Penagihan</label>
+                    <select
+                      value={formData.cycle}
+                      onChange={(e) => setFormData(p => ({ ...p, cycle: e.target.value }))}
+                      className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2 text-[var(--app-text)] focus:outline-none"
+                    >
+                      <option value="Bulanan">Bulanan</option>
+                      <option value="Mingguan">Mingguan</option>
+                      <option value="Tahunan">Tahunan</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-semibold text-[var(--app-text)] mb-1">Total Tagihan (Rp)</label>
+                    <input
+                      type="number"
+                      required
+                      value={formData.total}
+                      onChange={(e) => setFormData(p => ({ ...p, total: Number(e.target.value) }))}
+                      className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2 text-[var(--app-text)] font-mono focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-semibold text-[var(--app-text)] mb-1">Tanggal Terbit Pertama</label>
+                    <input
+                      type="date"
+                      value={formData.nextGenerate}
+                      onChange={(e) => setFormData(p => ({ ...p, nextGenerate: e.target.value }))}
+                      className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2 text-[var(--app-text)] focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-semibold text-[var(--app-text)] mb-1">Status Awal</label>
+                    <select
+                      value={formData.status}
+                      onChange={(e) => setFormData(p => ({ ...p, status: e.target.value as any }))}
+                      className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2 text-[var(--app-text)] focus:outline-none"
+                    >
+                      <option value="Aktif">Aktif</option>
+                      <option value="Dijeda">Dijeda</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[var(--app-border)]">
+                  <button
+                    type="button"
+                    onClick={() => setShowAddModal(false)}
+                    className="px-4 py-2 rounded-xl border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] text-xs font-semibold"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md"
+                  >
+                    Simpan Jadwal
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Modal: Edit Tagihan Berulang */}
+        {editingItem && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
+              <div className="flex items-center justify-between border-b border-[var(--app-border)] pb-3">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 rounded-xl bg-blue-500/10 text-blue-500 border border-blue-500/20">
+                    <Edit2 size={18} />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-[var(--app-text)]">Edit Tagihan Berulang</h3>
+                    <p className="text-[10px] text-[var(--app-muted)] font-mono">{editingItem.code}</p>
+                  </div>
+                </div>
+                <button onClick={() => setEditingItem(null)} className="p-1 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)]">
+                  <X size={16} />
+                </button>
+              </div>
+
+              <form onSubmit={handleSaveEdit} className="space-y-3.5 text-xs">
+                <div>
+                  <label className="block text-[11px] font-semibold text-[var(--app-text)] mb-1">Nama Pelanggan</label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.customerName}
+                    onChange={(e) => setFormData(p => ({ ...p, customerName: e.target.value }))}
+                    className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2 text-[var(--app-text)] focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-semibold text-[var(--app-text)] mb-1">Paket</label>
+                    <select
+                      value={formData.packageName}
+                      onChange={(e) => setFormData(p => ({ ...p, packageName: e.target.value }))}
+                      className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2 text-[var(--app-text)] focus:outline-none"
+                    >
+                      <option value="Home 20 Mbps">Home 20 Mbps</option>
+                      <option value="Home 50 Mbps">Home 50 Mbps</option>
+                      <option value="Home 100 Mbps">Home 100 Mbps</option>
+                      <option value="Corporate 200 Mbps">Corporate 200 Mbps</option>
+                      <option value="Corporate 500 Mbps">Corporate 500 Mbps</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-semibold text-[var(--app-text)] mb-1">Total Tagihan (Rp)</label>
+                    <input
+                      type="number"
+                      required
+                      value={formData.total}
+                      onChange={(e) => setFormData(p => ({ ...p, total: Number(e.target.value) }))}
+                      className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2 text-[var(--app-text)] font-mono focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-semibold text-[var(--app-text)] mb-1">Siklus Penagihan</label>
+                    <select
+                      value={formData.cycle}
+                      onChange={(e) => setFormData(p => ({ ...p, cycle: e.target.value }))}
+                      className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2 text-[var(--app-text)] focus:outline-none"
+                    >
+                      <option value="Bulanan">Bulanan</option>
+                      <option value="Mingguan">Mingguan</option>
+                      <option value="Tahunan">Tahunan</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-semibold text-[var(--app-text)] mb-1">Status</label>
+                    <select
+                      value={formData.status}
+                      onChange={(e) => setFormData(p => ({ ...p, status: e.target.value as any }))}
+                      className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2 text-[var(--app-text)] focus:outline-none"
+                    >
+                      <option value="Aktif">Aktif</option>
+                      <option value="Dijeda">Dijeda</option>
+                      <option value="Gagal">Gagal</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[var(--app-border)]">
+                  <button
+                    type="button"
+                    onClick={() => setEditingItem(null)}
+                    className="px-4 py-2 rounded-xl border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] text-xs font-semibold"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md"
+                  >
+                    Simpan Perubahan
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Modal: Opsi Tindakan Lanjutan */}
+        {actionModalItem && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-3xl max-w-sm w-full p-5 shadow-2xl space-y-4">
+              <div className="flex items-center justify-between border-b border-[var(--app-border)] pb-3">
+                <h3 className="text-sm font-bold text-[var(--app-text)]">Tindakan Recurring</h3>
+                <button onClick={() => setActionModalItem(null)} className="p-1 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)]">
+                  <X size={15} />
+                </button>
+              </div>
+
+              <div className="text-xs text-[var(--app-muted)] space-y-1">
+                <p>Pelanggan: <span className="text-[var(--app-text)] font-semibold">{actionModalItem.customerName}</span></p>
+                <p>Paket: <span className="text-[var(--app-text)] font-semibold">{actionModalItem.packageName}</span></p>
+                <p>Nominal: <span className="text-green-400 font-bold">{formatCurrency(actionModalItem.total)}</span></p>
+              </div>
+
+              <div className="flex flex-col gap-2 pt-2">
+                <button
+                  onClick={() => handleGenerateNow(actionModalItem)}
+                  className="w-full text-left p-3 rounded-xl bg-blue-600/10 hover:bg-blue-600/20 border border-blue-500/20 text-xs font-semibold text-blue-400 flex items-center justify-between transition"
+                >
+                  <span className="flex items-center gap-2"><Zap size={14} className="text-blue-500" /> Terbitkan Invoice Sekarang</span>
+                  <span className="text-[10px] text-blue-400">&rarr;</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    handleTogglePause(actionModalItem.id);
+                    setActionModalItem(null);
+                  }}
+                  className="w-full text-left p-3 rounded-xl bg-[var(--app-bg)] hover:bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-xs font-semibold text-[var(--app-text)] flex items-center justify-between transition"
+                >
+                  <span className="flex items-center gap-2">
+                    {actionModalItem.status === 'Aktif' ? <Pause size={14} className="text-orange-500" /> : <Play size={14} className="text-green-500" />}
+                    {actionModalItem.status === 'Aktif' ? 'Jeda Jadwal Recurring' : 'Aktifkan Kembali'}
+                  </span>
+                  <span className="text-[10px] text-[var(--app-muted)]">&rarr;</span>
+                </button>
+
+                <button
+                  onClick={() => handleDeleteRecurring(actionModalItem.id)}
+                  className="w-full text-left p-3 rounded-xl bg-red-500/5 hover:bg-red-500/10 border border-red-500/20 text-xs font-semibold text-red-400 flex items-center justify-between transition"
+                >
+                  <span className="flex items-center gap-2"><Trash2 size={14} className="text-red-400" /> Hapus Jadwal Recurring</span>
+                  <span className="text-[10px] text-red-400">&rarr;</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
       </div>
     </Layout>

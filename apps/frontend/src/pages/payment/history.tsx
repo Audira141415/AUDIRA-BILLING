@@ -1,7 +1,9 @@
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
+import { useToast } from '@/contexts/ToastContext';
+import { Pagination } from '@/components/Pagination';
 import {
   Search,
   Filter,
@@ -29,7 +31,10 @@ import {
   ChevronRight,
   Settings,
   RefreshCw,
-  Info
+  Info,
+  X,
+  Printer,
+  Share2
 } from 'lucide-react';
 
 interface PaymentHistoryRow {
@@ -66,12 +71,80 @@ const mockHistoryData: PaymentHistoryRow[] = [
 
 export default function PaymentHistoryPage() {
   const router = useRouter();
+  const { toast } = useToast();
+
+  // Search & Filter state
+  const [searchQuery, setSearchQuery] = useState('');
+  const [typeFilter, setTypeFilter] = useState('Semua Tipe');
+  const [methodFilter, setMethodFilter] = useState('Semua Metode');
+  const [statusFilter, setStatusFilter] = useState('Semua Status');
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  // Modals state
+  const [selectedDetailItem, setSelectedDetailItem] = useState<PaymentHistoryRow | null>(null);
+  const [selectedActionItem, setSelectedActionItem] = useState<PaymentHistoryRow | null>(null);
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
       currency: 'IDR',
       minimumFractionDigits: 0,
     }).format(amount);
+  };
+
+  // Filtered transactions
+  const filteredData = useMemo(() => {
+    return mockHistoryData.filter((item) => {
+      const matchSearch =
+        item.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.invoiceNo.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.refNo.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      const matchType = typeFilter === 'Semua Tipe' || item.type === typeFilter;
+      const matchMethod = methodFilter === 'Semua Metode' || item.method.toLowerCase().includes(methodFilter.toLowerCase());
+      const matchStatus = statusFilter === 'Semua Status' || item.status === statusFilter;
+
+      return matchSearch && matchType && matchMethod && matchStatus;
+    });
+  }, [searchQuery, typeFilter, methodFilter, statusFilter]);
+
+  const totalPages = Math.ceil(filteredData.length / pageSize) || 1;
+  const safeCurrentPage = Math.min(Math.max(1, currentPage), totalPages);
+  const paginatedData = filteredData.slice((safeCurrentPage - 1) * pageSize, safeCurrentPage * pageSize);
+
+  // Export CSV
+  const handleExportCSV = () => {
+    if (filteredData.length === 0) {
+      toast.warning('Tidak ada data transaksi untuk diekspor.');
+      return;
+    }
+    const headers = ['No', 'Tanggal', 'Tipe', 'Referensi', 'Invoice', 'Pelanggan', 'Metode', 'Channel', 'Nilai', 'Status', 'Catatan'];
+    const rows = filteredData.map((d, idx) => [
+      idx + 1,
+      `"${d.date}"`,
+      `"${d.type}"`,
+      `"${d.refNo}"`,
+      `"${d.invoiceNo}"`,
+      `"${d.customerName.replace(/"/g, '""')}"`,
+      `"${d.method}"`,
+      `"${d.channel}"`,
+      d.amount,
+      `"${d.status}"`,
+      `"${d.note.replace(/"/g, '""')}"`
+    ]);
+    const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `riwayat_pembayaran_audira_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success(`Berhasil mengunduh riwayat pembayaran (${filteredData.length} baris).`);
   };
 
   return (
@@ -176,43 +249,81 @@ export default function PaymentHistoryPage() {
           </div>
         </div>
 
-        {/* ─── Filter Bar ────────────────────────────────────────────────── */}
+        {/* Filter Bar */}
         <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4">
           <div className="flex flex-wrap items-center gap-4">
             {/* Date range */}
-            <div className="flex items-center gap-2 bg-[var(--app-bg)] border border-[var(--app-border)] px-3 py-2.5 rounded-xl text-xs text-[var(--app-text)]/80 cursor-pointer">
+            <div className="flex items-center gap-2 bg-[var(--app-bg)] border border-[var(--app-border)] px-3 py-2.5 rounded-xl text-xs text-[var(--app-text)]/80">
               <Calendar size={14} className="text-[var(--app-muted)]" />
               <span>01/06/2026 - 22/10/2026</span>
             </div>
 
-            <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]">
-              <option>Semua Tipe</option>
+            <select
+              value={typeFilter}
+              onChange={(e) => { setTypeFilter(e.target.value); setCurrentPage(1); }}
+              className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]"
+            >
+              <option value="Semua Tipe">Semua Tipe</option>
+              <option value="Payment">Payment</option>
+              <option value="Refund">Refund</option>
+              <option value="Void">Void</option>
             </select>
 
-            <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]">
-              <option>Semua Metode</option>
+            <select
+              value={methodFilter}
+              onChange={(e) => { setMethodFilter(e.target.value); setCurrentPage(1); }}
+              className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]"
+            >
+              <option value="Semua Metode">Semua Metode</option>
+              <option value="Transfer Bank">Transfer Bank</option>
+              <option value="QRIS">QRIS</option>
+              <option value="Virtual Account">Virtual Account</option>
+              <option value="E-Wallet">E-Wallet</option>
             </select>
 
-            <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]">
-              <option>Semua Channel</option>
-            </select>
-
-            <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]">
-              <option>Semua Status</option>
+            <select
+              value={statusFilter}
+              onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
+              className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]"
+            >
+              <option value="Semua Status">Semua Status</option>
+              <option value="Berhasil">Berhasil</option>
+              <option value="Menunggu">Menunggu</option>
+              <option value="Refund Selesai">Refund Selesai</option>
+              <option value="Refund Proses">Refund Proses</option>
+              <option value="Void Selesai">Void Selesai</option>
             </select>
             
             <div className="relative flex-1 min-w-[200px]">
               <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-[var(--app-muted)] w-4 h-4" />
               <input 
                 type="text" 
+                value={searchQuery}
+                onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
                 placeholder="Cari invoice, customer, referensi..."
                 className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] text-xs pl-10 pr-4 py-2.5 rounded-xl text-[var(--app-text)] placeholder-slate-400 focus:outline-none focus:border-blue-500 transition-colors"
               />
             </div>
 
-            <button onClick={() => alert("Penyaringan data diterapkan berdasarkan parameter yang dipilih.")} className="flex items-center gap-2 bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-md transition-all">
-              <Filter size={14} />
-              <span>Filter</span>
+            {(searchQuery || typeFilter !== 'Semua Tipe' || methodFilter !== 'Semua Metode' || statusFilter !== 'Semua Status') && (
+              <button
+                onClick={() => {
+                  setSearchQuery('');
+                  setTypeFilter('Semua Tipe');
+                  setMethodFilter('Semua Metode');
+                  setStatusFilter('Semua Status');
+                  setCurrentPage(1);
+                  toast.info('Filter berhasil direset.');
+                }}
+                className="text-xs text-[var(--app-muted)] hover:text-[var(--app-text)] font-semibold px-3 py-2 border border-[var(--app-border)] rounded-xl transition"
+              >
+                Reset
+              </button>
+            )}
+
+            <button onClick={handleExportCSV} className="flex items-center gap-2 bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-md transition-all">
+              <Download size={14} />
+              <span>Export CSV</span>
             </button>
           </div>
         </div>
@@ -225,9 +336,9 @@ export default function PaymentHistoryPage() {
             
             {/* Table Card */}
             <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs overflow-hidden">
-              <div className="flex justify-between items-center p-4 border-b border-[var(--app-border)] bg-white/40">
+              <div className="flex justify-between items-center p-4 border-b border-[var(--app-border)] bg-[var(--app-card-subtle)]">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Daftar Riwayat Payment</h3>
-                <button onClick={() => alert("Mengekspor seluruh riwayat pembayaran ke CSV...")} className="flex items-center gap-2 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-white text-[10px] font-bold px-3.5 py-1.5 rounded-xl transition-all border-gray-800">
+                <button onClick={() => toast.info("Mengekspor seluruh riwayat pembayaran ke CSV...")} className="flex items-center gap-2 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-white text-[10px] font-bold px-3.5 py-1.5 rounded-xl transition-all border-gray-800">
                   <Download size={12} className="text-[var(--app-muted)]" />
                   <span>Export</span>
                 </button>
@@ -252,82 +363,88 @@ export default function PaymentHistoryPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[var(--app-border)]">
-                    {mockHistoryData.map((d, idx) => (
-                      <tr key={d.id} className="hover:bg-[var(--app-border)]/20 transition-colors">
-                        <td className="p-4 text-[var(--app-muted)] font-medium">{idx + 1}</td>
-                        <td className="p-4 text-[var(--app-muted)] font-medium">{d.date}</td>
-                        <td className="p-4">
-                          <span className={`px-2 py-0.5 text-[9px] font-bold rounded-full ${
-                            d.type === 'Payment' 
-                              ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' 
-                              : d.type === 'Refund'
-                              ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
-                              : 'bg-red-500/10 text-red-400 border border-red-500/20'
-                          }`}>
-                            {d.type}
-                          </span>
-                        </td>
-                        <td className="p-4 font-mono font-semibold text-[var(--app-muted)]">{d.refNo}</td>
-                        <td className="p-4 font-mono font-semibold text-blue-400">{d.invoiceNo}</td>
-                        <td className="p-4 font-bold text-[var(--app-text)]">{d.customerName}</td>
-                        <td className="p-4 text-[var(--app-muted)] font-medium">{d.method}</td>
-                        <td className="p-4 text-[var(--app-muted)] font-medium">{d.channel}</td>
-                        <td className="p-4 font-bold text-[var(--app-text)]">{formatCurrency(d.amount)}</td>
-                        <td className="p-4">
-                          <span className={`px-2 py-1 text-[10px] font-bold rounded-full ${
-                            d.status === 'Berhasil' 
-                              ? 'bg-green-500/10 text-green-400 border border-green-500/20' 
-                              : d.status === 'Menunggu'
-                              ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20'
-                              : d.status === 'Refund Selesai'
-                              ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
-                              : d.status === 'Refund Proses'
-                              ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
-                              : 'bg-red-500/10 text-red-400 border border-red-500/20'
-                          }`}>
-                            {d.status}
-                          </span>
-                        </td>
-                        <td className="p-4 text-[var(--app-muted)] font-medium">{d.note}</td>
-                        <td className="p-4">
-                          <div className="flex items-center justify-center gap-1.5">
-                            <button onClick={() => alert("Membuka rincian bukti bayar...")} className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors"><Eye size={13} /></button>
-                            <button onClick={() => alert("Opsi tindakan: Kirim Kuitansi WhatsApp, Void Pembayaran.")} className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors"><MoreVertical size={13} /></button>
-                          </div>
+                    {paginatedData.length === 0 ? (
+                      <tr>
+                        <td colSpan={12} className="p-8 text-center text-xs text-[var(--app-muted)]">
+                          Tidak ditemukan transaksi pembayaran yang sesuai filter pencarian.
                         </td>
                       </tr>
-                    ))}
+                    ) : (
+                      paginatedData.map((d, idx) => (
+                        <tr key={d.id} className="hover:bg-[var(--app-border)]/20 transition-colors">
+                          <td className="p-4 text-[var(--app-muted)] font-medium">{(safeCurrentPage - 1) * pageSize + idx + 1}</td>
+                          <td className="p-4 text-[var(--app-muted)] font-medium">{d.date}</td>
+                          <td className="p-4">
+                            <span className={`px-2 py-0.5 text-[9px] font-bold rounded-full ${
+                              d.type === 'Payment' 
+                                ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' 
+                                : d.type === 'Refund'
+                                ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
+                                : 'bg-red-500/10 text-red-400 border border-red-500/20'
+                            }`}>
+                              {d.type}
+                            </span>
+                          </td>
+                          <td className="p-4 font-mono font-semibold text-[var(--app-muted)]">{d.refNo}</td>
+                          <td className="p-4 font-mono font-semibold text-blue-400">{d.invoiceNo}</td>
+                          <td className="p-4 font-bold text-[var(--app-text)]">{d.customerName}</td>
+                          <td className="p-4 text-[var(--app-muted)] font-medium">{d.method}</td>
+                          <td className="p-4 text-[var(--app-muted)] font-medium">{d.channel}</td>
+                          <td className="p-4 font-bold text-[var(--app-text)]">{formatCurrency(d.amount)}</td>
+                          <td className="p-4">
+                            <span className={`px-2 py-1 text-[10px] font-bold rounded-full ${
+                              d.status === 'Berhasil' 
+                                ? 'bg-green-500/10 text-green-400 border border-green-500/20' 
+                                : d.status === 'Menunggu'
+                                ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20'
+                                : d.status === 'Refund Selesai'
+                                ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
+                                : d.status === 'Refund Proses'
+                                ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
+                                : 'bg-red-500/10 text-red-400 border border-red-500/20'
+                            }`}>
+                              {d.status}
+                            </span>
+                          </td>
+                          <td className="p-4 text-[var(--app-muted)] font-medium">{d.note}</td>
+                          <td className="p-4">
+                            <div className="flex items-center justify-center gap-1.5">
+                              <button
+                                onClick={() => setSelectedDetailItem(d)}
+                                title="Lihat Bukti Bayar"
+                                className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors"
+                              >
+                                <Eye size={13} />
+                              </button>
+                              <button
+                                onClick={() => setSelectedActionItem(d)}
+                                title="Tindakan Lanjutan"
+                                className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors"
+                              >
+                                <MoreVertical size={13} />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>
 
               {/* Table pagination */}
-              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-t border-[var(--app-border)] bg-white/60">
-                <span className="text-xs text-[var(--app-muted)]">
-                  Menampilkan <span className="font-semibold text-white">1 - 15</span> dari <span className="font-semibold text-white">2.847</span> data
-                </span>
-                
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <button onClick={() => alert("Halaman pertama sudah tercapai.")} className="p-2 border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 rounded-xl text-[var(--app-muted)] transition-colors">
-                      <ChevronLeft size={14} />
-                    </button>
-                    <button onClick={() => alert("Halaman 1 saat ini aktif.")} className="w-8 h-8 rounded-xl text-xs font-semibold border bg-[#0052cc] text-white border-[#0052cc]">1</button>
-                    <button onClick={() => alert("Beralih ke halaman 2")} className="w-8 h-8 rounded-xl text-xs font-semibold border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/30">2</button>
-                    <button onClick={() => alert("Beralih ke halaman 3")} className="w-8 h-8 rounded-xl text-xs font-semibold border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/30">3</button>
-                    <span className="text-gray-600 text-xs px-1">...</span>
-                    <button onClick={() => alert("Beralih ke halaman 190")} className="w-8 h-8 rounded-xl text-xs font-semibold border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/30">190</button>
-                    <button onClick={() => alert("Beralih ke halaman selanjutnya.")} className="p-2 border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 rounded-xl text-[var(--app-muted)] transition-colors">
-                      <ChevronRight size={14} />
-                    </button>
-                  </div>
-
-                  <select
-                    className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-1.5 px-3 rounded-lg text-[var(--app-text)]/80 focus:outline-none"
-                  >
-                    <option value={15}>15 / halaman</option>
-                  </select>
-                </div>
+              <div className="p-4 border-t border-[var(--app-border)] bg-[var(--app-card-subtle)]">
+                <Pagination
+                  currentPage={safeCurrentPage}
+                  totalPages={totalPages}
+                  totalItems={filteredData.length}
+                  pageSize={pageSize}
+                  onPageChange={setCurrentPage}
+                  onPageSizeChange={(newSize) => {
+                    setPageSize(newSize);
+                    setCurrentPage(1);
+                  }}
+                />
               </div>
             </div>
 
@@ -608,7 +725,7 @@ export default function PaymentHistoryPage() {
                 ))}
               </div>
 
-              <button onClick={() => alert("Membuka seluruh riwayat log aktivitas pembayaran...")} className="w-full text-center text-xs font-bold text-blue-500 hover:underline pt-2 border-t border-[var(--app-border)] block">
+              <button onClick={() => toast.info("Membuka seluruh riwayat log aktivitas pembayaran...")} className="w-full text-center text-xs font-bold text-blue-500 hover:underline pt-2 border-t border-[var(--app-border)] block">
                 Lihat Semua Aktivitas &rarr;
               </button>
             </div>
@@ -616,6 +733,134 @@ export default function PaymentHistoryPage() {
           </div>
 
         </div>
+
+        {/* Modal: Rincian Bukti Bayar / Digital Receipt */}
+        {selectedDetailItem && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
+              <div className="flex items-center justify-between border-b border-[var(--app-border)] pb-3">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 rounded-xl bg-blue-500/10 text-blue-500 border border-blue-500/20">
+                    <FileText size={18} />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-[var(--app-text)]">Kuitansi Pembayaran Digital</h3>
+                    <p className="text-[10px] text-[var(--app-muted)] font-mono">{selectedDetailItem.refNo}</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setSelectedDetailItem(null)}
+                  className="p-1.5 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-card-subtle)]"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              {/* Receipt Body */}
+              <div className="bg-[var(--app-bg)] border border-[var(--app-border)] rounded-2xl p-4 space-y-3 text-xs">
+                <div className="flex justify-between items-center pb-2 border-b border-[var(--app-border)]">
+                  <span className="text-[var(--app-muted)] font-medium">Status</span>
+                  <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full ${
+                    selectedDetailItem.status === 'Berhasil'
+                      ? 'bg-green-500/10 text-green-400 border border-green-500/20'
+                      : 'bg-orange-500/10 text-orange-400 border border-orange-500/20'
+                  }`}>
+                    {selectedDetailItem.status}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-[var(--app-muted)] font-medium">Pelanggan</span>
+                  <span className="font-bold text-[var(--app-text)]">{selectedDetailItem.customerName}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-[var(--app-muted)] font-medium">Nomor Invoice</span>
+                  <span className="font-mono font-bold text-blue-400">{selectedDetailItem.invoiceNo}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-[var(--app-muted)] font-medium">Metode & Channel</span>
+                  <span className="font-medium text-[var(--app-text)]">{selectedDetailItem.method} ({selectedDetailItem.channel})</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-[var(--app-muted)] font-medium">Waktu Transaksi</span>
+                  <span className="font-medium text-[var(--app-text)]">{selectedDetailItem.date} WIB</span>
+                </div>
+                <div className="flex justify-between items-center pt-2 border-t border-[var(--app-border)]">
+                  <span className="text-xs font-bold text-[var(--app-text)]">Total Pembayaran</span>
+                  <span className="text-base font-black font-mono text-green-400">{formatCurrency(selectedDetailItem.amount)}</span>
+                </div>
+              </div>
+
+              {/* Receipt Footer Action buttons */}
+              <div className="flex items-center gap-2 pt-2">
+                <button
+                  onClick={() => {
+                    toast.success(`Kuitansi ${selectedDetailItem.refNo} siap dicetak.`);
+                    window.print();
+                  }}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2.5 bg-[var(--app-bg)] hover:bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-xs font-semibold rounded-xl text-[var(--app-text)] transition"
+                >
+                  <Printer size={13} /> Cetak
+                </button>
+                <button
+                  onClick={() => {
+                    toast.success(`Kuitansi ${selectedDetailItem.refNo} berhasil dikirim ke WhatsApp ${selectedDetailItem.customerName}.`);
+                    setSelectedDetailItem(null);
+                  }}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2.5 bg-green-600 hover:bg-green-700 text-xs font-bold rounded-xl text-white transition shadow-sm"
+                >
+                  <Share2 size={13} /> Kirim WhatsApp
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Modal: Opsi Tindakan Lanjutan */}
+        {selectedActionItem && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-3xl max-w-sm w-full p-5 shadow-2xl space-y-4">
+              <div className="flex items-center justify-between border-b border-[var(--app-border)] pb-3">
+                <h3 className="text-sm font-bold text-[var(--app-text)]">Tindakan Transaksi</h3>
+                <button
+                  onClick={() => setSelectedActionItem(null)}
+                  className="p-1 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)]"
+                >
+                  <X size={15} />
+                </button>
+              </div>
+
+              <div className="text-xs text-[var(--app-muted)] space-y-1">
+                <p>Referensi: <span className="font-mono text-[var(--app-text)] font-semibold">{selectedActionItem.refNo}</span></p>
+                <p>Customer: <span className="text-[var(--app-text)] font-semibold">{selectedActionItem.customerName}</span></p>
+                <p>Nominal: <span className="text-green-400 font-bold">{formatCurrency(selectedActionItem.amount)}</span></p>
+              </div>
+
+              <div className="flex flex-col gap-2 pt-2">
+                <button
+                  onClick={() => {
+                    toast.success(`Kuitansi WhatsApp untuk ${selectedActionItem.customerName} sedang dikirim via WhatsApp Gateway.`);
+                    setSelectedActionItem(null);
+                  }}
+                  className="w-full text-left p-3 rounded-xl bg-[var(--app-bg)] hover:bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-xs font-semibold text-[var(--app-text)] flex items-center justify-between transition"
+                >
+                  <span className="flex items-center gap-2"><Share2 size={14} className="text-green-500" /> Kirim Kuitansi WhatsApp</span>
+                  <span className="text-[10px] text-[var(--app-muted)]">&rarr;</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    toast.warning(`Permohonan Void / Pembatalan untuk ${selectedActionItem.refNo} diajukan ke Supervisor Kasir.`);
+                    setSelectedActionItem(null);
+                  }}
+                  className="w-full text-left p-3 rounded-xl bg-red-500/5 hover:bg-red-500/10 border border-red-500/20 text-xs font-semibold text-red-400 flex items-center justify-between transition"
+                >
+                  <span className="flex items-center gap-2"><XCircle size={14} className="text-red-400" /> Ajukan Void Transaksi</span>
+                  <span className="text-[10px] text-red-400">&rarr;</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
       </div>
     </Layout>

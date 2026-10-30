@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import { Home, ArrowLeft } from 'lucide-react'
+import { Home, ArrowLeft, Search, BookOpen, Settings, Mail } from 'lucide-react'
 
 export default function Custom404() {
   const router = useRouter()
@@ -12,17 +12,17 @@ export default function Custom404() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] flex items-center justify-center p-4">
       <div className="text-center max-w-2xl">
         {/* 404 Illustration */}
         <div className="mb-8">
           <div className="relative">
-            <h1 className="text-[150px] md:text-[200px] font-bold text-gray-200 leading-none">
+            <h1 className="text-[130px] md:text-[180px] font-mono font-black text-[var(--app-border)] select-none leading-none">
               404
             </h1>
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-32 h-32 bg-gradient-to-br from-blue-600 to-blue-800 rounded-full flex items-center justify-center animate-bounce">
-                <span className="text-6xl">🔍</span>
+              <div className="w-24 h-24 bg-blue-600/10 border-2 border-blue-500/40 rounded-2xl flex items-center justify-center text-blue-500 shadow-lg">
+                <Search className="w-12 h-12" />
               </div>
             </div>
           </div>
@@ -30,62 +30,65 @@ export default function Custom404() {
 
         {/* Message */}
         <div className="mb-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-2xl md:text-3xl font-bold text-[var(--app-text)] mb-3">
             Halaman Tidak Ditemukan
           </h2>
-          <p className="text-lg text-gray-600 mb-2">
-            Maaf, halaman yang Anda cari tidak ada atau telah dipindahkan.
+          <p className="text-sm md:text-base text-[var(--app-text-muted)] mb-3 max-w-md mx-auto">
+            Halaman rute yang Anda tuju tidak terdaftar atau telah dipindahkan ke segmen modul lain.
           </p>
-          <p className="text-sm text-slate-400" suppressHydrationWarning>
-            URL: <code className="bg-gray-100 px-2 py-1 rounded" suppressHydrationWarning>{mounted ? router.asPath : ''}</code>
+          <p className="text-xs font-mono text-[var(--app-text-muted)]" suppressHydrationWarning>
+            Rute: <code className="bg-[var(--app-card)] border border-[var(--app-border)] px-2.5 py-1 rounded-md text-[var(--app-primary)]" suppressHydrationWarning>{mounted ? router.asPath : ''}</code>
           </p>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <button
             onClick={() => router.back()}
-            className="flex items-center justify-center space-x-2 px-6 py-3 bg-white hover:bg-gray-50 text-gray-700 border-2 border-gray-300 rounded-lg transition-all font-medium shadow-sm"
+            className="flex items-center justify-center space-x-2 px-5 py-2.5 bg-[var(--app-card)] hover:bg-[var(--app-surface-2)] text-[var(--app-text)] border border-[var(--app-border)] rounded-lg transition-colors font-medium text-sm focus-visible:ring-2 focus-visible:ring-[var(--app-primary)]"
           >
-            <ArrowLeft size={20} />
+            <ArrowLeft size={16} />
             <span>Kembali</span>
           </button>
           
           <Link
             href="/"
-            className="flex items-center justify-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all font-medium shadow-lg"
+            className="flex items-center justify-center space-x-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium text-sm shadow-sm focus-visible:ring-2 focus-visible:ring-blue-400"
           >
-            <Home size={20} />
+            <Home size={16} />
             <span>Ke Halaman Utama</span>
           </Link>
         </div>
 
         {/* Additional Help */}
-        <div className="mt-12 p-6 bg-blue-50 rounded-xl border border-blue-100">
-          <h3 className="font-semibold text-gray-900 mb-2">Butuh Bantuan?</h3>
-          <p className="text-sm text-gray-600 mb-4">
-            Jika Anda yakin ini adalah kesalahan, silakan hubungi administrator sistem.
+        <div className="mt-10 p-5 bg-[var(--app-card)] rounded-xl border border-[var(--app-border)] text-left">
+          <h3 className="font-semibold text-xs uppercase tracking-wider text-[var(--app-text)] mb-1">Pusat Bantuan & Navigasi</h3>
+          <p className="text-xs text-[var(--app-text-muted)] mb-4">
+            Bila rute seharusnya aktif dalam konfigurasi ISP Billing, silakan periksa rute menu atau hubungi administrator:
           </p>
-          <div className="flex flex-wrap gap-3 justify-center">
+          <div className="flex flex-wrap items-center gap-3">
             <Link
               href="/dokumentasi"
-              className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+              className="inline-flex items-center gap-1.5 text-xs text-[var(--app-primary)] hover:underline font-medium"
             >
-              📚 Dokumentasi
+              <BookOpen size={13} />
+              <span>Dokumentasi Sistem</span>
             </Link>
-            <span className="text-slate-600">•</span>
+            <span className="text-[var(--app-border)]">•</span>
             <Link
               href="/pengaturan"
-              className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+              className="inline-flex items-center gap-1.5 text-xs text-[var(--app-primary)] hover:underline font-medium"
             >
-              ⚙️ Pengaturan
+              <Settings size={13} />
+              <span>Pengaturan Rute</span>
             </Link>
-            <span className="text-slate-600">•</span>
+            <span className="text-[var(--app-border)]">•</span>
             <a
               href="mailto:support@audiranet.com"
-              className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+              className="inline-flex items-center gap-1.5 text-xs text-[var(--app-primary)] hover:underline font-medium"
             >
-              ✉️ Hubungi Support
+              <Mail size={13} />
+              <span>Hubungi Support</span>
             </a>
           </div>
         </div>

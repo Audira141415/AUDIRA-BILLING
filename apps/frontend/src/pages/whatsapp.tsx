@@ -20,7 +20,8 @@ import {
   ShieldCheck,
   Check,
   Zap,
-  Radio
+  Radio,
+  X
 } from 'lucide-react';
 
 interface CustomerContact {
@@ -374,8 +375,12 @@ export default function WhatsappDashboardPage() {
                     <Send size={18} className="text-emerald-500" />
                     Kirim Pesan WhatsApp Langsung
                   </h3>
-                  <button onClick={() => setShowSendModal(false)} className="text-[var(--app-muted)] hover:text-[var(--app-text)]">
-                    ✕
+                  <button 
+                    onClick={() => setShowSendModal(false)} 
+                    className="p-1 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                    aria-label="Tutup modal"
+                  >
+                    <X className="w-4 h-4" />
                   </button>
                 </div>
 

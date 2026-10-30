@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Layout from '@/components/Layout';
+import { useToast } from '@/contexts/ToastContext';
 import { 
   ArrowLeft, 
   Calendar, 
@@ -15,7 +16,6 @@ import {
   Upload as UploadIcon,
   ChevronDown,
   Percent,
-  Sparkles,
   Search
 } from 'lucide-react';
 
@@ -47,6 +47,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3218';
 
 export default function TambahPackagePage() {
   const router = useRouter();
+  const { toast } = useToast();
   const [formLoading, setFormLoading] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   
@@ -169,14 +170,15 @@ export default function TambahPackagePage() {
       });
 
       if (response.ok) {
+        toast.success('Paket berhasil ditambahkan!');
         router.push('/packages-admin');
       } else {
         const error = await response.json();
-        alert(`Error: ${error.message || 'Gagal menyimpan package'}`);
+        toast.error(`Gagal menyimpan paket: ${error.message || 'Terjadi kesalahan'}`);
       }
     } catch (err) {
       console.error(err);
-      alert('Terjadi kesalahan koneksi');
+      toast.error('Terjadi kesalahan koneksi');
     } finally {
       setFormLoading(false);
     }
@@ -218,7 +220,7 @@ export default function TambahPackagePage() {
         <div className="flex justify-end">
           <button 
             onClick={() => router.push('/packages-admin')}
-            className="flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-slate-900 bg-white border border-slate-200 px-4 py-2.5 rounded-xl transition-all"
+            className="flex items-center gap-2 text-xs font-bold text-[var(--app-text-muted)] hover:text-[var(--app-text)] bg-[var(--app-card)] border border-[var(--app-border)] px-4 py-2.5 rounded-xl transition-all"
           >
             <ArrowLeft size={14} />
             <span>Kembali ke Package</span>
@@ -232,7 +234,7 @@ export default function TambahPackagePage() {
           <div className="lg:col-span-9 space-y-6">
             
             {/* Card 1: Informasi Dasar */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs space-y-5">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-6 shadow-2xs space-y-5">
               <h2 className="text-sm font-bold text-slate-800 tracking-wider uppercase border-b border-slate-200 pb-3">Informasi Dasar</h2>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -295,7 +297,7 @@ export default function TambahPackagePage() {
             </div>
 
             {/* Card 2: Kecepatan & Kuota */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs space-y-5">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-6 shadow-2xs space-y-5">
               <h2 className="text-sm font-bold text-slate-800 tracking-wider uppercase border-b border-slate-200 pb-3">Kecepatan & Kuota</h2>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -392,7 +394,7 @@ export default function TambahPackagePage() {
             </div>
 
             {/* Card 3: Harga & Biaya */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs space-y-5">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-6 shadow-2xs space-y-5">
               <h2 className="text-sm font-bold text-slate-800 tracking-wider uppercase border-b border-slate-200 pb-3">Harga & Biaya</h2>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
@@ -483,7 +485,7 @@ export default function TambahPackagePage() {
                     onClick={() => handleToggleChange('isTaxIncluded')}
                     className={`w-11 h-6 rounded-full transition-colors relative flex items-center ${formData.isTaxIncluded ? 'bg-blue-600' : 'bg-gray-700'}`}
                   >
-                    <span className={`w-4 h-4 bg-white rounded-full absolute transition-all ${formData.isTaxIncluded ? 'right-1' : 'left-1'}`} />
+                    <span className={`w-4 h-4 bg-[var(--app-card)] rounded-full absolute transition-all ${formData.isTaxIncluded ? 'right-1' : 'left-1'}`} />
                   </button>
                   <div className="text-left">
                     <span className="text-xs font-semibold text-slate-600 block">Pajak Termasuk</span>
@@ -494,7 +496,7 @@ export default function TambahPackagePage() {
             </div>
 
             {/* Card 4: Pengaturan */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs space-y-5">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-6 shadow-2xs space-y-5">
               <h2 className="text-sm font-bold text-slate-800 tracking-wider uppercase border-b border-slate-200 pb-3">Pengaturan</h2>
 
               <div className="grid grid-cols-1 md:grid-cols-4 gap-5 items-start">
@@ -506,7 +508,7 @@ export default function TambahPackagePage() {
                       onClick={() => handleToggleChange('status')}
                       className={`w-11 h-6 rounded-full transition-colors relative flex items-center ${formData.status ? 'bg-blue-600' : 'bg-gray-700'}`}
                     >
-                      <span className={`w-4 h-4 bg-white rounded-full absolute transition-all ${formData.status ? 'right-1' : 'left-1'}`} />
+                      <span className={`w-4 h-4 bg-[var(--app-card)] rounded-full absolute transition-all ${formData.status ? 'right-1' : 'left-1'}`} />
                     </button>
                     <span className="text-xs font-semibold text-slate-600">{formData.status ? 'Aktif' : 'Non Aktif'}</span>
                   </div>
@@ -521,7 +523,7 @@ export default function TambahPackagePage() {
                       onClick={() => handleToggleChange('showOnApp')}
                       className={`w-11 h-6 rounded-full transition-colors relative flex items-center ${formData.showOnApp ? 'bg-blue-600' : 'bg-gray-700'}`}
                     >
-                      <span className={`w-4 h-4 bg-white rounded-full absolute transition-all ${formData.showOnApp ? 'right-1' : 'left-1'}`} />
+                      <span className={`w-4 h-4 bg-[var(--app-card)] rounded-full absolute transition-all ${formData.showOnApp ? 'right-1' : 'left-1'}`} />
                     </button>
                     <span className="text-xs font-semibold text-slate-600">{formData.showOnApp ? 'Ya' : 'Tidak'}</span>
                   </div>
@@ -579,7 +581,7 @@ export default function TambahPackagePage() {
           </div>
 
           {/* ─── Right Column: Preview ─────────────────────────────────────── */}
-          <div className="lg:col-span-3 bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-5">
+          <div className="lg:col-span-3 bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-5">
             <div className="flex justify-between items-center border-b border-slate-200 pb-3">
               <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">Preview Package</h3>
               <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${formData.status ? 'bg-green-500/10 text-green-400 border border-green-500/25' : 'bg-gray-500/10 text-slate-500'}`}>
@@ -697,7 +699,7 @@ function SearchIcon() {
       <input 
         type="text" 
         placeholder="Cari customer, invoice, tagihan..."
-        className="w-full bg-white border border-slate-200 rounded-xl text-xs pl-9 pr-4 py-2 text-slate-800 focus:outline-none focus:border-blue-500"
+        className="w-full bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl text-xs pl-9 pr-4 py-2 text-[var(--app-text)] focus:outline-none focus:border-blue-500"
       />
     </div>
   );

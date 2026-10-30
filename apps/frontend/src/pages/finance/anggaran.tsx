@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
+import { useToast } from '@/contexts/ToastContext';
 import {
   TrendingUp,
   TrendingDown,
@@ -31,7 +32,6 @@ import {
   MinusSquare,
   Play,
   RotateCcw,
-  Sparkles,
   HelpCircle,
   FileSpreadsheet,
   X,
@@ -43,8 +43,10 @@ import {
   TrendingUp as TrendUpIcon,
   Wallet,
   Edit,
-  Trash2
+  Trash2,
+  Upload
 } from 'lucide-react';
+import { Pagination } from '@/components/Pagination';
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -73,6 +75,7 @@ const COLORS_KATEGORI = ['#1D4ED8', '#10B981', '#F59E0B', '#EC4899', '#EF4444', 
 
 export default function AnggaranDashboard() {
   const router = useRouter();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('Ringkasan');
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -84,6 +87,10 @@ export default function AnggaranDashboard() {
 
   // Modal State
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [showRevisionModal, setShowRevisionModal] = useState(false);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
   const [showEditModal, setShowEditModal] = useState(false);
   const [budgetToEdit, setBudgetToEdit] = useState<any | null>(null);
   const [editName, setEditName] = useState('');
@@ -248,6 +255,8 @@ export default function AnggaranDashboard() {
     return matchesSearch && matchesDept && matchesCategory && matchesStatus;
   });
 
+  const paginatedBudgets = filteredBudgets.slice((page - 1) * limit, page * limit);
+
   return (
     <Layout>
       <div className="bg-[var(--app-bg)] text-[var(--app-text)] min-h-screen p-6 font-sans antialiased">
@@ -274,12 +283,12 @@ export default function AnggaranDashboard() {
               <Plus className="w-3.5 h-3.5" />
               <span>Anggaran Baru</span>
             </button>
-            <button onClick={() => alert("Membuka modal impor data rencana anggaran...")} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--app-card)] hover:bg-[var(--app-card-subtle)] text-xs font-semibold text-[var(--app-text)] border border-[var(--app-border)] shadow-xs transition-colors">
+            <button onClick={() => setShowImportModal(true)} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--app-card)] hover:bg-[var(--app-card-subtle)] text-xs font-semibold text-[var(--app-text)] border border-[var(--app-border)] shadow-xs transition-colors cursor-pointer">
               <FolderOpen className="w-3.5 h-3.5 text-[var(--app-muted)]" />
               <span>Import Anggaran</span>
             </button>
             <button 
-              onClick={() => alert('Mengekspor anggaran...')}
+              onClick={() => toast.success('Mengekspor anggaran...')}
               className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--app-card)] hover:bg-slate-800 text-xs font-semibold text-white border border-[var(--app-border)] transition-colors"
             >
               <Download className="w-3.5 h-3.5" />
@@ -552,7 +561,7 @@ export default function AnggaranDashboard() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[var(--app-border)] text-[var(--app-text)]/90">
-                  {filteredBudgets.map((b) => {
+                  {paginatedBudgets.map((b) => {
                     const spentPct = parseFloat((b.spent / b.limit * 100).toFixed(1));
                     const sisaNominal = b.limit - b.spent;
 
@@ -599,16 +608,15 @@ export default function AnggaranDashboard() {
             </div>
 
             {/* Pagination */}
-            <div className="flex justify-between items-center mt-4 pt-4 border-t border-[var(--app-border)]/60 text-[11px] text-[var(--app-muted)]">
-              <span>Menampilkan 1 - {filteredBudgets.length} dari {budgets.length} anggaran</span>
-              <div className="flex items-center gap-1.5">
-                <button onClick={() => alert("Halaman pertama sudah aktif.")} className="px-2 py-0.5 rounded bg-[var(--app-card-subtle)] hover:text-white">&lt;</button>
-                <button onClick={() => alert("Halaman 1 saat ini aktif.")} className="px-2 py-0.5 rounded bg-blue-600 text-[var(--app-text)] font-semibold">1</button>
-                <button onClick={() => alert("Beralih ke halaman 2.")} className="px-2 py-0.5 rounded bg-[var(--app-card-subtle)] hover:text-white">2</button>
-                <button onClick={() => alert("Beralih ke halaman 3.")} className="px-2 py-0.5 rounded bg-[var(--app-card-subtle)] hover:text-white">3</button>
-                <button onClick={() => alert("Beralih ke halaman 4.")} className="px-2 py-0.5 rounded bg-[var(--app-card-subtle)] hover:text-white">4</button>
-                <button onClick={() => alert("Beralih ke halaman selanjutnya.")} className="px-2 py-0.5 rounded bg-[var(--app-card-subtle)] hover:text-white">&gt;</button>
-              </div>
+            <div className="mt-4 pt-4 border-t border-[var(--app-border)]/60">
+              <Pagination
+                currentPage={page}
+                totalItems={filteredBudgets.length}
+                pageSize={limit}
+                onPageChange={setPage}
+                onPageSizeChange={(newLimit) => { setLimit(newLimit); setPage(1); }}
+                pageSizeOptions={[5, 10, 20]}
+              />
             </div>
           </div>
 
@@ -653,7 +661,7 @@ export default function AnggaranDashboard() {
                 </div>
               </div>
               <button 
-                onClick={() => alert('Membuka laporan analisis anggaran...')}
+                onClick={() => toast.info('Membuka laporan analisis anggaran...')}
                 className="w-full text-center text-cyan-400 hover:text-cyan-300 pt-2 border-t border-[var(--app-border)] block text-[11px]"
               >
                 Lihat Laporan Lengkap →
@@ -670,16 +678,16 @@ export default function AnggaranDashboard() {
                 >
                   + Buat Anggaran Baru
                 </button>
-                <button onClick={() => alert("Membuka modal impor data rencana anggaran...")} className="w-full text-left py-2 px-3 rounded bg-[var(--app-card-subtle)]/20 hover:bg-[var(--app-card-subtle)]/40 text-[var(--app-text)]/90 border border-[var(--app-border)] block">
+                <button onClick={() => setShowImportModal(true)} className="w-full text-left py-2 px-3 rounded bg-[var(--app-card-subtle)]/20 hover:bg-[var(--app-card-subtle)]/40 text-[var(--app-text)]/90 border border-[var(--app-border)] block cursor-pointer">
                   Import Anggaran
                 </button>
-                <button onClick={() => alert("Membuka formulir pengajuan revisi pagu anggaran...")} className="w-full text-left py-2 px-3 rounded bg-[var(--app-card-subtle)]/20 hover:bg-[var(--app-card-subtle)]/40 text-[var(--app-text)]/90 border border-[var(--app-border)] block">
+                <button onClick={() => setShowRevisionModal(true)} className="w-full text-left py-2 px-3 rounded bg-[var(--app-card-subtle)]/20 hover:bg-[var(--app-card-subtle)]/40 text-[var(--app-text)]/90 border border-[var(--app-border)] block cursor-pointer">
                   Revisi Anggaran
                 </button>
-                <button onClick={() => alert("Menampilkan rekapitulasi realisasi anggaran vs belanja...")} className="w-full text-left py-2 px-3 rounded bg-[var(--app-card-subtle)]/20 hover:bg-[var(--app-card-subtle)]/40 text-[var(--app-text)]/90 border border-[var(--app-border)] block">
+                <button onClick={() => toast.info("Menampilkan rekapitulasi realisasi anggaran vs belanja...")} className="w-full text-left py-2 px-3 rounded bg-[var(--app-card-subtle)]/20 hover:bg-[var(--app-card-subtle)]/40 text-[var(--app-text)]/90 border border-[var(--app-border)] block">
                   Laporan Anggaran
                 </button>
-                <button onClick={() => alert("Mengekspor data anggaran ke format Excel...")} className="w-full text-left py-2 px-3 rounded bg-[var(--app-card-subtle)]/20 hover:bg-[var(--app-card-subtle)]/40 text-[var(--app-text)]/90 border border-[var(--app-border)] block">
+                <button onClick={() => toast.success("Mengekspor data anggaran ke format Excel...")} className="w-full text-left py-2 px-3 rounded bg-[var(--app-card-subtle)]/20 hover:bg-[var(--app-card-subtle)]/40 text-[var(--app-text)]/90 border border-[var(--app-border)] block">
                   Ekspor Data Anggaran
                 </button>
               </div>
@@ -946,6 +954,166 @@ export default function AnggaranDashboard() {
                 Ya, Hapus
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Import Data Anggaran */}
+      {showImportModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl w-full max-w-lg shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between p-5 border-b border-[var(--app-border)]">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-lg bg-blue-500/10 text-blue-500 border border-blue-500/20">
+                  <Upload size={16} />
+                </div>
+                <h3 className="text-sm font-bold text-[var(--app-text)]">Import Rencana Anggaran (RKA)</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowImportModal(false)}
+                className="p-1.5 text-[var(--app-muted)] hover:text-[var(--app-text)] rounded-lg hover:bg-[var(--app-surface-2)] transition-colors cursor-pointer"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="p-5 space-y-4 text-xs">
+              <div className="border-2 border-dashed border-[var(--app-border)] hover:border-blue-500 rounded-xl p-6 text-center bg-[var(--app-surface-2)]/50 transition-colors cursor-pointer">
+                <Upload size={28} className="mx-auto text-blue-500 mb-2" />
+                <p className="font-semibold text-[var(--app-text)]">Pilih atau seret berkas Excel/CSV Anggaran</p>
+                <p className="text-[11px] text-[var(--app-muted)] mt-1">Mendukung format .xlsx dan .csv (Maks. 5 MB)</p>
+              </div>
+
+              <div className="flex items-center justify-between pt-3 border-t border-[var(--app-border)]">
+                <button
+                  type="button"
+                  onClick={() => toast.success('Mengunduh template_anggaran_audira.xlsx...', 'Unduh Template')}
+                  className="text-blue-500 hover:text-blue-400 font-semibold flex items-center gap-1 text-xs cursor-pointer"
+                >
+                  <Download size={13} />
+                  <span>Download Template Excel</span>
+                </button>
+
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowImportModal(false)}
+                    className="px-4 py-2 rounded-lg border border-[var(--app-border)] bg-[var(--app-surface-2)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-surface)] transition-colors cursor-pointer"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newBgt = {
+                        id: Date.now().toString(),
+                        code: `BGT-2026-IT-0${budgets.length + 1}`,
+                        name: 'Pengadaan Patchcord & OTB Sentral',
+                        dept: 'IT & Jaringan',
+                        category: 'Beban Operasional',
+                        limit: 15000000,
+                        spent: 0,
+                        status: 'Disetujui'
+                      };
+                      setBudgets(prev => [newBgt, ...prev]);
+                      setShowImportModal(false);
+                      toast.success('Rencana anggaran berhasil diimpor ke sistem!', 'Impor Berhasil');
+                    }}
+                    className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold transition-colors cursor-pointer"
+                  >
+                    Proses Impor Anggaran
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Pengajuan Revisi Pagu Anggaran */}
+      {showRevisionModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl w-full max-w-lg shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between p-5 border-b border-[var(--app-border)]">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-lg bg-amber-500/10 text-amber-500 border border-amber-500/20">
+                  <RotateCcw size={16} />
+                </div>
+                <h3 className="text-sm font-bold text-[var(--app-text)]">Pengajuan Revisi Pagu Anggaran</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowRevisionModal(false)}
+                className="p-1.5 text-[var(--app-muted)] hover:text-[var(--app-text)] rounded-lg hover:bg-[var(--app-surface-2)] transition-colors cursor-pointer"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                setShowRevisionModal(false);
+                toast.success('Pengajuan revisi pagu anggaran telah dikirim ke Direksi Keuangan.', 'Pengajuan Diajukan');
+              }}
+              className="p-5 space-y-4 text-xs"
+            >
+              <div>
+                <label className="block font-semibold mb-1 text-[var(--app-text)]">Pilih Pos Anggaran</label>
+                <select className="w-full p-2.5 rounded bg-[var(--app-surface-2)] border border-[var(--app-border)] text-[var(--app-text)] focus:outline-none">
+                  {budgets.map(b => (
+                    <option key={b.code} value={b.code}>{b.code} - {b.name} (Pagu: {formatRupiah(b.limit)})</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold mb-1 text-[var(--app-text)]">Pagu Revisi Baru (Rp)</label>
+                  <input
+                    type="number"
+                    required
+                    placeholder="Contoh: 120000000"
+                    className="w-full p-2.5 rounded bg-[var(--app-surface-2)] border border-[var(--app-border)] text-[var(--app-text)] font-mono focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold mb-1 text-[var(--app-text)]">Sifat Revisi</label>
+                  <select className="w-full p-2.5 rounded bg-[var(--app-surface-2)] border border-[var(--app-border)] text-[var(--app-text)] focus:outline-none">
+                    <option>Penambahan Pagu (Ekspansi)</option>
+                    <option>Pergeseran Antar Sub-Pos</option>
+                    <option>Pengurangan / Efisiensi</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-semibold mb-1 text-[var(--app-text)]">Alasan Kebutuhan Revisi</label>
+                <textarea
+                  rows={2}
+                  required
+                  placeholder="Jelaskan kebutuhan penyesuaian pagu belanja..."
+                  className="w-full p-2.5 rounded bg-[var(--app-surface-2)] border border-[var(--app-border)] text-[var(--app-text)] focus:outline-none"
+                />
+              </div>
+
+              <div className="flex justify-end gap-2.5 pt-3 border-t border-[var(--app-border)]">
+                <button
+                  type="button"
+                  onClick={() => setShowRevisionModal(false)}
+                  className="px-4 py-2 rounded-lg border border-[var(--app-border)] bg-[var(--app-surface-2)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-surface)] transition-colors cursor-pointer"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold transition-colors cursor-pointer"
+                >
+                  Kirim Pengajuan
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

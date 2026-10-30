@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
+import { useToast } from '@/contexts/ToastContext';
 import {
   TrendingUp,
   TrendingDown,
@@ -62,6 +63,7 @@ const COLORS_EXPENSE = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
 
 export default function FinanceDashboard() {
   const router = useRouter();
+  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [dateRange, setDateRange] = useState('25 Juni 2026 - 22 Oktober 2026');
   const [searchTerm, setSearchTerm] = useState('');
@@ -479,7 +481,7 @@ export default function FinanceDashboard() {
                       </td>
                       <td className="py-3 text-center whitespace-nowrap">
                         <div className="flex items-center justify-center gap-1.5">
-                          <button onClick={() => alert(`Edit transaksi ${tx.id}`)} className="p-1 text-[var(--app-muted)] hover:text-cyan-400">
+                          <button onClick={() => toast.info(`Edit transaksi ${tx.id}`)} className="p-1 text-[var(--app-muted)] hover:text-cyan-400 focus-visible:ring-2 focus-visible:ring-[var(--app-primary)] rounded">
                             <Edit className="w-3 h-3" />
                           </button>
                           <button 

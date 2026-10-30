@@ -18,10 +18,24 @@ interface ToastContextType {
     info: (message: string, title?: string) => void;
     warning: (message: string, title?: string) => void;
   };
+  addToast: (
+    typeOrOpts: ToastType | { type?: ToastType; title: string; message?: string },
+    message?: string,
+    title?: string
+  ) => void;
   removeToast: (id: string) => void;
 }
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
+
+const sanitizeToastText = (input?: string) => {
+  if (!input) return '';
+  return input
+    .replace(/[\u2600-\u27BF]|[\uD83C-\uDBFF][\uDC00-\uDFFF]/g, '')
+    .replace(/\u2014/g, '-')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+};
 
 export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
@@ -32,11 +46,15 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const addToast = useCallback((type: ToastType, message: string, title?: string) => {
     const id = `toast_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`;
+    const cleanTitle = sanitizeToastText(
+      title || (type === 'success' ? 'Berhasil' : type === 'error' ? 'Kesalahan' : type === 'warning' ? 'Perhatian' : 'Informasi')
+    );
+    const cleanMsg = sanitizeToastText(message);
     const newToast: ToastItem = {
       id,
       type,
-      title: title || (type === 'success' ? 'Berhasil' : type === 'error' ? 'Kesalahan' : type === 'warning' ? 'Perhatian' : 'Informasi'),
-      message,
+      title: cleanTitle,
+      message: cleanMsg,
       duration: 4000,
     };
 
@@ -58,16 +76,15 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (typeof window !== 'undefined') {
       (window as any).audiraToast = toastMethods;
 
-      // Non-blocking Cyberpunk Toast Bridge for window.alert
       const originalAlert = window.alert;
       window.alert = (msg?: any) => {
         const text = String(msg || '');
         const lower = text.toLowerCase();
-        if (text.includes('✅') || lower.includes('berhasil') || lower.includes('success')) {
+        if (lower.includes('berhasil') || lower.includes('success') || lower.includes('tersimpan') || lower.includes('aktif')) {
           toastMethods.success(text);
-        } else if (text.includes('❌') || lower.includes('gagal') || lower.includes('error') || lower.includes('failed')) {
+        } else if (lower.includes('gagal') || lower.includes('error') || lower.includes('failed') || lower.includes('wajib')) {
           toastMethods.error(text);
-        } else if (text.includes('⚠️') || lower.includes('perhatian') || lower.includes('warning') || lower.includes('peringatan')) {
+        } else if (lower.includes('perhatian') || lower.includes('warning') || lower.includes('peringatan')) {
           toastMethods.warning(text);
         } else {
           toastMethods.info(text);
@@ -80,32 +97,55 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, [addToast]);
 
+  const flexibleAddToast = useCallback(
+    (
+      typeOrOpts: ToastType | { type?: ToastType; title: string; message?: string },
+      message?: string,
+      title?: string
+    ) => {
+      if (typeof typeOrOpts === 'object' && typeOrOpts !== null) {
+        addToast(
+          typeOrOpts.type || 'info',
+          typeOrOpts.message || typeOrOpts.title,
+          typeOrOpts.message ? typeOrOpts.title : undefined
+        );
+      } else {
+        addToast(typeOrOpts, message || '', title);
+      }
+    },
+    [addToast]
+  );
+
   return (
-    <ToastContext.Provider value={{ toast: toastMethods, removeToast }}>
+    <ToastContext.Provider value={{ toast: toastMethods, addToast: flexibleAddToast, removeToast }}>
       {children}
 
-      {/* Floating Neo-Brutalist Toast Container (Top Right) */}
-      <div className="fixed top-5 right-5 z-[9999] flex flex-col gap-3 max-w-md w-full pointer-events-none p-2">
+      {/* Enterprise Semantic Toast Stack (Top Right) */}
+      <div
+        className="fixed top-4 right-4 z-[9999] flex flex-col gap-2.5 max-w-sm w-full pointer-events-none p-2"
+        role="region"
+        aria-label="Notifikasi sistem"
+      >
         {toasts.map((t) => {
           const isSuccess = t.type === 'success';
           const isError = t.type === 'error';
           const isWarning = t.type === 'warning';
 
-          const accentBg = isSuccess
-            ? 'bg-emerald-500'
+          const borderTone = isSuccess
+            ? 'border-emerald-500/40'
             : isError
-            ? 'bg-rose-500'
+            ? 'border-rose-500/40'
             : isWarning
-            ? 'bg-amber-500'
-            : 'bg-[#0070f3]';
+            ? 'border-amber-500/40'
+            : 'border-blue-500/40';
 
-          const accentBorder = isSuccess
-            ? 'border-emerald-500/80'
+          const badgeTone = isSuccess
+            ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
             : isError
-            ? 'border-rose-500/80'
+            ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20'
             : isWarning
-            ? 'border-amber-500/80'
-            : 'border-[#0070f3]/80';
+            ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20'
+            : 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20';
 
           const Icon = isSuccess
             ? CheckCircle2
@@ -118,29 +158,30 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           return (
             <div
               key={t.id}
-              className={`pointer-events-auto transform transition-all duration-300 ease-out translate-y-0 opacity-100 bg-[#0a0e1a] text-white border-2 ${accentBorder} rounded-xl p-4 shadow-[6px_6px_0px_#05070d] dark:shadow-[6px_6px_0px_rgba(0,112,243,0.35)] flex items-start gap-3 relative overflow-hidden`}
+              role="status"
+              aria-live="polite"
+              className={`pointer-events-auto transition-all duration-150 ease-out bg-[var(--app-card)] text-[var(--app-text)] border ${borderTone} rounded-lg p-3.5 shadow-lg flex items-start gap-3`}
             >
-              {/* Neon color bar indicator */}
-              <div className={`absolute top-0 left-0 bottom-0 w-1.5 ${accentBg}`} />
-
-              <div className={`p-2 rounded-lg ${accentBg}/15 text-white flex-shrink-0 mt-0.5`}>
-                <Icon size={18} className={isSuccess ? 'text-emerald-400' : isError ? 'text-rose-400' : isWarning ? 'text-amber-400' : 'text-[#0070f3]'} />
+              <div className={`p-1.5 rounded-md border ${badgeTone} flex-shrink-0 mt-0.5`}>
+                <Icon size={16} />
               </div>
 
-              <div className="flex-1 min-w-0 pr-4">
-                <h4 className="text-xs font-black uppercase tracking-wider text-white">
+              <div className="flex-1 min-w-0 pr-2">
+                <h4 className="text-xs font-bold tracking-tight text-[var(--app-text)]">
                   {t.title}
                 </h4>
                 {t.message && (
-                  <p className="text-[11px] text-slate-300 mt-1 leading-snug break-words">
+                  <p className="text-[11px] text-[var(--app-text-muted)] mt-0.5 leading-snug break-words">
                     {t.message}
                   </p>
                 )}
               </div>
 
               <button
+                type="button"
                 onClick={() => removeToast(t.id)}
-                className="text-slate-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-white/10"
+                aria-label="Tutup notifikasi"
+                className="text-[var(--app-text-muted)] hover:text-[var(--app-text)] transition-colors p-1 rounded-md hover:bg-[var(--app-card-subtle)] cursor-pointer"
               >
                 <X size={14} />
               </button>
@@ -155,44 +196,49 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 export const useToast = () => {
   const context = useContext(ToastContext);
   if (!context) {
-    // Graceful fallback for components outside of provider
     return {
       toast: {
         success: (msg: string) => {
           if (typeof window !== 'undefined' && (window as any).audiraToast) {
             (window as any).audiraToast.success(msg);
-          } else {
-            console.log('[SUCCESS]', msg);
           }
         },
         error: (msg: string) => {
           if (typeof window !== 'undefined' && (window as any).audiraToast) {
             (window as any).audiraToast.error(msg);
-          } else {
-            console.error('[ERROR]', msg);
           }
         },
         info: (msg: string) => {
           if (typeof window !== 'undefined' && (window as any).audiraToast) {
             (window as any).audiraToast.info(msg);
-          } else {
-            console.info('[INFO]', msg);
           }
         },
         warning: (msg: string) => {
           if (typeof window !== 'undefined' && (window as any).audiraToast) {
             (window as any).audiraToast.warning(msg);
-          } else {
-            console.warn('[WARNING]', msg);
           }
         },
       },
+      addToast: (
+        typeOrOpts: ToastType | { type?: ToastType; title: string; message?: string },
+        message?: string,
+        title?: string
+      ) => {
+        if (typeof window !== 'undefined' && (window as any).audiraToast) {
+          if (typeof typeOrOpts === 'object' && typeOrOpts !== null) {
+            const t = typeOrOpts.type || 'info';
+            (window as any).audiraToast[t]?.(typeOrOpts.message || typeOrOpts.title, typeOrOpts.title);
+          } else {
+            (window as any).audiraToast[typeOrOpts]?.(message || '', title);
+          }
+        }
+      },
+      removeToast: () => {},
     };
   }
   return context;
 };
 
-// Standalone global trigger helper (callable directly or via .success / .error)
 type ToastTrigger = {
   (type: ToastType, msg: string, title?: string): void;
   success: (msg: string, title?: string) => void;

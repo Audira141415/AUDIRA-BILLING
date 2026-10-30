@@ -34,6 +34,10 @@ import { FranchiseModule } from './franchise/franchise.module';
 import { OdpModule } from './odp/odp.module';
 import { SettingsModule } from './settings/settings.module';
 import { DocumentationModule } from './documentation/documentation.module';
+import { TelegramModule } from './telegram/telegram.module';
+import { DnsModule } from './dns/dns.module';
+import { SpeedtestModule } from './speedtest/speedtest.module';
+import { ZtpModule } from './ztp/ztp.module';
 import { EmployeeModule } from './employee/employee.module';
 import { SalaryModule } from './salary/salary.module';
 import { LeaveModule } from './leave/leave.module';
@@ -52,6 +56,10 @@ import { BoosterModule } from './booster/booster.module';
 import { CollectorModule } from './collector/collector.module';
 import { OltModule } from './olt/olt.module';
 import { RealtimeModule } from './realtime/realtime.module';
+import { IncidentModule } from './incident/incident.module';
+import { RetensiModule } from './retensi/retensi.module';
+import { NetflowModule } from './netflow/netflow.module';
+import { TunnelModule } from './tunnel/tunnel.module';
 
 @Module({
   imports: [
@@ -76,6 +84,7 @@ import { RealtimeModule } from './realtime/realtime.module';
     CollectorModule,
     OltModule,
     MikrotikModule,
+    TunnelModule,
     PelangganModule,
     KeuanganModule,
     OperationalModule,
@@ -102,6 +111,14 @@ import { RealtimeModule } from './realtime/realtime.module';
     OdpModule,
     SettingsModule,
     DocumentationModule,
+    TelegramModule,
+    // ISP Advanced Infrastructure Modules
+    DnsModule,
+    SpeedtestModule,
+    ZtpModule,
+    IncidentModule,
+    RetensiModule,
+    NetflowModule,
     // HRM Modules
     EmployeeModule,
     SalaryModule,

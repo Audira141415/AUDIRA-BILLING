@@ -223,14 +223,14 @@ export default function Layanan() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gray-50 p-4 md:p-8">
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-950 text-gray-900 dark:text-slate-100 p-4 md:p-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Manajemen Layanan</h1>
-            <p className="text-gray-600 mt-1">Kelola aktivasi dan status layanan pelanggan</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100">Manajemen Layanan</h1>
+            <p className="text-gray-600 dark:text-slate-400 mt-1">Kelola aktivasi dan status layanan pelanggan</p>
           </div>
-          <button onClick={() => setShowAddServiceModal(true)} className="flex items-center space-x-2 bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+          <button onClick={() => setShowAddServiceModal(true)} className="flex items-center space-x-2 bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-primary)]">
             <Plus size={20} />
             <span>Tambah Layanan</span>
           </button>
@@ -238,64 +238,64 @@ export default function Layanan() {
 
         {/* Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-xl shadow-sm p-6">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm">Total Layanan</p>
-                <p className="text-3xl font-bold text-gray-900 mt-1">{services.length}</p>
+                <p className="text-gray-600 dark:text-slate-400 text-sm">Total Layanan</p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-slate-100 mt-1">{services.length}</p>
               </div>
-              <div className="bg-blue-100 p-3 rounded-lg">
-                <Server className="text-blue-600" size={24} />
+              <div className="bg-blue-100 dark:bg-blue-950/50 p-3 rounded-lg">
+                <Server className="text-blue-600 dark:text-blue-400" size={24} />
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm p-6">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm">Layanan Aktif</p>
-                <p className="text-3xl font-bold text-green-600 mt-1">{activeServices}</p>
+                <p className="text-gray-600 dark:text-slate-400 text-sm">Layanan Aktif</p>
+                <p className="text-3xl font-bold text-green-600 dark:text-green-400 mt-1">{activeServices}</p>
               </div>
-              <div className="bg-green-100 p-3 rounded-lg">
-                <PlayCircle className="text-green-600" size={24} />
+              <div className="bg-green-100 dark:bg-green-950/50 p-3 rounded-lg">
+                <PlayCircle className="text-green-600 dark:text-green-400" size={24} />
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm p-6">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm">Suspended</p>
-                <p className="text-3xl font-bold text-orange-600 mt-1">{suspendedServices}</p>
+                <p className="text-gray-600 dark:text-slate-400 text-sm">Suspended</p>
+                <p className="text-3xl font-bold text-orange-600 dark:text-orange-400 mt-1">{suspendedServices}</p>
               </div>
-              <div className="bg-orange-100 p-3 rounded-lg">
-                <PauseCircle className="text-orange-600" size={24} />
+              <div className="bg-orange-100 dark:bg-orange-950/50 p-3 rounded-lg">
+                <PauseCircle className="text-orange-600 dark:text-orange-400" size={24} />
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm p-6">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm">Terminated</p>
-                <p className="text-3xl font-bold text-red-600 mt-1">{terminatedServices}</p>
+                <p className="text-gray-600 dark:text-slate-400 text-sm">Terminated</p>
+                <p className="text-3xl font-bold text-red-600 dark:text-red-400 mt-1">{terminatedServices}</p>
               </div>
-              <div className="bg-red-100 p-3 rounded-lg">
-                <StopCircle className="text-red-600" size={24} />
+              <div className="bg-red-100 dark:bg-red-950/50 p-3 rounded-lg">
+                <StopCircle className="text-red-600 dark:text-red-400" size={24} />
               </div>
             </div>
           </div>
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-xl shadow-sm p-4 mb-6">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm p-4 mb-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
             <div className="relative flex-1 md:mr-4">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500" size={20} />
               <input
                 type="text"
                 placeholder="Cari berdasarkan nama layanan, pelanggan, atau paket..."
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-3 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 text-gray-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent focus-visible:outline-none"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -304,7 +304,7 @@ export default function Layanan() {
               <button
                 onClick={() => setStatusFilter('all')}
                 className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  statusFilter === 'all' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  statusFilter === 'all' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-slate-300 hover:bg-gray-200 dark:hover:bg-slate-700'
                 }`}
               >
                 Semua
@@ -312,7 +312,7 @@ export default function Layanan() {
               <button
                 onClick={() => setStatusFilter('active')}
                 className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  statusFilter === 'active' ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  statusFilter === 'active' ? 'bg-green-600 text-white' : 'bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-slate-300 hover:bg-gray-200 dark:hover:bg-slate-700'
                 }`}
               >
                 Aktif
@@ -320,7 +320,7 @@ export default function Layanan() {
               <button
                 onClick={() => setStatusFilter('suspended')}
                 className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  statusFilter === 'suspended' ? 'bg-orange-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  statusFilter === 'suspended' ? 'bg-orange-600 text-white' : 'bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-slate-300 hover:bg-gray-200 dark:hover:bg-slate-700'
                 }`}
               >
                 Suspended
@@ -330,55 +330,55 @@ export default function Layanan() {
         </div>
 
         {/* Services Table */}
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead className="bg-gray-50 dark:bg-slate-800/60 border-b border-gray-200 dark:border-slate-800">
                 <tr>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-slate-400 uppercase tracking-wider">
                     Nama Layanan
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-slate-400 uppercase tracking-wider">
                     Pelanggan
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-slate-400 uppercase tracking-wider">
                     Paket
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-slate-400 uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-slate-400 uppercase tracking-wider">
                     Tanggal Aktif
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-slate-400 uppercase tracking-wider">
                     Tanggal Expired
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-slate-400 uppercase tracking-wider">
                     Auto Renew
                   </th>
-                  <th className="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-right text-xs font-semibold text-gray-600 dark:text-slate-400 uppercase tracking-wider">
                     Aksi
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-gray-200 dark:divide-slate-800">
                 {filteredServices.map((service) => (
                   <tr 
                     key={service.id} 
                     onClick={() => handleServiceClick(service)}
-                    className="hover:bg-orange-50 transition-colors cursor-pointer"
+                    className="hover:bg-orange-50/60 dark:hover:bg-slate-800/40 transition-colors cursor-pointer"
                   >
                     <td className="px-6 py-4">
                       <div>
-                        <p className="font-semibold text-gray-900">{service.serviceName}</p>
+                        <p className="font-semibold text-gray-900 dark:text-slate-100">{service.serviceName}</p>
                         <p className="text-sm text-slate-400">{service.serviceType}</p>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-gray-900">{service.customerName}</span>
+                      <span className="text-gray-900 dark:text-slate-100">{service.customerName}</span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-gray-900">{service.packageName}</span>
+                      <span className="text-gray-900 dark:text-slate-100">{service.packageName}</span>
                     </td>
                     <td className="px-6 py-4">
                       <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(service.status)}`}>
@@ -386,10 +386,10 @@ export default function Layanan() {
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-sm text-gray-600">{service.activationDate}</span>
+                      <span className="text-sm text-gray-600 dark:text-slate-400">{service.activationDate}</span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-sm text-gray-600">{service.expiryDate}</span>
+                      <span className="text-sm text-gray-600 dark:text-slate-400">{service.expiryDate}</span>
                     </td>
                     <td className="px-6 py-4">
                       {service.autoRenew ? (
@@ -404,18 +404,18 @@ export default function Layanan() {
                     <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
                       <div className="flex items-center justify-end space-x-2">
                         {service.status === 'active' ? (
-                          <button onClick={() => handleToggleSuspend(service)} className="p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors" title="Suspend Layanan">
+                          <button onClick={() => handleToggleSuspend(service)} className="p-2 text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-950/30 rounded-lg transition-colors" title="Suspend Layanan">
                             <PauseCircle size={18} />
                           </button>
                         ) : (
-                          <button onClick={() => handleToggleSuspend(service)} className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors" title="Aktivasi Layanan">
+                          <button onClick={() => handleToggleSuspend(service)} className="p-2 text-green-600 hover:bg-green-50 dark:hover:bg-green-950/30 rounded-lg transition-colors" title="Aktivasi Layanan">
                             <PlayCircle size={18} />
                           </button>
                         )}
-                        <button onClick={() => { setSelectedService(service); setShowServiceModal(true); }} className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors" title="Edit / Detail">
+                        <button onClick={() => { setSelectedService(service); setShowServiceModal(true); }} className="p-2 text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors" title="Edit / Detail">
                           <Edit size={18} />
                         </button>
-                        <button onClick={() => handleDeleteService(service)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Hapus Layanan">
+                        <button onClick={() => handleDeleteService(service)} className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-lg transition-colors" title="Hapus Layanan">
                           <Trash2 size={18} />
                         </button>
                       </div>
@@ -429,8 +429,8 @@ export default function Layanan() {
           {filteredServices.length === 0 && (
             <div className="text-center py-12">
               <Server size={64} className="mx-auto text-slate-500 mb-4" />
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Tidak ada layanan ditemukan</h3>
-              <p className="text-gray-600">Coba ubah kata kunci pencarian atau filter Anda</p>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-2">Tidak ada layanan ditemukan</h3>
+              <p className="text-gray-600 dark:text-slate-400">Coba ubah kata kunci pencarian atau filter Anda</p>
             </div>
           )}
         </div>
@@ -439,12 +439,13 @@ export default function Layanan() {
       {/* Service Detail Modal */}
       {showServiceModal && selectedService && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             {/* Header */}
             <div className="bg-gradient-to-r from-orange-600 to-amber-700 text-white p-6 rounded-t-2xl relative">
               <button
                 onClick={() => setShowServiceModal(false)}
-                className="absolute top-4 right-4 p-2 hover:bg-white/20 rounded-lg transition-colors"
+                className="absolute top-4 right-4 p-2 hover:bg-white/20 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                aria-label="Tutup modal"
               >
                 <X size={24} />
               </button>
@@ -462,67 +463,67 @@ export default function Layanan() {
             {/* Content */}
             <div className="p-6 space-y-6">
               {/* Status Badge */}
-              <div className="flex items-center justify-between pb-4 border-b">
+              <div className="flex items-center justify-between pb-4 border-b border-gray-200 dark:border-slate-800">
                 <span className={`px-4 py-2 rounded-full text-sm font-semibold ${getStatusColor(selectedService.status)}`}>
                   {getStatusText(selectedService.status)}
                 </span>
                 <div className="flex items-center space-x-2">
                   {selectedService.autoRenew ? (
-                    <span className="flex items-center text-green-600 bg-green-50 px-3 py-1 rounded-full">
+                    <span className="flex items-center text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/40 px-3 py-1 rounded-full">
                       <CheckCircle size={16} className="mr-1" />
                       <span className="text-sm font-semibold">Auto Renew Aktif</span>
                     </span>
                   ) : (
-                    <span className="text-sm text-slate-400 bg-gray-100 px-3 py-1 rounded-full">Manual Renew</span>
+                    <span className="text-sm text-slate-400 bg-gray-100 dark:bg-slate-800 px-3 py-1 rounded-full">Manual Renew</span>
                   )}
                 </div>
               </div>
 
               {/* Service Information */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4">
+                <div className="bg-blue-50/70 dark:bg-blue-950/30 border border-blue-200/50 dark:border-blue-900/40 rounded-xl p-4">
                   <div className="flex items-center space-x-3 mb-3">
-                    <User className="text-blue-600" size={20} />
-                    <h3 className="font-bold text-gray-900">Pelanggan</h3>
+                    <User className="text-blue-600 dark:text-blue-400" size={20} />
+                    <h3 className="font-bold text-gray-900 dark:text-slate-100">Pelanggan</h3>
                   </div>
-                  <p className="text-lg font-semibold text-gray-900">{selectedService.customerName}</p>
-                  <p className="text-sm text-gray-600">Tipe: {selectedService.serviceType}</p>
+                  <p className="text-lg font-semibold text-gray-900 dark:text-slate-100">{selectedService.customerName}</p>
+                  <p className="text-sm text-gray-600 dark:text-slate-400">Tipe: {selectedService.serviceType}</p>
                 </div>
 
-                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4">
+                <div className="bg-emerald-50/70 dark:bg-emerald-950/30 border border-green-200/50 dark:border-emerald-900/40 rounded-xl p-4">
                   <div className="flex items-center space-x-3 mb-3">
-                    <Package className="text-green-600" size={20} />
-                    <h3 className="font-bold text-gray-900">Paket</h3>
+                    <Package className="text-emerald-600 dark:text-emerald-400" size={20} />
+                    <h3 className="font-bold text-gray-900 dark:text-slate-100">Paket</h3>
                   </div>
-                  <p className="text-lg font-semibold text-gray-900">{selectedService.packageName}</p>
+                  <p className="text-lg font-semibold text-gray-900 dark:text-slate-100">{selectedService.packageName}</p>
                 </div>
               </div>
 
               {/* Dates */}
-              <div className="bg-white border border-gray-200 rounded-xl p-4">
+              <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl p-4">
                 <div className="flex items-center space-x-3 mb-3">
-                  <Calendar className="text-blue-600" size={20} />
-                  <h3 className="font-bold text-gray-900">Informasi Tanggal</h3>
+                  <Calendar className="text-blue-600 dark:text-blue-400" size={20} />
+                  <h3 className="font-bold text-gray-900 dark:text-slate-100">Informasi Tanggal</h3>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-xs text-gray-600">Tanggal Aktivasi</p>
-                    <p className="font-semibold text-gray-900">{selectedService.activationDate}</p>
+                    <p className="text-xs text-gray-600 dark:text-slate-400">Tanggal Aktivasi</p>
+                    <p className="font-semibold text-gray-900 dark:text-slate-100">{selectedService.activationDate}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-600">Tanggal Expired</p>
-                    <p className="font-semibold text-gray-900">{selectedService.expiryDate}</p>
+                    <p className="text-xs text-gray-600 dark:text-slate-400">Tanggal Expired</p>
+                    <p className="font-semibold text-gray-900 dark:text-slate-100">{selectedService.expiryDate}</p>
                   </div>
                 </div>
               </div>
 
               {/* Info Box */}
-              <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+              <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/50 rounded-xl p-4">
                 <div className="flex items-start space-x-3">
-                  <Info className="text-blue-600 mt-0.5" size={20} />
+                  <Info className="text-blue-600 dark:text-blue-400 mt-0.5" size={20} />
                   <div>
-                    <h4 className="font-semibold text-blue-900 mb-1">Catatan</h4>
-                    <p className="text-sm text-blue-700">
+                    <h4 className="font-semibold text-blue-900 dark:text-blue-200 mb-1">Catatan</h4>
+                    <p className="text-sm text-blue-700 dark:text-blue-300">
                       {selectedService.status === 'active' && 'Layanan sedang aktif dan berjalan normal.'}
                       {selectedService.status === 'suspended' && 'Layanan ditangguhkan. Harap selesaikan pembayaran untuk mengaktifkan kembali.'}
                       {selectedService.status === 'terminated' && 'Layanan telah dihentikan.'}
@@ -532,20 +533,20 @@ export default function Layanan() {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center justify-end space-x-3 pt-4 border-t">
+              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-slate-800">
                 <button
                   onClick={() => setShowServiceModal(false)}
-                  className="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-lg transition-colors"
+                  className="px-6 py-2.5 bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700 text-gray-700 dark:text-slate-200 font-semibold rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-primary)]"
                 >
                   Tutup
                 </button>
                 {selectedService.status === 'active' ? (
-                  <button onClick={() => { handleToggleSuspend(selectedService); }} className="px-6 py-2.5 bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl">
+                  <button onClick={() => { handleToggleSuspend(selectedService); }} className="px-6 py-2.5 bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500">
                     <PauseCircle className="inline mr-2" size={18} />
                     Suspend Layanan
                   </button>
                 ) : (
-                  <button onClick={() => { handleToggleSuspend(selectedService); }} className="px-6 py-2.5 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl">
+                  <button onClick={() => { handleToggleSuspend(selectedService); }} className="px-6 py-2.5 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500">
                     <PlayCircle className="inline mr-2" size={18} />
                     Aktivasi Layanan
                   </button>
@@ -559,48 +560,48 @@ export default function Layanan() {
       {/* Add Service Modal */}
       {showAddServiceModal && (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl border border-gray-200">
-            <div className="p-5 border-b flex justify-between items-center bg-gray-50">
-              <h3 className="font-bold text-base text-gray-900 flex items-center gap-2">
-                <Plus size={18} className="text-orange-600" />
+          <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl border border-gray-200 dark:border-slate-800">
+            <div className="p-5 border-b border-gray-200 dark:border-slate-800 flex justify-between items-center bg-gray-50 dark:bg-slate-800/60">
+              <h3 className="font-bold text-base text-gray-900 dark:text-slate-100 flex items-center gap-2">
+                <Plus size={18} className="text-orange-600 dark:text-orange-400" />
                 Tambah Layanan Pelanggan Baru
               </h3>
-              <button onClick={() => setShowAddServiceModal(false)} className="text-gray-400 hover:text-gray-600">
+              <button onClick={() => setShowAddServiceModal(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-slate-200 p-1 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-primary)]" aria-label="Tutup dialog">
                 <XCircle size={20} />
               </button>
             </div>
             <form onSubmit={handleCreateService} className="p-6 space-y-4">
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Nama Layanan *</label>
+                <label className="block text-xs font-bold text-gray-700 dark:text-slate-300 uppercase mb-1">Nama Layanan *</label>
                 <input
                   type="text"
                   required
                   placeholder="Contoh: Dedicated Internet - Kantor Cabang"
                   value={newServiceData.serviceName}
                   onChange={e => setNewServiceData({ ...newServiceData, serviceName: e.target.value })}
-                  className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                  className="w-full bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100 border border-gray-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-500 focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Nama Pelanggan *</label>
+                <label className="block text-xs font-bold text-gray-700 dark:text-slate-300 uppercase mb-1">Nama Pelanggan *</label>
                 <input
                   type="text"
                   required
                   placeholder="Contoh: PT Sumber Rezeki Mandiri"
                   value={newServiceData.customerName}
                   onChange={e => setNewServiceData({ ...newServiceData, customerName: e.target.value })}
-                  className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                  className="w-full bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100 border border-gray-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-500 focus:outline-none"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Tipe Layanan</label>
+                  <label className="block text-xs font-bold text-gray-700 dark:text-slate-300 uppercase mb-1">Tipe Layanan</label>
                   <select
                     value={newServiceData.serviceType}
                     onChange={e => setNewServiceData({ ...newServiceData, serviceType: e.target.value })}
-                    className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-orange-500"
+                    className="w-full bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100 border border-gray-300 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-orange-500"
                   >
                     <option value="Residential Internet">Residential Internet</option>
                     <option value="Business Internet">Business Internet</option>
@@ -609,11 +610,11 @@ export default function Layanan() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Pilihan Paket</label>
+                  <label className="block text-xs font-bold text-gray-700 dark:text-slate-300 uppercase mb-1">Pilihan Paket</label>
                   <select
                     value={newServiceData.packageName}
                     onChange={e => setNewServiceData({ ...newServiceData, packageName: e.target.value })}
-                    className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-orange-500"
+                    className="w-full bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100 border border-gray-300 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-orange-500"
                   >
                     <option value="Paket 20 Mbps">Paket 20 Mbps - Rp 175.000</option>
                     <option value="Paket 50 Mbps">Paket 50 Mbps - Rp 250.000</option>
@@ -632,22 +633,22 @@ export default function Layanan() {
                   onChange={e => setNewServiceData({ ...newServiceData, autoRenew: e.target.checked })}
                   className="rounded border-gray-300 text-orange-600 focus:ring-orange-500 h-4 w-4"
                 />
-                <label htmlFor="autoRenew" className="text-xs text-gray-700 font-medium cursor-pointer">
+                <label htmlFor="autoRenew" className="text-xs text-gray-700 dark:text-slate-300 font-medium cursor-pointer">
                   Aktifkan Auto-Renew tagihan bulanan
                 </label>
               </div>
 
-              <div className="pt-3 border-t flex gap-3">
+              <div className="pt-3 border-t border-gray-200 dark:border-slate-800 flex gap-3">
                 <button
                   type="button"
                   onClick={() => setShowAddServiceModal(false)}
-                  className="flex-1 bg-gray-100 text-gray-700 py-2.5 rounded-xl hover:bg-gray-200 font-medium text-sm transition-all"
+                  className="flex-1 bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-slate-200 py-2.5 rounded-xl hover:bg-gray-200 dark:hover:bg-slate-700 font-medium text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-primary)]"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 bg-orange-600 hover:bg-orange-700 text-white py-2.5 rounded-xl font-bold text-sm transition-all shadow-md"
+                  className="flex-1 bg-orange-600 hover:bg-orange-700 text-white py-2.5 rounded-xl font-bold text-sm transition-all shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
                 >
                   Aktifkan Layanan
                 </button>

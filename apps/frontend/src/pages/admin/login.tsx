@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
+import { Shield, Lock, Mail, ArrowRight, Activity } from 'lucide-react';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3218';
 
@@ -36,69 +37,89 @@ export default function AdminLoginPage() {
         localStorage.setItem('adminToken', data.access_token);
         router.push('/admin/customers');
       } else {
-        setError(data.message || 'Login gagal');
+        setError(data.message || 'Autentikasi admin gagal. Periksa email dan sandi.');
       }
     } catch (err) {
       console.error('Login error:', err);
-      setError('Terjadi kesalahan saat login');
+      setError('Gagal menghubungi gateway autentikasi. Pastikan backend aktif di port 3218.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Panel</h1>
-          <p className="text-gray-600">Audira Billing System</p>
+    <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] flex items-center justify-center p-4">
+      <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-xl p-6 sm:p-8 w-full max-w-md">
+        <div className="text-center mb-6">
+          <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white mx-auto mb-3 shadow-md">
+            <Shield className="w-6 h-6" />
+          </div>
+          <h1 className="text-xl font-bold text-[var(--app-text)] font-mono">AUDIRA ADMIN PORTAL</h1>
+          <p className="text-xs text-[var(--app-text-muted)] mt-1">Konsol Akses Manajemen Pelanggan & Jaringan</p>
         </div>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+            <div className="p-3 bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 rounded-lg text-xs">
               {error}
             </div>
           )}
 
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Email
+          <div>
+            <label className="block text-xs font-semibold text-[var(--app-text)] mb-1.5">
+              Email Administrator
             </label>
-            <input
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              required
-            />
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[var(--app-text-muted)]">
+                <Mail size={16} />
+              </div>
+              <input
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className="w-full pl-9 pr-3 py-2 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-xs text-[var(--app-text)] focus:outline-none focus:border-blue-500 focus-visible:ring-2 focus-visible:ring-[var(--app-primary)]"
+                required
+              />
+            </div>
           </div>
 
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Password
+          <div>
+            <label className="block text-xs font-semibold text-[var(--app-text)] mb-1.5">
+              Kata Sandi
             </label>
-            <input
-              type="password"
-              value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              required
-            />
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[var(--app-text-muted)]">
+                <Lock size={16} />
+              </div>
+              <input
+                type="password"
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                className="w-full pl-9 pr-3 py-2 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-xs text-[var(--app-text)] focus:outline-none focus:border-blue-500 focus-visible:ring-2 focus-visible:ring-[var(--app-primary)] font-mono"
+                required
+              />
+            </div>
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 px-4 rounded-lg text-xs font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 shadow-sm focus-visible:ring-2 focus-visible:ring-blue-400"
           >
-            {loading ? 'Logging in...' : 'Login'}
+            {loading ? (
+              <span>Memvalidasi Kredensial...</span>
+            ) : (
+              <>
+                <span>Masuk Administrator</span>
+                <ArrowRight size={14} />
+              </>
+            )}
           </button>
         </form>
 
-        <div className="mt-4 text-center text-sm text-gray-600">
-          <p>Default credentials:</p>
-          <p className="font-mono text-xs mt-1">admin@audira.net / admin123</p>
+        <div className="mt-5 p-3 bg-[var(--app-card-subtle)] border border-[var(--app-border)] rounded-lg text-center">
+          <p className="text-[10px] text-[var(--app-text-muted)] uppercase tracking-wider font-semibold">Kredensial Default Staging</p>
+          <p className="font-mono text-xs text-[var(--app-primary)] font-semibold mt-0.5">admin@audira.net : admin123</p>
         </div>
       </div>
     </div>

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
+import { useToast } from '@/contexts/ToastContext';
 import {
   TrendingUp,
   TrendingDown,
@@ -67,6 +68,7 @@ const COLORS_METODE = ['#1D4ED8', '#10B981', '#6366F1', '#F59E0B', '#EC4899', '#
 
 export default function ArusKasDashboard() {
   const router = useRouter();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('Ringkasan');
 
   // Search filter
@@ -234,12 +236,12 @@ export default function ArusKasDashboard() {
             <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--app-card)] border border-[var(--app-border)] text-xs">
               <span className="text-[var(--app-muted)] font-medium">25 Juni 2026 - 22 Oktober 2026</span>
             </div>
-            <button onClick={() => alert("Penyaringan arus kas per periode diterapkan.")} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white transition-colors">
+            <button onClick={() => toast.info("Penyaringan arus kas per periode diterapkan.")} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white transition-colors">
               <Filter className="w-3.5 h-3.5" />
               <span>Filter</span>
             </button>
             <button 
-              onClick={() => alert('Mengekspor laporan arus kas...')}
+              onClick={() => toast.success('Mengekspor laporan arus kas...')}
               className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--app-card)] hover:bg-[var(--app-card-subtle)] text-xs font-semibold text-[var(--app-text)] border border-[var(--app-border)] shadow-xs transition-colors"
             >
               <Download className="w-3.5 h-3.5" />
@@ -619,7 +621,7 @@ export default function ArusKasDashboard() {
                     <Briefcase className="w-4 h-4 text-purple-400" />
                     <span>Buat Anggaran Kas</span>
                   </button>
-                  <button onClick={() => alert("Mengekspor laporan arus kas...")} className="w-full flex items-center gap-2 p-2.5 rounded-lg bg-[var(--app-card)] hover:bg-[#0c1d36] border border-[var(--app-border)] text-left text-[var(--app-text)] transition-colors">
+                  <button onClick={() => toast.success("Mengekspor laporan arus kas...")} className="w-full flex items-center gap-2 p-2.5 rounded-lg bg-[var(--app-card)] hover:bg-[#0c1d36] border border-[var(--app-border)] text-left text-[var(--app-text)] transition-colors">
                     <FileText className="w-4 h-4 text-amber-400" />
                     <span>Export Laporan</span>
                   </button>

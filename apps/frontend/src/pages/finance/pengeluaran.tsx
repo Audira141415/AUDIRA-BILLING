@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
+import Pagination from '@/components/Pagination';
+import { useToast } from '@/contexts/ToastContext';
 import {
   TrendingUp,
   TrendingDown,
@@ -19,7 +21,9 @@ import {
   Bell,
   Mail,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  X,
+  Printer
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -47,6 +51,7 @@ const COLORS_METODE = ['#3B82F6', '#10B981', '#6366F1', '#F59E0B', '#EC4899', '#
 
 export default function PengeluaranDashboard() {
   const router = useRouter();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('Ringkasan');
 
   // Filter states
@@ -76,6 +81,14 @@ export default function PengeluaranDashboard() {
   const [transactions, setTransactions] = useState(initialTransactions);
   const [filteredTransactions, setFilteredTransactions] = useState(initialTransactions);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [selectedDetailTx, setSelectedDetailTx] = useState<any | null>(null);
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  const totalPages = Math.max(1, Math.ceil(filteredTransactions.length / pageSize));
+  const paginatedTransactions = filteredTransactions.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   // New transaction form state
   const [newDate, setNewDate] = useState('22/10/2026 11:00');
@@ -106,6 +119,7 @@ export default function PengeluaranDashboard() {
     }
 
     setFilteredTransactions(result);
+    setCurrentPage(1);
   };
 
   const resetFilters = () => {
@@ -115,6 +129,7 @@ export default function PengeluaranDashboard() {
     setFilterMinNominal('');
     setFilterMaxNominal('');
     setFilteredTransactions(transactions);
+    setCurrentPage(1);
   };
 
   const handleAddTransaction = (e: React.FormEvent) => {
@@ -228,7 +243,16 @@ export default function PengeluaranDashboard() {
             <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--app-card)] border border-[var(--app-border)] text-xs">
               <span className="text-[var(--app-muted)] font-medium">25 Juni 2026 - 22 Oktober 2026</span>
             </div>
-            <button onClick={() => alert("Penyaringan data transaksi keuangan diterapkan.")} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white transition-colors"><Filter className="w-3.5 h-3.5" /><span>Filter</span></button>
+            <button 
+              onClick={() => {
+                applyFilters();
+                toast.success("Penyaringan data transaksi pengeluaran diterapkan.");
+              }} 
+              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white transition-colors"
+            >
+              <Filter className="w-3.5 h-3.5" />
+              <span>Filter</span>
+            </button>
             <button 
               onClick={handleExport}
               className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--app-card)] hover:bg-[var(--app-card-subtle)] text-xs font-semibold text-[var(--app-text)] border border-[var(--app-border)] shadow-xs transition-colors"
@@ -667,67 +691,77 @@ export default function PengeluaranDashboard() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[var(--app-border)] text-[var(--app-text)]/90">
-                      {filteredTransactions.map((tx, idx) => (
-                        <tr key={idx} className="hover:bg-[var(--app-card-subtle)]/20">
-                          <td className="py-3 text-[var(--app-muted)]">{tx.no}</td>
-                          <td className="py-3 text-[var(--app-muted)] whitespace-nowrap">{tx.tanggal}</td>
-                          <td className="py-3 font-semibold text-cyan-400 whitespace-nowrap">{tx.invoice}</td>
-                          <td className="py-3 font-medium text-white">{tx.vendor}</td>
-                          <td className="py-3 text-[var(--app-muted)]">{tx.kategori}</td>
-                          <td className="py-3 text-[var(--app-text)]/90">{tx.metode}</td>
-                          <td className="py-3 text-right font-bold text-[var(--app-text)] whitespace-nowrap">{formatRupiah(tx.total)}</td>
-                          <td className="py-3 text-center">
-                            <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-semibold ${
-                              tx.status === 'Lunas' ? 'bg-emerald-500/15 text-emerald-400' :
-                              tx.status === 'Sebagian' ? 'bg-amber-500/15 text-amber-400' :
-                              tx.status === 'Belum Lunas' ? 'bg-orange-500/15 text-orange-400' :
-                              'bg-red-500/15 text-red-400'
-                            }`}>
-                              {tx.status}
-                            </span>
-                          </td>
-                          <td className="py-3 text-center">
-                            <div className="flex items-center justify-center gap-1.5">
-                              <button onClick={() => alert("Membuka rincian detail catatan...")} className="p-1 text-[var(--app-muted)] hover:text-cyan-400"><Eye className="w-3.5 h-3.5" /></button>
-                              <button 
-                                onClick={() => {
-                                  if (confirm("Hapus pencatatan pengeluaran ini?")) {
-                                    const updated = transactions.filter(t => t.invoice !== tx.invoice);
-                                    setTransactions(updated);
-                                    setFilteredTransactions(updated);
-                                  }
-                                }}
-                                className="p-1 text-[var(--app-muted)] hover:text-rose-500"
-                              >
-                                <Trash className="w-3.5 h-3.5" />
-                              </button>
-                            </div>
+                      {paginatedTransactions.length === 0 ? (
+                        <tr>
+                          <td colSpan={9} className="py-8 text-center text-xs text-[var(--app-muted)]">
+                            Tidak ada catatan pengeluaran yang sesuai filter.
                           </td>
                         </tr>
-                      ))}
+                      ) : (
+                        paginatedTransactions.map((tx, idx) => (
+                          <tr key={idx} className="hover:bg-[var(--app-card-subtle)]/20">
+                            <td className="py-3 text-[var(--app-muted)]">{(currentPage - 1) * pageSize + idx + 1}</td>
+                            <td className="py-3 text-[var(--app-muted)] whitespace-nowrap">{tx.tanggal}</td>
+                            <td className="py-3 font-semibold text-cyan-400 whitespace-nowrap">{tx.invoice}</td>
+                            <td className="py-3 font-medium text-white">{tx.vendor}</td>
+                            <td className="py-3 text-[var(--app-muted)]">{tx.kategori}</td>
+                            <td className="py-3 text-[var(--app-text)]/90">{tx.metode}</td>
+                            <td className="py-3 text-right font-bold text-[var(--app-text)] whitespace-nowrap">{formatRupiah(tx.total)}</td>
+                            <td className="py-3 text-center">
+                              <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-semibold ${
+                                tx.status === 'Lunas' ? 'bg-emerald-500/15 text-emerald-400' :
+                                tx.status === 'Sebagian' ? 'bg-amber-500/15 text-amber-400' :
+                                tx.status === 'Belum Lunas' ? 'bg-orange-500/15 text-orange-400' :
+                                'bg-red-500/15 text-red-400'
+                              }`}>
+                                {tx.status}
+                              </span>
+                            </td>
+                            <td className="py-3 text-center">
+                              <div className="flex items-center justify-center gap-1.5">
+                                <button 
+                                  onClick={() => setSelectedDetailTx(tx)} 
+                                  title="Lihat Rincian Pengeluaran"
+                                  className="p-1 text-[var(--app-muted)] hover:text-cyan-400 transition-colors"
+                                >
+                                  <Eye className="w-3.5 h-3.5" />
+                                </button>
+                                <button 
+                                  onClick={() => {
+                                    if (confirm("Hapus pencatatan pengeluaran ini?")) {
+                                      const updated = transactions.filter(t => t.invoice !== tx.invoice);
+                                      setTransactions(updated);
+                                      setFilteredTransactions(updated);
+                                      toast.success("Catatan pengeluaran berhasil dihapus.");
+                                    }
+                                  }}
+                                  title="Hapus Catatan"
+                                  className="p-1 text-[var(--app-muted)] hover:text-rose-500 transition-colors"
+                                >
+                                  <Trash className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      )}
                     </tbody>
                   </table>
                 </div>
 
-                {/* Pagination */}
-                <div className="flex justify-between items-center pt-4 border-t border-[var(--app-border)]/40 text-xs text-[var(--app-muted)]">
-                  <span>Menampilkan 1 - 10 dari 342 transaksi</span>
-                  <div className="flex items-center gap-1">
-                    <button onClick={() => alert("Halaman pertama sudah aktif.")} className="px-2 py-1 rounded bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)]/90 font-semibold hover:border-cyan-500">&lt;</button>
-                    <button onClick={() => alert("Halaman 1 saat ini aktif.")} className="px-2.5 py-1 rounded bg-blue-600 text-[var(--app-text)] font-bold">1</button>
-                    <button onClick={() => alert("Beralih ke halaman 2")} className="px-2.5 py-1 rounded bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)]/90 font-semibold hover:border-cyan-500">2</button>
-                    <button onClick={() => alert("Beralih ke halaman 3")} className="px-2.5 py-1 rounded bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)]/90 font-semibold hover:border-cyan-500">3</button>
-                    <button onClick={() => alert("Beralih ke halaman 4")} className="px-2.5 py-1 rounded bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)]/90 font-semibold hover:border-cyan-500">4</button>
-                    <button onClick={() => alert("Beralih ke halaman 5")} className="px-2.5 py-1 rounded bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)]/90 font-semibold hover:border-cyan-500">5</button>
-                    <span>...</span>
-                    <button onClick={() => alert("Beralih ke halaman 35")} className="px-2.5 py-1 rounded bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)]/90 font-semibold hover:border-cyan-500">35</button>
-                    <button onClick={() => alert("Beralih ke halaman selanjutnya.")} className="px-2 py-1 rounded bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)]/90 font-semibold hover:border-cyan-500">&gt;</button>
-                  </div>
-                  <div>
-                    <select className="bg-[var(--app-card-subtle)] border border-[var(--app-border)] rounded p-1 text-[11px] text-white">
-                      <option>10 / halaman</option>
-                    </select>
-                  </div>
+                {/* Universal Pagination */}
+                <div className="pt-4 border-t border-[var(--app-border)]/40">
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    totalItems={filteredTransactions.length}
+                    pageSize={pageSize}
+                    onPageChange={setCurrentPage}
+                    onPageSizeChange={(newSize: number) => {
+                      setPageSize(newSize);
+                      setCurrentPage(1);
+                    }}
+                  />
                 </div>
               </div>
 
@@ -772,7 +806,15 @@ export default function PengeluaranDashboard() {
                 <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-4 space-y-3.5">
                   <div className="flex justify-between items-center border-b border-[var(--app-border)]/60 pb-2">
                     <h4 className="text-xs font-bold text-[var(--app-text)] tracking-wide uppercase">Top 5 Vendor</h4>
-                    <button onClick={() => alert("Membuka seluruh riwayat pengeluaran...")} className="text-[10px] font-semibold text-cyan-400 hover:underline">Lihat Semua</button>
+                    <button 
+                      onClick={() => {
+                        resetFilters();
+                        toast.success("Menampilkan seluruh transaksi pengeluaran.");
+                      }} 
+                      className="text-[10px] font-semibold text-cyan-400 hover:underline"
+                    >
+                      Lihat Semua
+                    </button>
                   </div>
                   <div className="space-y-3 text-xs">
                     {vendorData.map((d, index) => (
@@ -911,6 +953,85 @@ export default function PengeluaranDashboard() {
                 </button>
               </div>
             </form>
+          </div>
+        )}
+
+        {/* ─── MODAL DETAIL PENGELUARAN ─── */}
+        {selectedDetailTx && (
+          <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl w-full max-w-md shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+              <div className="p-4 border-b border-[var(--app-border)] flex items-center justify-between bg-[var(--app-bg)]">
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-rose-400">Rincian Pengeluaran</span>
+                  <h3 className="text-sm font-bold text-white font-mono mt-0.5">{selectedDetailTx.invoice}</h3>
+                </div>
+                <button 
+                  onClick={() => setSelectedDetailTx(null)}
+                  className="p-1 rounded-lg text-[var(--app-muted)] hover:text-white hover:bg-[var(--app-border)]/20"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              <div className="p-5 space-y-3.5 text-xs">
+                <div className="flex items-center justify-between p-3 bg-[var(--app-bg)] rounded-xl border border-[var(--app-border)]">
+                  <div>
+                    <p className="text-[10px] text-[var(--app-muted)] font-bold uppercase">Status Pembayaran</p>
+                    <p className="font-bold text-white mt-0.5">{selectedDetailTx.status}</p>
+                  </div>
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold ${
+                    selectedDetailTx.status === 'Lunas' ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/20' :
+                    selectedDetailTx.status === 'Sebagian' ? 'bg-amber-500/15 text-amber-400 border border-amber-500/20' :
+                    selectedDetailTx.status === 'Belum Lunas' ? 'bg-orange-500/15 text-orange-400 border border-orange-500/20' :
+                    'bg-red-500/15 text-red-400 border border-red-500/20'
+                  }`}>
+                    {selectedDetailTx.status}
+                  </span>
+                </div>
+
+                <div className="p-3 bg-[var(--app-bg)] rounded-xl border border-[var(--app-border)] space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-[var(--app-muted)]">Vendor / Supplier:</span>
+                    <span className="font-bold text-white">{selectedDetailTx.vendor}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-[var(--app-muted)]">Tanggal Pengeluaran:</span>
+                    <span className="font-bold text-white">{selectedDetailTx.tanggal}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-[var(--app-muted)]">Kategori Biaya:</span>
+                    <span className="font-bold text-rose-400">{selectedDetailTx.kategori}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-[var(--app-muted)]">Metode Pembayaran:</span>
+                    <span className="font-bold text-white">{selectedDetailTx.metode}</span>
+                  </div>
+                  <div className="flex justify-between border-t border-[var(--app-border)] pt-2 text-sm">
+                    <span className="font-bold text-white">Total Pengeluaran:</span>
+                    <span className="font-black text-rose-400">{formatRupiah(selectedDetailTx.total)}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between gap-2 pt-2 border-t border-[var(--app-border)]">
+                  <button
+                    onClick={() => {
+                      toast.info(`Mencetak bukti pengeluaran ${selectedDetailTx.invoice}...`);
+                      window.print();
+                    }}
+                    className="flex items-center gap-1.5 px-3 py-2 bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-white rounded-xl text-xs font-semibold"
+                  >
+                    <Printer size={14} />
+                    <span>Cetak Bukti</span>
+                  </button>
+                  <button
+                    onClick={() => setSelectedDetailTx(null)}
+                    className="px-4 py-2 bg-[var(--app-border)]/50 hover:bg-[var(--app-border)] text-white rounded-xl text-xs font-semibold"
+                  >
+                    Tutup
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </div>

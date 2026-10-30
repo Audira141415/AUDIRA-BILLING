@@ -15,7 +15,7 @@ import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 
 
-@Controller('leave')
+@Controller(['leave', 'leaves'])
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class LeaveController {
   constructor(private readonly leaveService: LeaveService) {}

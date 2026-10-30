@@ -7,7 +7,7 @@ export default function PrivacyPolicy() {
   return (
     <>
       <Head>
-        <title>Kebijakan Privasi — AUDIRA NET</title>
+        <title>Kebijakan Privasi - AUDIRA NET</title>
       </Head>
       <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-xl p-8 sm:p-10">

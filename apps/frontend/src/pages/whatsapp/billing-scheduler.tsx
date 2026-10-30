@@ -15,7 +15,6 @@ import {
   Zap,
   CreditCard,
   Smartphone,
-  Sparkles,
   Calendar,
   ShieldCheck,
   Eye,
@@ -332,7 +331,7 @@ export default function WhatsAppBillingSchedulerPage() {
         </div>
 
         {/* Gateway Engine Live Status Banner */}
-        <div className="p-4 rounded-2xl border-2 border-black dark:border-cyan-400 bg-gradient-to-r from-slate-900 via-[#0e1626] to-slate-900 text-white shadow-[6px_6px_0px_#000] flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="p-4 rounded-2xl border-2 border-black dark:border-cyan-400 bg-slate-900 text-white shadow-[6px_6px_0px_#000] flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
             <div className="w-12 h-12 rounded-xl bg-cyan-400/20 border-2 border-cyan-400 flex items-center justify-center text-cyan-300 shadow-[2px_2px_0px_#000]">
               <Smartphone className="w-6 h-6 animate-pulse" />
@@ -658,7 +657,7 @@ export default function WhatsAppBillingSchedulerPage() {
                 )}
                 {invoices.map((inv) => (
                   <option key={inv.id} value={inv.id}>
-                    {inv.invoiceNumber} — {inv.customer?.name || 'Pelanggan'} (Rp {formatRupiah(inv.amount)} &bull; {inv.status})
+                    {inv.invoiceNumber} - {inv.customer?.name || 'Pelanggan'} (Rp {formatRupiah(inv.amount)} &bull; {inv.status})
                   </option>
                 ))}
               </select>

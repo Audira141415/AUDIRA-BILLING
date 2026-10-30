@@ -10,8 +10,8 @@ export class AttendanceController {
   constructor(private readonly attendanceService: AttendanceService) {}
 
   // Check-in (masuk kerja)
-  @Post('check-in')
-  @Roles('admin', 'BILLING', 'TECHNICIAN')
+  @Post(['check-in', 'checkin'])
+  @Roles('admin', 'ADMIN', 'billing', 'BILLING', 'technician', 'TECHNICIAN', 'noc', 'NOC', 'cs', 'CS', 'finance', 'FINANCE')
   async checkIn(
     @Body('userId') userId: string,
     @Body('checkInPhoto') checkInPhoto?: string,
@@ -22,8 +22,8 @@ export class AttendanceController {
   }
 
   // Check-out (pulang kerja)
-  @Post('check-out')
-  @Roles('admin', 'BILLING', 'TECHNICIAN')
+  @Post(['check-out', 'checkout'])
+  @Roles('admin', 'ADMIN', 'billing', 'BILLING', 'technician', 'TECHNICIAN', 'noc', 'NOC', 'cs', 'CS', 'finance', 'FINANCE')
   async checkOut(
     @Body('userId') userId: string,
     @Body('checkOutPhoto') checkOutPhoto?: string,

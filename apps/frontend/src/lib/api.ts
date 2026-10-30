@@ -95,6 +95,32 @@ export const api = {
     },
   },
 
+  // WireGuard Cloud Tunnel endpoints
+  tunnel: {
+    provision: async (data: { routerName?: string; tenantId?: string; location?: string }) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/tunnel/provision`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error('Gagal membuat Cloud Tunnel WireGuard');
+      return res.json();
+    },
+    getAll: async (tenantId?: string) => {
+      const query = tenantId ? `?tenantId=${tenantId}` : '';
+      const res = await fetchWithAuth(`${API_BASE_URL}/tunnel${query}`);
+      if (!res.ok) throw new Error('Gagal mengambil daftar tunnel');
+      return res.json();
+    },
+    testHandshake: async (id: string) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/tunnel/${id}/test-handshake`, {
+        method: 'POST',
+      });
+      if (!res.ok) throw new Error('Handshake tunnel gagal');
+      return res.json();
+    },
+  },
+
   // Pelanggan endpoints
   pelanggan: {
     getAll: async () => {
@@ -636,28 +662,35 @@ export const api = {
       if (!res.ok) throw new Error('Failed to reject leave request');
       return res.json();
     },
+    delete: async (id: string) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/leave/${id}`, {
+        method: 'DELETE',
+      });
+      if (!res.ok) throw new Error('Failed to delete leave request');
+      return res.json();
+    },
   },
 
   // Employee endpoints
   employee: {
     getAll: async (status?: string) => {
-      const url = status ? `${API_BASE_URL}/employees?status=${status}` : `${API_BASE_URL}/employees`;
+      const url = status ? `${API_BASE_URL}/employee?status=${status}` : `${API_BASE_URL}/employee`;
       const res = await fetchWithAuth(url);
       if (!res.ok) throw new Error('Failed to fetch employees');
       return res.json();
     },
     getStats: async () => {
-      const res = await fetchWithAuth(`${API_BASE_URL}/employees/stats`);
+      const res = await fetchWithAuth(`${API_BASE_URL}/employee/stats`);
       if (!res.ok) throw new Error('Failed to fetch employee stats');
       return res.json();
     },
     getProfile: async (id: string) => {
-      const res = await fetchWithAuth(`${API_BASE_URL}/employees/${id}`);
+      const res = await fetchWithAuth(`${API_BASE_URL}/employee/${id}`);
       if (!res.ok) throw new Error('Failed to fetch employee profile');
       return res.json();
     },
     create: async (data: any) => {
-      const res = await fetchWithAuth(`${API_BASE_URL}/employees`, {
+      const res = await fetchWithAuth(`${API_BASE_URL}/employee`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -666,7 +699,7 @@ export const api = {
       return res.json();
     },
     update: async (id: string, data: any) => {
-      const res = await fetchWithAuth(`${API_BASE_URL}/employees/${id}`, {
+      const res = await fetchWithAuth(`${API_BASE_URL}/employee/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -675,7 +708,7 @@ export const api = {
       return res.json();
     },
     delete: async (id: string) => {
-      const res = await fetchWithAuth(`${API_BASE_URL}/employees/${id}`, {
+      const res = await fetchWithAuth(`${API_BASE_URL}/employee/${id}`, {
         method: 'DELETE',
       });
       if (!res.ok) throw new Error('Failed to delete employee');
@@ -685,13 +718,18 @@ export const api = {
 
   // Salary endpoints
   salary: {
-    getAll: async () => {
-      const res = await fetchWithAuth(`${API_BASE_URL}/salaries`);
+    getAll: async (period?: string, status?: string) => {
+      const query = new URLSearchParams();
+      if (period) query.append('period', period);
+      if (status && status !== 'all') query.append('status', status);
+      const url = `${API_BASE_URL}/salaries${query.toString() ? `?${query.toString()}` : ''}`;
+      const res = await fetchWithAuth(url);
       if (!res.ok) throw new Error('Failed to fetch salaries');
       return res.json();
     },
-    getStats: async () => {
-      const res = await fetchWithAuth(`${API_BASE_URL}/salaries/stats`);
+    getStats: async (period?: string) => {
+      const url = `${API_BASE_URL}/salaries/stats${period ? `?period=${period}` : ''}`;
+      const res = await fetchWithAuth(url);
       if (!res.ok) throw new Error('Failed to fetch salary stats');
       return res.json();
     },
@@ -795,6 +833,40 @@ export const api = {
       if (!res.ok) throw new Error('Failed to fetch attendance stats');
       return res.json();
     },
+    getToday: async () => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/attendance/today`);
+      if (!res.ok) return [];
+      return res.json();
+    },
+    getStatus: async (userId: string) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/attendance/status/${userId}`);
+      if (!res.ok) return null;
+      return res.json();
+    },
+    checkIn: async (data: { userId: string; checkInPhoto?: string; latitude?: number; longitude?: number }) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/attendance/check-in`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || 'Gagal check-in');
+      }
+      return res.json();
+    },
+    checkOut: async (data: { userId: string; checkOutPhoto?: string; latitude?: number; longitude?: number }) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/attendance/check-out`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || 'Gagal check-out');
+      }
+      return res.json();
+    },
   },
 
   // Dashboard endpoints
@@ -877,8 +949,23 @@ export const api = {
       if (!res.ok) throw new Error('Failed to create bulk schedules');
       return res.json();
     },
+    getStats: async (date?: string) => {
+      const url = date ? `${API_BASE_URL}/schedule/stats?date=${date}` : `${API_BASE_URL}/schedule/stats`;
+      const res = await fetchWithAuth(url);
+      if (!res.ok) throw new Error('Failed to fetch schedule stats');
+      return res.json();
+    },
+    update: async (id: string, data: any) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/schedule/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error('Failed to update schedule');
+      return res.json();
+    },
     delete: async (id: string) => {
-      const res = await fetchWithAuth(`${API_BASE_URL}/schedules/${id}`, {
+      const res = await fetchWithAuth(`${API_BASE_URL}/schedule/${id}`, {
         method: 'DELETE',
       });
       if (!res.ok) throw new Error('Failed to delete schedule');
@@ -959,6 +1046,58 @@ export const api = {
       if (!res.ok) throw new Error('Failed to send reminder via WhatsApp');
       return res.json();
     },
+    sendBatchDueReminders: async (payload: {
+      date?: string;
+      customerIds?: string[];
+      invoiceIds?: string[];
+      customMessage?: string;
+      mode?: 'HARI_H' | 'H3' | 'CUSTOM';
+      items?: any[];
+    }) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/billing/remind-due-customers`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error('Gagal mengirim pengingat batch WhatsApp');
+      return res.json();
+    },
+    sendSingleReminder: async (payload: {
+      phone: string;
+      customerName: string;
+      internetNumber?: string;
+      amount?: number;
+      invoiceNumber?: string;
+      dueDate?: string;
+      customMessage?: string;
+      mode?: 'HARI_H' | 'H3' | 'CUSTOM';
+    }) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/billing/send-single-reminder`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error('Gagal mengirim pengingat WhatsApp perorangan');
+      return res.json();
+    },
+    triggerDailyReminders: async () => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/billing/run-daily-reminders`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      });
+      if (!res.ok) throw new Error('Gagal menjalankan trigger pengingat harian');
+      return res.json();
+    },
+    simulateBot: async (phone: string, message: string, senderName?: string) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/billing/bot-simulate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone, message, senderName }),
+      });
+      if (!res.ok) throw new Error('Gagal menjalankan simulasi bot');
+      return res.json();
+    },
   },
 
   // Billing & Invoicing Automation endpoints
@@ -1034,6 +1173,39 @@ export const api = {
         body: JSON.stringify({ invoiceId, bank }),
       });
       if (!res.ok) throw new Error('Failed to create Virtual Account payment');
+      return res.json();
+    },
+    getSuspendedCustomers: async () => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/billing/suspended-customers`);
+      if (!res.ok) throw new Error('Failed to fetch suspended customers');
+      return res.json();
+    },
+    getActiveGracePeriods: async () => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/billing/grace-period/active`);
+      if (!res.ok) throw new Error('Failed to fetch active grace periods');
+      return res.json();
+    },
+    setGracePeriod: async (customerId: string, promiseDate: string, notes?: string) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/billing/grace-period/${customerId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ promiseDate, notes }),
+      });
+      if (!res.ok) throw new Error('Failed to set grace period');
+      return res.json();
+    },
+    cancelGracePeriod: async (customerId: string) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/billing/grace-period/${customerId}/cancel`, {
+        method: 'POST',
+      });
+      if (!res.ok) throw new Error('Failed to cancel grace period');
+      return res.json();
+    },
+    reconnectSession: async (customerId: string) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/billing/coa/reconnect/${customerId}`, {
+        method: 'POST',
+      });
+      if (!res.ok) throw new Error('Failed to reconnect session');
       return res.json();
     },
   },
@@ -1139,6 +1311,53 @@ export const api = {
     getStats: async () => {
       const res = await fetchWithAuth(`${API_BASE_URL}/inventory/stats`);
       if (!res.ok) throw new Error('Failed to fetch inventory stats');
+      return res.json();
+    },
+    assign: async (id: string, customerId: string) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/inventory/equipment/${id}/assign`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ customerId }),
+      });
+      if (!res.ok) throw new Error('Failed to assign equipment');
+      return res.json();
+    },
+    unassign: async (id: string) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/inventory/equipment/${id}/unassign`, {
+        method: 'POST',
+      });
+      if (!res.ok) throw new Error('Failed to unassign equipment');
+      return res.json();
+    },
+    getMaintenanceLogs: async (params?: { equipmentId?: string; status?: string; technicianId?: string }) => {
+      const query = params ? `?${new URLSearchParams(params as any)}` : '';
+      const res = await fetchWithAuth(`${API_BASE_URL}/inventory/maintenance${query}`);
+      if (!res.ok) throw new Error('Failed to fetch maintenance logs');
+      return res.json();
+    },
+    createMaintenanceLog: async (data: { equipmentId: string; type: string; description: string; cost?: number; scheduledAt: string; technicianId?: string; notes?: string }) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/inventory/maintenance`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error('Failed to schedule maintenance');
+      return res.json();
+    },
+    completeMaintenance: async (id: string) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/inventory/maintenance/${id}/complete`, {
+        method: 'POST',
+      });
+      if (!res.ok) throw new Error('Failed to complete maintenance');
+      return res.json();
+    },
+    bulkImport: async (equipmentList: any[]) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/inventory/equipment/bulk-import`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ equipment: equipmentList }),
+      });
+      if (!res.ok) throw new Error('Failed to bulk import equipment');
       return res.json();
     },
   },
@@ -1372,6 +1591,178 @@ export const api = {
       return res.json();
     },
   },
+
+  // Telegram Bot & Supergroup 14 Topics Operations Hub
+  telegram: {
+    getStatus: async () => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/telegram/status`);
+      if (!res.ok) throw new Error('Failed to fetch Telegram status');
+      return res.json();
+    },
+    getTopics: async () => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/telegram/topics`);
+      if (!res.ok) throw new Error('Failed to fetch Telegram topics');
+      return res.json();
+    },
+    getLogs: async () => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/telegram/logs`);
+      if (!res.ok) throw new Error('Failed to fetch Telegram logs');
+      return res.json();
+    },
+    broadcast: async (data: {
+      topicNo: number | string;
+      message: string;
+      title?: string;
+      parseMode?: 'Markdown' | 'HTML';
+    }) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/telegram/broadcast`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error('Failed to send Telegram broadcast');
+      return res.json();
+    },
+    testTopic: async (topicNo: number | string) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/telegram/test/${topicNo}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      });
+      if (!res.ok) throw new Error(`Failed to test Telegram topic ${topicNo}`);
+      return res.json();
+    },
+    simulateScenario: async (
+      scenario: 'PAYMENT' | 'OUTAGE' | 'ODP_FULL' | 'OPTICAL_CRITICAL' | 'ACTIVATION' | 'TICKET' | 'FINANCE',
+      customData?: any
+    ) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/telegram/simulate-scenario`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ scenario, customData }),
+      });
+      if (!res.ok) throw new Error('Failed to simulate scenario in Telegram');
+      return res.json();
+    },
+  },
+
+  // DNS Filtering & Internet Positif Kominfo
+  dns: {
+    getStatus: async () => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/dns/status`);
+      if (!res.ok) throw new Error('Failed to fetch DNS status');
+      return res.json();
+    },
+    getCategories: async () => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/dns/categories`);
+      if (!res.ok) throw new Error('Failed to fetch DNS categories');
+      return res.json();
+    },
+    getCustomRules: async () => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/dns/custom-rules`);
+      if (!res.ok) throw new Error('Failed to fetch DNS custom rules');
+      return res.json();
+    },
+    getBlockedLogs: async () => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/dns/blocked-logs`);
+      if (!res.ok) throw new Error('Failed to fetch DNS blocked logs');
+      return res.json();
+    },
+    syncTrustPositif: async () => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/dns/sync-trustpositif`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      if (!res.ok) throw new Error('Failed to sync TrustPositif database');
+      return res.json();
+    },
+    toggleCategory: async (id: string, enabled: boolean) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/dns/toggle-category`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, enabled }),
+      });
+      if (!res.ok) throw new Error('Failed to toggle DNS category');
+      return res.json();
+    },
+    addCustomRule: async (data: { domain: string; type: 'BLACKLIST' | 'WHITELIST'; category: string; reason: string; createdBy?: string }) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/dns/custom-rules`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error('Failed to add DNS custom rule');
+      return res.json();
+    },
+    deleteCustomRule: async (id: string) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/dns/custom-rules/${id}`, {
+        method: 'DELETE',
+      });
+      if (!res.ok) throw new Error('Failed to delete DNS custom rule');
+      return res.json();
+    },
+  },
+
+  // Speedtest Server Lokal & Diagnostic SLA Studio
+  speedtest: {
+    getServerInfo: async () => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/speedtest/server-info`);
+      if (!res.ok) throw new Error('Failed to fetch Speedtest server info');
+      return res.json();
+    },
+    getHistory: async () => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/speedtest/history`);
+      if (!res.ok) throw new Error('Failed to fetch Speedtest history');
+      return res.json();
+    },
+    runBenchmark: async (data?: {
+      clientIp?: string;
+      pppoeUser?: string;
+      customerName?: string;
+      packagePlan?: string;
+      packageSpeedMbps?: number;
+    }) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/speedtest/run`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data || {}),
+      });
+      if (!res.ok) throw new Error('Failed to run speedtest benchmark');
+      return res.json();
+    },
+  },
+
+  // Zero-Touch Provisioning (ZTP) & Discovery Queue
+  ztp: {
+    getQueue: async () => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/ztp/queue`);
+      if (!res.ok) throw new Error('Failed to fetch ZTP discovery queue');
+      return res.json();
+    },
+    getHistory: async () => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/ztp/history`);
+      if (!res.ok) throw new Error('Failed to fetch ZTP history');
+      return res.json();
+    },
+    provision: async (data: {
+      discoveryId: string;
+      customerName: string;
+      internetNumber: string;
+      packagePlan: string;
+      wifiSsid?: string;
+      wifiPassword?: string;
+      technicianName?: string;
+    }) => {
+      const res = await fetchWithAuth(`${API_BASE_URL}/ztp/provision`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error('Failed to auto-provision ONU');
+      return res.json();
+    },
+  },
 };
 
 export default api;
+

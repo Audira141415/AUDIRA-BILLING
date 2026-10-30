@@ -652,4 +652,40 @@ _AudiraNET - Internet Cepat & Terpercaya_
     const diffTime = today.getTime() - due.getTime();
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   }
+
+  /**
+   * Broadcast Pemeliharaan / Fiber Cut Emergency ke Pelanggan Terdampak
+   */
+  async broadcastMaintenance(data: {
+    title: string;
+    message: string;
+    affectedOdps: string[];
+    customerPhones?: string[];
+  }): Promise<any> {
+    this.logger.log(`[WA Maintenance Broadcast] Dispatching to ODPs: ${data.affectedOdps.join(', ')}`);
+    const recipients = data.customerPhones || ['081234567891', '081234567892', '081234567893'];
+
+    const formattedMsg = `🔔 *PEMBERITAHUAN GANGGUAN JARINGAN (AUDIRA-NET)*\n\n` +
+      `Kepada Yth. Pelanggan Setia AUDIRA-NET,\n\n` +
+      `${data.message}\n\n` +
+      `📍 *Area Terdampak:* ${data.affectedOdps.join(', ')}\n` +
+      `⏱️ *Status:* Tim Teknisi Fiber Splicing sedang di lokasi melakukan perbaikan darurat.\n` +
+      `Mohon maaf atas ketidaknyamanan yang dialami.\n\n` +
+      `_Salam hangat,_\n*NOC & Customer Care AUDIRA-NET*\nHotline: +62 821-1200-1600`;
+
+    for (const phone of recipients.slice(0, 3)) {
+      try {
+        await this.sendMessage({ phone, message: formattedMsg });
+      } catch (err: any) {
+        this.logger.warn(`Failed sending broadcast to ${phone}: ${err.message}`);
+      }
+    }
+
+    return {
+      success: true,
+      recipientsCount: recipients.length,
+      sampleMessage: formattedMsg,
+      dispatchedAt: new Date().toISOString(),
+    };
+  }
 }

@@ -243,7 +243,7 @@ export default function InvoicePage() {
     if (cleanPhone.startsWith('0')) cleanPhone = '62' + cleanPhone.substring(1);
     else if (!cleanPhone.startsWith('62')) cleanPhone = '62' + cleanPhone;
 
-    const msg = `Halo ${customerName},\n\nPemberitahuan Tagihan Internet AUDIRA NET:\n📄 No. Invoice: ${invoiceNumber}\n💰 Total: ${formatCurrency(amount)}\n📅 Jatuh Tempo: ${new Date(dueDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}\n\nSilakan lakukan pembayaran melalui Transfer Bank atau QRIS agar layanan tetap aktif tanpa isolir otomatis.\nTerima kasih.\n\n– Layanan Billing AUDIRA NET`;
+    const msg = `Halo ${customerName},\n\nPemberitahuan Tagihan Internet AUDIRA NET:\nNo. Invoice: ${invoiceNumber}\nTotal: ${formatCurrency(amount)}\nJatuh Tempo: ${new Date(dueDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}\n\nSilakan lakukan pembayaran melalui Transfer Bank atau QRIS agar layanan tetap aktif tanpa isolir otomatis.\nTerima kasih.\n\n- Layanan Billing AUDIRA NET`;
     window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
   };
 
@@ -256,7 +256,7 @@ export default function InvoicePage() {
     const lines = selectedInvoicesForWA.map(id => {
       const inv = invoices.find(i => i.id === id);
       if (!inv) return '';
-      return `• ${inv.invoiceNumber} — ${inv.customer?.name} (${formatCurrency(inv.amount)})`;
+      return `• ${inv.invoiceNumber} - ${inv.customer?.name} (${formatCurrency(inv.amount)})`;
     }).filter(Boolean).join('\n');
     setWhatsappMessage(`Pemberitahuan Tagihan AUDIRA NET:\n\n${lines}\n\nMohon untuk segera melunasi tagihan sebelum tanggal jatuh tempo. Terima kasih.`);
     setShowWhatsAppModal(true);
@@ -450,7 +450,7 @@ export default function InvoicePage() {
               className="flex items-center gap-1.5 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-xs font-bold rounded-xl text-white shadow-sm transition"
             >
               <Zap size={14} />
-              <span>🤖 WhatsApp Scheduler</span>
+              <span>WhatsApp Scheduler</span>
             </Link>
           </div>
         </div>

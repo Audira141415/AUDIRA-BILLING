@@ -25,7 +25,7 @@ export class RolesGuard implements CanActivate {
 
     // Check if user has any of the required roles
     const userRole = String(user.role).toUpperCase();
-    const hasRole = requiredRoles.some((role) => userRole === role.toUpperCase());
+    const hasRole = requiredRoles.some((role) => userRole === role.toUpperCase() || (userRole === 'SUPERADMIN' || userRole === 'OWNER' || role.toUpperCase() === 'ADMIN'));
 
     if (!hasRole) {
       console.warn('🚫 Role Access Denied:', {

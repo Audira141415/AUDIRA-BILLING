@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { useState, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
+import { useToast } from '@/contexts/ToastContext';
 import {
   Search,
   Filter,
@@ -25,10 +26,11 @@ import {
   HelpCircle,
   Sliders,
   CheckSquare,
-  Sparkles,
+  Zap,
   ToggleLeft,
   ToggleRight,
-  AlertTriangle
+  AlertTriangle,
+  Upload
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -71,6 +73,7 @@ interface TransactionReconcile {
 
 export default function Rekonsiliasi() {
   const router = useRouter();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('Ringkasan');
 
   // Search & Filters State
@@ -86,6 +89,7 @@ export default function Rekonsiliasi() {
 
   // Modals state
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedItemDetails, setSelectedItemDetails] = useState<TransactionReconcile | null>(null);
   
@@ -251,7 +255,7 @@ export default function Rekonsiliasi() {
       });
       setTransactions(updated);
       setIsProcessingAutoMatch(false);
-      alert('Pencocokan Otomatis Selesai! Transaksi yang valid telah dicocokkan.');
+      toast.success('Pencocokan Otomatis Selesai! Transaksi yang valid telah dicocokkan.');
     }, 2000);
   };
 
@@ -259,6 +263,7 @@ export default function Rekonsiliasi() {
   const handleDeleteItem = (id: number) => {
     if (confirm('Apakah Anda yakin ingin menghapus data pencocokan ini?')) {
       setTransactions(transactions.filter(t => t.id !== id));
+      toast.success('Data pencocokan berhasil dihapus.');
     }
   };
 
@@ -304,7 +309,7 @@ export default function Rekonsiliasi() {
               <Plus className="w-4 h-4" />
               <span>Rekonsiliasi Baru</span>
             </button>
-            <button onClick={() => alert("Membuka dialog Import Mutasi Bank...")} className="flex items-center gap-1.5 bg-[var(--app-card)] hover:bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-[var(--app-text)] text-xs font-medium px-4.5 py-2.5 rounded-lg transition-colors cursor-pointer shadow-xs">
+            <button onClick={() => setShowImportModal(true)} className="flex items-center gap-1.5 bg-[var(--app-card)] hover:bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-[var(--app-text)] text-xs font-medium px-4.5 py-2.5 rounded-lg transition-colors cursor-pointer shadow-xs">
               <RefreshCw className="w-3.5 h-3.5" />
               <span>Import Mutasi</span>
             </button>
@@ -315,7 +320,7 @@ export default function Rekonsiliasi() {
               <Download className="w-3.5 h-3.5" />
               <span>Ekspor</span>
             </button>
-            <button onClick={() => alert("Panduan Rekonsiliasi: Cocokkan transaksi mutasi bank rekening dengan invoice pelanggan AUDIRA.")} className="flex items-center gap-1.5 bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200 text-xs font-medium px-4 py-2.5 rounded-lg transition-colors cursor-pointer">
+            <button onClick={() => toast.info("Panduan Rekonsiliasi: Cocokkan transaksi mutasi bank rekening dengan invoice pelanggan AUDIRA.")} className="flex items-center gap-1.5 bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200 text-xs font-medium px-4 py-2.5 rounded-lg transition-colors cursor-pointer">
               <HelpCircle className="w-3.5 h-3.5" />
               <span>Bantuan</span>
             </button>
@@ -837,7 +842,7 @@ export default function Rekonsiliasi() {
                   className="w-full flex items-center justify-between p-3 bg-[var(--app-bg)]/85 hover:bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-left gap-1.5 transition-colors cursor-pointer group disabled:opacity-50"
                 >
                   <div className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-amber-500" />
+                    <Zap className="w-4 h-4 text-amber-500" />
                     <span className="text-[10px] text-slate-200 font-semibold">Proses Pencocokan Otomatis</span>
                   </div>
                   {isProcessingAutoMatch && <RefreshCw className="w-3.5 h-3.5 animate-spin text-[var(--app-muted)]" />}
@@ -1105,6 +1110,91 @@ export default function Rekonsiliasi() {
                 >
                   Tutup
                 </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* IMPORT MUTASI BANK MODAL */}
+      {showImportModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl w-full max-w-lg shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between p-5 border-b border-[var(--app-border)]">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-lg bg-blue-500/10 text-blue-500 border border-blue-500/20">
+                  <Upload className="w-4 h-4" />
+                </div>
+                <h3 className="text-sm font-bold text-[var(--app-text)]">Import Mutasi Bank Rekening</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowImportModal(false)}
+                className="p-1.5 text-[var(--app-muted)] hover:text-[var(--app-text)] rounded-lg hover:bg-[var(--app-surface-2)] transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="p-5 space-y-4 text-xs">
+              <div>
+                <label className="block font-semibold mb-1 text-[var(--app-text)]">Pilih Akun Bank</label>
+                <select className="w-full p-2.5 rounded bg-[var(--app-surface-2)] border border-[var(--app-border)] text-[var(--app-text)] focus:outline-none">
+                  <option>Bank Mandiri (123-00-9876543-1 a.n AUDIRA)</option>
+                  <option>Bank BCA (882-019-2831 a.n AUDIRA)</option>
+                  <option>Bank BRI (0012-01-098273-50-1 a.n AUDIRA)</option>
+                </select>
+              </div>
+
+              <div className="border-2 border-dashed border-[var(--app-border)] hover:border-blue-500 rounded-xl p-6 text-center bg-[var(--app-surface-2)]/50 transition-colors cursor-pointer">
+                <Upload size={28} className="mx-auto text-blue-500 mb-2" />
+                <p className="font-semibold text-[var(--app-text)]">Pilih atau seret berkas mutasi bank (.csv/.xlsx/.ofx)</p>
+                <p className="text-[11px] text-[var(--app-muted)] mt-1">Mendukung file export internet banking korporat & personal</p>
+              </div>
+
+              <div className="flex items-center justify-between pt-3 border-t border-[var(--app-border)]">
+                <button
+                  type="button"
+                  onClick={() => toast.success('Mengunduh template_mutasi_bank.csv...', 'Unduh Format')}
+                  className="text-blue-500 hover:text-blue-400 font-semibold flex items-center gap-1 text-xs cursor-pointer"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Download Format CSV</span>
+                </button>
+
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowImportModal(false)}
+                    className="px-4 py-2 rounded-lg border border-[var(--app-border)] bg-[var(--app-surface-2)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-surface)] transition-colors cursor-pointer"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newTx = {
+                        id: Date.now(),
+                        tanggal: new Date().toLocaleDateString('id-ID') + ' 10:15',
+                        referensi: `BCA-010726-00${transactions.length + 1}`,
+                        sumber: 'Bank BCA',
+                        deskripsi: 'Pembayaran Invoice Pelanggan Massal (Auto-Match)',
+                        metode: 'Transfer Bank',
+                        debit: 1850000,
+                        kredit: 1850000,
+                        selisih: 0,
+                        status: 'Cocok' as const,
+                        dicocokkanDengan: 'INV/2026/07/BATCH-MATCH'
+                      };
+                      setTransactions(prev => [newTx, ...prev]);
+                      setShowImportModal(false);
+                      toast.success('Mutasi bank berhasil diimpor dan dicocokkan otomatis dengan invoice!', 'Rekonsiliasi Sukses');
+                    }}
+                    className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold transition-colors cursor-pointer"
+                  >
+                    Proses Impor Mutasi
+                  </button>
+                </div>
               </div>
             </div>
           </div>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
 import Link from 'next/link';
+import { useToast } from '@/contexts/ToastContext';
 import {
   TrendingUp,
   TrendingDown,
@@ -46,6 +47,7 @@ import {
 
 export default function ReportsDashboard() {
   const router = useRouter();
+  const { addToast } = useToast();
   const [activeTab, setActiveTab] = useState('Ringkasan Finansial');
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -214,7 +216,7 @@ export default function ReportsDashboard() {
 
   const handleExportCSV = () => {
     if (invoiceRecords.length === 0) {
-      alert('Tidak ada data invoice untuk diexport.');
+      addToast('warning', 'Tidak ada data invoice untuk diexport.');
       return;
     }
     const headers = ['No Invoice', 'Pelanggan', 'Tanggal', 'Nominal (Rp)', 'Status', 'Metode'];

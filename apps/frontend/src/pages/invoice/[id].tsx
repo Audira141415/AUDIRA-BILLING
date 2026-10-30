@@ -183,7 +183,7 @@ export default function InvoiceDetailPage() {
         });
       }
     } catch {
-      // Backend not returning or 401/404 - high-fidelity fallback remains active seamlessly
+      // Backend not returning or 401/404 - local fallback remains active
     } finally {
       setIsSyncing(false);
     }

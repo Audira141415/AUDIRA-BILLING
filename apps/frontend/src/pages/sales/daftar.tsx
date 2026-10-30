@@ -10,7 +10,6 @@ import {
   ArrowRight,
   ShieldCheck,
   Send,
-  Sparkles,
   Phone,
   Lock,
   Mail,
@@ -420,7 +419,7 @@ export default function SalesRegistrationPage() {
     return (
       <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] flex flex-col justify-between transition-colors duration-200">
         <Head>
-          <title>Pendaftaran Mitra Sales & Agen — AUDIRA Digital Network</title>
+          <title>Pendaftaran Mitra Sales & Agen - AUDIRA Digital Network</title>
           <meta
             name="description"
             content="Bergabung menjadi Mitra Sales Freelance AUDIRA Digital Network. Dapatkan komisi instan untuk setiap pemasangan internet baru di wilayah Anda."
@@ -462,8 +461,8 @@ export default function SalesRegistrationPage() {
             <div className="space-y-8">
               <div className="text-center space-y-3">
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-xs font-semibold">
-                  <Sparkles className="w-3.5 h-3.5" />
-                  Peluang Penghasilan Tanpa Batas
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                  Peluang Penghasilan Kemitraan
                 </div>
                 <h1 className="text-3xl sm:text-4xl font-extrabold text-[var(--app-text)] tracking-tight">
                   Daftar Mitra Sales & Agen Freelance
@@ -491,7 +490,7 @@ export default function SalesRegistrationPage() {
   return (
     <Layout>
       <Head>
-        <title>Registrasi Mitra Sales Baru — AUDIRA NET BILLING</title>
+        <title>Registrasi Mitra Sales Baru - AUDIRA NET BILLING</title>
       </Head>
 
       <div className="p-4 sm:p-6 max-w-5xl mx-auto space-y-6">
@@ -528,7 +527,7 @@ export default function SalesRegistrationPage() {
         </div>
 
         {/* Share Public Link Banner */}
-        <div className="bg-gradient-to-r from-emerald-500/10 via-slate-500/5 to-indigo-500/10 dark:from-emerald-950/40 dark:via-slate-900 dark:to-indigo-950/40 border border-emerald-500/30 rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm backdrop-blur-sm">
+        <div className="bg-[var(--app-card)] border border-emerald-500/30 rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm">
           <div className="flex items-center gap-3 w-full md:w-auto">
             <div className="p-2.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 flex-shrink-0">
               <Share2 className="w-5 h-5" />

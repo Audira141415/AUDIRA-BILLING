@@ -74,12 +74,33 @@ export class EmployeeService {
   }
 
   async create(data: any) {
-    // Note: In real implementation, you should create User first
-    // This is simplified version
+    let userId = data.userId;
+    if (!userId) {
+      const email = data.email || `${(data.employeeNumber || 'emp').toLowerCase()}@audira.local`;
+      let user = await this.prisma.user.findUnique({ where: { email } });
+      if (!user) {
+        user = await this.prisma.user.create({
+          data: {
+            email,
+            name: data.fullName || 'Karyawan AUDIRA',
+            role: data.department === 'Teknisi' || data.department === 'Teknisi Lapangan' ? 'TECH' : 'STAFF',
+            phone: data.phone || null,
+            password: '$2a$10$hkkT5RBIkT6bkd6HN6yr0u8.iPLiJgka9T3Z0EcqdsIwJAUcr/Xx2', // standard bcrypt
+          },
+        });
+      }
+      userId = user.id;
+    }
+
+    const { userId: _, ...employeeFields } = data;
+
     return this.prisma.employee.create({
       data: {
-        ...data,
-        joinDate: new Date(data.joinDate),
+        ...employeeFields,
+        user: {
+          connect: { id: userId },
+        },
+        joinDate: data.joinDate ? new Date(data.joinDate) : new Date(),
         birthDate: data.birthDate ? new Date(data.birthDate) : null,
         endDate: data.endDate ? new Date(data.endDate) : null,
       },

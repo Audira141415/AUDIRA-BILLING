@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import React, { useState } from 'react';
 import Layout from '@/components/Layout';
+import { useToast } from '@/contexts/ToastContext';
 import {
   Search,
   Filter,
@@ -62,6 +63,7 @@ const mockExportLogs: ExportLog[] = [
 ];
 
 export default function ExportInvoicePage() {
+  const { toast } = useToast();
   const [selectedFormat, setSelectedFormat] = useState<'XLSX' | 'CSV' | 'PDF' | 'JSON'>('XLSX');
   const [sertakanHeader, setSertakanHeader] = useState(true);
   const [autoWidth, setAutoWidth] = useState(true);
@@ -236,7 +238,7 @@ export default function ExportInvoicePage() {
               </div>
 
               <div className="flex justify-between items-center border-t border-[var(--app-border)]/65 pt-3">
-                <button onClick={() => alert("Menampilkan opsi filter lanjutan...")} className="text-[10px] text-blue-400 font-bold hover:underline">
+                <button onClick={() => toast.info("Menampilkan opsi filter lanjutan...")} className="text-[10px] text-blue-400 font-bold hover:underline">
                   Tampilkan Filter Lanjutan &darr;
                 </button>
 
@@ -311,7 +313,7 @@ export default function ExportInvoicePage() {
                       }`}
                     >
                       <div className="flex items-center gap-3">
-                        <div className={`p-2.5 rounded-lg bg-white/5 ${item.color}`}>
+                        <div className={`p-2.5 rounded-lg bg-[var(--app-card-subtle)] ${item.color}`}>
                           <Icon size={20} />
                         </div>
                         <div className="space-y-0.5">
@@ -337,7 +339,7 @@ export default function ExportInvoicePage() {
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" checked={sertakanHeader} onChange={() => setSertakanHeader(!sertakanHeader)} className="sr-only peer" />
-                    <div className="w-9 h-5 bg-[var(--app-bg)] rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+                    <div className="w-9 h-5 bg-[var(--app-bg)] rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[var(--app-card)] after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
                   </label>
                 </div>
 
@@ -348,7 +350,7 @@ export default function ExportInvoicePage() {
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" checked={autoWidth} onChange={() => setAutoWidth(!autoWidth)} className="sr-only peer" />
-                    <div className="w-9 h-5 bg-[var(--app-bg)] rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+                    <div className="w-9 h-5 bg-[var(--app-bg)] rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[var(--app-card)] after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
                   </label>
                 </div>
 
@@ -359,7 +361,7 @@ export default function ExportInvoicePage() {
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" checked={separateSheets} onChange={() => setSeparateSheets(!separateSheets)} className="sr-only peer" />
-                    <div className="w-9 h-5 bg-[var(--app-bg)] rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+                    <div className="w-9 h-5 bg-[var(--app-bg)] rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[var(--app-card)] after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
                   </label>
                 </div>
 
@@ -370,7 +372,7 @@ export default function ExportInvoicePage() {
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" checked={encryption} onChange={() => setEncryption(!encryption)} className="sr-only peer" />
-                    <div className="w-9 h-5 bg-[var(--app-bg)] rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+                    <div className="w-9 h-5 bg-[var(--app-bg)] rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[var(--app-card)] after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
                   </label>
                 </div>
               </div>
@@ -387,14 +389,14 @@ export default function ExportInvoicePage() {
                 </div>
 
                 <div className="md:col-span-2 flex items-center justify-end gap-3.5">
-                  <button onClick={() => alert("Filter ekspor direset ke bawaan.")} className="text-xs font-bold text-[var(--app-muted)] hover:text-[var(--app-text)] px-5 py-3 border border-[var(--app-border)] rounded-xl hover:bg-[var(--app-border)]/20 transition-colors">
+                  <button onClick={() => toast.info("Filter ekspor direset ke bawaan.")} className="text-xs font-bold text-[var(--app-muted)] hover:text-[var(--app-text)] px-5 py-3 border border-[var(--app-border)] rounded-xl hover:bg-[var(--app-border)]/20 transition-colors">
                     Reset Filter
                   </button>
-                  <button onClick={() => alert("Preset filter berhasil disimpan.")} className="text-xs font-bold text-blue-400 hover:text-blue-300 px-5 py-3 border border-blue-500/20 rounded-xl hover:bg-blue-500/10 transition-colors">
+                  <button onClick={() => toast.success("Preset filter berhasil disimpan.")} className="text-xs font-bold text-blue-400 hover:text-blue-300 px-5 py-3 border border-blue-500/20 rounded-xl hover:bg-blue-500/10 transition-colors">
                     Simpan Preset Filter
                   </button>
                   
-                  <button onClick={() => alert("Memproses pembuatan berkas ekspor invoice...")} className="flex items-center gap-2 bg-[#10b981] hover:bg-emerald-600 text-white text-xs font-bold px-6 py-3 rounded-xl shadow-md transition-all"><Download size={14} /><span>Export Sekarang</span></button>
+                  <button onClick={() => toast.info("Memproses pembuatan berkas ekspor invoice...")} className="flex items-center gap-2 bg-[#10b981] hover:bg-emerald-600 text-white text-xs font-bold px-6 py-3 rounded-xl shadow-md transition-all"><Download size={14} /><span>Export Sekarang</span></button>
                 </div>
               </div>
             </div>
@@ -541,7 +543,7 @@ export default function ExportInvoicePage() {
                         <p className="text-[10px] text-[var(--app-muted)] font-bold leading-none">{item.dataCount}</p>
                         <p className="text-[9px] text-[var(--app-muted)] mt-1 font-semibold">{item.size}</p>
                       </div>
-                      <button onClick={() => alert(`Mengunduh berkas arsip: ${item.name}`)} className="p-1 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors">
+                      <button onClick={() => toast.info(`Mengunduh berkas arsip: ${item.name}`)} className="p-1 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors">
                         <Download size={13} />
                       </button>
                     </div>
@@ -549,11 +551,11 @@ export default function ExportInvoicePage() {
                 ))}
               </div>
 
-              <button onClick={() => alert("Menampilkan seluruh riwayat arsip export...")} className="w-full text-center text-xs font-bold text-blue-500 hover:underline pt-2 border-t border-[var(--app-border)] block">Lihat Semua Riwayat Export &rarr;</button>
+              <button onClick={() => toast.info("Menampilkan seluruh riwayat arsip export...")} className="w-full text-center text-xs font-bold text-blue-500 hover:underline pt-2 border-t border-[var(--app-border)] block">Lihat Semua Riwayat Export &rarr;</button>
             </div>
 
             {/* Tips Card */}
-            <div className="bg-white/40 border border-[var(--app-border)] p-4.5 rounded-2xl flex items-start gap-3">
+            <div className="bg-[var(--app-card-subtle)] border border-[var(--app-border)] p-4.5 rounded-2xl flex items-start gap-3">
               <div className="p-2 bg-yellow-500/10 text-yellow-500 rounded-lg">
                 <Lightbulb size={16} />
               </div>

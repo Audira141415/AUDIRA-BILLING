@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import React, { useState } from 'react';
 import Layout from '@/components/Layout';
+import { useToast } from '@/contexts/ToastContext';
 import {
   Search,
   Filter,
@@ -33,6 +34,7 @@ import {
 } from 'lucide-react';
 
 export default function InvoiceSettingsPage() {
+  const { toast } = useToast();
   const [activeSubTab, setActiveSubTab] = useState('umum');
   const [generalSwitches, setGeneralSwitches] = useState({
     autoSend: true,
@@ -163,7 +165,7 @@ export default function InvoiceSettingsPage() {
               </div>
 
               <div className="flex justify-end pt-5 border-t border-[var(--app-border)]/60 mt-5">
-                <button onClick={() => alert("Perubahan konfigurasi berhasil disimpan ke database!")} className="bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-md transition-all">Simpan Perubahan</button>
+                <button onClick={() => toast.success("Perubahan konfigurasi berhasil disimpan ke database!")} className="bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-md transition-all">Simpan Perubahan</button>
               </div>
             </div>
 
@@ -177,7 +179,7 @@ export default function InvoiceSettingsPage() {
                     <span className="text-[10px] text-[var(--app-muted)] font-bold uppercase block">Format Nomor Invoice</span>
                     <div className="flex items-center gap-2">
                       <input type="text" defaultValue="INV/{YY}/{MM}/{SEQ}" className="flex-1 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl text-xs px-3.5 py-2.5 text-white focus:outline-none" />
-                      <button onClick={() => alert("Format nomor invoice siap disunting.")} className="bg-[var(--app-card)] border border-[var(--app-border)] text-blue-400 hover:bg-[var(--app-border)]/30 text-xs font-bold px-4 py-2.5 rounded-xl transition-all border-blue-500/20">
+                      <button onClick={() => toast.info("Format nomor invoice siap disunting.")} className="bg-[var(--app-card)] border border-[var(--app-border)] text-blue-400 hover:bg-[var(--app-border)]/30 text-xs font-bold px-4 py-2.5 rounded-xl transition-all border-blue-500/20">
                         Edit Format
                       </button>
                     </div>
@@ -197,7 +199,7 @@ export default function InvoiceSettingsPage() {
                     <span className="text-[10px] text-[var(--app-muted)] font-bold uppercase block">Nomor Awal</span>
                     <div className="flex items-center gap-2">
                       <input type="text" defaultValue="0001" className="flex-1 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl text-xs px-3.5 py-2.5 text-white focus:outline-none" />
-                      <button onClick={() => alert("Nomor awal direset ke 0001.")} className="text-xs font-bold text-[var(--app-muted)] hover:text-[var(--app-text)] px-4 py-2.5 border border-[var(--app-border)] rounded-xl hover:bg-[var(--app-border)]/20 transition-colors">
+                      <button onClick={() => toast.info("Nomor awal direset ke 0001.")} className="text-xs font-bold text-[var(--app-muted)] hover:text-[var(--app-text)] px-4 py-2.5 border border-[var(--app-border)] rounded-xl hover:bg-[var(--app-border)]/20 transition-colors">
                         Reset
                       </button>
                     </div>
@@ -213,7 +215,7 @@ export default function InvoiceSettingsPage() {
               </div>
 
               <div className="flex justify-end pt-5 border-t border-[var(--app-border)]/60 mt-5">
-                <button onClick={() => alert("Perubahan konfigurasi berhasil disimpan ke database!")} className="bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-md transition-all">Simpan Perubahan</button>
+                <button onClick={() => toast.success("Perubahan konfigurasi berhasil disimpan ke database!")} className="bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-md transition-all">Simpan Perubahan</button>
               </div>
             </div>
 
@@ -232,7 +234,7 @@ export default function InvoiceSettingsPage() {
                     <span>Kirim invoice otomatis saat generate</span>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input type="checkbox" checked={generalSwitches.autoSend} onChange={() => setGeneralSwitches(p => ({ ...p, autoSend: !p.autoSend }))} className="sr-only peer" />
-                      <div className="w-9 h-5 bg-[var(--app-bg)] rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+                      <div className="w-9 h-5 bg-[var(--app-bg)] rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[var(--app-card)] after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
                     </label>
                   </div>
 
@@ -240,7 +242,7 @@ export default function InvoiceSettingsPage() {
                     <span>Gunakan email customer sebagai default</span>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input type="checkbox" checked={generalSwitches.useCustomerEmail} onChange={() => setGeneralSwitches(p => ({ ...p, useCustomerEmail: !p.useCustomerEmail }))} className="sr-only peer" />
-                      <div className="w-9 h-5 bg-[var(--app-bg)] rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+                      <div className="w-9 h-5 bg-[var(--app-bg)] rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[var(--app-card)] after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
                     </label>
                   </div>
 
@@ -255,7 +257,7 @@ export default function InvoiceSettingsPage() {
                     <span>Tampilkan PPN di invoice</span>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input type="checkbox" checked={generalSwitches.showTax} onChange={() => setGeneralSwitches(p => ({ ...p, showTax: !p.showTax }))} className="sr-only peer" />
-                      <div className="w-9 h-5 bg-[var(--app-bg)] rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+                      <div className="w-9 h-5 bg-[var(--app-bg)] rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[var(--app-card)] after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
                     </label>
                   </div>
 
@@ -284,7 +286,7 @@ export default function InvoiceSettingsPage() {
                     <span>Tampilkan watermark</span>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input type="checkbox" checked={generalSwitches.watermark} onChange={() => setGeneralSwitches(p => ({ ...p, watermark: !p.watermark }))} className="sr-only peer" />
-                      <div className="w-9 h-5 bg-[var(--app-bg)] rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+                      <div className="w-9 h-5 bg-[var(--app-bg)] rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[var(--app-card)] after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
                     </label>
                   </div>
 
@@ -298,7 +300,7 @@ export default function InvoiceSettingsPage() {
               </div>
 
               <div className="flex justify-end pt-5 border-t border-[var(--app-border)]/60 mt-5">
-                <button onClick={() => alert("Perubahan konfigurasi berhasil disimpan ke database!")} className="bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-md transition-all">Simpan Perubahan</button>
+                <button onClick={() => toast.success("Perubahan konfigurasi berhasil disimpan ke database!")} className="bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-md transition-all">Simpan Perubahan</button>
               </div>
             </div>
 
@@ -354,7 +356,7 @@ export default function InvoiceSettingsPage() {
               </div>
 
               <div className="flex justify-end pt-5 border-t border-[var(--app-border)]/60 mt-5">
-                <button onClick={() => alert("Perubahan konfigurasi berhasil disimpan ke database!")} className="bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-md transition-all">Simpan Perubahan</button>
+                <button onClick={() => toast.success("Perubahan konfigurasi berhasil disimpan ke database!")} className="bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-md transition-all">Simpan Perubahan</button>
               </div>
             </div>
 
@@ -368,7 +370,7 @@ export default function InvoiceSettingsPage() {
                     <span>Tampilkan detail penggunaan pada invoice</span>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input type="checkbox" checked={otherSwitches.showDetails} onChange={() => setOtherSwitches(p => ({ ...p, showDetails: !p.showDetails }))} className="sr-only peer" />
-                      <div className="w-9 h-5 bg-[var(--app-bg)] rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+                      <div className="w-9 h-5 bg-[var(--app-bg)] rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[var(--app-card)] after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
                     </label>
                   </div>
 
@@ -376,7 +378,7 @@ export default function InvoiceSettingsPage() {
                     <span>Tampilkan nomor kontrak / layanan</span>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input type="checkbox" checked={otherSwitches.showContract} onChange={() => setOtherSwitches(p => ({ ...p, showContract: !p.showContract }))} className="sr-only peer" />
-                      <div className="w-9 h-5 bg-[var(--app-bg)] rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+                      <div className="w-9 h-5 bg-[var(--app-bg)] rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[var(--app-card)] after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
                     </label>
                   </div>
 
@@ -384,7 +386,7 @@ export default function InvoiceSettingsPage() {
                     <span>Tampilkan kontak penagihan</span>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input type="checkbox" checked={otherSwitches.showContact} onChange={() => setOtherSwitches(p => ({ ...p, showContact: !p.showContact }))} className="sr-only peer" />
-                      <div className="w-9 h-5 bg-[var(--app-bg)] rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+                      <div className="w-9 h-5 bg-[var(--app-bg)] rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[var(--app-card)] after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
                     </label>
                   </div>
 
@@ -392,7 +394,7 @@ export default function InvoiceSettingsPage() {
                     <span>Izinkan pengeditan invoice setelah kirim</span>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input type="checkbox" checked={otherSwitches.allowEdit} onChange={() => setOtherSwitches(p => ({ ...p, allowEdit: !p.allowEdit }))} className="sr-only peer" />
-                      <div className="w-9 h-5 bg-[var(--app-bg)] rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+                      <div className="w-9 h-5 bg-[var(--app-bg)] rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[var(--app-card)] after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
                     </label>
                   </div>
 
@@ -400,7 +402,7 @@ export default function InvoiceSettingsPage() {
                     <span>Aktifkan invoice berulang otomatis</span>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input type="checkbox" checked={otherSwitches.autoRecurring} onChange={() => setOtherSwitches(p => ({ ...p, autoRecurring: !p.autoRecurring }))} className="sr-only peer" />
-                      <div className="w-9 h-5 bg-[var(--app-bg)] rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+                      <div className="w-9 h-5 bg-[var(--app-bg)] rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[var(--app-card)] after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
                     </label>
                   </div>
 
@@ -422,7 +424,7 @@ export default function InvoiceSettingsPage() {
               </div>
 
               <div className="flex justify-end pt-5 border-t border-[var(--app-border)]/60 mt-5">
-                <button onClick={() => alert("Perubahan konfigurasi berhasil disimpan ke database!")} className="bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-md transition-all">Simpan Perubahan</button>
+                <button onClick={() => toast.success("Perubahan konfigurasi berhasil disimpan ke database!")} className="bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-md transition-all">Simpan Perubahan</button>
               </div>
             </div>
 
@@ -490,7 +492,7 @@ export default function InvoiceSettingsPage() {
               </div>
 
               <div className="flex justify-end pt-5 border-t border-[var(--app-border)]/60 mt-5">
-                <button onClick={() => alert("Perubahan konfigurasi berhasil disimpan ke database!")} className="bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-md transition-all">Simpan Perubahan</button>
+                <button onClick={() => toast.success("Perubahan konfigurasi berhasil disimpan ke database!")} className="bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-md transition-all">Simpan Perubahan</button>
               </div>
             </div>
 
@@ -543,7 +545,7 @@ export default function InvoiceSettingsPage() {
 
           <div className="flex items-center gap-2">
             <span>Log Perubahan Terakhir</span>
-            <button onClick={() => alert("Menampilkan log perubahan konfigurasi...")} className="text-blue-500 hover:underline">Lihat Log Perubahan &rarr;</button>
+            <button onClick={() => toast.info("Menampilkan log perubahan konfigurasi...")} className="text-blue-500 hover:underline">Lihat Log Perubahan &rarr;</button>
           </div>
         </div>
 

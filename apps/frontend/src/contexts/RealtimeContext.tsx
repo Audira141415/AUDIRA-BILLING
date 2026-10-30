@@ -71,7 +71,7 @@ export const RealtimeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       setLastEvent({ type: 'payment_received', data });
       addNotification({
         type: 'payment',
-        title: '💰 Pembayaran Diterima!',
+        title: 'Pembayaran Diterima',
         message: `${data.customerName || 'Pelanggan'} telah membayar tagihan ${data.invoiceNumber || ''} sebesar Rp ${(data.amount || 0).toLocaleString('id-ID')}`,
         timestamp: data.timestamp || new Date().toISOString(),
         data,
@@ -83,7 +83,7 @@ export const RealtimeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       setLastEvent({ type: 'ticket_updated', data });
       addNotification({
         type: 'ticket',
-        title: `🎫 Tiket ${data.ticketNumber || 'Update'} (${data.status})`,
+        title: `Tiket ${data.ticketNumber || 'Update'} (${data.status})`,
         message: `${data.title || 'Pembaruan tiket'} - ${data.customerName || ''}`,
         timestamp: data.timestamp || new Date().toISOString(),
         data,
@@ -95,7 +95,7 @@ export const RealtimeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       setLastEvent({ type: 'network_alert', data });
       addNotification({
         type: 'alert',
-        title: `🚨 Alert Jaringan: ${data.device} [${data.status}]`,
+        title: `Alert Jaringan: ${data.device} [${data.status}]`,
         message: data.message,
         timestamp: data.timestamp || new Date().toISOString(),
         data,
@@ -107,7 +107,7 @@ export const RealtimeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       setLastEvent({ type: 'invoice_created', data });
       addNotification({
         type: 'invoice',
-        title: '📄 Invoice Tagihan Baru Terbit',
+        title: 'Invoice Tagihan Baru Terbit',
         message: `Invoice ${data.invoiceNumber || ''} untuk ${data.customerName || 'Pelanggan'} sebesar Rp ${(data.amount || 0).toLocaleString('id-ID')}`,
         timestamp: data.timestamp || new Date().toISOString(),
         data,

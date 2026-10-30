@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { useState, useMemo } from 'react';
 import Layout from '@/components/Layout';
+import { useToast } from '@/contexts/ToastContext';
 import {
   Search, Download, Eye, Trash2, Clock, HelpCircle, FileText,
   FileSpreadsheet, FileImage, Globe, CheckCircle2, ChevronLeft,
@@ -38,6 +39,7 @@ interface ArchiveItem {
 }
 
 export default function LaporanKeuangan() {
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('Arsip Laporan');
 
   // Common filters
@@ -209,11 +211,11 @@ export default function LaporanKeuangan() {
                   <Clock className="w-4 h-4" />
                   <span>Buat Laporan</span>
                 </button>
-                <button onClick={() => alert("Mengunggah berkas laporan keuangan...")} className="flex items-center gap-1.5 bg-slate-800 border border-slate-700 text-slate-200 text-xs font-medium px-4 py-2.5 rounded-lg cursor-pointer">
+                <button onClick={() => toast.info("Mengunggah berkas laporan keuangan...")} className="flex items-center gap-1.5 bg-slate-800 border border-slate-700 text-slate-200 text-xs font-medium px-4 py-2.5 rounded-lg cursor-pointer">
                   <Upload className="w-3.5 h-3.5" />
                   <span>Upload</span>
                 </button>
-                <button onClick={() => alert("Panduan Laporan Keuangan: hubungi finance@audira.my.id atau hotline WhatsApp.")} className="flex items-center gap-1.5 bg-slate-800 border border-slate-700 text-slate-200 text-xs font-medium px-4 py-2.5 rounded-lg cursor-pointer">
+                <button onClick={() => toast.info("Panduan Laporan Keuangan: hubungi finance@audira.my.id atau hotline WhatsApp.")} className="flex items-center gap-1.5 bg-slate-800 border border-slate-700 text-slate-200 text-xs font-medium px-4 py-2.5 rounded-lg cursor-pointer">
                   <HelpCircle className="w-3.5 h-3.5" />
                   <span>Bantuan</span>
                 </button>
@@ -346,7 +348,7 @@ export default function LaporanKeuangan() {
                   </select>
                 </div>
                 <div className="flex gap-2 items-end">
-                  <button onClick={() => alert("Penyaringan data laporan keuangan diterapkan.")} className="bg-blue-600 hover:bg-blue-500 text-[var(--app-text)] font-bold py-2 rounded-lg w-full">Filter</button>
+                  <button onClick={() => toast.info("Penyaringan data laporan keuangan diterapkan.")} className="bg-blue-600 hover:bg-blue-500 text-[var(--app-text)] font-bold py-2 rounded-lg w-full">Filter</button>
                   <button onClick={() => { setArchiveSearch(''); setArchiveStatus('Semua Status'); }} className="bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-2 rounded-lg w-full">Reset</button>
                 </div>
               </div>
@@ -386,7 +388,7 @@ export default function LaporanKeuangan() {
                 <div className="flex items-center justify-between border-b border-[var(--app-border)] pb-3">
                   <h3 className="text-xs font-bold text-white uppercase tracking-wider">Daftar Arsip Laporan</h3>
                   <div className="flex items-center gap-2">
-                    <button onClick={() => alert("Opsi massal: Unduh Bundel, Arsipkan Laporan, Kirim ke Pimpinan.")} className="text-xs bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded border border-slate-700/80 cursor-pointer">Aksi Massal</button>
+                    <button onClick={() => toast.info("Opsi massal: Unduh Bundel, Arsipkan Laporan, Kirim ke Pimpinan.")} className="text-xs bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded border border-slate-700/80 cursor-pointer">Aksi Massal</button>
                   </div>
                 </div>
 
@@ -439,8 +441,8 @@ export default function LaporanKeuangan() {
                           <td className="py-3.5 px-3 text-right font-medium text-slate-300">{item.ukuran}</td>
                           <td className="py-3.5 px-3 text-center">
                             <div className="flex items-center justify-center gap-1">
-                              <button onClick={() => alert("Menampilkan detail laporan...")} className="p-1 text-[var(--app-muted)] hover:text-white"><Eye className="w-3.5 h-3.5" /></button>
-                              <button onClick={() => alert("Mengunduh salinan berkas laporan...")} className="p-1 text-[var(--app-muted)] hover:text-white"><Download className="w-3.5 h-3.5" /></button>
+                              <button onClick={() => toast.info("Menampilkan detail laporan...")} className="p-1 text-[var(--app-muted)] hover:text-white"><Eye className="w-3.5 h-3.5" /></button>
+                              <button onClick={() => toast.success("Mengunduh salinan berkas laporan...")} className="p-1 text-[var(--app-muted)] hover:text-white"><Download className="w-3.5 h-3.5" /></button>
                             </div>
                           </td>
                         </tr>
@@ -513,31 +515,31 @@ export default function LaporanKeuangan() {
 
                 <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5 space-y-2.5 text-xs">
                   <h3 className="text-xs font-bold text-white uppercase tracking-wider border-b border-[var(--app-border)] pb-2 mb-1">Aksi Cepat</h3>
-                  <button onClick={() => alert("Membuka pratinjau dokumen laporan keuangan...")} className="w-full flex items-center justify-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-[var(--app-text)] font-bold py-2.5 rounded-lg cursor-pointer">
+                  <button onClick={() => toast.info("Membuka pratinjau dokumen laporan keuangan...")} className="w-full flex items-center justify-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-[var(--app-text)] font-bold py-2.5 rounded-lg cursor-pointer">
                     <Eye className="w-4 h-4" />
                     <span>Lihat Laporan</span>
                   </button>
                   <div className="grid grid-cols-2 gap-2">
-                    <button onClick={() => alert("Mengunduh salinan berkas laporan keuangan...")} className="flex items-center justify-center gap-1 bg-[var(--app-bg)] hover:bg-[#07101F] border border-slate-850 py-2.5 rounded-lg text-slate-300 font-semibold cursor-pointer">
+                    <button onClick={() => toast.success("Mengunduh salinan berkas laporan keuangan...")} className="flex items-center justify-center gap-1 bg-[var(--app-bg)] hover:bg-[#07101F] border border-slate-850 py-2.5 rounded-lg text-slate-300 font-semibold cursor-pointer">
                       <Download className="w-3.5 h-3.5" />
                       <span>Unduh</span>
                     </button>
-                    <button onClick={() => alert("Membagikan tautan aman laporan ke manajemen.")} className="flex items-center justify-center gap-1 bg-[var(--app-bg)] hover:bg-[#07101F] border border-slate-850 py-2.5 rounded-lg text-slate-300 font-semibold cursor-pointer">
+                    <button onClick={() => toast.info("Membagikan tautan aman laporan ke manajemen.")} className="flex items-center justify-center gap-1 bg-[var(--app-bg)] hover:bg-[#07101F] border border-slate-850 py-2.5 rounded-lg text-slate-300 font-semibold cursor-pointer">
                       <Share2 className="w-3.5 h-3.5" />
                       <span>Bagikan</span>
                     </button>
                   </div>
                   <div className="grid grid-cols-2 gap-2">
-                    <button onClick={() => alert("Menduplikasi konfigurasi laporan...")} className="flex items-center justify-center gap-1 bg-[var(--app-bg)] hover:bg-[#07101F] border border-slate-850 py-2.5 rounded-lg text-slate-300 font-semibold cursor-pointer">
+                    <button onClick={() => toast.info("Menduplikasi konfigurasi laporan...")} className="flex items-center justify-center gap-1 bg-[var(--app-bg)] hover:bg-[#07101F] border border-slate-850 py-2.5 rounded-lg text-slate-300 font-semibold cursor-pointer">
                       <Copy className="w-3.5 h-3.5" />
                       <span>Duplikat</span>
                     </button>
-                    <button onClick={() => alert("Memindahkan laporan ke folder arsip / departemen.")} className="flex items-center justify-center gap-1 bg-[var(--app-bg)] hover:bg-[#07101F] border border-slate-850 py-2.5 rounded-lg text-slate-300 font-semibold cursor-pointer">
+                    <button onClick={() => toast.info("Memindahkan laporan ke folder arsip / departemen.")} className="flex items-center justify-center gap-1 bg-[var(--app-bg)] hover:bg-[#07101F] border border-slate-850 py-2.5 rounded-lg text-slate-300 font-semibold cursor-pointer">
                       <FolderOpen className="w-3.5 h-3.5" />
                       <span>Pindahkan</span>
                     </button>
                   </div>
-                  <button onClick={() => alert("Laporan dihapus dari daftar aktif.")} className="w-full flex items-center justify-center gap-1.5 border border-dashed border-red-500/40 text-rose-400 hover:text-rose-300 hover:border-red-400 py-2 rounded-lg font-semibold cursor-pointer">
+                  <button onClick={() => toast.success("Laporan dihapus dari daftar aktif.")} className="w-full flex items-center justify-center gap-1.5 border border-dashed border-red-500/40 text-rose-400 hover:text-rose-300 hover:border-red-400 py-2 rounded-lg font-semibold cursor-pointer">
                     <Trash2 className="w-3.5 h-3.5" />
                     <span>Hapus Laporan</span>
                   </button>

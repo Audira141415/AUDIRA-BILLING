@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Layout from '@/components/Layout';
 import api from '@/lib/api';
-import { showAudiraToast } from '@/contexts/ToastContext';
+import { useToast } from '@/contexts/ToastContext';
 import {
   Search,
   Download,
@@ -63,6 +63,7 @@ const PAYMENT_METHODS = ['Cash', 'Transfer Bank', 'QRIS', 'Virtual Account BCA',
 
 export default function SemuaInvoicePage() {
   const router = useRouter();
+  const { toast } = useToast();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [customers, setCustomers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -103,12 +104,12 @@ export default function SemuaInvoicePage() {
   
   // Dashboard statistics
   const [stats, setStats] = useState({
-    totalInvoice: 1248,
-    paid: 986,
-    pending: 162,
-    overdue: 68,
-    totalRevenue: 412500000,
-    outstanding: 68750000
+    totalInvoice: 0,
+    paid: 0,
+    pending: 0,
+    overdue: 0,
+    totalRevenue: 0,
+    outstanding: 0
   });
 
   const [page, setPage] = useState(1);
@@ -142,12 +143,12 @@ export default function SemuaInvoicePage() {
       const data = await api.keuangan.getStats();
       if (data) {
         setStats({
-          totalInvoice: data.totalInvoices || 1248,
-          paid: data.paidInvoices || 986,
-          pending: data.unpaidInvoices || 162,
-          overdue: data.overdueInvoices || 68,
-          totalRevenue: data.totalRevenue || 412500000,
-          outstanding: data.outstandingRevenue || 68750000
+          totalInvoice: data.totalInvoices || 0,
+          paid: data.paidInvoices || 0,
+          pending: data.unpaidInvoices || 0,
+          overdue: data.overdueInvoices || 0,
+          totalRevenue: data.totalRevenue || 0,
+          outstanding: data.outstandingRevenue || 0
         });
       }
     } catch (error) {
@@ -165,7 +166,7 @@ export default function SemuaInvoicePage() {
   const handleMassWhatsApp = () => {
     // Blast reminder for selected unpaid invoices
     if (selectedInvoicesForWA.length === 0) {
-      alert('Pilih minimal 1 invoice');
+      toast.warning('Pilih minimal 1 invoice');
       return;
     }
     setShowWhatsAppModal(true);
@@ -178,9 +179,9 @@ export default function SemuaInvoicePage() {
       setShowGenerateModal(false);
       await fetchInvoices();
       await fetchStats();
-      showAudiraToast.success(`Berhasil generate invoice periode ${generateMonth}! ${result?.created ? `${result.created} tagihan dibuat.` : ''}`, 'Generate Sukses');
+      toast.success(`Berhasil generate invoice periode ${generateMonth}! ${result?.created ? `${result.created} tagihan dibuat.` : ''}`, 'Generate Sukses');
     } catch (error: any) {
-      showAudiraToast.error(`Gagal generate invoice: ${error.message || 'Koneksi error'}`, 'Gagal');
+      toast.error(`Gagal generate invoice: ${error.message || 'Koneksi error'}`, 'Gagal');
     } finally {
       setActionLoading(null);
     }
@@ -196,9 +197,9 @@ export default function SemuaInvoicePage() {
       setSelectedInvoice(null);
       await fetchInvoices();
       await fetchStats();
-      showAudiraToast.success(`Tagihan ${invNum} berhasil ditandai LUNAS via ${markPaidMethod}!`, 'Pembayaran Sukses');
+      toast.success(`Tagihan ${invNum} berhasil ditandai LUNAS via ${markPaidMethod}!`, 'Pembayaran Sukses');
     } catch (error: any) {
-      showAudiraToast.error(`Gagal menandai lunas: ${error.message}`, 'Gagal');
+      toast.error(`Gagal menandai lunas: ${error.message}`, 'Gagal');
     } finally {
       setActionLoading(null);
     }
@@ -299,7 +300,7 @@ export default function SemuaInvoicePage() {
     if (!invoiceToEdit) return;
     const num = parseInt(editAmount);
     if (isNaN(num) || num <= 0) {
-      alert('Nominal tagihan harus berupa angka positif');
+      toast.warning('Nominal tagihan harus berupa angka positif');
       return;
     }
     try {
@@ -315,9 +316,9 @@ export default function SemuaInvoicePage() {
       setInvoiceToEdit(null);
       await fetchInvoices();
       await fetchStats();
-      alert('Tagihan berhasil diupdate');
+      toast.success('Tagihan berhasil diupdate');
     } catch (err: any) {
-      alert(`Gagal update: ${err.message}`);
+      toast.error(`Gagal update: ${err.message}`);
     } finally {
       setActionLoading(null);
     }
@@ -340,9 +341,9 @@ export default function SemuaInvoicePage() {
       setInvoiceToDelete(null);
       await fetchInvoices();
       await fetchStats();
-      alert('Invoice berhasil dihapus');
+      toast.success('Invoice berhasil dihapus');
     } catch (err: any) {
-      alert(`Gagal menghapus: ${err.message}`);
+      toast.error(`Gagal menghapus: ${err.message}`);
     } finally {
       setActionLoading(null);
     }
@@ -359,9 +360,9 @@ export default function SemuaInvoicePage() {
       setShowBulkDeleteModal(false);
       await fetchInvoices();
       await fetchStats();
-      alert('Semua invoice terpilih berhasil dihapus');
+      toast.success('Semua invoice terpilih berhasil dihapus');
     } catch (err: any) {
-      alert(`Gagal hapus massal: ${err.message}`);
+      toast.error(`Gagal hapus massal: ${err.message}`);
     } finally {
       setActionLoading(null);
     }
@@ -378,9 +379,9 @@ export default function SemuaInvoicePage() {
       setShowBulkMarkPaidModal(false);
       await fetchInvoices();
       await fetchStats();
-      alert('Semua invoice terpilih berhasil ditandai lunas');
+      toast.success('Semua invoice terpilih berhasil ditandai lunas');
     } catch (err: any) {
-      alert(`Gagal update status: ${err.message}`);
+      toast.error(`Gagal update status: ${err.message}`);
     } finally {
       setActionLoading(null);
     }
@@ -433,96 +434,102 @@ export default function SemuaInvoicePage() {
         {/* ─── Stats Cards ────────────────────────────────────────────────── */}
         <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
           {/* Card 1: Total Invoice */}
-          <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs p-4 flex items-center gap-4">
-            <div className="p-3.5 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-xl">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)] rounded-2xl shadow-2xs p-4 flex items-center gap-4">
+            <div className="p-3.5 bg-blue-500/10 text-blue-500 border border-blue-500/20 rounded-xl">
               <FileText size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Total Invoice</p>
-              <p className="text-xl font-black text-slate-900 mt-0.5">{dynamicStats.totalInvoice}</p>
-              <p className="text-[10px] text-slate-500 mt-0.5">Semua invoice</p>
+              <p className="text-[10px] text-[var(--app-text-muted)] font-bold uppercase tracking-wider">Total Invoice</p>
+              <p className="text-xl font-black text-[var(--app-text)] font-mono tabular-nums mt-0.5">{dynamicStats.totalInvoice}</p>
+              <p className="text-[10px] text-[var(--app-text-muted)] mt-0.5">Semua invoice</p>
             </div>
           </div>
 
           {/* Card 2: Lunas */}
-          <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs p-4 flex items-center gap-4">
-            <div className="p-3.5 bg-green-500/10 text-green-400 border border-green-500/20 rounded-xl">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)] rounded-2xl shadow-2xs p-4 flex items-center gap-4">
+            <div className="p-3.5 bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 rounded-xl">
               <CheckCircle size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Lunas</p>
-              <p className="text-xl font-black text-slate-900 mt-0.5">{dynamicStats.paid}</p>
-              <p className="text-[10px] text-slate-500 mt-0.5">79.0% dari total</p>
+              <p className="text-[10px] text-[var(--app-text-muted)] font-bold uppercase tracking-wider">Lunas</p>
+              <p className="text-xl font-black text-[var(--app-text)] font-mono tabular-nums mt-0.5">{dynamicStats.paid}</p>
+              <p className="text-[10px] text-[var(--app-text-muted)] mt-0.5">
+                {dynamicStats.totalInvoice > 0 ? ((dynamicStats.paid / dynamicStats.totalInvoice) * 100).toFixed(1) : '0.0'}% dari total
+              </p>
             </div>
           </div>
 
           {/* Card 3: Pending */}
-          <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs p-4 flex items-center gap-4">
-            <div className="p-3.5 bg-orange-500/10 text-orange-400 border border-orange-500/20 rounded-xl">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)] rounded-2xl shadow-2xs p-4 flex items-center gap-4">
+            <div className="p-3.5 bg-amber-500/10 text-amber-500 border border-amber-500/20 rounded-xl">
               <Clock size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Pending</p>
-              <p className="text-xl font-black text-slate-900 mt-0.5">{dynamicStats.pending}</p>
-              <p className="text-[10px] text-slate-500 mt-0.5">13.0% dari total</p>
+              <p className="text-[10px] text-[var(--app-text-muted)] font-bold uppercase tracking-wider">Pending</p>
+              <p className="text-xl font-black text-[var(--app-text)] font-mono tabular-nums mt-0.5">{dynamicStats.pending}</p>
+              <p className="text-[10px] text-[var(--app-text-muted)] mt-0.5">
+                {dynamicStats.totalInvoice > 0 ? ((dynamicStats.pending / dynamicStats.totalInvoice) * 100).toFixed(1) : '0.0'}% dari total
+              </p>
             </div>
           </div>
 
           {/* Card 4: Overdue */}
-          <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs p-4 flex items-center gap-4">
-            <div className="p-3.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded-xl">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)] rounded-2xl shadow-2xs p-4 flex items-center gap-4">
+            <div className="p-3.5 bg-rose-500/10 text-rose-500 border border-rose-500/20 rounded-xl">
               <AlertCircle size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Overdue</p>
-              <p className="text-xl font-black text-slate-900 mt-0.5">{dynamicStats.overdue}</p>
-              <p className="text-[10px] text-slate-500 mt-0.5">5.4% dari total</p>
+              <p className="text-[10px] text-[var(--app-text-muted)] font-bold uppercase tracking-wider">Overdue</p>
+              <p className="text-xl font-black text-[var(--app-text)] font-mono tabular-nums mt-0.5">{dynamicStats.overdue}</p>
+              <p className="text-[10px] text-[var(--app-text-muted)] mt-0.5">
+                {dynamicStats.totalInvoice > 0 ? ((dynamicStats.overdue / dynamicStats.totalInvoice) * 100).toFixed(1) : '0.0'}% dari total
+              </p>
             </div>
           </div>
 
           {/* Card 5: Total Pendapatan */}
-          <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs p-4 flex items-center gap-4">
-            <div className="p-3 bg-purple-500/10 text-purple-400 border border-purple-500/20 rounded-xl">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)] rounded-2xl shadow-2xs p-4 flex items-center gap-4">
+            <div className="p-3 bg-purple-500/10 text-purple-500 border border-purple-500/20 rounded-xl">
               <DollarSign size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Total Pendapatan</p>
-              <p className="text-sm font-black text-slate-900 mt-0.5">{formatCurrency(dynamicStats.totalRevenue)}</p>
-              <p className="text-[10px] text-slate-500 mt-0.5">Dari semua invoice</p>
+              <p className="text-[10px] text-[var(--app-text-muted)] font-bold uppercase tracking-wider">Total Pendapatan</p>
+              <p className="text-sm font-black text-[var(--app-text)] font-mono tabular-nums mt-0.5">{formatCurrency(dynamicStats.totalRevenue)}</p>
+              <p className="text-[10px] text-[var(--app-text-muted)] mt-0.5">Dari invoice lunas</p>
             </div>
           </div>
 
           {/* Card 6: Outstanding */}
-          <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs p-4 flex items-center gap-4">
-            <div className="p-3.5 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-xl">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)] rounded-2xl shadow-2xs p-4 flex items-center gap-4">
+            <div className="p-3.5 bg-blue-500/10 text-blue-500 border border-blue-500/20 rounded-xl">
               <DollarSign size={20} />
             </div>
             <div>
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Outstanding</p>
-              <p className="text-sm font-black text-slate-900 mt-0.5">{formatCurrency(dynamicStats.outstanding)}</p>
-              <p className="text-[10px] text-slate-500 mt-0.5">Belum dibayar</p>
+              <p className="text-[10px] text-[var(--app-text-muted)] font-bold uppercase tracking-wider">Outstanding</p>
+              <p className="text-sm font-black text-[var(--app-text)] font-mono tabular-nums mt-0.5">{formatCurrency(dynamicStats.outstanding)}</p>
+              <p className="text-[10px] text-[var(--app-text-muted)] mt-0.5">Belum dibayar</p>
             </div>
           </div>
         </div>
 
         {/* ─── Filter Bar ────────────────────────────────────────────────── */}
-        <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs p-4 space-y-4">
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)] rounded-2xl shadow-2xs p-4 space-y-4">
           <div className="flex flex-wrap items-center gap-4">
             <div className="relative flex-1 min-w-[240px]">
-              <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+              <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-[var(--app-muted)] w-4 h-4" />
               <input 
                 type="text" 
                 placeholder="Cari invoice, customer, package..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 text-xs pl-10 pr-4 py-2.5 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none"
+                className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] text-xs pl-10 pr-4 py-2.5 rounded-xl text-[var(--app-text)] placeholder-[var(--app-muted)] focus:outline-none"
               />
             </div>
 
             <select 
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value as any)}
-              className="bg-slate-50 border border-slate-200 text-xs py-2.5 px-4 rounded-xl text-slate-600 focus:outline-none min-w-[140px]"
+              className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)] focus:outline-none min-w-[140px]"
             >
               <option value="ALL">Semua Status</option>
               <option value="PAID">Lunas</option>
@@ -531,7 +538,7 @@ export default function SemuaInvoicePage() {
             </select>
 
             <select 
-              className="bg-slate-50 border border-slate-200 text-xs py-2.5 px-4 rounded-xl text-slate-600 focus:outline-none min-w-[140px]"
+              className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)] focus:outline-none min-w-[140px]"
             >
               <option value="all">Semua Metode</option>
               <option value="transfer">Transfer</option>
@@ -540,27 +547,27 @@ export default function SemuaInvoicePage() {
             </select>
 
             <select 
-              className="bg-slate-50 border border-slate-200 text-xs py-2.5 px-4 rounded-xl text-slate-600 focus:outline-none min-w-[140px]"
+              className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)] focus:outline-none min-w-[140px]"
             >
               <option value="all">Semua Periode</option>
               <option value="this-month">Bulan Ini</option>
             </select>
 
-            {/* Date range picker mock */}
-            <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-2.5 rounded-xl text-xs text-slate-600 cursor-pointer">
-              <Calendar size={14} className="text-slate-400" />
-              <span>01/06/2026 - 01/07/2026</span>
+            {/* Current billing cycle indicator */}
+            <div className="flex items-center gap-2 bg-[var(--app-bg)] border border-[var(--app-border)] px-3 py-2.5 rounded-xl text-xs text-[var(--app-text)] font-mono">
+              <Calendar size={14} className="text-[var(--app-text-muted)]" />
+              <span>{generateMonth}</span>
             </div>
             
             <button 
               onClick={() => { setSearchTerm(''); setFilterStatus('ALL'); }}
-              className="text-xs font-semibold text-slate-500 hover:text-slate-900 px-4 py-2.5 rounded-xl border border-transparent hover:border-slate-200 transition-all ml-auto"
+              className="text-xs font-semibold text-[var(--app-muted)] hover:text-[var(--app-text)] px-4 py-2.5 rounded-xl border border-transparent hover:border-[var(--app-border)] transition-all ml-auto"
             >
               Reset
             </button>
 
             <button 
-              onClick={() => alert("Filter status dan pencarian invoice diterapkan.")}
+              onClick={() => toast.info("Filter status dan pencarian invoice diterapkan.")}
               className="flex items-center gap-2 bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-md"
             >
               <Filter size={14} />
@@ -577,37 +584,37 @@ export default function SemuaInvoicePage() {
 
             <button 
               onClick={handleExportCSV}
-              className="flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-100 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-sm border-gray-800"
+              className="flex items-center gap-2 bg-[var(--app-card)] border border-[var(--app-border)] hover:opacity-90 text-[var(--app-text)] text-xs font-bold px-5 py-2.5 rounded-xl shadow-sm"
             >
-              <Download size={14} className="text-slate-500" />
+              <Download size={14} className="text-[var(--app-muted)]" />
               <span>Export</span>
             </button>
           </div>
         </div>
 
         {/* ─── Mass Action bar ────────────────────────────────────────────── */}
-        <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs p-4 flex flex-wrap items-center gap-3">
-          <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mr-2">Mass Action</span>
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)] rounded-2xl shadow-2xs p-4 flex flex-wrap items-center gap-3">
+          <span className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider mr-2">Mass Action</span>
           
           <button 
             onClick={handleMassWhatsApp}
-            className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 hover:border-emerald-500/30 text-slate-500 hover:text-emerald-400 text-xs px-3.5 py-2 rounded-xl transition-all"
+            className="flex items-center gap-1.5 bg-[var(--app-bg)] border border-[var(--app-border)] hover:border-emerald-500/30 text-[var(--app-muted)] hover:text-emerald-400 text-xs px-3.5 py-2 rounded-xl transition-all"
           >
             <MessageCircle size={13} />
             <span>Kirim WA</span>
           </button>
 
-          <button onClick={() => { if (selectedInvoicesForWA.length === 0) { alert('Pilih minimal 1 invoice untuk dikirim via Email'); return; } alert(`Mengirim tagihan via email ke ${selectedInvoicesForWA.length} pelanggan terpilih...`); }} className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 hover:border-blue-500/30 text-slate-500 hover:text-blue-400 text-xs px-3.5 py-2 rounded-xl transition-all">
+          <button onClick={() => { if (selectedInvoicesForWA.length === 0) { toast.warning('Pilih minimal 1 invoice untuk dikirim via Email'); return; } toast.info(`Mengirim tagihan via email ke ${selectedInvoicesForWA.length} pelanggan terpilih...`); }} className="flex items-center gap-1.5 bg-[var(--app-bg)] border border-[var(--app-border)] hover:border-blue-500/30 text-[var(--app-muted)] hover:text-blue-400 text-xs px-3.5 py-2 rounded-xl transition-all">
             <Mail size={13} />
             <span>Kirim Email</span>
           </button>
 
-          <button onClick={() => { if (selectedInvoicesForWA.length === 0) { alert('Pilih minimal 1 invoice untuk diunduh'); return; } alert(`Mengunduh PDF untuk ${selectedInvoicesForWA.length} invoice terpilih...`); }} className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 hover:border-red-500/30 text-slate-500 hover:text-red-400 text-xs px-3.5 py-2 rounded-xl transition-all">
+          <button onClick={() => { if (selectedInvoicesForWA.length === 0) { toast.warning('Pilih minimal 1 invoice untuk diunduh'); return; } toast.info(`Mengunduh PDF untuk ${selectedInvoicesForWA.length} invoice terpilih...`); }} className="flex items-center gap-1.5 bg-[var(--app-bg)] border border-[var(--app-border)] hover:border-red-500/30 text-[var(--app-muted)] hover:text-red-400 text-xs px-3.5 py-2 rounded-xl transition-all">
             <FileText size={13} />
             <span>Download PDF</span>
           </button>
 
-          <button onClick={handleExportCSV} className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 hover:border-blue-500/30 text-slate-500 hover:text-blue-400 text-xs px-3.5 py-2 rounded-xl transition-all">
+          <button onClick={handleExportCSV} className="flex items-center gap-1.5 bg-[var(--app-bg)] border border-[var(--app-border)] hover:border-blue-500/30 text-[var(--app-muted)] hover:text-blue-400 text-xs px-3.5 py-2 rounded-xl transition-all">
             <Download size={13} />
             <span>Export</span>
           </button>
@@ -615,12 +622,12 @@ export default function SemuaInvoicePage() {
           <button 
             onClick={() => {
               if (selectedInvoicesForWA.length === 0) {
-                alert('Pilih minimal 1 invoice untuk dihapus');
+                toast.warning('Pilih minimal 1 invoice untuk dihapus');
                 return;
               }
               setShowBulkDeleteModal(true);
             }}
-            className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 hover:border-red-500/30 text-slate-500 hover:text-red-400 text-xs px-3.5 py-2 rounded-xl transition-all"
+            className="flex items-center gap-1.5 bg-[var(--app-bg)] border border-[var(--app-border)] hover:border-red-500/30 text-[var(--app-muted)] hover:text-red-400 text-xs px-3.5 py-2 rounded-xl transition-all"
           >
             <Trash2 size={13} />
             <span>Hapus ({selectedInvoicesForWA.length})</span>
@@ -629,18 +636,18 @@ export default function SemuaInvoicePage() {
           <button 
             onClick={() => {
               if (selectedInvoicesForWA.length === 0) {
-                alert('Pilih minimal 1 invoice untuk ditandai lunas');
+                toast.warning('Pilih minimal 1 invoice untuk ditandai lunas');
                 return;
               }
               setShowBulkMarkPaidModal(true);
             }}
-            className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 hover:border-green-500/30 text-slate-500 hover:text-green-400 text-xs px-3.5 py-2 rounded-xl transition-all"
+            className="flex items-center gap-1.5 bg-[var(--app-bg)] border border-[var(--app-border)] hover:border-green-500/30 text-[var(--app-muted)] hover:text-green-400 text-xs px-3.5 py-2 rounded-xl transition-all"
           >
             <Check size={13} />
             <span>Tandai Lunas ({selectedInvoicesForWA.length})</span>
           </button>
 
-          <button onClick={() => alert("Menu lainnya: Sinkronisasi billing, Cetak thermal masal, Arsipkan invoice terpilih.")} className="p-2 bg-slate-50 border border-slate-200 hover:bg-slate-100 rounded-xl text-slate-500">
+          <button onClick={() => toast.info("Menu lainnya: Sinkronisasi billing, Cetak thermal masal, Arsipkan invoice terpilih.")} className="p-2 bg-[var(--app-bg)] border border-[var(--app-border)] hover:opacity-80 rounded-xl text-[var(--app-muted)]">
             <MoreVertical size={13} />
           </button>
         </div>
@@ -650,13 +657,26 @@ export default function SemuaInvoicePage() {
 
           {/* Left Column: Invoice list table */}
           <div className={`${showDetailSidebar ? 'lg:col-span-8' : 'lg:col-span-12'} space-y-6 transition-all duration-300`}>
-            <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs overflow-hidden">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)] rounded-2xl shadow-2xs overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="border-b border-slate-200 bg-slate-50/40 text-slate-500 text-[10px] font-bold uppercase tracking-wider">
+                    <tr className="border-b border-[var(--app-border)] bg-[var(--app-card-subtle)] text-[var(--app-text-muted)] text-[10px] font-bold uppercase tracking-wider">
                       <th className="p-4 w-10">
-                        <input type="checkbox" className="rounded bg-slate-50 border-slate-200 text-blue-600 focus:ring-0" />
+                        <input
+                          type="checkbox"
+                          checked={paginatedInvoices.length > 0 && paginatedInvoices.every(inv => selectedInvoicesForWA.includes(inv.id))}
+                          onChange={() => {
+                            const pageIds = paginatedInvoices.map(inv => inv.id);
+                            const allSelected = pageIds.every(id => selectedInvoicesForWA.includes(id));
+                            if (allSelected) {
+                              setSelectedInvoicesForWA(prev => prev.filter(id => !pageIds.includes(id)));
+                            } else {
+                              setSelectedInvoicesForWA(prev => Array.from(new Set([...prev, ...pageIds])));
+                            }
+                          }}
+                          className="rounded bg-[var(--app-bg)] border-[var(--app-border)] text-blue-600 focus:ring-0"
+                        />
                       </th>
                       <th className="p-4 w-12">NO</th>
                       <th className="p-4 w-40">INVOICE</th>
@@ -670,144 +690,171 @@ export default function SemuaInvoicePage() {
                       <th className="p-4 w-20 text-center">AKSI</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-200 text-xs text-slate-600">
-                    {paginatedInvoices.map((inv, idx) => {
-                      const isAuto = idx < 3;
-                      const isActiveRow = activeDetail?.id === inv.id;
-                      return (
-                        <tr 
-                          key={inv.id} 
-                          onClick={() => { setSelectedInvoice(inv); setShowDetailSidebar(true); }}
-                          className={`hover:bg-slate-100/40 transition-colors cursor-pointer ${isActiveRow ? 'bg-slate-100/70 border-l-4 border-blue-500' : ''}`}
-                        >
-                          <td className="p-4" onClick={(e) => e.stopPropagation()}>
-                            <input type="checkbox" className="rounded bg-slate-50 border-slate-200 text-blue-600 focus:ring-0" />
-                          </td>
-                          <td className="p-4 text-slate-400 font-medium">{idx + 1}</td>
-                          <td className="p-4 font-mono font-semibold text-white tracking-wider">
-                            <div className="space-y-1">
-                              <span className="block text-blue-400 font-bold">{inv.invoiceNumber}</span>
-                              <span className={`inline-block text-[8px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider ${isAuto ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20' : 'bg-green-500/10 text-green-400 border border-green-500/20'}`}>
-                                {isAuto ? 'Auto' : 'Manual'}
+                  <tbody className="divide-y divide-[var(--app-border)] text-xs text-[var(--app-text)]">
+                    {loading ? (
+                      <tr>
+                        <td colSpan={11} className="py-12 text-center text-[var(--app-text-muted)]">
+                          <RefreshCw className="animate-spin mx-auto text-blue-500 mb-2" size={22} />
+                          <span>Memuat daftar invoice...</span>
+                        </td>
+                      </tr>
+                    ) : paginatedInvoices.length === 0 ? (
+                      <tr>
+                        <td colSpan={11} className="py-12 text-center text-[var(--app-text-muted)]">
+                          <FileText className="mx-auto text-blue-500 mb-2" size={26} />
+                          <p className="font-bold text-[var(--app-text)]">Belum ada data invoice</p>
+                          <p className="text-[11px] mt-1">Gunakan tombol Buat Invoice atau Generate Tagihan Baru untuk memulai.</p>
+                        </td>
+                      </tr>
+                    ) : (
+                      paginatedInvoices.map((inv, idx) => {
+                        const isAuto = idx < 3;
+                        const isActiveRow = activeDetail?.id === inv.id;
+                        const isChecked = selectedInvoicesForWA.includes(inv.id);
+                        return (
+                          <tr 
+                            key={inv.id} 
+                            onClick={() => { setSelectedInvoice(inv); setShowDetailSidebar(true); }}
+                            className={`hover:bg-[var(--app-card-subtle)] transition-colors cursor-pointer ${isActiveRow ? 'bg-[var(--app-primary-soft)] border-l-4 border-blue-500' : ''}`}
+                          >
+                            <td className="p-4" onClick={(e) => e.stopPropagation()}>
+                              <input
+                                type="checkbox"
+                                checked={isChecked}
+                                onChange={() => {
+                                  setSelectedInvoicesForWA(prev =>
+                                    prev.includes(inv.id) ? prev.filter(x => x !== inv.id) : [...prev, inv.id]
+                                  );
+                                }}
+                                className="rounded bg-[var(--app-bg)] border-[var(--app-border)] text-blue-600 focus:ring-0"
+                              />
+                            </td>
+                            <td className="p-4 text-[var(--app-text-muted)] font-mono font-medium">{(page - 1) * limit + idx + 1}</td>
+                            <td className="p-4 font-mono font-semibold text-[var(--app-text)] tracking-wider">
+                              <div className="space-y-1">
+                                <span className="block text-blue-500 font-bold">{inv.invoiceNumber}</span>
+                                <span className={`inline-block text-[8px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider ${isAuto ? 'bg-purple-500/10 text-purple-500 border border-purple-500/20' : 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'}`}>
+                                  {isAuto ? 'Auto' : 'Manual'}
+                                </span>
+                              </div>
+                            </td>
+                            <td className="p-4">
+                              <div className="space-y-0.5">
+                                <span className="font-bold text-[var(--app-text)] block">{inv.customer?.name || '-'}</span>
+                                <span className="text-[10px] text-[var(--app-text-muted)] block font-mono font-semibold">{inv.customer?.id || `CUST-00${inv.id}`}</span>
+                              </div>
+                            </td>
+                            <td className="p-4 font-medium text-[var(--app-text-muted)]">
+                              {inv.customer?.name?.includes('Corporate') || inv.amount > 500000 ? 'Corporate 100 Mbps' : 'Home 50 Mbps'}
+                            </td>
+                            <td className="p-4 text-[var(--app-text-muted)] leading-normal max-w-[130px] font-medium">{inv.month}</td>
+                            <td className="p-4">
+                              <span className="block text-[var(--app-text)] font-mono">{new Date(inv.dueDate).toLocaleDateString('id-ID')}</span>
+                              <span className={`text-[10px] block mt-0.5 ${inv.status === 'PAID' ? 'text-emerald-500' : inv.status === 'PENDING' ? 'text-blue-500' : 'text-rose-500'}`}>
+                                {inv.status === 'PAID' ? 'Lunas' : inv.status === 'PENDING' ? 'Menunggu' : 'Lewat'}
                               </span>
-                            </div>
-                          </td>
-                          <td className="p-4">
-                            <div className="space-y-0.5">
-                              <span className="font-bold text-slate-800 block">{inv.customer.name}</span>
-                              <span className="text-[10px] text-slate-400 block font-semibold">{inv.customer.id || `CUST-00${inv.id}`}</span>
-                            </div>
-                          </td>
-                          <td className="p-4 font-medium text-slate-600">
-                            {inv.customer.name.includes('Corporate') || inv.amount > 500000 ? 'Corporate 100 Mbps' : 'Home 50 Mbps'}
-                          </td>
-                          <td className="p-4 text-slate-500 leading-normal max-w-[130px] font-medium">{inv.month}</td>
-                          <td className="p-4">
-                            <span className="block text-slate-600">{new Date(inv.dueDate).toLocaleDateString('id-ID')}</span>
-                            <span className={`text-[10px] block mt-0.5 ${inv.status === 'PAID' ? 'text-green-500' : inv.status === 'PENDING' ? 'text-blue-400' : 'text-red-400'}`}>
-                              {inv.status === 'PAID' ? 'Lunas' : inv.status === 'PENDING' ? '9 Hari Lagi' : 'Lewat'}
-                            </span>
-                          </td>
-                          <td className="p-4 font-bold text-slate-800">{formatCurrency(inv.amount)}</td>
-                          <td className="p-4">
-                            <span className={`px-2.5 py-1 text-[10px] font-bold rounded-full ${
-                              inv.status === 'PAID' 
-                                ? 'bg-green-500/10 text-green-400 border border-green-500/20' 
-                                : inv.status === 'PENDING'
-                                ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20'
-                                : 'bg-red-500/10 text-red-400 border border-red-500/20'
-                            }`}>
-                              {inv.status === 'PAID' ? 'Lunas' : inv.status === 'PENDING' ? 'Belum Dibayar' : 'Terlambat'}
-                            </span>
-                          </td>
-                          <td className="p-4">
-                            <span className="px-2 py-0.5 rounded bg-slate-50 text-[10px] text-slate-500 border border-slate-200 font-semibold uppercase tracking-wider">
-                              {inv.method || 'Transfer'}
-                            </span>
-                          </td>
-                          <td className="p-4" onClick={(e) => e.stopPropagation()}>
-                            <div className="flex items-center justify-center gap-1">
-                              {/* View detail */}
-                              <button 
-                                onClick={() => { setSelectedInvoice(inv); setShowDetailSidebar(true); }}
-                                className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-500 hover:text-blue-600 transition-colors"
-                                title="Lihat Detail Tagihan"
-                              >
-                                <Eye size={14} />
-                              </button>
-
-                              {/* Edit invoice */}
-                              <button 
-                                onClick={() => handleOpenEditModal(inv)}
-                                className="p-1.5 hover:bg-blue-50 dark:hover:bg-blue-950/40 rounded-lg text-slate-500 hover:text-blue-600 transition-colors"
-                                title="Edit Tagihan & Nominal"
-                              >
-                                <Edit size={14} />
-                              </button>
-
-                              {/* WhatsApp Reminder */}
-                              {inv.customer?.phone && (
-                                <button
-                                  onClick={() => {
-                                    let phone = inv.customer.phone.replace(/\D/g, '');
-                                    if (phone.startsWith('0')) phone = '62' + phone.substring(1);
-                                    else if (!phone.startsWith('62')) phone = '62' + phone;
-                                    const msg = `Halo ${inv.customer.name},\n\nPemberitahuan Tagihan Internet AUDIRA NET:\n📄 No. Invoice: ${inv.invoiceNumber}\n💰 Total: ${formatCurrency(inv.amount)}\n📅 Jatuh Tempo: ${new Date(inv.dueDate).toLocaleDateString('id-ID')}\n\nTerima kasih atas kerja samanya.`;
-                                    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
-                                  }}
-                                  className="p-1.5 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 rounded-lg text-slate-500 hover:text-emerald-600 transition-colors"
-                                  title="Kirim Tagihan via WhatsApp"
+                            </td>
+                            <td className="p-4 font-bold text-[var(--app-text)] font-mono tabular-nums">{formatCurrency(inv.amount)}</td>
+                            <td className="p-4">
+                              <span className={`px-2.5 py-1 text-[10px] font-bold rounded-full ${
+                                inv.status === 'PAID' 
+                                  ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' 
+                                  : inv.status === 'PENDING'
+                                  ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20'
+                                  : 'bg-rose-500/10 text-rose-500 border border-rose-500/20'
+                              }`}>
+                                {inv.status === 'PAID' ? 'Lunas' : inv.status === 'PENDING' ? 'Belum Dibayar' : 'Terlambat'}
+                              </span>
+                            </td>
+                            <td className="p-4">
+                              <span className="px-2 py-0.5 rounded bg-[var(--app-bg)] text-[10px] text-[var(--app-text-muted)] border border-[var(--app-border)] font-semibold uppercase tracking-wider">
+                                {inv.method || 'Transfer'}
+                              </span>
+                            </td>
+                            <td className="p-4" onClick={(e) => e.stopPropagation()}>
+                              <div className="flex items-center justify-center gap-1">
+                                {/* View detail */}
+                                <button 
+                                  onClick={() => { setSelectedInvoice(inv); setShowDetailSidebar(true); }}
+                                  className="p-1.5 hover:bg-[var(--app-bg)] rounded-lg text-[var(--app-text-muted)] hover:text-blue-500 transition-colors"
+                                  title="Lihat Detail Tagihan"
                                 >
-                                  <MessageCircle size={14} />
+                                  <Eye size={14} />
                                 </button>
-                              )}
 
-                              {/* Mark Paid button if not paid */}
-                              {inv.status !== 'PAID' && (
-                                <button
-                                  onClick={() => {
-                                    setSelectedInvoice(inv);
-                                    setShowMarkPaidModal(true);
-                                  }}
-                                  className="p-1.5 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 rounded-lg text-slate-500 hover:text-emerald-600 transition-colors"
-                                  title="Tandai Lunas"
+                                {/* Edit invoice */}
+                                <button 
+                                  onClick={() => handleOpenEditModal(inv)}
+                                  className="p-1.5 hover:bg-blue-500/10 rounded-lg text-[var(--app-text-muted)] hover:text-blue-500 transition-colors"
+                                  title="Edit Tagihan & Nominal"
                                 >
-                                  <CheckCircle size={14} />
+                                  <Edit size={14} />
                                 </button>
-                              )}
 
-                              {/* PDF Receipt */}
-                              <a
-                                href={`${API_BASE_URL}/billing/invoices/${inv.id}/receipt-pdf`}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="p-1.5 hover:bg-purple-50 dark:hover:bg-purple-950/40 rounded-lg text-slate-500 hover:text-purple-600 transition-colors"
-                                title="Cetak / Unduh Kwitansi PDF"
-                              >
-                                <FileText size={14} />
-                              </a>
+                                {/* WhatsApp Reminder */}
+                                {inv.customer?.phone && (
+                                  <button
+                                    onClick={() => {
+                                      let phone = inv.customer.phone.replace(/\D/g, '');
+                                      if (phone.startsWith('0')) phone = '62' + phone.substring(1);
+                                      else if (!phone.startsWith('62')) phone = '62' + phone;
+                                      const msg = `Halo ${inv.customer.name},\n\nPemberitahuan Tagihan Internet AUDIRA NET:\nNo. Invoice: ${inv.invoiceNumber}\nTotal: ${formatCurrency(inv.amount)}\nJatuh Tempo: ${new Date(inv.dueDate).toLocaleDateString('id-ID')}\n\nTerima kasih atas kerja samanya.`;
+                                      window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+                                    }}
+                                    className="p-1.5 hover:bg-emerald-500/10 rounded-lg text-[var(--app-text-muted)] hover:text-emerald-500 transition-colors"
+                                    title="Kirim Tagihan via WhatsApp"
+                                  >
+                                    <MessageCircle size={14} />
+                                  </button>
+                                )}
 
-                              {/* Delete invoice */}
-                              <button 
-                                onClick={() => handleOpenDeleteModal(inv)}
-                                className="p-1.5 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg text-slate-500 hover:text-rose-600 transition-colors"
-                                title="Hapus Tagihan"
-                              >
-                                <Trash2 size={14} />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
+                                {/* Mark Paid button if not paid */}
+                                {inv.status !== 'PAID' && (
+                                  <button
+                                    onClick={() => {
+                                      setSelectedInvoice(inv);
+                                      setShowMarkPaidModal(true);
+                                    }}
+                                    className="p-1.5 hover:bg-emerald-500/10 rounded-lg text-[var(--app-text-muted)] hover:text-emerald-500 transition-colors"
+                                    title="Tandai Lunas"
+                                  >
+                                    <CheckCircle size={14} />
+                                  </button>
+                                )}
+
+                                {/* PDF Receipt */}
+                                <a
+                                  href={`${API_BASE_URL}/billing/invoices/${inv.id}/receipt-pdf`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="p-1.5 hover:bg-purple-500/10 rounded-lg text-[var(--app-text-muted)] hover:text-purple-500 transition-colors"
+                                  title="Cetak / Unduh Kwitansi PDF"
+                                >
+                                  <FileText size={14} />
+                                </a>
+
+                                {/* Delete invoice */}
+                                <button 
+                                  onClick={() => handleOpenDeleteModal(inv)}
+                                  className="p-1.5 hover:bg-rose-500/10 rounded-lg text-[var(--app-text-muted)] hover:text-rose-500 transition-colors"
+                                  title="Hapus Tagihan"
+                                >
+                                  <Trash2 size={14} />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
                   </tbody>
                 </table>
               </div>
 
               {/* Table pagination */}
-              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-t border-slate-200 bg-white/60">
-                <span className="text-xs text-slate-400">
-                  Menampilkan <span className="font-semibold text-slate-800">{(page - 1) * limit + 1} - {Math.min(page * limit, filteredInvoices.length)}</span> dari <span className="font-semibold text-slate-800">{filteredInvoices.length}</span> invoice
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-t border-[var(--app-border)] bg-[var(--app-card)] text-[var(--app-text)]">
+                <span className="text-xs text-[var(--app-muted)]">
+                  Menampilkan <span className="font-semibold text-[var(--app-text)]">{(page - 1) * limit + 1} - {Math.min(page * limit, filteredInvoices.length)}</span> dari <span className="font-semibold text-[var(--app-text)]">{filteredInvoices.length}</span> invoice
                 </span>
                 
                 <div className="flex items-center gap-4">
@@ -815,17 +862,17 @@ export default function SemuaInvoicePage() {
                     <button 
                       onClick={() => setPage(p => Math.max(1, p - 1))}
                       disabled={page === 1}
-                      className="p-2 border border-slate-200 hover:bg-slate-100 rounded-xl text-slate-500 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                      className="p-2 border border-[var(--app-border)] hover:bg-[var(--app-bg)] rounded-xl text-[var(--app-muted)] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                     >
                       <ChevronLeft size={14} />
                     </button>
-                    <span className="text-xs font-mono font-bold text-slate-700 px-2">
+                    <span className="text-xs font-mono font-bold text-[var(--app-text)] px-2">
                       Halaman {page} / {totalPages}
                     </span>
                     <button 
                       onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                       disabled={page === totalPages}
-                      className="p-2 border border-slate-200 hover:bg-slate-100 rounded-xl text-slate-500 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                      className="p-2 border border-[var(--app-border)] hover:bg-[var(--app-bg)] rounded-xl text-[var(--app-muted)] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                     >
                       <ChevronRight size={14} />
                     </button>
@@ -834,7 +881,7 @@ export default function SemuaInvoicePage() {
                   <select
                     value={limit}
                     onChange={(e) => setLimit(Number(e.target.value))}
-                    className="bg-slate-50 border border-slate-200 text-xs py-1.5 px-3 rounded-lg text-slate-600 focus:outline-none"
+                    className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-1.5 px-3 rounded-lg text-[var(--app-text)] focus:outline-none"
                   >
                     <option value={10}>10 / halaman</option>
                     <option value={25}>25 / halaman</option>
@@ -848,10 +895,10 @@ export default function SemuaInvoicePage() {
           {/* Right Column: Invoice Detail sidebar widget */}
           {showDetailSidebar && activeDetail ? (
             <div className="lg:col-span-4 space-y-6 transition-all duration-300">
-              <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-5 relative">
+              <div className="bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)] rounded-2xl p-5 shadow-2xs space-y-5 relative">
                 
                 {/* Header widget */}
-                <div className="flex justify-between items-start border-b border-slate-200 pb-4">
+                <div className="flex justify-between items-start border-b border-[var(--app-border)] pb-4">
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
                       <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${activeDetail.status === 'PAID' ? 'bg-green-500/10 text-green-400' : 'bg-orange-500/10 text-orange-400'}`}>
@@ -859,67 +906,69 @@ export default function SemuaInvoicePage() {
                       </span>
                       <span className="px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 text-[10px] font-bold">Auto</span>
                     </div>
-                    <h3 className="text-base font-bold text-slate-800 font-mono mt-1.5">{activeDetail.invoiceNumber}</h3>
-                    <p className="text-[10px] text-slate-400">Dibuat pada {activeDetail.createdAt ? new Date(activeDetail.createdAt).toLocaleDateString('id-ID') : 'Hari ini'}</p>
+                    <h3 className="text-base font-bold text-[var(--app-text)] font-mono mt-1.5">{activeDetail.invoiceNumber}</h3>
+                    <p className="text-[10px] text-[var(--app-muted)]">Dibuat pada {activeDetail.createdAt ? new Date(activeDetail.createdAt).toLocaleDateString('id-ID') : 'Hari ini'}</p>
                   </div>
                   
                   <button 
                     onClick={() => setShowDetailSidebar(false)}
-                    className="p-1.5 hover:bg-slate-100 rounded-xl text-slate-500 transition-colors"
+                    className="p-1.5 hover:bg-[var(--app-bg)] rounded-xl text-[var(--app-muted)] transition-colors"
                   >
                     <X size={16} />
                   </button>
                 </div>
 
                 {/* Tagihan Summary Row */}
-                <div className="grid grid-cols-4 gap-2 text-center bg-slate-50/40 border border-slate-200 rounded-xl p-3">
+                <div className="grid grid-cols-4 gap-2 text-center bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl p-3">
                   <div>
-                    <span className="text-[9px] text-slate-400 font-bold uppercase">Total Tagihan</span>
-                    <p className="text-xs font-bold text-slate-800 mt-1">{formatCurrency(activeDetail.amount)}</p>
+                    <span className="text-[9px] text-[var(--app-muted)] font-bold uppercase">Total Tagihan</span>
+                    <p className="text-xs font-bold text-[var(--app-text)] mt-1">{formatCurrency(activeDetail.amount)}</p>
                   </div>
                   <div>
-                    <span className="text-[9px] text-slate-400 font-bold uppercase">Dibayar</span>
+                    <span className="text-[9px] text-[var(--app-muted)] font-bold uppercase">Dibayar</span>
                     <p className="text-xs font-bold text-green-400 mt-1">{formatCurrency(activeDetail.status === 'PAID' ? activeDetail.amount : 0)}</p>
                   </div>
                   <div>
-                    <span className="text-[9px] text-slate-400 font-bold uppercase">Sisa</span>
-                    <p className="text-xs font-bold text-slate-800 mt-1">{formatCurrency(activeDetail.status === 'PAID' ? 0 : activeDetail.amount)}</p>
+                    <span className="text-[9px] text-[var(--app-muted)] font-bold uppercase">Sisa</span>
+                    <p className="text-xs font-bold text-[var(--app-text)] mt-1">{formatCurrency(activeDetail.status === 'PAID' ? 0 : activeDetail.amount)}</p>
                   </div>
                   <div>
-                    <span className="text-[9px] text-slate-400 font-bold uppercase">Jatuh Tempo</span>
-                    <p className="text-xs font-bold text-blue-400 mt-1">10 Juli 2026</p>
+                    <span className="text-[9px] text-[var(--app-text-muted)] font-bold uppercase">Jatuh Tempo</span>
+                    <p className="text-xs font-bold text-blue-500 font-mono mt-1">
+                      {activeDetail.dueDate ? new Date(activeDetail.dueDate).toLocaleDateString('id-ID') : '-'}
+                    </p>
                   </div>
                 </div>
 
                 {/* Tabs */}
-                <div className="flex border-b border-slate-200 text-[10px] font-bold text-slate-400">
+                <div className="flex border-b border-[var(--app-border)] text-[10px] font-bold text-[var(--app-muted)]">
                   <button 
                     onClick={() => setDetailTab('overview')}
-                    className={`flex-1 pb-2 border-b-2 transition-all ${detailTab === 'overview' ? 'border-blue-500 text-white' : 'border-transparent hover:text-slate-600'}`}
+                    className={`flex-1 pb-2 border-b-2 transition-all ${detailTab === 'overview' ? 'border-blue-500 text-[var(--app-text)]' : 'border-transparent hover:text-[var(--app-text)]'}`}
                   >
                     Overview
                   </button>
                   <button 
                     onClick={() => setDetailTab('items')}
-                    className={`flex-1 pb-2 border-b-2 transition-all ${detailTab === 'items' ? 'border-blue-500 text-white' : 'border-transparent hover:text-slate-600'}`}
+                    className={`flex-1 pb-2 border-b-2 transition-all ${detailTab === 'items' ? 'border-blue-500 text-[var(--app-text)]' : 'border-transparent hover:text-[var(--app-text)]'}`}
                   >
                     Item Tagihan
                   </button>
                   <button 
                     onClick={() => setDetailTab('payments')}
-                    className={`flex-1 pb-2 border-b-2 transition-all ${detailTab === 'payments' ? 'border-blue-500 text-white' : 'border-transparent hover:text-slate-600'}`}
+                    className={`flex-1 pb-2 border-b-2 transition-all ${detailTab === 'payments' ? 'border-blue-500 text-[var(--app-text)]' : 'border-transparent hover:text-[var(--app-text)]'}`}
                   >
                     Pembayaran
                   </button>
                   <button 
                     onClick={() => setDetailTab('history')}
-                    className={`flex-1 pb-2 border-b-2 transition-all ${detailTab === 'history' ? 'border-blue-500 text-white' : 'border-transparent hover:text-slate-600'}`}
+                    className={`flex-1 pb-2 border-b-2 transition-all ${detailTab === 'history' ? 'border-blue-500 text-[var(--app-text)]' : 'border-transparent hover:text-[var(--app-text)]'}`}
                   >
                     Riwayat
                   </button>
                   <button 
                     onClick={() => setDetailTab('reminder')}
-                    className={`flex-1 pb-2 border-b-2 transition-all ${detailTab === 'reminder' ? 'border-blue-500 text-white' : 'border-transparent hover:text-slate-600'}`}
+                    className={`flex-1 pb-2 border-b-2 transition-all ${detailTab === 'reminder' ? 'border-blue-500 text-[var(--app-text)]' : 'border-transparent hover:text-[var(--app-text)]'}`}
                   >
                     Reminder
                   </button>
@@ -931,38 +980,38 @@ export default function SemuaInvoicePage() {
                     <div className="grid grid-cols-2 gap-4">
                       {/* Customer Info */}
                       <div className="space-y-2">
-                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Informasi Customer</span>
+                        <span className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider">Informasi Customer</span>
                         <div className="text-xs space-y-1.5">
-                          <p className="text-slate-400">Nama: <strong className="text-white">{activeDetail.customer?.name || '-'}</strong></p>
-                          <p className="text-slate-400">ID Customer: <strong className="text-white">{activeDetail.customer?.id || '-' || 'CUST-0001'}</strong></p>
-                          <p className="text-slate-400">No. WhatsApp: <strong className="text-white">{activeDetail.customer?.phone || '-'}</strong></p>
-                          <p className="text-slate-400 font-semibold break-all">Email: <span className="text-blue-400">{activeDetail.customer?.email || '-'}</span></p>
-                          <p className="text-slate-400 leading-relaxed">Alamat: <strong className="text-white">{activeDetail.customer?.address || '-' || 'Jl. Merdeka No. 10, Yogyakarta'}</strong></p>
+                          <p className="text-[var(--app-muted)]">Nama: <strong className="text-[var(--app-text)]">{activeDetail.customer?.name || '-'}</strong></p>
+                          <p className="text-[var(--app-muted)]">ID Customer: <strong className="text-[var(--app-text)]">{activeDetail.customer?.id || '-' || 'CUST-0001'}</strong></p>
+                          <p className="text-[var(--app-muted)]">No. WhatsApp: <strong className="text-[var(--app-text)]">{activeDetail.customer?.phone || '-'}</strong></p>
+                          <p className="text-[var(--app-muted)] font-semibold break-all">Email: <span className="text-blue-400">{activeDetail.customer?.email || '-'}</span></p>
+                          <p className="text-[var(--app-muted)] leading-relaxed">Alamat: <strong className="text-[var(--app-text)]">{activeDetail.customer?.address || '-' || 'Jl. Merdeka No. 10, Yogyakarta'}</strong></p>
                         </div>
                       </div>
 
                       {/* Invoice Info */}
                       <div className="space-y-2">
-                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Informasi Invoice</span>
+                        <span className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider">Informasi Invoice</span>
                         <div className="text-xs space-y-1.5">
-                          <p className="text-slate-400">No. Referensi: <strong className="text-white">{activeDetail.referenceNumber || 'REF-202607-0001'}</strong></p>
-                          <p className="text-slate-400">Metode Pembayaran: <strong className="text-white">{activeDetail.method || 'Transfer Bank'}</strong></p>
-                          <p className="text-slate-400">Bank Tujuan: <strong className="text-white">BCA - 1234567890</strong></p>
-                          <p className="text-slate-400">Periode: <strong className="text-white">{activeDetail.month}</strong></p>
-                          <p className="text-slate-400">Tanggal Invoice: <strong className="text-white">{activeDetail.createdAt ? new Date(activeDetail.createdAt).toLocaleDateString('id-ID') : 'Hari ini'}</strong></p>
-                          <p className="text-slate-400">Jatuh Tempo: <strong className="text-red-400">{activeDetail.dueDate ? new Date(activeDetail.dueDate).toLocaleDateString('id-ID') : '10 hari'}</strong></p>
-                          <p className="text-slate-400">Status: <span className="text-green-400 font-bold">Lunas</span></p>
+                          <p className="text-[var(--app-muted)]">No. Referensi: <strong className="text-[var(--app-text)]">{activeDetail.referenceNumber || 'REF-202607-0001'}</strong></p>
+                          <p className="text-[var(--app-muted)]">Metode Pembayaran: <strong className="text-[var(--app-text)]">{activeDetail.method || 'Transfer Bank'}</strong></p>
+                          <p className="text-[var(--app-muted)]">Bank Tujuan: <strong className="text-[var(--app-text)]">BCA - 1234567890</strong></p>
+                          <p className="text-[var(--app-muted)]">Periode: <strong className="text-[var(--app-text)]">{activeDetail.month}</strong></p>
+                          <p className="text-[var(--app-muted)]">Tanggal Invoice: <strong className="text-[var(--app-text)]">{activeDetail.createdAt ? new Date(activeDetail.createdAt).toLocaleDateString('id-ID') : 'Hari ini'}</strong></p>
+                          <p className="text-[var(--app-muted)]">Jatuh Tempo: <strong className="text-red-400">{activeDetail.dueDate ? new Date(activeDetail.dueDate).toLocaleDateString('id-ID') : '10 hari'}</strong></p>
+                          <p className="text-[var(--app-muted)]">Status: <span className={`font-bold ${activeDetail.status === 'PAID' ? 'text-emerald-500' : activeDetail.status === 'OVERDUE' ? 'text-rose-500' : 'text-amber-500'}`}>{activeDetail.status === 'PAID' ? 'Lunas' : activeDetail.status === 'OVERDUE' ? 'Overdue' : 'Belum Dibayar'}</span></p>
                         </div>
                       </div>
                     </div>
 
                     {/* Bottom Payment details */}
-                    <div className="grid grid-cols-2 gap-4 border-t border-slate-200 pt-4">
+                    <div className="grid grid-cols-2 gap-4 border-t border-[var(--app-border)] pt-4">
                       {/* QR payment */}
-                      <div className="bg-white p-3 rounded-2xl flex flex-col items-center justify-center border border-gray-200 shadow-sm">
-                        <div className="relative w-24 h-24 flex items-center justify-center bg-white p-1">
+                      <div className="bg-[var(--app-card)] p-3 rounded-2xl flex flex-col items-center justify-center border border-[var(--app-border)] text-[var(--app-text)] shadow-sm">
+                        <div className="relative w-24 h-24 flex items-center justify-center bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)] p-1">
                           {/* Beautiful SVG QR Code */}
-                          <svg viewBox="0 0 100 100" className="w-full h-full text-gray-900">
+                          <svg viewBox="0 0 100 100" className="w-full h-full text-[var(--app-text)]">
                             {/* Outer boundary squares */}
                             <path d="M0,0 h30 v30 h-30 z M10,10 h10 v10 h-10 z" fill="currentColor" />
                             <path d="M70,0 h30 v30 h-30 z M80,10 h10 v10 h-10 z" fill="currentColor" />
@@ -977,36 +1026,36 @@ export default function SemuaInvoicePage() {
                             <path d="M70,35 h15 v5 h-15 z M75,45 h10 v5 h-10 z M70,55 h5 v15 h-5 z M80,55 h15 v5 h-15 z M90,65 h10 v5 h-10 z M80,80 h5 v10 h-5 z M90,80 h10 v15 h-10 z" fill="currentColor" />
                           </svg>
                           {/* Tiny logo in center */}
-                          <div className="absolute w-6 h-6 bg-white rounded-md border border-gray-100 flex items-center justify-center shadow-md">
+                          <div className="absolute w-6 h-6 bg-[var(--app-card)] rounded-md border border-[var(--app-border)] text-[var(--app-text)] flex items-center justify-center shadow-md">
                             <span className="text-[6px] font-black text-blue-600 tracking-tighter">QRIS</span>
                           </div>
                         </div>
                         <div className="text-center mt-2.5">
-                          <p className="text-[8px] font-bold text-gray-800">BCA 1234567890</p>
-                          <p className="text-[7px] font-semibold text-slate-500">PT. AudiraNET Solusi</p>
+                          <p className="text-[8px] font-bold text-[var(--app-text)]">BCA 1234567890</p>
+                          <p className="text-[7px] font-semibold text-[var(--app-muted)]">PT. AudiraNET Solusi</p>
                         </div>
                         <div className="flex gap-2.5 mt-2 justify-center items-center scale-90">
-                          <span className="text-[9px] font-extrabold text-blue-900 tracking-wider">QRIS</span>
+                          <span className="text-[9px] font-extrabold text-blue-500 tracking-wider">QRIS</span>
                           <span className="text-[9px] font-extrabold text-blue-600">BCA</span>
                         </div>
                       </div>
 
                       {/* Financial values */}
                       <div className="space-y-1.5 text-xs">
-                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-1">Ringkasan Pembayaran</span>
-                        <div className="flex justify-between text-slate-500">
+                        <span className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider block mb-1">Ringkasan Pembayaran</span>
+                        <div className="flex justify-between text-[var(--app-muted)]">
                           <span>Subtotal</span>
-                          <span className="font-semibold text-white">{formatCurrency(activeDetail.amount)}</span>
+                          <span className="font-semibold text-[var(--app-text)]">{formatCurrency(activeDetail.amount)}</span>
                         </div>
-                        <div className="flex justify-between text-slate-500">
+                        <div className="flex justify-between text-[var(--app-muted)]">
                           <span>Diskon</span>
-                          <span className="font-semibold text-white">- Rp 0</span>
+                          <span className="font-semibold text-[var(--app-text)]">- Rp 0</span>
                         </div>
-                        <div className="flex justify-between text-slate-500">
+                        <div className="flex justify-between text-[var(--app-muted)]">
                           <span>PPN (11%)</span>
-                          <span className="font-semibold text-white">Rp 0</span>
+                          <span className="font-semibold text-[var(--app-text)]">Rp 0</span>
                         </div>
-                        <div className="flex justify-between text-white font-bold border-t border-slate-200 pt-1 mt-1">
+                        <div className="flex justify-between text-[var(--app-text)] font-bold border-t border-[var(--app-border)] pt-1 mt-1">
                           <span>Total Tagihan</span>
                           <span>{formatCurrency(activeDetail.amount)}</span>
                         </div>
@@ -1014,7 +1063,7 @@ export default function SemuaInvoicePage() {
                           <span>Dibayar</span>
                           <span>{formatCurrency(activeDetail.status === 'PAID' ? activeDetail.amount : 0)}</span>
                         </div>
-                        <div className="flex justify-between text-white font-bold">
+                        <div className="flex justify-between text-[var(--app-text)] font-bold">
                           <span>Sisa Tagihan</span>
                           <span>{formatCurrency(activeDetail.status === 'PAID' ? 0 : activeDetail.amount)}</span>
                         </div>
@@ -1024,13 +1073,13 @@ export default function SemuaInvoicePage() {
                 )}
 
                 {detailTab !== 'overview' && (
-                  <div className="py-8 text-center text-xs text-slate-400 font-medium">
+                  <div className="py-8 text-center text-xs text-[var(--app-muted)] font-medium">
                     Konten Tab {detailTab} terhubung dengan data referensi database invoice.
                   </div>
                 )}
 
                 {/* Bottom link button */}
-                <div className="border-t border-slate-200 pt-4 flex flex-col gap-2">
+                <div className="border-t border-[var(--app-border)] pt-4 flex flex-col gap-2">
                   <div className="grid grid-cols-2 gap-2">
                     <button 
                       onClick={() => window.open(`${API_BASE_URL}/billing/invoices/${activeDetail.id}/receipt-pdf`, '_blank')} 
@@ -1052,7 +1101,7 @@ export default function SemuaInvoicePage() {
                       <span>{activeDetail.status === 'PAID' ? 'Sudah Lunas' : 'Tandai Lunas'}</span>
                     </button>
                   </div>
-                  <button onClick={() => window.open(`/invoice/public/${activeDetail.id}`, '_blank')} className="w-full flex items-center justify-center gap-2 bg-slate-50 border border-slate-200 hover:bg-slate-100 text-blue-500 text-xs font-bold py-2.5 rounded-xl transition-all">
+                  <button onClick={() => window.open(`/invoice/public/${activeDetail.id}`, '_blank')} className="w-full flex items-center justify-center gap-2 bg-[var(--app-bg)] border border-[var(--app-border)] hover:opacity-90 text-blue-500 text-xs font-bold py-2.5 rounded-xl transition-all">
                     <span>Lihat Invoice Public (Customer View)</span>
                     <span>↗</span>
                   </button>
@@ -1061,12 +1110,12 @@ export default function SemuaInvoicePage() {
               </div>
             </div>
           ) : showDetailSidebar ? (
-            <div className="lg:col-span-4 bg-white border border-slate-200 rounded-2xl p-8 shadow-2xs text-center space-y-3 flex flex-col items-center justify-center min-h-[300px]">
+            <div className="lg:col-span-4 bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)] rounded-2xl p-8 shadow-2xs text-center space-y-3 flex flex-col items-center justify-center min-h-[300px]">
               <div className="p-3.5 bg-blue-500/10 text-blue-500 rounded-2xl">
                 <FileText size={28} />
               </div>
-              <h4 className="text-sm font-bold text-slate-800">Detail Invoice</h4>
-              <p className="text-xs text-slate-400 max-w-xs">
+              <h4 className="text-sm font-bold text-[var(--app-text)]">Detail Invoice</h4>
+              <p className="text-xs text-[var(--app-muted)] max-w-xs">
                 Pilih salah satu baris tagihan pada tabel untuk melihat rincian lengkap atau melakukan aksi pembayaran.
               </p>
             </div>
@@ -1079,27 +1128,27 @@ export default function SemuaInvoicePage() {
       {/* Modals wrapper */}
       {showGenerateModal && (
         <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs w-full max-w-md overflow-hidden text-slate-600">
-            <div className="flex items-center justify-between p-5 border-b border-slate-200">
-              <h2 className="text-sm font-bold text-slate-800 flex items-center gap-2 uppercase tracking-wide">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)] rounded-2xl shadow-2xs w-full max-w-md overflow-hidden">
+            <div className="flex items-center justify-between p-5 border-b border-[var(--app-border)]">
+              <h2 className="text-sm font-bold text-[var(--app-text)] flex items-center gap-2 uppercase tracking-wide">
                 <Plus size={16} className="text-blue-500" /> Generate Invoice Bulanan
               </h2>
-              <button onClick={() => setShowGenerateModal(false)} className="p-1.5 hover:bg-slate-100 rounded-lg">
+              <button onClick={() => setShowGenerateModal(false)} className="p-1.5 hover:bg-[var(--app-bg)] rounded-lg">
                 <X size={16} />
               </button>
             </div>
             <div className="p-5 space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-500 mb-2">Pilih Bulan Tagihan</label>
+                <label className="block text-xs font-semibold text-[var(--app-muted)] mb-2">Pilih Bulan Tagihan</label>
                 <input
                   type="month"
                   value={generateMonth}
                   onChange={e => setGenerateMonth(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 px-4 py-2.5 rounded-xl text-slate-800 focus:outline-none focus:border-blue-500 text-xs"
+                  className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] px-4 py-2.5 rounded-xl text-[var(--app-text)] focus:outline-none focus:border-blue-500 text-xs"
                 />
               </div>
-              <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 text-[11px] text-blue-400 leading-relaxed">
-                <p className="font-bold mb-1">ℹ️ Prosedur Otomatis:</p>
+              <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 text-[11px] text-blue-500 leading-relaxed">
+                <p className="font-bold mb-1">Prosedur Otomatis:</p>
                 <ul className="space-y-1 list-disc list-inside">
                   <li>Invoice dibuat untuk semua pelanggan aktif</li>
                   <li>Jatuh tempo otomatis tanggal 5 bulan berikutnya</li>
@@ -1108,8 +1157,8 @@ export default function SemuaInvoicePage() {
                 </ul>
               </div>
             </div>
-            <div className="p-5 border-t border-slate-200 flex gap-3">
-              <button onClick={() => setShowGenerateModal(false)} className="flex-1 px-4 py-2.5 border border-slate-200 hover:bg-slate-100 rounded-xl text-xs font-bold text-slate-500 hover:text-slate-900 transition-all">
+            <div className="p-5 border-t border-[var(--app-border)] flex gap-3">
+              <button onClick={() => setShowGenerateModal(false)} className="flex-1 px-4 py-2.5 border border-[var(--app-border)] hover:bg-[var(--app-bg)] rounded-xl text-xs font-bold text-[var(--app-muted)] hover:text-[var(--app-text)] transition-all">
                 Batal
               </button>
               <button
@@ -1127,32 +1176,32 @@ export default function SemuaInvoicePage() {
 
       {showMarkPaidModal && selectedInvoice && (
         <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs w-full max-w-md overflow-hidden text-slate-600">
-            <div className="flex items-center justify-between p-5 border-b border-slate-200">
-              <h2 className="text-sm font-bold text-slate-800 flex items-center gap-2 uppercase tracking-wide">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)] rounded-2xl shadow-2xs w-full max-w-md overflow-hidden">
+            <div className="flex items-center justify-between p-5 border-b border-[var(--app-border)]">
+              <h2 className="text-sm font-bold text-[var(--app-text)] flex items-center gap-2 uppercase tracking-wide">
                 <CheckCircle size={16} className="text-green-500" /> Tandai Lunas
               </h2>
-              <button onClick={() => setShowMarkPaidModal(false)} className="p-1.5 hover:bg-slate-100 rounded-lg">
+              <button onClick={() => setShowMarkPaidModal(false)} className="p-1.5 hover:bg-[var(--app-bg)] rounded-lg">
                 <X size={16} />
               </button>
             </div>
             <div className="p-5 space-y-4">
-              <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-2">
+              <div className="bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl p-4 space-y-2">
                 <div>
-                  <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Invoice</span>
+                  <span className="text-[10px] text-[var(--app-muted)] uppercase font-bold tracking-wider">Invoice</span>
                   <p className="font-mono font-bold text-blue-400 text-xs">{selectedInvoice.invoiceNumber}</p>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Pelanggan</span>
-                  <p className="font-semibold text-gray-200 text-xs">{selectedInvoice.customer.name}</p>
+                  <span className="text-[10px] text-[var(--app-muted)] uppercase font-bold tracking-wider">Pelanggan</span>
+                  <p className="font-semibold text-[var(--app-text)] text-xs">{selectedInvoice.customer.name}</p>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Jumlah Tagihan</span>
-                  <p className="text-xl font-black text-slate-900">{formatCurrency(selectedInvoice.amount)}</p>
+                  <span className="text-[10px] text-[var(--app-muted)] uppercase font-bold tracking-wider">Jumlah Tagihan</span>
+                  <p className="text-xl font-black text-[var(--app-text)]">{formatCurrency(selectedInvoice.amount)}</p>
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-500 mb-2">Metode Pembayaran</label>
+                <label className="block text-xs font-semibold text-[var(--app-muted)] mb-2">Metode Pembayaran</label>
                 <div className="grid grid-cols-2 gap-2">
                   {PAYMENT_METHODS.map(m => (
                     <button
@@ -1161,7 +1210,7 @@ export default function SemuaInvoicePage() {
                       className={`px-3 py-2 rounded-xl text-xs border transition ${
                         markPaidMethod === m
                           ? 'bg-green-600 text-white border-green-600 font-bold'
-                          : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'
+                          : 'bg-[var(--app-bg)] text-[var(--app-muted)] border-[var(--app-border)] hover:opacity-90'
                       }`}
                     >
                       {m}
@@ -1170,8 +1219,8 @@ export default function SemuaInvoicePage() {
                 </div>
               </div>
             </div>
-            <div className="p-5 border-t border-slate-200 flex gap-3">
-              <button onClick={() => setShowMarkPaidModal(false)} className="flex-1 px-4 py-2.5 border border-slate-200 hover:bg-slate-100 rounded-xl text-xs font-bold text-slate-500 hover:text-slate-900 transition-all">
+            <div className="p-5 border-t border-[var(--app-border)] flex gap-3">
+              <button onClick={() => setShowMarkPaidModal(false)} className="flex-1 px-4 py-2.5 border border-[var(--app-border)] hover:bg-[var(--app-bg)] rounded-xl text-xs font-bold text-[var(--app-muted)] hover:text-[var(--app-text)] transition-all">
                 Batal
               </button>
               <button
@@ -1189,28 +1238,28 @@ export default function SemuaInvoicePage() {
 
       {showWhatsAppModal && (
         <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs w-full max-w-lg overflow-hidden text-slate-600">
-            <div className="flex items-center justify-between p-5 border-b border-slate-200">
-              <h2 className="text-sm font-bold text-slate-800 flex items-center gap-2 uppercase tracking-wide">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)] rounded-2xl shadow-2xs w-full max-w-lg overflow-hidden">
+            <div className="flex items-center justify-between p-5 border-b border-[var(--app-border)]">
+              <h2 className="text-sm font-bold text-[var(--app-text)] flex items-center gap-2 uppercase tracking-wide">
                 <MessageCircle size={16} className="text-emerald-500" /> WhatsApp Blast
               </h2>
-              <button onClick={() => setShowWhatsAppModal(false)} className="p-1.5 hover:bg-slate-100 rounded-lg">
+              <button onClick={() => setShowWhatsAppModal(false)} className="p-1.5 hover:bg-[var(--app-bg)] rounded-lg">
                 <X size={16} />
               </button>
             </div>
             <div className="p-5 space-y-4">
-              <p className="text-xs text-slate-500">
-                Mengirim pesan reminder pembayaran ke <strong className="text-white">{selectedInvoicesForWA.length} pelanggan</strong>.
+              <p className="text-xs text-[var(--app-muted)]">
+                Mengirim pesan reminder pembayaran ke <strong className="text-[var(--app-text)]">{selectedInvoicesForWA.length} pelanggan</strong>.
               </p>
               <textarea
                 rows={6}
                 value={whatsappMessage}
                 onChange={e => setWhatsappMessage(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-800 focus:outline-none focus:border-blue-500 resize-none font-mono"
+                className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-4 py-3 text-xs text-[var(--app-text)] focus:outline-none focus:border-blue-500 resize-none font-mono"
               />
             </div>
-            <div className="p-5 border-t border-slate-200 flex gap-3">
-              <button onClick={() => setShowWhatsAppModal(false)} className="flex-1 px-4 py-2.5 border border-slate-200 hover:bg-slate-100 rounded-xl text-xs font-bold text-slate-500 hover:text-slate-900 transition-all">
+            <div className="p-5 border-t border-[var(--app-border)] flex gap-3">
+              <button onClick={() => setShowWhatsAppModal(false)} className="flex-1 px-4 py-2.5 border border-[var(--app-border)] hover:bg-[var(--app-bg)] rounded-xl text-xs font-bold text-[var(--app-muted)] hover:text-[var(--app-text)] transition-all">
                 Batal
               </button>
               <button
@@ -1227,51 +1276,51 @@ export default function SemuaInvoicePage() {
       {/* ─── MODAL: Edit Tagihan (Invoice) ─────────────────────────── */}
       {showEditModal && invoiceToEdit && (
         <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs w-full max-w-lg overflow-hidden text-slate-600">
-            <div className="flex items-center justify-between p-5 border-b border-slate-200">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)] rounded-2xl shadow-2xs w-full max-w-lg overflow-hidden">
+            <div className="flex items-center justify-between p-5 border-b border-[var(--app-border)]">
               <div className="flex items-center gap-2">
                 <div className="p-2 rounded-lg bg-blue-500/10 text-blue-600 border border-blue-500/20">
                   <Edit size={16} />
                 </div>
                 <div>
-                  <h2 className="text-sm font-bold text-slate-800">Edit Data Tagihan</h2>
-                  <p className="text-[10px] text-slate-400 font-mono">{invoiceToEdit.invoiceNumber}</p>
+                  <h2 className="text-sm font-bold text-[var(--app-text)]">Edit Data Tagihan</h2>
+                  <p className="text-[10px] text-[var(--app-muted)] font-mono">{invoiceToEdit.invoiceNumber}</p>
                 </div>
               </div>
-              <button onClick={() => setShowEditModal(false)} className="p-1.5 hover:bg-slate-100 rounded-lg">
+              <button onClick={() => setShowEditModal(false)} className="p-1.5 hover:bg-[var(--app-bg)] rounded-lg">
                 <X size={16} />
               </button>
             </div>
 
             <div className="p-5 space-y-4">
-              <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs space-y-1">
+              <div className="bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl p-3 text-xs space-y-1">
                 <div className="flex justify-between">
-                  <span className="text-slate-400">Pelanggan:</span>
-                  <span className="font-bold text-slate-800">{invoiceToEdit.customer?.name}</span>
+                  <span className="text-[var(--app-muted)]">Pelanggan:</span>
+                  <span className="font-bold text-[var(--app-text)]">{invoiceToEdit.customer?.name}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-400">No. Telepon:</span>
-                  <span className="font-mono text-slate-700">{invoiceToEdit.customer?.phone || '-'}</span>
+                  <span className="text-[var(--app-muted)]">No. Telepon:</span>
+                  <span className="font-mono text-[var(--app-text)]">{invoiceToEdit.customer?.phone || '-'}</span>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-500 mb-1">Nominal Tagihan (Rp)</label>
+                  <label className="block text-xs font-semibold text-[var(--app-muted)] mb-1">Nominal Tagihan (Rp)</label>
                   <input
                     type="number"
                     value={editAmount}
                     onChange={e => setEditAmount(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-mono font-bold text-slate-800 focus:outline-none focus:border-blue-500"
+                    className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2 text-xs font-mono font-bold text-[var(--app-text)] focus:outline-none focus:border-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-500 mb-1">Status Pembayaran</label>
+                  <label className="block text-xs font-semibold text-[var(--app-muted)] mb-1">Status Pembayaran</label>
                   <select
                     value={editStatus}
                     onChange={e => setEditStatus(e.target.value as any)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-blue-500"
+                    className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2 text-xs text-[var(--app-text)] focus:outline-none focus:border-blue-500"
                   >
                     <option value="PENDING">PENDING (Belum Bayar)</option>
                     <option value="PAID">PAID (Lunas)</option>
@@ -1282,43 +1331,43 @@ export default function SemuaInvoicePage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-500 mb-1">Tanggal Jatuh Tempo</label>
+                  <label className="block text-xs font-semibold text-[var(--app-muted)] mb-1">Tanggal Jatuh Tempo</label>
                   <input
                     type="date"
                     value={editDueDate}
                     onChange={e => setEditDueDate(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-mono text-slate-800 focus:outline-none focus:border-blue-500"
+                    className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2 text-xs font-mono text-[var(--app-text)] focus:outline-none focus:border-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-500 mb-1">Periode Bulan</label>
+                  <label className="block text-xs font-semibold text-[var(--app-muted)] mb-1">Periode Bulan</label>
                   <input
                     type="text"
-                    placeholder="e.g. 2026-07 atau Juli 2026"
+                    placeholder={`Contoh: ${new Date().toISOString().slice(0, 7)}`}
                     value={editMonth}
                     onChange={e => setEditMonth(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-blue-500"
+                    className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2 text-xs text-[var(--app-text)] focus:outline-none focus:border-blue-500"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-500 mb-1">Catatan / Deskripsi Tambahan</label>
+                <label className="block text-xs font-semibold text-[var(--app-muted)] mb-1">Catatan / Deskripsi Tambahan</label>
                 <input
                   type="text"
                   placeholder="e.g. Penyesuaian tagihan pelanggan"
                   value={editDescription}
                   onChange={e => setEditDescription(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-blue-500"
+                  className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2 text-xs text-[var(--app-text)] focus:outline-none focus:border-blue-500"
                 />
               </div>
             </div>
 
-            <div className="p-4 border-t border-slate-200 flex gap-2.5 justify-end bg-slate-50">
+            <div className="p-4 border-t border-[var(--app-border)] flex gap-2.5 justify-end bg-[var(--app-bg)]">
               <button
                 onClick={() => setShowEditModal(false)}
-                className="px-4 py-2 border border-slate-200 text-slate-500 hover:text-slate-800 rounded-xl text-xs font-semibold transition"
+                className="px-4 py-2 border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] rounded-xl text-xs font-semibold transition"
               >
                 Batal
               </button>
@@ -1338,51 +1387,51 @@ export default function SemuaInvoicePage() {
       {/* ─── MODAL: Hapus Single Tagihan ────────────────────────────── */}
       {showDeleteModal && invoiceToDelete && (
         <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs w-full max-w-md overflow-hidden text-slate-600">
-            <div className="flex items-center justify-between p-5 border-b border-slate-200 bg-rose-50">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)] rounded-2xl shadow-2xs w-full max-w-md overflow-hidden">
+            <div className="flex items-center justify-between p-5 border-b border-[var(--app-border)] bg-rose-500/10">
               <div className="flex items-center gap-2">
                 <div className="p-2 rounded-lg bg-rose-500/10 text-rose-600 border border-rose-500/20">
                   <Trash2 size={16} />
                 </div>
                 <div>
                   <h2 className="text-sm font-bold text-rose-600">Konfirmasi Hapus Tagihan</h2>
-                  <p className="text-[10px] text-slate-400">Tindakan ini permanen di database</p>
+                  <p className="text-[10px] text-[var(--app-muted)]">Tindakan ini permanen di database</p>
                 </div>
               </div>
-              <button onClick={() => setShowDeleteModal(false)} className="p-1.5 hover:bg-slate-100 rounded-lg">
+              <button onClick={() => setShowDeleteModal(false)} className="p-1.5 hover:bg-[var(--app-bg)] rounded-lg">
                 <X size={16} />
               </button>
             </div>
 
             <div className="p-5 space-y-4">
-              <p className="text-xs text-slate-700">
+              <p className="text-xs text-[var(--app-text)]">
                 Apakah Anda yakin ingin menghapus tagihan berikut dari sistem?
               </p>
 
-              <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-2 text-xs font-mono">
+              <div className="bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl p-3.5 space-y-2 text-xs font-mono">
                 <div className="flex justify-between">
-                  <span className="text-slate-400">Nomor Invoice:</span>
-                  <span className="font-bold text-slate-800">{invoiceToDelete.invoiceNumber}</span>
+                  <span className="text-[var(--app-muted)]">Nomor Invoice:</span>
+                  <span className="font-bold text-[var(--app-text)]">{invoiceToDelete.invoiceNumber}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-400">Pelanggan:</span>
-                  <span className="font-bold text-slate-800">{invoiceToDelete.customer?.name}</span>
+                  <span className="text-[var(--app-muted)]">Pelanggan:</span>
+                  <span className="font-bold text-[var(--app-text)]">{invoiceToDelete.customer?.name}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-400">Nominal:</span>
+                  <span className="text-[var(--app-muted)]">Nominal:</span>
                   <span className="font-bold text-rose-600">{formatCurrency(invoiceToDelete.amount)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-400">Status:</span>
-                  <span className="font-bold uppercase text-slate-800">{invoiceToDelete.status}</span>
+                  <span className="text-[var(--app-muted)]">Status:</span>
+                  <span className="font-bold uppercase text-[var(--app-text)]">{invoiceToDelete.status}</span>
                 </div>
               </div>
             </div>
 
-            <div className="p-4 border-t border-slate-200 flex gap-2.5 justify-end bg-slate-50">
+            <div className="p-4 border-t border-[var(--app-border)] flex gap-2.5 justify-end bg-[var(--app-bg)]">
               <button
                 onClick={() => setShowDeleteModal(false)}
-                className="px-4 py-2 border border-slate-200 text-slate-500 hover:text-slate-800 rounded-xl text-xs font-semibold transition"
+                className="px-4 py-2 border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] rounded-xl text-xs font-semibold transition"
               >
                 Batal
               </button>
@@ -1402,32 +1451,32 @@ export default function SemuaInvoicePage() {
       {/* ─── MODAL: Hapus Massal Tagihan ────────────────────────────── */}
       {showBulkDeleteModal && (
         <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs w-full max-w-md overflow-hidden text-slate-600">
-            <div className="flex items-center justify-between p-5 border-b border-slate-200 bg-rose-50">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)] rounded-2xl shadow-2xs w-full max-w-md overflow-hidden">
+            <div className="flex items-center justify-between p-5 border-b border-[var(--app-border)] bg-rose-500/10">
               <div className="flex items-center gap-2">
                 <div className="p-2 rounded-lg bg-rose-500/10 text-rose-600 border border-rose-500/20">
                   <Trash2 size={16} />
                 </div>
                 <div>
                   <h2 className="text-sm font-bold text-rose-600">Hapus Massal Tagihan</h2>
-                  <p className="text-[10px] text-slate-400">{selectedInvoicesForWA.length} invoice dipilih</p>
+                  <p className="text-[10px] text-[var(--app-muted)]">{selectedInvoicesForWA.length} invoice dipilih</p>
                 </div>
               </div>
-              <button onClick={() => setShowBulkDeleteModal(false)} className="p-1.5 hover:bg-slate-100 rounded-lg">
+              <button onClick={() => setShowBulkDeleteModal(false)} className="p-1.5 hover:bg-[var(--app-bg)] rounded-lg">
                 <X size={16} />
               </button>
             </div>
 
             <div className="p-5 space-y-3">
-              <p className="text-xs text-slate-700">
+              <p className="text-xs text-[var(--app-text)]">
                 Anda akan menghapus secara permanen <strong className="text-rose-600 font-mono">{selectedInvoicesForWA.length} invoice</strong> sekaligus dari database. Tindakan ini tidak dapat dibatalkan.
               </p>
             </div>
 
-            <div className="p-4 border-t border-slate-200 flex gap-2.5 justify-end bg-slate-50">
+            <div className="p-4 border-t border-[var(--app-border)] flex gap-2.5 justify-end bg-[var(--app-bg)]">
               <button
                 onClick={() => setShowBulkDeleteModal(false)}
-                className="px-4 py-2 border border-slate-200 text-slate-500 hover:text-slate-800 rounded-xl text-xs font-semibold transition"
+                className="px-4 py-2 border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] rounded-xl text-xs font-semibold transition"
               >
                 Batal
               </button>
@@ -1447,24 +1496,24 @@ export default function SemuaInvoicePage() {
       {/* ─── MODAL: Mass Mark Paid ─────────────────────────────────── */}
       {showBulkMarkPaidModal && (
         <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs w-full max-w-md overflow-hidden text-slate-600">
-            <div className="flex items-center justify-between p-5 border-b border-slate-200 bg-emerald-50">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)] rounded-2xl shadow-2xs w-full max-w-md overflow-hidden">
+            <div className="flex items-center justify-between p-5 border-b border-[var(--app-border)] bg-emerald-500/10">
               <div className="flex items-center gap-2">
                 <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
                   <CheckCircle size={16} />
                 </div>
                 <div>
                   <h2 className="text-sm font-bold text-emerald-600">Tandai Lunas Massal</h2>
-                  <p className="text-[10px] text-slate-400">{selectedInvoicesForWA.length} invoice dipilih</p>
+                  <p className="text-[10px] text-[var(--app-muted)]">{selectedInvoicesForWA.length} invoice dipilih</p>
                 </div>
               </div>
-              <button onClick={() => setShowBulkMarkPaidModal(false)} className="p-1.5 hover:bg-slate-100 rounded-lg">
+              <button onClick={() => setShowBulkMarkPaidModal(false)} className="p-1.5 hover:bg-[var(--app-bg)] rounded-lg">
                 <X size={16} />
               </button>
             </div>
 
             <div className="p-5 space-y-4">
-              <p className="text-xs text-slate-700">
+              <p className="text-xs text-[var(--app-text)]">
                 Pilih metode pembayaran untuk melunasi <strong className="text-emerald-600 font-mono">{selectedInvoicesForWA.length} invoice</strong>:
               </p>
               <div className="grid grid-cols-2 gap-2">
@@ -1475,7 +1524,7 @@ export default function SemuaInvoicePage() {
                     className={`px-3 py-2 rounded-xl text-xs border transition ${
                       markPaidMethod === m
                         ? 'bg-emerald-600 text-white border-emerald-600 font-bold'
-                        : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'
+                        : 'bg-[var(--app-bg)] text-[var(--app-muted)] border-[var(--app-border)] hover:opacity-90'
                     }`}
                   >
                     {m}
@@ -1484,10 +1533,10 @@ export default function SemuaInvoicePage() {
               </div>
             </div>
 
-            <div className="p-4 border-t border-slate-200 flex gap-2.5 justify-end bg-slate-50">
+            <div className="p-4 border-t border-[var(--app-border)] flex gap-2.5 justify-end bg-[var(--app-bg)]">
               <button
                 onClick={() => setShowBulkMarkPaidModal(false)}
-                className="px-4 py-2 border border-slate-200 text-slate-500 hover:text-slate-800 rounded-xl text-xs font-semibold transition"
+                className="px-4 py-2 border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] rounded-xl text-xs font-semibold transition"
               >
                 Batal
               </button>

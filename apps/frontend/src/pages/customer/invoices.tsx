@@ -173,7 +173,7 @@ export default function CustomerInvoices() {
 
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] py-8">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
@@ -186,27 +186,27 @@ export default function CustomerInvoices() {
             </svg>
             Back to Dashboard
           </button>
-          <h1 className="text-3xl font-bold text-gray-900">My Invoices</h1>
-          <p className="text-gray-600 mt-2">Total: {total} invoice(s)</p>
+          <h1 className="text-3xl font-bold text-[var(--app-text)]">My Invoices</h1>
+          <p className="text-[var(--app-text-muted)] mt-2">Total: {total} invoice(s)</p>
         </div>
 
         {error && (
-          <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+          <div className="mb-6 bg-red-500/10 border border-red-500/20 text-red-500 px-4 py-3 rounded-lg">
             {error}
           </div>
         )}
 
         {/* Filter */}
-        <div className="bg-white rounded-lg shadow-md p-4 mb-6">
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4 mb-6">
           <div className="flex items-center gap-4">
-            <label className="text-sm font-medium text-gray-700">Filter by Status:</label>
+            <label className="text-sm font-medium text-[var(--app-text-muted)]">Filter by Status:</label>
             <select
               value={statusFilter}
               onChange={(e) => {
                 setStatusFilter(e.target.value);
                 setCurrentPage(1);
               }}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="px-3 py-2 bg-[var(--app-bg)] text-[var(--app-text)] border border-[var(--app-border)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="">All Status</option>
               <option value="paid">Paid</option>
@@ -218,7 +218,7 @@ export default function CustomerInvoices() {
         </div>
 
         {/* Invoice List */}
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl overflow-hidden">
           {invoices.length === 0 ? (
             <div className="text-center py-12">
               <svg className="w-16 h-16 text-slate-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -228,8 +228,8 @@ export default function CustomerInvoices() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+              <table className="min-w-full divide-y divide-[var(--app-border)]">
+                <thead className="bg-[var(--app-card-subtle)]">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
                       Invoice Number
@@ -248,7 +248,7 @@ export default function CustomerInvoices() {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-[var(--app-card)] divide-y divide-[var(--app-border)]">
                   {invoices.map((invoice) => (
                     <tr key={invoice.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -283,22 +283,22 @@ export default function CustomerInvoices() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="bg-gray-50 px-6 py-4 flex items-center justify-between border-t border-gray-200">
-              <div className="text-sm text-gray-700">
+            <div className="bg-[var(--app-card-subtle)] px-6 py-4 flex items-center justify-between border-t border-[var(--app-border)]">
+              <div className="text-sm text-[var(--app-text)]">
                 Page {currentPage} of {totalPages}
               </div>
               <div className="flex gap-2">
                 <button
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
-                  className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 border border-[var(--app-border)] rounded-lg text-sm font-medium text-[var(--app-text)] bg-[var(--app-card)] hover:bg-[var(--app-card-subtle)] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Previous
                 </button>
                 <button
                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages}
-                  className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 border border-[var(--app-border)] rounded-lg text-sm font-medium text-[var(--app-text)] bg-[var(--app-card)] hover:bg-[var(--app-card-subtle)] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Next
                 </button>
@@ -311,7 +311,7 @@ export default function CustomerInvoices() {
       {/* Invoice Detail Modal */}
       {selectedInvoice && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               {/* Modal Header */}
               <div className="flex justify-between items-start mb-6">

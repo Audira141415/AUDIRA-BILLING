@@ -3,9 +3,11 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Layout from '@/components/Layout'
 import api from '@/lib/api'
+import { Pagination } from '@/components/Pagination'
+import { useToast } from '@/contexts/ToastContext'
 import {
-  TimerOff, Search, Eye, Edit, RefreshCw, Phone, Calendar, CheckCircle, ShieldAlert,
-  MessageSquare, Trash2, Ban, ChevronDown, List, Grid, Clock, Wallet, HelpCircle, Check, Play, UserCheck, AlertTriangle, Plus, MoreHorizontal, Download
+  TimerOff, Search, Eye, Edit, RefreshCw, Calendar, CheckCircle,
+  MessageSquare, Trash2, ChevronDown, List, Grid, Wallet, Check, Plus, MoreHorizontal, Download
 } from 'lucide-react'
 
 interface ExpiredCustomer {
@@ -25,10 +27,9 @@ interface ExpiredCustomer {
   colorClass: string
 }
 
-const INITIAL_EXPIRED_DATA: ExpiredCustomer[] = []
-
 export default function CustomerExpired() {
   const router = useRouter()
+  const { toast } = useToast()
   const [customers, setCustomers] = useState<ExpiredCustomer[]>([])
   const [loading, setLoading] = useState(false)
   const [actionLoading, setActionLoading] = useState(false)
@@ -46,13 +47,14 @@ export default function CustomerExpired() {
   const [activeTab, setActiveTab] = useState<'all' | 'bulan_ini' | 'over_30' | 'over_60'>('all')
 
   // Pagination & Layout View state
+  const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(25)
   const [isGridView, setIsGridView] = useState(false)
 
   // Checkbox Selection state
   const [selectedIds, setSelectedIds] = useState<string[]>([])
 
-  // Load actual customers and merge with mock data
+  // Load actual customers
   const fetchData = useCallback(async () => {
     try {
       setLoading(true)
@@ -64,17 +66,21 @@ export default function CustomerExpired() {
               id: c.id,
               name: c.name,
               initials: c.name.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase(),
-              colorClass: 'bg-blue-600/20 text-blue-400 border border-blue-500/30',
+              colorClass: 'bg-blue-600/20 text-blue-500 border border-blue-500/30',
               packageName: pkgName,
               phone: c.phone || '0812-0000-0000',
               email: c.email || `${c.name.toLowerCase().replace(/\s+/g, '')}@email.com`,
               salesName: 'Budi Santoso',
-              expiredDate: '20 Jun 2026',
+              expiredDate: c.updatedAt
+                ? new Date(c.updatedAt).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })
+                : '-',
               daysExpired: 11,
-              outstandingAmount: 250000,
-              lastPaymentDate: '20 Mei 2026',
+              outstandingAmount: Array.isArray(c.invoices)
+                ? c.invoices.reduce((sum: number, inv: any) => sum + (inv.amount || 0), 0)
+                : 0,
+              lastPaymentDate: '-',
               status: 'Expired' as const,
-              area: 'Cimahi Selatan'
+              area: c.address || 'Cimahi Selatan'
             }
           })
         : []
@@ -125,18 +131,17 @@ export default function CustomerExpired() {
       setActionLoading(true)
       for (const id of selectedIds) {
         if (id.length > 5) {
-          // Change status to active
           await api.pelanggan.update(id, { status: 'active' })
         }
       }
 
       setCustomers(prev => prev.filter(c => !selectedIds.includes(c.id)))
       setSelectedIds([])
-      alert('Berhasil mengaktifkan kembali customer terpilih.')
+      toast.success('Berhasil mengaktifkan kembali customer terpilih.', 'Re-Aktivasi Berhasil')
       fetchData()
     } catch (err) {
       console.error(err)
-      alert('Terjadi kesalahan saat memproses aktivasi kembali.')
+      toast.error('Terjadi kesalahan saat memproses aktivasi kembali.', 'Gagal Re-Aktivasi')
     } finally {
       setActionLoading(false)
     }
@@ -155,11 +160,11 @@ export default function CustomerExpired() {
       }
       setCustomers(prev => prev.filter(c => !selectedIds.includes(c.id)))
       setSelectedIds([])
-      alert('Data terpilih berhasil dihapus.')
+      toast.success('Data terpilih berhasil dihapus.', 'Data Dihapus')
       fetchData()
     } catch (err) {
       console.error(err)
-      alert('Gagal menghapus data terpilih.')
+      toast.error('Gagal menghapus data terpilih.', 'Kesalahan')
     } finally {
       setActionLoading(false)
     }
@@ -184,7 +189,7 @@ export default function CustomerExpired() {
     // Dropdown filters
     if (packageFilter !== 'all' && c.packageName.toLowerCase() !== packageFilter.toLowerCase()) return false
     if (salesFilter !== 'all' && c.salesName.toLowerCase() !== salesFilter.toLowerCase()) return false
-    if (areaFilter !== 'all' && c.area.toLowerCase() !== areaFilter.toLowerCase()) return false
+    if (areaFilter !== 'all' && !c.area.toLowerCase().includes(areaFilter.toLowerCase())) return false
 
     // Duration filter
     if (durationFilter !== 'all') {
@@ -207,8 +212,8 @@ export default function CustomerExpired() {
   const countBulanIni = customers.filter(c => c.daysExpired <= 30).length
   const countOver30 = customers.filter(c => c.daysExpired > 30 && c.daysExpired <= 60).length
   const countOver60 = customers.filter(c => c.daysExpired > 60).length
-  const totalOutstanding = 89715200 // Rp 89.715.200
-  const avgOutstanding = 350450 // Rp 350.450
+  const totalOutstanding = customers.reduce((sum, c) => sum + (c.outstandingAmount || 0), 0)
+  const avgOutstanding = countTotal > 0 ? Math.round(totalOutstanding / countTotal) : 0
 
   // Donut chart variables
   const radius = 35
@@ -222,24 +227,36 @@ export default function CustomerExpired() {
   const offsetOver30 = getOffset(countOver30)
   const offsetOver60 = getOffset(countOver60)
 
+  const formatPct = (count: number) => {
+    if (countTotal === 0) return '0%'
+    return `${((count / countTotal) * 100).toFixed(1)}%`
+  }
+
+  const totalPages = Math.max(1, Math.ceil(filteredCustomers.length / pageSize));
+  const safeCurrentPage = Math.min(currentPage, totalPages);
+  const paginatedCustomers = filteredCustomers.slice(
+    (safeCurrentPage - 1) * pageSize,
+    safeCurrentPage * pageSize
+  );
+
   return (
     <Layout>
-      <div className="min-h-screen bg-slate-50 text-slate-800 p-6 space-y-6">
+      <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] p-4 md:p-6 space-y-6">
         
         {/* Header Section */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-[var(--app-border)] pb-5">
           <div className="space-y-1">
-            <div className="flex items-center gap-2 text-xs text-[var(--app-muted)] font-mono mb-1">
+            <div className="flex items-center gap-2 text-xs text-[var(--app-text-muted)] font-mono mb-1">
               <Link href="/" className="hover:text-[var(--app-text)]">AUDIRA</Link>
               <span>/</span>
               <Link href="/pelanggan" className="hover:text-[var(--app-text)]">Customer CRM</Link>
               <span>/</span>
-              <span className="text-rose-400">Customer Expired (Non-Aktif)</span>
+              <span className="text-rose-500">Customer Expired (Non-Aktif)</span>
             </div>
             <h1 className="text-xl md:text-2xl font-bold tracking-tight text-[var(--app-text)] flex items-center gap-2.5">
               Customer Expired & Berhenti Berlangganan
             </h1>
-            <p className="text-xs text-[var(--app-muted)]">
+            <p className="text-xs text-[var(--app-text-muted)]">
               Daftar pelanggan yang masa aktif layanannya telah berakhir atau berhenti berlangganan (churn).
             </p>
           </div>
@@ -248,7 +265,7 @@ export default function CustomerExpired() {
             <button
               onClick={() => fetchData()}
               disabled={loading}
-              className="p-2 border border-[var(--app-border)] bg-[var(--app-card)] text-[var(--app-muted)] hover:text-[var(--app-text)] rounded-lg transition-colors"
+              className="p-2 border border-[var(--app-border)] bg-[var(--app-card)] text-[var(--app-text-muted)] hover:text-[var(--app-text)] rounded-lg transition-colors"
               title="Refresh Data"
             >
               <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
@@ -266,99 +283,99 @@ export default function CustomerExpired() {
         <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
           
           {/* Card 1: Total Expired */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs flex items-center justify-between hover:border-purple-500/35 transition cursor-pointer" onClick={() => { setActiveTab('all'); handleResetFilters(); }}>
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs flex items-center justify-between hover:border-purple-500/40 transition cursor-pointer" onClick={() => { setActiveTab('all'); handleResetFilters(); }}>
             <div className="space-y-1">
-              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Total Expired</span>
-              <p className="text-2xl font-black text-slate-900 mt-1">{countTotal}</p>
-              <p className="text-[10px] text-slate-500">Semua customer expired</p>
+              <span className="text-[10px] text-[var(--app-text-muted)] font-bold uppercase tracking-wider">Total Expired</span>
+              <p className="text-2xl font-black font-mono tabular-nums text-[var(--app-text)] mt-1">{countTotal}</p>
+              <p className="text-[10px] text-[var(--app-text-muted)]">Semua customer expired</p>
             </div>
-            <div className="p-3 bg-purple-650/10 rounded-xl text-purple-500 border border-purple-500/20 bg-purple-600/10">
+            <div className="p-3 bg-purple-600/10 rounded-xl text-purple-500 border border-purple-500/20">
               <TimerOff size={20} />
             </div>
           </div>
 
           {/* Card 2: Expired Bulan Ini */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs flex items-center justify-between hover:border-red-500/35 transition cursor-pointer" onClick={() => setActiveTab('bulan_ini')}>
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs flex items-center justify-between hover:border-red-500/40 transition cursor-pointer" onClick={() => setActiveTab('bulan_ini')}>
             <div className="space-y-1">
-              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Expired Bulan Ini</span>
-              <p className="text-2xl font-black text-red-400 mt-1">{countBulanIni}</p>
-              <p className="text-[10px] text-slate-500">Expired bulan ini</p>
+              <span className="text-[10px] text-[var(--app-text-muted)] font-bold uppercase tracking-wider">Expired Bulan Ini</span>
+              <p className="text-2xl font-black font-mono tabular-nums text-red-500 mt-1">{countBulanIni}</p>
+              <p className="text-[10px] text-[var(--app-text-muted)]">Expired bulan ini</p>
             </div>
-            <div className="p-3 bg-red-650/10 rounded-xl text-red-400 border border-red-500/20 bg-red-600/10">
+            <div className="p-3 bg-red-600/10 rounded-xl text-red-500 border border-red-500/20">
               <Calendar size={20} />
             </div>
           </div>
 
           {/* Card 3: Expired > 30 Hari */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs flex items-center justify-between hover:border-orange-500/35 transition cursor-pointer" onClick={() => setActiveTab('over_30')}>
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs flex items-center justify-between hover:border-orange-500/40 transition cursor-pointer" onClick={() => setActiveTab('over_30')}>
             <div className="space-y-1">
-              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Expired &gt; 30 Hari</span>
-              <p className="text-2xl font-black text-orange-400 mt-1">{countOver30}</p>
-              <p className="text-[10px] text-slate-500">Expired lebih dari 30 hari</p>
+              <span className="text-[10px] text-[var(--app-text-muted)] font-bold uppercase tracking-wider">Expired &gt; 30 Hari</span>
+              <p className="text-2xl font-black font-mono tabular-nums text-orange-500 mt-1">{countOver30}</p>
+              <p className="text-[10px] text-[var(--app-text-muted)]">Expired lebih dari 30 hari</p>
             </div>
-            <div className="p-3 bg-orange-600/10 rounded-xl text-orange-400 border border-orange-500/20">
+            <div className="p-3 bg-orange-600/10 rounded-xl text-orange-500 border border-orange-500/20">
               <Calendar size={20} />
             </div>
           </div>
 
           {/* Card 4: Expired > 60 Hari */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs flex items-center justify-between hover:border-yellow-500/35 transition cursor-pointer" onClick={() => setActiveTab('over_60')}>
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs flex items-center justify-between hover:border-amber-500/40 transition cursor-pointer" onClick={() => setActiveTab('over_60')}>
             <div className="space-y-1">
-              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Expired &gt; 60 Hari</span>
-              <p className="text-2xl font-black text-yellow-400 mt-1">{countOver60}</p>
-              <p className="text-[10px] text-slate-500">Expired lebih dari 60 hari</p>
+              <span className="text-[10px] text-[var(--app-text-muted)] font-bold uppercase tracking-wider">Expired &gt; 60 Hari</span>
+              <p className="text-2xl font-black font-mono tabular-nums text-amber-500 mt-1">{countOver60}</p>
+              <p className="text-[10px] text-[var(--app-text-muted)]">Expired lebih dari 60 hari</p>
             </div>
-            <div className="p-3 bg-yellow-600/10 rounded-xl text-yellow-400 border border-yellow-500/20">
+            <div className="p-3 bg-amber-500/10 rounded-xl text-amber-500 border border-amber-500/20">
               <Calendar size={20} />
             </div>
           </div>
 
           {/* Card 5: Rata-rata Tunggakan */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs flex items-center justify-between hover:border-teal-500/35 transition cursor-pointer">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs flex items-center justify-between hover:border-teal-500/40 transition cursor-pointer">
             <div className="space-y-1">
-              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Rata-rata Tunggakan</span>
-              <p className="text-lg font-black text-teal-400 mt-1">Rp 350.450</p>
-              <p className="text-[10px] text-slate-500">Per customer</p>
+              <span className="text-[10px] text-[var(--app-text-muted)] font-bold uppercase tracking-wider">Rata-rata Tunggakan</span>
+              <p className="text-lg font-black font-mono tabular-nums text-teal-500 mt-1">Rp {avgOutstanding.toLocaleString('id-ID')}</p>
+              <p className="text-[10px] text-[var(--app-text-muted)]">Per customer</p>
             </div>
-            <div className="p-3 bg-teal-500/10 rounded-xl text-teal-400 border border-teal-500/20">
+            <div className="p-3 bg-teal-500/10 rounded-xl text-teal-500 border border-teal-500/20">
               <CheckCircle size={20} />
             </div>
           </div>
 
           {/* Card 6: Total Tunggakan */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs flex items-center justify-between hover:border-green-500/35 transition cursor-pointer">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs flex items-center justify-between hover:border-emerald-500/40 transition cursor-pointer">
             <div className="space-y-1">
-              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Total Tunggakan</span>
-              <p className="text-lg font-black text-green-400 mt-1">Rp 89.715.200</p>
-              <p className="text-[10px] text-slate-500">Semua customer expired</p>
+              <span className="text-[10px] text-[var(--app-text-muted)] font-bold uppercase tracking-wider">Total Tunggakan</span>
+              <p className="text-lg font-black font-mono tabular-nums text-emerald-500 mt-1">Rp {totalOutstanding.toLocaleString('id-ID')}</p>
+              <p className="text-[10px] text-[var(--app-text-muted)]">Semua customer expired</p>
             </div>
-            <div className="p-3 bg-green-600/10 rounded-xl text-green-400 border border-green-500/20">
+            <div className="p-3 bg-emerald-600/10 rounded-xl text-emerald-500 border border-emerald-500/20">
               <Wallet size={20} />
             </div>
           </div>
         </div>
 
         {/* Filter Toolbar Card */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-4">
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-4">
           <div className="flex flex-col xl:flex-row gap-4 justify-between items-stretch xl:items-center">
             {/* Search Input */}
             <div className="relative flex-1">
-              <Search className="absolute left-3.5 top-3.5 text-slate-400" size={16} />
+              <Search className="absolute left-3.5 top-3.5 text-[var(--app-text-muted)]" size={16} />
               <input
                 type="text"
                 placeholder="Cari nama, no. hp, email, paket, area..."
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-11 pr-4 py-3 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition"
+                className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl pl-11 pr-4 py-3 text-xs text-[var(--app-text)] placeholder-[var(--app-text-muted)] focus:outline-none focus:border-blue-500 focus-visible:ring-2 focus-visible:ring-[var(--app-primary)] transition"
               />
             </div>
 
             {/* Quick Actions */}
             <div className="flex items-center gap-3">
-              <button onClick={handleResetFilters} className="px-4 py-3 bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 hover:text-slate-900 text-xs font-semibold rounded-xl text-slate-500 hover:text-slate-900 transition">
+              <button onClick={handleResetFilters} className="px-4 py-3 bg-[var(--app-card)] hover:bg-[var(--app-bg)] border border-[var(--app-border)] text-[var(--app-text-muted)] hover:text-[var(--app-text)] text-xs font-semibold rounded-xl transition">
                 Reset
               </button>
-              <button onClick={() => alert("Mengekspor daftar pelanggan expired...")} className="flex items-center gap-1.5 px-4 py-3 bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 hover:text-slate-900 text-xs font-semibold rounded-xl text-slate-500 hover:text-slate-900 transition">
+              <button onClick={() => toast.info('Mengekspor daftar pelanggan expired ke CSV...', 'Export Data')} className="flex items-center gap-1.5 px-4 py-3 bg-[var(--app-card)] hover:bg-[var(--app-bg)] border border-[var(--app-border)] text-[var(--app-text-muted)] hover:text-[var(--app-text)] text-xs font-semibold rounded-xl transition">
                 Export <ChevronDown size={14} />
               </button>
             </div>
@@ -368,8 +385,8 @@ export default function CustomerExpired() {
           <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3">
             
             <div className="space-y-1.5">
-              <label className="text-[10px] text-slate-400 font-bold block">Paket</label>
-              <select value={packageFilter} onChange={e => setPackageFilter(e.target.value)} className="w-full bg-slate-100 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-blue-500">
+              <label className="text-[10px] text-[var(--app-text-muted)] font-bold block">Paket</label>
+              <select value={packageFilter} onChange={e => setPackageFilter(e.target.value)} className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2.5 text-xs text-[var(--app-text)] focus:outline-none focus:border-blue-500">
                 <option value="all">Semua Paket</option>
                 <option value="home 20 mbps">Home 20 Mbps</option>
                 <option value="home 50 mbps">Home 50 Mbps</option>
@@ -379,8 +396,8 @@ export default function CustomerExpired() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[10px] text-slate-400 font-bold block">Sales</label>
-              <select value={salesFilter} onChange={e => setSalesFilter(e.target.value)} className="w-full bg-slate-100 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-blue-500">
+              <label className="text-[10px] text-[var(--app-text-muted)] font-bold block">Sales</label>
+              <select value={salesFilter} onChange={e => setSalesFilter(e.target.value)} className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2.5 text-xs text-[var(--app-text)] focus:outline-none focus:border-blue-500">
                 <option value="all">Semua Sales</option>
                 <option value="budi santoso">Budi Santoso</option>
                 <option value="dewi lestari">Dewi Lestari</option>
@@ -389,8 +406,8 @@ export default function CustomerExpired() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[10px] text-slate-400 font-bold block">Area</label>
-              <select value={areaFilter} onChange={e => setAreaFilter(e.target.value)} className="w-full bg-slate-100 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-blue-500">
+              <label className="text-[10px] text-[var(--app-text-muted)] font-bold block">Area</label>
+              <select value={areaFilter} onChange={e => setAreaFilter(e.target.value)} className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2.5 text-xs text-[var(--app-text)] focus:outline-none focus:border-blue-500">
                 <option value="all">Semua Area</option>
                 <option value="cimahi selatan">Cimahi Selatan</option>
                 <option value="cimahi utara">Cimahi Utara</option>
@@ -400,18 +417,18 @@ export default function CustomerExpired() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[10px] text-slate-400 font-bold block">Tanggal Expired</label>
+              <label className="text-[10px] text-[var(--app-text-muted)] font-bold block">Tanggal Expired</label>
               <input
                 type="text"
                 value={dateRange}
                 onChange={e => setDateRange(e.target.value)}
-                className="w-full bg-slate-100 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-blue-500"
+                className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2.5 text-xs text-[var(--app-text)] focus:outline-none focus:border-blue-500"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[10px] text-slate-400 font-bold block">Lama Expired</label>
-              <select value={durationFilter} onChange={e => setDurationFilter(e.target.value)} className="w-full bg-slate-100 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-blue-500">
+              <label className="text-[10px] text-[var(--app-text-muted)] font-bold block">Lama Expired</label>
+              <select value={durationFilter} onChange={e => setDurationFilter(e.target.value)} className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2.5 text-xs text-[var(--app-text)] focus:outline-none focus:border-blue-500">
                 <option value="all">Semua</option>
                 <option value="short">&lt; 30 Hari</option>
                 <option value="medium">30 - 60 Hari</option>
@@ -420,8 +437,8 @@ export default function CustomerExpired() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[10px] text-slate-400 font-bold block">Tunggakan</label>
-              <select value={outstandingFilter} onChange={e => setOutstandingFilter(e.target.value)} className="w-full bg-slate-100 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-blue-500">
+              <label className="text-[10px] text-[var(--app-text-muted)] font-bold block">Tunggakan</label>
+              <select value={outstandingFilter} onChange={e => setOutstandingFilter(e.target.value)} className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2.5 text-xs text-[var(--app-text)] focus:outline-none focus:border-blue-500">
                 <option value="all">Semua</option>
                 <option value="none">Tidak Ada</option>
                 <option value="exist">Ada Tunggakan</option>
@@ -436,7 +453,7 @@ export default function CustomerExpired() {
           {/* Left Side: Table & Tab navigation */}
           <div className="xl:col-span-9 space-y-4">
             
-            <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 border-b border-slate-200 pb-px">
+            <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 border-b border-[var(--app-border)] pb-px">
               <div className="flex overflow-x-auto gap-2 scrollbar-none">
                 {[
                   { id: 'all', label: `Semua Expired (${countTotal})` },
@@ -449,8 +466,8 @@ export default function CustomerExpired() {
                     onClick={() => setActiveTab(tab.id as any)}
                     className={`px-4 py-3 font-semibold text-xs whitespace-nowrap border-b-2 transition-all ${
                       activeTab === tab.id 
-                        ? 'border-blue-500 text-blue-400 bg-blue-500/5' 
-                        : 'border-transparent text-slate-500 hover:text-gray-200'
+                        ? 'border-blue-500 text-blue-500 bg-blue-500/5' 
+                        : 'border-transparent text-[var(--app-text-muted)] hover:text-[var(--app-text)]'
                     }`}
                   >
                     {tab.label}
@@ -459,12 +476,12 @@ export default function CustomerExpired() {
               </div>
 
               <div className="flex items-center justify-end gap-3 pb-3 sm:pb-0">
-                <div className="flex items-center gap-1.5 text-xs text-slate-500">
+                <div className="flex items-center gap-1.5 text-xs text-[var(--app-text-muted)]">
                   <span>Tampilkan</span>
                   <select 
                     value={pageSize} 
                     onChange={e => setPageSize(parseInt(e.target.value))}
-                    className="bg-slate-100 border border-slate-200 rounded-lg px-2 py-1 text-xs text-white focus:outline-none"
+                    className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-lg px-2 py-1 text-xs text-[var(--app-text)] focus:outline-none"
                   >
                     <option value={10}>10</option>
                     <option value={25}>25</option>
@@ -473,17 +490,17 @@ export default function CustomerExpired() {
                   <span>data</span>
                 </div>
 
-                <div className="flex items-center border border-slate-200 rounded-xl overflow-hidden">
+                <div className="flex items-center border border-[var(--app-border)] rounded-xl overflow-hidden">
                   <button 
                     onClick={() => setIsGridView(false)} 
-                    className={`p-2 transition-colors ${!isGridView ? 'bg-blue-600/20 text-blue-400' : 'bg-slate-100 text-slate-400 hover:text-slate-600'}`}
+                    className={`p-2 transition-colors ${!isGridView ? 'bg-blue-600/20 text-blue-500' : 'bg-[var(--app-card)] text-[var(--app-text-muted)] hover:text-[var(--app-text)]'}`}
                     title="List View"
                   >
                     <List size={14} />
                   </button>
                   <button 
                     onClick={() => setIsGridView(true)} 
-                    className={`p-2 transition-colors ${isGridView ? 'bg-blue-600/20 text-blue-400' : 'bg-slate-100 text-slate-400 hover:text-slate-600'}`}
+                    className={`p-2 transition-colors ${isGridView ? 'bg-blue-600/20 text-blue-500' : 'bg-[var(--app-card)] text-[var(--app-text-muted)] hover:text-[var(--app-text)]'}`}
                     title="Grid View"
                   >
                     <Grid size={14} />
@@ -493,17 +510,17 @@ export default function CustomerExpired() {
             </div>
 
             {/* Expired Table */}
-            <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs overflow-hidden">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
                   <thead>
-                    <tr className="border-b border-slate-200 text-slate-400 uppercase tracking-wider font-bold">
+                    <tr className="border-b border-[var(--app-border)] text-[var(--app-text-muted)] uppercase tracking-wider font-bold">
                       <th className="p-4 w-12 text-center">
                         <input 
                           type="checkbox" 
                           checked={selectedIds.length === filteredCustomers.length && filteredCustomers.length > 0} 
                           onChange={e => handleSelectAll(e.target.checked)}
-                          className="w-4 h-4 rounded bg-slate-100 border-slate-200 text-blue-500 focus:ring-0" 
+                          className="w-4 h-4 rounded bg-[var(--app-bg)] border-[var(--app-border)] text-blue-500 focus:ring-0" 
                         />
                       </th>
                       <th className="p-4 w-10 text-center">NO</th>
@@ -518,20 +535,20 @@ export default function CustomerExpired() {
                       <th className="p-4 text-center">AKSI</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-200/35">
+                  <tbody className="divide-y divide-[var(--app-border)]">
                     {loading ? (
-                      <tr><td colSpan={11} className="py-12 text-center text-slate-400">Memuat data customer expired...</td></tr>
+                      <tr><td colSpan={11} className="py-12 text-center text-[var(--app-text-muted)]">Memuat data customer expired...</td></tr>
                     ) : filteredCustomers.length === 0 ? (
-                      <tr><td colSpan={11} className="py-12 text-center text-slate-400">Tidak ada data customer expired yang cocok.</td></tr>
+                      <tr><td colSpan={11} className="py-12 text-center text-[var(--app-text-muted)]">Tidak ada data customer expired yang cocok.</td></tr>
                     ) : (
-                      filteredCustomers.slice(0, pageSize).map((row, index) => {
+                      paginatedCustomers.map((row, index) => {
                         const isSelected = selectedIds.includes(row.id)
-                        let badgeColor = 'bg-red-500/10 text-red-400 border border-red-500/20'
+                        const badgeColor = 'bg-red-500/10 text-red-500 border border-red-500/20'
 
                         return (
                           <tr 
                             key={row.id} 
-                            className={`border-b border-slate-200/20 last:border-b-0 hover:bg-slate-100/25 transition ${
+                            className={`hover:bg-[var(--app-bg)]/60 transition ${
                               isSelected ? 'bg-blue-600/5' : ''
                             }`}
                           >
@@ -540,34 +557,34 @@ export default function CustomerExpired() {
                                 type="checkbox" 
                                 checked={isSelected} 
                                 onChange={() => handleBulkSelect(row.id)}
-                                className="w-4 h-4 rounded bg-slate-100 border-slate-200 text-blue-500 focus:ring-0" 
+                                className="w-4 h-4 rounded bg-[var(--app-bg)] border-[var(--app-border)] text-blue-500 focus:ring-0" 
                               />
                             </td>
-                            <td className="p-4 text-center text-slate-400 font-semibold">{index + 1}</td>
+                            <td className="p-4 text-center text-[var(--app-text-muted)] font-semibold">{index + 1}</td>
                             <td className="p-4">
                               <div className="flex items-center gap-3">
                                 <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ${row.colorClass}`}>
                                   {row.initials}
                                 </div>
                                 <div>
-                                  <div className="font-bold text-slate-800 cursor-pointer hover:text-blue-600 flex items-center gap-1.5" onClick={() => router.push(`/pelanggan/${row.id}`)}>
+                                  <div className="font-bold text-[var(--app-text)] cursor-pointer hover:text-blue-500 flex items-center gap-1.5" onClick={() => router.push(`/pelanggan/${row.id}`)}>
                                     <span>{row.name}</span>
-                                    <a href={`https://wa.me/${row.phone.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="text-green-500 hover:text-green-400">
-                                      <MessageSquare size={12} className="fill-green-500/10" />
+                                    <a href={`https://wa.me/${row.phone.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} className="text-emerald-500 hover:text-emerald-400">
+                                      <MessageSquare size={12} className="fill-emerald-500/10" />
                                     </a>
                                   </div>
-                                  <div className="text-[10px] text-slate-400 font-medium">{row.phone}</div>
+                                  <div className="text-[10px] text-[var(--app-text-muted)] font-mono">{row.phone}</div>
                                 </div>
                               </div>
                             </td>
-                            <td className="p-4 text-slate-700 font-semibold">{row.packageName}</td>
-                            <td className="p-4 text-slate-500 font-semibold">{row.salesName}</td>
-                            <td className="p-4 text-slate-500 font-medium">{row.expiredDate}</td>
-                            <td className="p-4 text-slate-600 font-bold">{row.daysExpired} Hari</td>
-                            <td className={`p-4 font-bold ${row.outstandingAmount > 0 ? 'text-red-400' : 'text-slate-400'}`}>
+                            <td className="p-4 text-[var(--app-text)] font-semibold">{row.packageName}</td>
+                            <td className="p-4 text-[var(--app-text-muted)] font-semibold">{row.salesName}</td>
+                            <td className="p-4 text-[var(--app-text-muted)] font-medium">{row.expiredDate}</td>
+                            <td className="p-4 text-[var(--app-text)] font-bold font-mono">{row.daysExpired} Hari</td>
+                            <td className={`p-4 font-bold font-mono ${row.outstandingAmount > 0 ? 'text-red-500' : 'text-[var(--app-text-muted)]'}`}>
                               {row.outstandingAmount > 0 ? `Rp ${row.outstandingAmount.toLocaleString('id-ID')}` : 'Rp 0'}
                             </td>
-                            <td className="p-4 text-slate-500 font-medium">{row.lastPaymentDate}</td>
+                            <td className="p-4 text-[var(--app-text-muted)] font-medium">{row.lastPaymentDate}</td>
                             <td className="p-4">
                               <span className={`px-2.5 py-1 rounded text-[9px] font-bold ${badgeColor}`}>
                                 {row.status}
@@ -575,11 +592,15 @@ export default function CustomerExpired() {
                             </td>
                             <td className="p-4 text-center">
                               <div className="flex items-center justify-center gap-1.5">
-                                <button onClick={() => router.push(`/pelanggan/${row.id}`)} className="p-1 hover:bg-slate-100 hover:text-white text-slate-500 rounded transition" title="Lihat Detail">
-                                  <Eye size={12} />
+                                <button onClick={() => router.push(`/pelanggan/${row.id}`)} className="p-1.5 hover:bg-[var(--app-bg)] text-[var(--app-text-muted)] hover:text-[var(--app-text)] rounded transition" title="Lihat Detail">
+                                  <Eye size={13} />
                                 </button>
-                                <button onClick={() => alert("Membuka modal edit data...")} className="p-1 hover:bg-slate-100 hover:text-white text-slate-500 rounded transition" title="Edit Data"><Edit size={12} /></button>
-                                <button onClick={() => alert("Opsi tindakan: Kirim Notifikasi, Isolir Layanan, Cetak Bukti.")} className="p-1 hover:bg-slate-100 hover:text-white text-slate-500 rounded transition"><MoreHorizontal size={12} /></button>
+                                <button onClick={() => router.push(`/pelanggan/${row.id}`)} className="p-1.5 hover:bg-[var(--app-bg)] text-[var(--app-text-muted)] hover:text-blue-500 rounded transition" title="Edit Data">
+                                  <Edit size={13} />
+                                </button>
+                                <button onClick={() => toast.info('Opsi tindakan: Kirim Notifikasi, Re-Aktivasi Layanan, atau Cetak Bukti.', 'Menu Tindakan')} className="p-1.5 hover:bg-[var(--app-bg)] text-[var(--app-text-muted)] hover:text-[var(--app-text)] rounded transition" title="Opsi Lainnya">
+                                  <MoreHorizontal size={13} />
+                                </button>
                               </div>
                             </td>
                           </tr>
@@ -591,18 +612,17 @@ export default function CustomerExpired() {
               </div>
             </div>
 
-            <div className="flex justify-between items-center text-xs text-slate-400 font-medium pt-2">
-              <span>Menampilkan 1 - {Math.min(filteredCustomers.length, pageSize)} dari {filteredCustomers.length} data</span>
-              <div className="flex gap-1">
-                <button onClick={() => alert("Halaman pertama sudah aktif.")} className="px-3 py-1 bg-slate-100 border border-slate-200 text-slate-500 hover:text-slate-900 rounded-lg font-semibold">&lt;</button>
-                <button onClick={() => alert("Halaman 1 saat ini aktif.")} className="px-3 py-1 bg-blue-600/20 text-blue-400 border border-blue-500/20 rounded-lg font-semibold">1</button>
-                <button onClick={() => alert("Beralih ke halaman 2.")} className="px-3 py-1 bg-slate-100 border border-slate-200/50 text-slate-400 rounded-lg font-semibold">2</button>
-                <button onClick={() => alert("Beralih ke halaman 3.")} className="px-3 py-1 bg-slate-100 border border-slate-200/50 text-slate-400 rounded-lg font-semibold">3</button>
-                <span className="px-2 pt-1 text-gray-600">...</span>
-                <button onClick={() => alert("Beralih ke halaman 11")} className="px-3 py-1 bg-slate-100 border border-slate-200/50 text-slate-400 rounded-lg font-semibold">11</button>
-                <button onClick={() => alert("Beralih ke halaman selanjutnya.")} className="px-3 py-1 bg-slate-100 border border-slate-200/50 text-slate-500 hover:text-slate-900 rounded-lg font-semibold">&gt;</button>
-              </div>
-            </div>
+            <Pagination
+              currentPage={safeCurrentPage}
+              totalPages={totalPages}
+              totalItems={filteredCustomers.length}
+              pageSize={pageSize}
+              onPageChange={setCurrentPage}
+              onPageSizeChange={(newSize) => {
+                setPageSize(newSize);
+                setCurrentPage(1);
+              }}
+            />
 
           </div>
 
@@ -610,16 +630,15 @@ export default function CustomerExpired() {
           <div className="xl:col-span-3 space-y-6">
             
             {/* Widget 1: Ringkasan Expired (Donut Chart) */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-4">
-              <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">Ringkasan Expired</h3>
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-4">
+              <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider">Ringkasan Expired</h3>
               
               <div className="flex items-center justify-between gap-4">
                 {/* SVG Donut Chart */}
                 <div className="relative w-24 h-24 flex items-center justify-center flex-shrink-0">
                   <svg className="w-full h-full transform -rotate-90" viewBox="0 0 80 80">
-                    <circle cx="40" cy="40" r={radius} fill="transparent" stroke="#e2e8f0" strokeWidth="6" />
+                    <circle cx="40" cy="40" r={radius} fill="transparent" stroke="var(--app-border)" strokeWidth="6" />
                     
-                    {/* Expired Bulan Ini (14.1%) - Red */}
                     <circle 
                       cx="40" 
                       cy="40" 
@@ -631,7 +650,6 @@ export default function CustomerExpired() {
                       strokeDashoffset={offsetBulanIni}
                     />
 
-                    {/* Expired > 30 Hari (43.8%) - Orange */}
                     <circle 
                       cx="40" 
                       cy="40" 
@@ -643,7 +661,6 @@ export default function CustomerExpired() {
                       strokeDashoffset={offsetOver30}
                     />
 
-                    {/* Expired > 60 Hari (25%) - Yellow */}
                     <circle 
                       cx="40" 
                       cy="40" 
@@ -657,8 +674,8 @@ export default function CustomerExpired() {
                   </svg>
                   
                   <div className="absolute flex flex-col items-center">
-                    <span className="text-base font-black text-slate-900">{countTotal}</span>
-                    <span className="text-[8px] text-slate-400 font-bold uppercase">Total</span>
+                    <span className="text-base font-black font-mono text-[var(--app-text)]">{countTotal}</span>
+                    <span className="text-[8px] text-[var(--app-text-muted)] font-bold uppercase">Total</span>
                   </div>
                 </div>
 
@@ -667,56 +684,47 @@ export default function CustomerExpired() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>
-                      <span className="text-slate-500">Bulan Ini</span>
+                      <span className="text-[var(--app-text-muted)]">Bulan Ini</span>
                     </div>
-                    <span className="font-bold text-slate-800">36 <span className="text-[8px] text-slate-400 font-normal">(14.1%)</span></span>
+                    <span className="font-bold font-mono text-[var(--app-text)]">{countBulanIni} <span className="text-[8px] text-[var(--app-text-muted)] font-normal">({formatPct(countBulanIni)})</span></span>
                   </div>
 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-orange-400"></span>
-                      <span className="text-slate-500">&gt; 30 Hari</span>
+                      <span className="text-[var(--app-text-muted)]">&gt; 30 Hari</span>
                     </div>
-                    <span className="font-bold text-slate-800">112 <span className="text-[8px] text-slate-400 font-normal">(43.8%)</span></span>
+                    <span className="font-bold font-mono text-[var(--app-text)]">{countOver30} <span className="text-[8px] text-[var(--app-text-muted)] font-normal">({formatPct(countOver30)})</span></span>
                   </div>
 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-yellow-500"></span>
-                      <span className="text-slate-500">&gt; 60 Hari</span>
+                      <span className="text-[var(--app-text-muted)]">&gt; 60 Hari</span>
                     </div>
-                    <span className="font-bold text-slate-800">64 <span className="text-[8px] text-slate-400 font-normal">(25%)</span></span>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
-                      <span className="text-slate-500">Lainnya</span>
-                    </div>
-                    <span className="font-bold text-slate-800">44 <span className="text-[8px] text-slate-400 font-normal">(17.1%)</span></span>
+                    <span className="font-bold font-mono text-[var(--app-text)]">{countOver60} <span className="text-[8px] text-[var(--app-text-muted)] font-normal">({formatPct(countOver60)})</span></span>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Widget 2: Alasan Expired */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-4">
-              <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">Alasan Expired</h3>
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-4">
+              <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider">Alasan Expired</h3>
               
               <div className="space-y-3">
                 {[
-                  { label: 'Telat pembayaran', value: 184, pct: 'w-[71.9%]', color: 'bg-red-500' },
-                  { label: 'Request stop layanan', value: 32, pct: 'w-[12.5%]', color: 'bg-orange-500' },
-                  { label: 'Pindah provider', value: 24, pct: 'w-[9.4%]', color: 'bg-yellow-500' },
-                  { label: 'Lainnya', value: 16, pct: 'w-[6.2%]', color: 'bg-blue-500' }
+                  { label: 'Telat pembayaran', value: countBulanIni, pct: countTotal > 0 ? `${Math.round((countBulanIni / countTotal) * 100)}%` : '0%', color: 'bg-red-500' },
+                  { label: 'Request stop layanan', value: countOver30, pct: countTotal > 0 ? `${Math.round((countOver30 / countTotal) * 100)}%` : '0%', color: 'bg-orange-500' },
+                  { label: 'Pindah provider / lainnya', value: countOver60, pct: countTotal > 0 ? `${Math.round((countOver60 / countTotal) * 100)}%` : '0%', color: 'bg-blue-500' }
                 ].map(src => (
                   <div key={src.label} className="space-y-1.5">
                     <div className="flex justify-between items-center text-[10px]">
-                      <span className="text-slate-500 font-bold">{src.label}</span>
-                      <span className="text-white font-bold">{src.value} <span className="text-[8px] text-slate-400 font-normal">({src.pct.replace('w-[', '').replace(']', '')})</span></span>
+                      <span className="text-[var(--app-text-muted)] font-bold">{src.label}</span>
+                      <span className="text-[var(--app-text)] font-bold font-mono">{src.value} <span className="text-[8px] text-[var(--app-text-muted)] font-normal">({src.pct})</span></span>
                     </div>
-                    <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                      <div className={`h-full rounded-full ${src.color} ${src.pct}`}></div>
+                    <div className="w-full bg-[var(--app-bg)] h-1.5 rounded-full overflow-hidden">
+                      <div className={`h-full rounded-full ${src.color}`} style={{ width: src.pct }}></div>
                     </div>
                   </div>
                 ))}
@@ -724,25 +732,27 @@ export default function CustomerExpired() {
             </div>
 
             {/* Widget 3: Rekomendasi */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-3">
-              <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">Rekomendasi</h3>
-              <p className="text-[10px] text-slate-500 leading-relaxed">
-                Kirim penawaran spesial untuk pelanggan expired lebih dari 30 hari.
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-3">
+              <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider">Rekomendasi Retensi</h3>
+              <p className="text-[11px] text-[var(--app-text-muted)] leading-relaxed">
+                Kirim penawaran spesial win-back untuk pelanggan expired lebih dari 30 hari melalui WhatsApp Broadcast.
               </p>
-              <button onClick={() => alert("Membuka formulir pembuatan penawaran diskon re-aktivasi...")} className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-xs font-bold text-slate-800 rounded-xl transition shadow-lg">Buat Penawaran</button>
+              <button onClick={() => toast.info('Membuka formulir pembuatan penawaran diskon re-aktivasi...', 'Program Win-Back')} className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-xs font-bold text-white rounded-xl transition shadow-xs">
+                Buat Penawaran
+              </button>
             </div>
 
             {/* Widget 4: Tunggakan Expired */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-4">
-              <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">Tunggakan Expired</h3>
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-4">
+              <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider">Tunggakan Expired</h3>
               <div className="space-y-3.5">
                 <div>
-                  <div className="text-[10px] text-slate-400 font-bold">Total Tunggakan</div>
-                  <div className="text-lg font-black text-slate-900 mt-0.5">Rp 89.715.200</div>
+                  <div className="text-[10px] text-[var(--app-text-muted)] font-bold">Total Tunggakan</div>
+                  <div className="text-lg font-black font-mono text-[var(--app-text)] mt-0.5">Rp {totalOutstanding.toLocaleString('id-ID')}</div>
                 </div>
-                <div className="border-t border-slate-200 pt-3">
-                  <div className="text-[10px] text-slate-400 font-bold">Rata-rata per Customer</div>
-                  <div className="text-sm font-extrabold text-slate-600 mt-0.5">Rp 350.450</div>
+                <div className="border-t border-[var(--app-border)] pt-3">
+                  <div className="text-[10px] text-[var(--app-text-muted)] font-bold">Rata-rata per Customer</div>
+                  <div className="text-sm font-extrabold font-mono text-[var(--app-text-muted)] mt-0.5">Rp {avgOutstanding.toLocaleString('id-ID')}</div>
                 </div>
               </div>
             </div>
@@ -752,50 +762,52 @@ export default function CustomerExpired() {
         </div>
 
         {/* Footer Action Bar */}
-        <div className="flex flex-col sm:flex-row justify-between items-center bg-white border border-slate-200 p-4 rounded-2xl gap-4">
+        <div className="flex flex-col sm:flex-row justify-between items-center bg-[var(--app-card)] border border-[var(--app-border)] p-4 rounded-2xl gap-4">
           <div className="flex flex-wrap items-center gap-3.5 text-xs">
-            <span className="text-slate-500 font-bold">
-              <span className="text-blue-400 font-black">{selectedIds.length}</span> dipilih
+            <span className="text-[var(--app-text-muted)] font-bold">
+              <span className="text-blue-500 font-black font-mono">{selectedIds.length}</span> dipilih
             </span>
-            <label className="flex items-center gap-2 text-slate-700 font-semibold cursor-pointer">
+            <label className="flex items-center gap-2 text-[var(--app-text)] font-semibold cursor-pointer">
               <input 
                 type="checkbox"
                 checked={selectedIds.length === filteredCustomers.length && filteredCustomers.length > 0} 
                 onChange={e => handleSelectAll(e.target.checked)} 
-                className="w-4 h-4 rounded bg-slate-100 border-slate-200" 
+                className="w-4 h-4 rounded bg-[var(--app-bg)] border-[var(--app-border)]" 
               />
               Pilih Semua
             </label>
-            <div className="h-4 w-px bg-slate-100 hidden sm:block"></div>
+            <div className="h-4 w-px bg-[var(--app-border)] hidden sm:block"></div>
             <button
+              onClick={() => toast.info(`Menyiapkan broadcast WhatsApp untuk ${selectedIds.length} pelanggan...`, 'WhatsApp Gateway')}
               disabled={selectedIds.length === 0 || actionLoading}
-              className="flex items-center gap-1.5 px-3.5 py-2 bg-slate-100 hover:bg-slate-100 disabled:opacity-50 text-slate-600 border border-slate-200 rounded-xl font-bold transition"
+              className="flex items-center gap-1.5 px-3.5 py-2 bg-[var(--app-bg)] hover:border-blue-500/40 disabled:opacity-50 text-[var(--app-text)] border border-[var(--app-border)] rounded-xl font-bold transition"
             >
               <MessageSquare size={12} /> Kirim WhatsApp
             </button>
             <button
               onClick={handleBulkReactivate}
               disabled={selectedIds.length === 0 || actionLoading}
-              className="flex items-center gap-1.5 px-3.5 py-2 bg-green-500/10 hover:bg-green-500/20 disabled:opacity-50 text-green-400 border border-green-500/20 rounded-xl font-bold transition"
+              className="flex items-center gap-1.5 px-3.5 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 disabled:opacity-50 text-emerald-500 border border-emerald-500/20 rounded-xl font-bold transition"
             >
               <Check size={12} /> Aktifkan Kembali
             </button>
             <button
               onClick={handleBulkDelete}
               disabled={selectedIds.length === 0 || actionLoading}
-              className="flex items-center gap-1.5 px-3.5 py-2 bg-slate-100 hover:bg-red-500/10 disabled:opacity-50 text-slate-500 hover:text-red-400 border border-slate-200 rounded-xl font-bold transition"
+              className="flex items-center gap-1.5 px-3.5 py-2 bg-[var(--app-bg)] hover:bg-red-500/10 disabled:opacity-50 text-[var(--app-text-muted)] hover:text-red-500 border border-[var(--app-border)] rounded-xl font-bold transition"
             >
               <Trash2 size={12} /> Hapus Expired
             </button>
             <button
+              onClick={() => toast.info(`Mengekspor ${selectedIds.length} data terpilih ke CSV...`, 'Export Data')}
               disabled={selectedIds.length === 0}
-              className="flex items-center gap-1.5 px-3.5 py-2 bg-slate-100 hover:bg-slate-100 disabled:opacity-50 text-slate-600 border border-slate-200 rounded-xl font-bold transition"
+              className="flex items-center gap-1.5 px-3.5 py-2 bg-[var(--app-bg)] hover:border-blue-500/40 disabled:opacity-50 text-[var(--app-text)] border border-[var(--app-border)] rounded-xl font-bold transition"
             >
               <Download size={12} /> Export
             </button>
           </div>
 
-          <button onClick={() => router.push('/pelanggan/tambah')} className="flex items-center gap-1.5 px-5 py-2 bg-blue-600 hover:bg-blue-700 text-xs font-bold rounded-xl text-white shadow-lg transition">
+          <button onClick={() => router.push('/pelanggan/tambah')} className="flex items-center gap-1.5 px-5 py-2 bg-blue-600 hover:bg-blue-700 text-xs font-bold rounded-xl text-white shadow-xs transition">
             <Plus size={14} /> Tambah Customer
           </button>
         </div>
@@ -804,4 +816,3 @@ export default function CustomerExpired() {
     </Layout>
   )
 }
-

@@ -16,7 +16,7 @@ import { Roles } from '../auth/roles.decorator';
 
 
 
-@Controller('schedule')
+@Controller(['schedule', 'schedules'])
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class ScheduleController {
   constructor(private readonly scheduleService: ScheduleService) {}

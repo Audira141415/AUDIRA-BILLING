@@ -9,11 +9,13 @@ import { ToastProvider } from '@/contexts/ToastContext'
 import NavigationProgressBar from '@/components/NavigationProgressBar'
 import { RealtimeNotificationBanner } from '@/components/RealtimeNotificationBanner'
 import Layout from '@/components/Layout'
+import RoleSwitcherBar from '@/components/RoleSwitcherBar'
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter()
 
   const isStandalone =
+    router.pathname === '/landing' ||
     router.pathname.startsWith('/customer') ||
     router.pathname.startsWith('/invoice/public') ||
     router.pathname === '/login' ||
@@ -26,7 +28,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>AUDIRA NET — ISP Billing & Network Management</title>
+        <title>AUDIRA NET - ISP Billing & Network Management</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
       </Head>
       <ThemeProvider>
@@ -34,7 +36,8 @@ export default function App({ Component, pageProps }: AppProps) {
           <RealtimeProvider>
             <ToastProvider>
               <NavigationProgressBar />
-              <RealtimeNotificationBanner />
+              {!isStandalone && <RealtimeNotificationBanner />}
+              {!isStandalone && <RoleSwitcherBar />}
               {isStandalone ? (
                 <Component {...pageProps} />
               ) : (

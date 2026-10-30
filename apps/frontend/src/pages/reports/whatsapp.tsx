@@ -2,6 +2,7 @@ import Link from 'next/link';
 import React, { useState } from 'react';
 import Layout from '@/components/Layout';
 import ReportSubTabDetail from '@/components/ReportSubTabDetail';
+import { useToast } from '@/contexts/ToastContext';
 import {
   Download, Calendar, RefreshCw, Filter, ChevronDown, FileDown,
   FileSpreadsheet, FileText, BarChart2, TrendingUp, TrendingDown,
@@ -236,6 +237,7 @@ function TabExecSummary() {
 // ─── Tab: Performa Campaign ───────────────────────────────────────────────────
 
 function TabCampaignROI() {
+  const { toast } = useToast();
   return (
     <div className="space-y-5">
       <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-4 space-y-4">
@@ -244,7 +246,7 @@ function TabCampaignROI() {
             <h4 className="text-xs font-bold text-[var(--app-text)]">ROI per Campaign</h4>
             <p className="text-[9px] text-[var(--app-muted)]">Performa bisnis setiap campaign WhatsApp</p>
           </div>
-          <button onClick={() => alert("Mengunduh laporan performa campaign...")} className="flex items-center gap-1.5 bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-[var(--app-text)]/80 text-[9px] font-bold px-3 py-1.5 rounded-lg transition-colors">
+          <button onClick={() => toast.success("Mengunduh laporan performa campaign...")} className="flex items-center gap-1.5 bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-[var(--app-text)]/80 text-[9px] font-bold px-3 py-1.5 rounded-lg transition-colors">
             <Download size={11} /> Export
           </button>
         </div>
@@ -421,6 +423,7 @@ function TabAgentRevenue() {
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function ReportsWhatsappPage() {
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('Ringkasan Eksekutif');
   const [showExport, setShowExport] = useState(false);
 
@@ -447,13 +450,13 @@ export default function ReportsWhatsappPage() {
             </div>
             <h1 className="text-xl font-black text-[var(--app-text)] tracking-tight">WhatsApp Report</h1>
             <p className="text-[10px] text-[var(--app-muted)] mt-0.5">
-              Laporan bisnis & eksekutif — ROI campaign, konversi, churn, dan analisis revenue dari WhatsApp.
+              Laporan bisnis & eksekutif: ROI campaign, konversi, churn, dan analisis revenue dari WhatsApp.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <div className="flex items-center gap-1.5 bg-[var(--app-card)] border border-[var(--app-border)] px-3 py-1.5 rounded-lg">
               <Calendar size={11} className="text-blue-400" />
-              <span className="text-[9px] text-[var(--app-text)]/80">01 Jun – 30 Jun 2026</span>
+              <span className="text-[9px] text-[var(--app-text)]/80">01 Jun - 30 Jun 2026</span>
             </div>
             <div className="relative">
               <button onClick={() => setShowExport(v => !v)}
@@ -467,17 +470,17 @@ export default function ReportsWhatsappPage() {
                     { label: 'Export Excel', icon: FileSpreadsheet, color: 'text-green-400' },
                     { label: 'Export CSV', icon: FileText, color: 'text-blue-400' },
                   ].map(e => (
-                    <button key={e.label} onClick={() => { if (e.label === "Export PDF") { window.print(); } else { alert(`${e.label} berhasil diekspor.`); } setShowExport(false); }} className="w-full flex items-center gap-2 px-3 py-2 text-[10px] text-[var(--app-text)]/80 hover:bg-[var(--app-border)]/30 transition-colors">
+                    <button key={e.label} onClick={() => { if (e.label === "Export PDF") { window.print(); } else { toast.success(`${e.label} berhasil diekspor.`); } setShowExport(false); }} className="w-full flex items-center gap-2 px-3 py-2 text-[10px] text-[var(--app-text)]/80 hover:bg-[var(--app-border)]/30 transition-colors">
                       <e.icon size={12} className={e.color} />{e.label}
                     </button>
                   ))}
                 </div>
               )}
             </div>
-            <button onClick={() => alert("Menjadwalkan laporan otomatis berkala via WhatsApp...")} className="flex items-center gap-1.5 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-[var(--app-text)]/80 text-[10px] font-bold px-3 py-1.5 rounded-lg transition-colors">
+            <button onClick={() => toast.success("Menjadwalkan laporan otomatis berkala via WhatsApp...")} className="flex items-center gap-1.5 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-[var(--app-text)]/80 text-[10px] font-bold px-3 py-1.5 rounded-lg transition-colors">
               <Calendar size={11} className="text-blue-400" /> Jadwalkan
             </button>
-            <button onClick={() => { alert("Menyegarkan analitik pesan..."); window.location.reload(); }} className="flex items-center gap-1.5 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-[var(--app-muted)] text-[10px] px-2.5 py-1.5 rounded-lg transition-colors">
+            <button onClick={() => { toast.info("Menyegarkan analitik pesan..."); window.location.reload(); }} className="flex items-center gap-1.5 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-[var(--app-muted)] text-[10px] px-2.5 py-1.5 rounded-lg transition-colors">
               <RefreshCw size={11} />
             </button>
           </div>
@@ -498,14 +501,14 @@ export default function ReportsWhatsappPage() {
               </select>
             </div>
           ))}
-          <button onClick={() => alert("Membuka filter lanjutan & kustomisasi periode...")} className="flex items-center gap-1.5 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-card-subtle)] text-[var(--app-text)] text-xs font-medium px-3 py-1.5 rounded-lg transition-colors shadow-xs"><Filter size={12} /> Filter Lainnya</button>
+          <button onClick={() => toast.info("Membuka filter lanjutan & kustomisasi periode...")} className="flex items-center gap-1.5 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-card-subtle)] text-[var(--app-text)] text-xs font-medium px-3 py-1.5 rounded-lg transition-colors shadow-xs"><Filter size={12} /> Filter Lainnya</button>
         </div>
 
         {/* ─── Info Banner ─────────────────────────────────────────────── */}
         <div className="flex items-start gap-2 bg-blue-500/5 border border-blue-500/20 rounded-xl px-4 py-2.5">
           <Info size={14} className="text-blue-500 dark:text-blue-400 shrink-0 mt-0.5" />
           <p className="text-xs text-blue-700 dark:text-blue-300 leading-relaxed">
-            <span className="font-semibold">Halaman ini</span> menampilkan laporan bisnis &amp; eksekutif WhatsApp — mencakup ROI campaign, analisis konversi, revenue, churn rate, dan performa per channel.
+            <span className="font-semibold">Halaman ini</span> menampilkan laporan bisnis &amp; eksekutif WhatsApp: mencakup ROI campaign, analisis konversi, revenue, churn rate, dan performa per channel.
             Untuk laporan operasional harian (pengiriman pesan, status, response time), gunakan menu{' '}
             <span className="font-semibold text-[var(--app-text)]">WhatsApp → Laporan</span>.
           </p>

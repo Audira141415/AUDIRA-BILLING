@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
+import { useToast } from '@/contexts/ToastContext';
 import {
   Settings,
   Building2,
@@ -57,6 +58,7 @@ interface SettingsLog {
 
 export default function FinanceSettings() {
   const router = useRouter();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('Umum');
   const [showSavedToast, setShowSavedToast] = useState(false);
   const [showEditCompanyModal, setShowEditCompanyModal] = useState(false);
@@ -90,6 +92,7 @@ export default function FinanceSettings() {
   // Handle Save All Settings Changes
   const handleSaveAll = () => {
     setShowSavedToast(true);
+    toast.success('Pengaturan keuangan berhasil disimpan!');
     // Add current user action to activity logs
     const newLog: SettingsLog = {
       id: activityLogs.length + 1,
@@ -469,7 +472,7 @@ export default function FinanceSettings() {
             <div className="bg-[var(--app-card)] shadow-xs border border-[var(--app-border)] rounded-xl p-5 shadow-sm">
               <div className="flex items-center justify-between mb-4 border-b border-[var(--app-border)]/50 pb-2">
                 <h2 className="text-xs font-bold text-white uppercase tracking-wider">Aktivitas Terakhir</h2>
-                <button onClick={() => alert("Menampilkan seluruh riwayat log aktivitas pengaturan keuangan.")} className="text-[10px] text-blue-400 font-semibold hover:underline">Lihat Semua</button>
+                <button onClick={() => toast.info("Menampilkan seluruh riwayat log aktivitas pengaturan keuangan.")} className="text-[10px] text-blue-400 font-semibold hover:underline">Lihat Semua</button>
               </div>
 
               <div className="space-y-4">

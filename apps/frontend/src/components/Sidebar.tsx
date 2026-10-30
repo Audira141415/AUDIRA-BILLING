@@ -91,6 +91,8 @@ export const navigationGroups: MenuGroup[] = [
           { name: 'Tambah Customer Baru', href: '/pelanggan/tambah' },
           { name: 'Customer Pending', href: '/pelanggan/pending' },
           { name: 'Customer Suspend (Isolir)', href: '/pelanggan/suspend' },
+          { name: 'Radar Retensi & Churn', href: '/pelanggan/retensi', isNew: true },
+          { name: 'Loyalty Points & Referral', href: '/pelanggan/loyalty', isNew: true },
           { name: 'Customer Expired', href: '/pelanggan/expired' },
           { name: 'Import Data Customer', href: '/pelanggan/import' },
         ]
@@ -103,6 +105,7 @@ export const navigationGroups: MenuGroup[] = [
         subItems: [
           { name: 'Katalog Paket Internet', href: '/packages-admin' },
           { name: 'Tambah Paket Baru', href: '/packages-admin/tambah' },
+          { name: 'Persetujuan Upgrade Paket', href: '/packages-admin/upgrade-requests', isNew: true },
           { name: 'Kategori Paket', href: '/packages-admin/kategori' },
           { name: 'Speed Profile Mikrotik', href: '/packages-admin/speed' },
           { name: 'Promo & Diskon', href: '/packages-admin/promo' },
@@ -118,12 +121,19 @@ export const navigationGroups: MenuGroup[] = [
         subItems: [
           { name: 'Dashboard Invoice', href: '/invoice' },
           { name: 'Semua Tagihan (Invoice)', href: '/invoice/semua' },
+          { name: 'Draft Tagihan', href: '/invoice/draft' },
+          { name: 'Invoice Berulang (Recurring)', href: '/invoice/recurring' },
           { name: 'Generate Tagihan Otomatis', href: '/invoice/generate' },
           { name: 'Batch Generate Invoice', href: '/invoice/batch-generate' },
           { name: 'Invoice Jatuh Tempo', href: '/invoice/due' },
+          { name: 'Kalender Jatuh Tempo', href: '/payment/calendar', isNew: true },
           { name: 'Invoice Menunggak (Overdue)', href: '/invoice/overdue' },
+          { name: 'Nota Kredit (Credit Note)', href: '/invoice/credit-note' },
+          { name: 'Pengembalian Dana Invoice', href: '/invoice/refund' },
+          { name: 'Faktur Pajak & PPN', href: '/invoice/tax' },
           { name: 'Batch Send WhatsApp', href: '/invoice/batch-send' },
-          { name: '🤖 WhatsApp Billing Scheduler', href: '/whatsapp/billing-scheduler', isNew: true },
+          { name: 'WhatsApp Billing Scheduler', href: '/whatsapp/billing-scheduler', isNew: true },
+          { name: 'Ekspor Data Invoice', href: '/invoice/export' },
           { name: 'Riwayat Invoice', href: '/invoice/history' },
           { name: 'Template Invoice & PDF', href: '/invoice/templates' },
           { name: 'Pengaturan Billing', href: '/invoice/settings' },
@@ -136,6 +146,7 @@ export const navigationGroups: MenuGroup[] = [
         roles: ['ADMIN', 'BILLING'],
         subItems: [
           { name: 'Dashboard Pembayaran', href: '/payment' },
+          { name: 'Kalender Jatuh Tempo & Monitoring', href: '/payment/calendar', isNew: true },
           { name: 'Semua Transaksi Masuk', href: '/transaksi' },
           { name: 'Kasir Kolektor Lapangan', href: '/kolektor', isNew: true },
           { name: 'Konfirmasi Manual', href: '/payment/confirmation' },
@@ -164,18 +175,21 @@ export const navigationGroups: MenuGroup[] = [
         name: 'Keuangan & Akuntansi', 
         href: '/finance/dashboard', 
         icon: DollarSign, 
-        roles: ['ADMIN', 'BILLING'],
+        roles: ['OWNER', 'ADMIN'],
         subItems: [
           { name: 'Dashboard Keuangan', href: '/finance/dashboard' },
+          { name: 'Jurnal Transaksi Umum', href: '/finance/transaksi' },
           { name: 'Pendapatan Kas', href: '/finance/pendapatan' },
           { name: 'Pengeluaran Operasional', href: '/finance/pengeluaran' },
           { name: 'Laporan Arus Kas', href: '/finance/arus-kas' },
           { name: 'Laporan Laba Rugi', href: '/finance/laba-rugi' },
           { name: 'Neraca Keuangan', href: '/finance/neraca' },
+          { name: 'Ringkasan Laporan Keuangan', href: '/finance/laporan' },
           { name: 'Bagan Akun (Chart of Accounts)', href: '/finance/akun' },
           { name: 'Anggaran Belanja', href: '/finance/anggaran' },
           { name: 'Rekonsiliasi Bank', href: '/finance/rekonsiliasi' },
           { name: 'Pajak & PPN', href: '/finance/pajak', isNew: true },
+          { name: 'Pengaturan Akuntansi', href: '/finance/settings' },
         ]
       },
     ]
@@ -192,8 +206,10 @@ export const navigationGroups: MenuGroup[] = [
         roles: ['ADMIN', 'NOC', 'TECHNICIAN'],
         subItems: [
           { name: 'OLT & Zero-Touch ONU', href: '/infrastruktur/olt', isNew: true },
+          { name: 'Zero-Touch Provisioning (ZTP)', href: '/infrastruktur/ztp', isNew: true },
           { name: 'Kapasitas Port ODP', href: '/infrastruktur/odp' },
           { name: 'Peta Jaringan GIS (FTTH)', href: '/infrastruktur/map' },
+          { name: 'Kalkulator OTDR & Core Splicing', href: '/infrastruktur/otdr', isNew: true },
         ]
       },
       { 
@@ -203,6 +219,13 @@ export const navigationGroups: MenuGroup[] = [
         roles: ['ADMIN', 'NOC'],
         subItems: [
           { name: 'Mikrotik PPPoE & Queue', href: '/mikrotik' },
+          { name: 'Multi-NAS Cluster & Anycast BNG', href: '/mikrotik/cluster', isNew: true },
+          { name: 'NetFlow v9 & BGP Flowspec Shield', href: '/infrastruktur/netflow', isNew: true },
+          { name: 'e-Pelaporan Ditjen PPI Kominfo', href: '/infrastruktur/kominfo', isNew: true },
+          { name: 'DNS Filtering (Internet Positif)', href: '/infrastruktur/dns', isNew: true },
+          { name: 'Speedtest & SLA Studio', href: '/infrastruktur/speedtest', isNew: true },
+          { name: 'IPAM & Log CGNAT (UU ITE)', href: '/infrastruktur/ipam', isNew: true },
+          { name: 'Live MRTG & Uplink Monitor', href: '/infrastruktur/traffic', isNew: true },
           { name: 'Manajemen Layanan PPPoE', href: '/services-admin' },
           { name: 'GenieACS TR-069 Server', href: '/genieacs' },
           { name: 'Monitoring Status ONT Modem', href: '/modem-monitor' },
@@ -214,7 +237,9 @@ export const navigationGroups: MenuGroup[] = [
         icon: Activity, 
         roles: ['ADMIN', 'NOC'],
         subItems: [
-          { name: 'NOC Telegram Bot & Outage', href: '/noc', isNew: true },
+          { name: 'Telegram Bot & 14 Topics Hub', href: '/telegram', isNew: true },
+          { name: 'Pusat Gangguan Massal (Outages)', href: '/noc/incidents', isNew: true },
+          { name: 'NOC Command & Outage Radar', href: '/noc', isNew: true },
           { name: 'Sync PPPoE & CoA Otomatis', href: '/automation?tab=sync' },
         ]
       },
@@ -270,7 +295,7 @@ export const navigationGroups: MenuGroup[] = [
         roles: ['ADMIN', 'BILLING', 'CS'],
         subItems: [
           { name: 'Dashboard Gateway & Status', href: '/whatsapp' },
-          { name: '🤖 Billing Scheduler (Fonnte)', href: '/whatsapp/billing-scheduler', isNew: true },
+          { name: 'Billing Scheduler (Fonnte)', href: '/whatsapp/billing-scheduler', isNew: true },
           { name: 'Broadcast & Campaign', href: '/whatsapp/campaigns' },
           { name: 'Template Pesan Interaktif', href: '/whatsapp/templates' },
           { name: 'Live Chat CS & Inbound', href: '/whatsapp/chat' },
@@ -293,7 +318,7 @@ export const navigationGroups: MenuGroup[] = [
         name: 'Manajemen Karyawan', 
         href: '/hrm-dashboard', 
         icon: Users, 
-        roles: ['ADMIN'],
+        roles: ['OWNER', 'ADMIN'],
         subItems: [
           { name: 'Dashboard HRM', href: '/hrm-dashboard' },
           { name: 'Daftar Karyawan & Teknisi', href: '/karyawan' },
@@ -316,16 +341,19 @@ export const navigationGroups: MenuGroup[] = [
         name: 'Pusat Laporan ISP', 
         href: '/reports', 
         icon: BarChart3, 
-        roles: ['ADMIN', 'BILLING', 'CS'],
+        roles: ['OWNER', 'ADMIN', 'BILLING'],
         subItems: [
           { name: 'Dashboard Ringkasan Laporan', href: '/reports' },
           { name: 'Laporan Pendapatan (Revenue)', href: '/reports/revenue' },
+          { name: 'Laporan Keuangan Detail', href: '/reports/finance' },
           { name: 'Laporan Pertumbuhan Customer', href: '/reports/customer' },
+          { name: 'Laporan Siklus Langganan', href: '/reports/subscription' },
           { name: 'Laporan Tagihan & Piutang', href: '/reports/invoice' },
           { name: 'Laporan Pembayaran & Kas', href: '/reports/payment' },
           { name: 'Laporan Paket & Berlangganan', href: '/reports/package' },
           { name: 'Laporan Perpajakan PPN', href: '/reports/tax' },
           { name: 'Laporan Kinerja Sales & Komisi', href: '/reports/sales' },
+          { name: 'Laporan Akuisisi & Marketing', href: '/reports/marketing' },
           { name: 'Laporan Campaign WhatsApp', href: '/reports/whatsapp' },
           { name: 'Laporan Eksekutif Bulanan', href: '/reports/executive' },
         ]
@@ -341,9 +369,11 @@ export const navigationGroups: MenuGroup[] = [
         name: 'Pengaturan Sistem', 
         href: '/pengaturan', 
         icon: Settings, 
-        roles: ['ADMIN', 'BILLING', 'NOC', 'CS', 'TECHNICIAN'],
+        roles: ['OWNER', 'ADMIN'],
         subItems: [
           { name: 'Pengaturan Umum Perusahaan', href: '/pengaturan' },
+          { name: 'Lisensi & Langganan SaaS', href: '/admin/subscription', isNew: true },
+          { name: 'Telegram Bot & 14 Topics Hub', href: '/telegram', isNew: true },
           { name: 'Backup & Restore Database', href: '/backup' },
           { name: 'Audit Log Aktivitas Admin', href: '/audit-logs' },
           { name: 'Dokumentasi Sistem', href: '/dokumentasi' },
@@ -428,8 +458,14 @@ export default function Sidebar() {
 
     return navigationGroups.map(group => {
       const roleFilteredItems = group.items.filter(item => {
-        if (!user || !item.roles) return true
-        return item.roles.some(role => role.toUpperCase() === user.role.toUpperCase())
+        if (!user) return true
+        const currentRole = (user.role || '').toUpperCase()
+        // Owner and Admin have access to all management modules
+        if (currentRole === 'SUPERADMIN' || currentRole === 'OWNER' || currentRole === 'ADMIN') return true
+        // Customer has no access to admin management menus
+        if (currentRole === 'CUSTOMER') return false
+        if (!item.roles) return true
+        return item.roles.some(role => role.toUpperCase() === currentRole)
       })
 
       if (!query) {

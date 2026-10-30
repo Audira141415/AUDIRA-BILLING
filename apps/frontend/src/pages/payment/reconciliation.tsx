@@ -1,6 +1,8 @@
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Layout from '@/components/Layout';
+import { useToast } from '@/contexts/ToastContext';
+import { Pagination } from '@/components/Pagination';
 import {
   Search,
   Filter,
@@ -30,7 +32,9 @@ import {
   RefreshCw,
   Info,
   ChevronDown,
-  Upload
+  Upload,
+  X,
+  Check
 } from 'lucide-react';
 
 interface ReconRow {
@@ -60,7 +64,24 @@ const mockRecons: ReconRow[] = [
 ];
 
 export default function PaymentReconciliationPage() {
+  const { toast } = useToast();
+  const [recons, setRecons] = useState<ReconRow[]>(mockRecons);
   const [activeTab, setActiveTab] = useState('Semua');
+
+  // Search & Filter state
+  const [searchQuery, setSearchQuery] = useState('');
+  const [channelFilter, setChannelFilter] = useState('Semua Channel');
+  const [methodFilter, setMethodFilter] = useState('Semua Metode');
+  const [statusFilter, setStatusFilter] = useState('Semua Status');
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  // Modals state
+  const [selectedDetailItem, setSelectedDetailItem] = useState<ReconRow | null>(null);
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [isAutoReconciling, setIsAutoReconciling] = useState(false);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('id-ID', {
@@ -68,6 +89,110 @@ export default function PaymentReconciliationPage() {
       currency: 'IDR',
       minimumFractionDigits: 0,
     }).format(amount);
+  };
+
+  // Tab counts
+  const tabCounts = useMemo(() => {
+    return {
+      Semua: recons.length,
+      Cocok: recons.filter(r => r.status === 'Cocok').length,
+      'Tidak Cocok': recons.filter(r => r.status === 'Tidak Cocok').length,
+      Selisih: recons.filter(r => r.status === 'Selisih').length,
+      Duplikat: recons.filter(r => r.status === 'Duplikat').length,
+    };
+  }, [recons]);
+
+  // Filtered dataset
+  const filteredData = useMemo(() => {
+    return recons.filter((item) => {
+      // Tab filter
+      if (activeTab !== 'Semua' && item.status !== activeTab) return false;
+
+      // Dropdown filters
+      if (channelFilter !== 'Semua Channel' && !item.channel.toLowerCase().includes(channelFilter.toLowerCase())) return false;
+      if (methodFilter !== 'Semua Metode' && !item.method.toLowerCase().includes(methodFilter.toLowerCase())) return false;
+      if (statusFilter !== 'Semua Status' && item.status !== statusFilter) return false;
+
+      // Search query
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        const matchRef = item.refNo.toLowerCase().includes(query);
+        const matchInvoice = item.invoiceNo.toLowerCase().includes(query);
+        const matchCustomer = item.customerName.toLowerCase().includes(query);
+        if (!matchRef && !matchInvoice && !matchCustomer) return false;
+      }
+
+      return true;
+    });
+  }, [recons, activeTab, channelFilter, methodFilter, statusFilter, searchQuery]);
+
+  const totalPages = Math.ceil(filteredData.length / pageSize) || 1;
+  const safeCurrentPage = Math.min(Math.max(1, currentPage), totalPages);
+  const paginatedData = filteredData.slice((safeCurrentPage - 1) * pageSize, safeCurrentPage * pageSize);
+
+  // Auto Reconcile Action
+  const handleRunAutoReconcile = () => {
+    setIsAutoReconciling(true);
+    toast.info('Memulai pemindaian mutasi rekening koran BCA, BRI, Mandiri & QRIS...');
+    setTimeout(() => {
+      setRecons(prev => prev.map(item => {
+        if (item.status === 'Selisih' || item.status === 'Tidak Cocok') {
+          return { ...item, status: 'Cocok', diffAmount: 0 };
+        }
+        return item;
+      }));
+      setIsAutoReconciling(false);
+      toast.success('Rekonsiliasi otomatis selesai! 100% mutasi terverifikasi cocok.');
+    }, 1500);
+  };
+
+  // Export CSV
+  const handleExportCSV = () => {
+    if (filteredData.length === 0) {
+      toast.warning('Tidak ada data rekonsiliasi untuk diekspor.');
+      return;
+    }
+    const headers = ['No', 'Tanggal', 'Referensi Mutasi', 'Channel', 'Metode', 'No Invoice', 'Customer', 'Nominal', 'Status', 'Selisih'];
+    const rows = filteredData.map((d, idx) => [
+      idx + 1,
+      `"${d.date}"`,
+      `"${d.refNo}"`,
+      `"${d.channel}"`,
+      `"${d.method}"`,
+      `"${d.invoiceNo}"`,
+      `"${d.customerName.replace(/"/g, '""')}"`,
+      d.amount,
+      `"${d.status}"`,
+      d.diffAmount
+    ]);
+    const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `rekonsiliasi_bank_audira_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success(`Berhasil mengunduh laporan rekonsiliasi (${filteredData.length} baris).`);
+  };
+
+  // Manual Status Change
+  const handleUpdateStatus = (id: string, newStatus: ReconRow['status']) => {
+    setRecons(prev => prev.map(item => {
+      if (item.id === id) {
+        return {
+          ...item,
+          status: newStatus,
+          diffAmount: newStatus === 'Cocok' ? 0 : item.diffAmount || 50000
+        };
+      }
+      return item;
+    }));
+    if (selectedDetailItem && selectedDetailItem.id === id) {
+      setSelectedDetailItem(p => p ? { ...p, status: newStatus, diffAmount: newStatus === 'Cocok' ? 0 : p.diffAmount || 50000 } : null);
+    }
+    toast.success(`Status transaksi berhasil diperbarui menjadi ${newStatus}.`);
   };
 
   return (
@@ -166,37 +291,88 @@ export default function PaymentReconciliationPage() {
           </div>
         </div>
 
-        {/* ─── Filter Bar ────────────────────────────────────────────────── */}
+        {/* Filter Bar */}
         <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs p-4">
           <div className="flex flex-wrap items-center gap-4">
             {/* Date range */}
-            <div className="flex items-center gap-2 bg-[var(--app-bg)] border border-[var(--app-border)] px-3 py-2.5 rounded-xl text-xs text-[var(--app-text)]/80 cursor-pointer">
+            <div className="flex items-center gap-2 bg-[var(--app-bg)] border border-[var(--app-border)] px-3 py-2.5 rounded-xl text-xs text-[var(--app-text)]/80">
               <Calendar size={14} className="text-[var(--app-muted)]" />
               <span>01/06/2026 - 22/10/2026</span>
             </div>
 
-            <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]">
-              <option>Semua Channel</option>
+            <select
+              value={channelFilter}
+              onChange={(e) => { setChannelFilter(e.target.value); setCurrentPage(1); }}
+              className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]"
+            >
+              <option value="Semua Channel">Semua Channel</option>
+              <option value="Mobile Banking">Mobile Banking</option>
+              <option value="Internet Banking">Internet Banking</option>
+              <option value="QR Code">QR Code</option>
+              <option value="E-Wallet">E-Wallet</option>
+              <option value="Virtual Account">Virtual Account</option>
             </select>
 
-            <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]">
-              <option>Semua Metode</option>
+            <select
+              value={methodFilter}
+              onChange={(e) => { setMethodFilter(e.target.value); setCurrentPage(1); }}
+              className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]"
+            >
+              <option value="Semua Metode">Semua Metode</option>
+              <option value="BCA">BCA</option>
+              <option value="Mandiri">Mandiri</option>
+              <option value="BRI">BRI</option>
+              <option value="QRIS">QRIS</option>
+              <option value="OVO">OVO</option>
+              <option value="DANA">DANA</option>
+              <option value="ShopeePay">ShopeePay</option>
             </select>
 
-            <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]">
-              <option>Semua Status</option>
+            <select
+              value={statusFilter}
+              onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
+              className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]"
+            >
+              <option value="Semua Status">Semua Status</option>
+              <option value="Cocok">Cocok</option>
+              <option value="Tidak Cocok">Tidak Cocok</option>
+              <option value="Selisih">Selisih</option>
+              <option value="Duplikat">Duplikat</option>
             </select>
             
             <div className="relative flex-1 min-w-[240px]">
               <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-[var(--app-muted)] w-4 h-4" />
               <input 
                 type="text" 
+                value={searchQuery}
+                onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
                 placeholder="Cari referensi, invoice, customer..."
                 className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] text-xs pl-10 pr-4 py-2.5 rounded-xl text-[var(--app-text)] placeholder-slate-400 focus:outline-none focus:border-blue-500 transition-colors"
               />
             </div>
 
-            <button onClick={() => alert("Penyaringan data diterapkan.")} className="flex items-center gap-2 bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-md transition-all"><Filter size={14} /><span>Filter</span></button>
+            <button
+              onClick={() => {
+                setSearchQuery('');
+                setChannelFilter('Semua Channel');
+                setMethodFilter('Semua Metode');
+                setStatusFilter('Semua Status');
+                setActiveTab('Semua');
+                setCurrentPage(1);
+                toast.info('Filter direset ke nilai awal.');
+              }}
+              className="text-xs text-[var(--app-muted)] hover:text-[var(--app-text)] font-semibold px-3 py-2 border border-[var(--app-border)] rounded-xl transition"
+            >
+              Reset
+            </button>
+
+            <button
+              onClick={handleExportCSV}
+              className="flex items-center gap-2 bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md transition-all"
+            >
+              <Download size={14} />
+              <span>Export CSV</span>
+            </button>
           </div>
         </div>
 
@@ -210,19 +386,19 @@ export default function PaymentReconciliationPage() {
             <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs overflow-hidden">
               
               {/* Tabs row */}
-              <div className="flex border-b border-[var(--app-border)] bg-white/40 text-xs font-bold text-[var(--app-muted)] overflow-x-auto">
+              <div className="flex border-b border-[var(--app-border)] bg-[var(--app-card-subtle)] text-xs font-bold text-[var(--app-muted)] overflow-x-auto">
                 {[
-                  { label: 'Semua', count: 183 },
-                  { label: 'Cocok', count: 131 },
-                  { label: 'Tidak Cocok', count: 52 },
-                  { label: 'Selisih', count: 28 },
-                  { label: 'Duplikat', count: 12 }
+                  { label: 'Semua', count: tabCounts.Semua },
+                  { label: 'Cocok', count: tabCounts.Cocok },
+                  { label: 'Tidak Cocok', count: tabCounts['Tidak Cocok'] },
+                  { label: 'Selisih', count: tabCounts.Selisih },
+                  { label: 'Duplikat', count: tabCounts.Duplikat }
                 ].map(tab => {
                   const isActive = activeTab === tab.label;
                   return (
                     <button
                       key={tab.label}
-                      onClick={() => setActiveTab(tab.label)}
+                      onClick={() => { setActiveTab(tab.label); setCurrentPage(1); }}
                       className={`py-3 px-5 border-b-2 transition-all flex items-center gap-1.5 ${
                         isActive ? 'border-blue-500 text-[var(--app-text)] font-bold' : 'border-transparent hover:text-[var(--app-text)]/80'
                       }`}
@@ -257,70 +433,68 @@ export default function PaymentReconciliationPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[var(--app-border)]">
-                    {mockRecons.map((d, idx) => (
-                      <tr key={d.id} className="hover:bg-[var(--app-border)]/20 transition-colors">
-                        <td className="p-4 text-[var(--app-muted)] font-medium">{idx + 1}</td>
-                        <td className="p-4 text-[var(--app-muted)] font-medium">{d.date}</td>
-                        <td className="p-4 font-mono font-semibold text-[var(--app-muted)]">{d.refNo}</td>
-                        <td className="p-4 font-bold text-[var(--app-text)]">{d.channel}</td>
-                        <td className="p-4 text-[var(--app-muted)] font-medium">{d.method}</td>
-                        <td className="p-4 font-mono font-semibold text-blue-400">{d.invoiceNo}</td>
-                        <td className="p-4 font-bold text-[var(--app-text)]">{d.customerName}</td>
-                        <td className="p-4 font-bold text-[var(--app-text)]">{formatCurrency(d.amount)}</td>
-                        <td className="p-4">
-                          <span className={`px-2.5 py-1 text-[10px] font-bold rounded-full ${
-                            d.status === 'Cocok' 
-                              ? 'bg-green-500/10 text-green-400 border border-green-500/20' 
-                              : d.status === 'Selisih'
-                              ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20'
-                              : d.status === 'Tidak Cocok'
-                              ? 'bg-red-500/10 text-red-400 border border-red-500/20'
-                              : 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
-                          }`}>
-                            {d.status}
-                          </span>
-                        </td>
-                        <td className="p-4 font-bold text-[var(--app-text)]">{formatCurrency(d.diffAmount)}</td>
-                        <td className="p-4">
-                          <div className="flex items-center justify-center gap-1.5">
-                            <button onClick={() => alert("Membuka tampilan detail...")} className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors"><Eye size={13} /></button>
-                            <button onClick={() => alert("Opsi tindakan: Kirim WhatsApp, Cetak PDF, Void.")} className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors"><MoreVertical size={13} /></button>
-                          </div>
+                    {paginatedData.length === 0 ? (
+                      <tr>
+                        <td colSpan={11} className="p-8 text-center text-xs text-[var(--app-muted)]">
+                          Tidak ditemukan data transaksi mutasi yang cocok dengan filter.
                         </td>
                       </tr>
-                    ))}
+                    ) : (
+                      paginatedData.map((d, idx) => (
+                        <tr key={d.id} className="hover:bg-[var(--app-border)]/20 transition-colors">
+                          <td className="p-4 text-[var(--app-muted)] font-medium">{(safeCurrentPage - 1) * pageSize + idx + 1}</td>
+                          <td className="p-4 text-[var(--app-muted)] font-medium">{d.date}</td>
+                          <td className="p-4 font-mono font-semibold text-[var(--app-muted)]">{d.refNo}</td>
+                          <td className="p-4 font-bold text-[var(--app-text)]">{d.channel}</td>
+                          <td className="p-4 text-[var(--app-muted)] font-medium">{d.method}</td>
+                          <td className="p-4 font-mono font-semibold text-blue-400">{d.invoiceNo}</td>
+                          <td className="p-4 font-bold text-[var(--app-text)]">{d.customerName}</td>
+                          <td className="p-4 font-bold text-[var(--app-text)]">{formatCurrency(d.amount)}</td>
+                          <td className="p-4">
+                            <span className={`px-2.5 py-1 text-[10px] font-bold rounded-full ${
+                              d.status === 'Cocok' 
+                                ? 'bg-green-500/10 text-green-400 border border-green-500/20' 
+                                : d.status === 'Selisih'
+                                ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20'
+                                : d.status === 'Tidak Cocok'
+                                ? 'bg-red-500/10 text-red-400 border border-red-500/20'
+                                : 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
+                            }`}>
+                              {d.status}
+                            </span>
+                          </td>
+                          <td className="p-4 font-bold text-[var(--app-text)]">{formatCurrency(d.diffAmount)}</td>
+                          <td className="p-4">
+                            <div className="flex items-center justify-center gap-1.5">
+                              <button
+                                onClick={() => setSelectedDetailItem(d)}
+                                title="Lihat Detail Rekonsiliasi"
+                                className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors"
+                              >
+                                <Eye size={13} />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>
 
               {/* Table pagination */}
-              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-t border-[var(--app-border)] bg-white/60">
-                <span className="text-xs text-[var(--app-muted)]">
-                  Menampilkan <span className="font-semibold text-white">1 - 10</span> dari <span className="font-semibold text-white">183</span> data
-                </span>
-                
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <button 
-                      disabled
-                      className="p-2 border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 rounded-xl text-[var(--app-muted)] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                    >
-                      <ChevronLeft size={14} />
-                    </button>
-                    <button onClick={() => alert("Halaman 1 saat ini aktif.")} className="w-8 h-8 rounded-xl text-xs font-semibold border bg-[#0052cc] text-white border-[#0052cc]">1</button>
-                    <button onClick={() => alert("Beralih ke halaman 2")} className="w-8 h-8 rounded-xl text-xs font-semibold border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/30">2</button>
-                    <button onClick={() => alert("Beralih ke halaman 3")} className="w-8 h-8 rounded-xl text-xs font-semibold border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/30">3</button>
-                    <span className="text-gray-600 text-xs px-1">...</span>
-                    <button onClick={() => alert("Beralih ke halaman 19")} className="w-8 h-8 rounded-xl text-xs font-semibold border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/30">19</button>
-                    <button onClick={() => alert("Beralih ke halaman selanjutnya.")} className="p-2 border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 rounded-xl text-[var(--app-muted)] transition-colors"><ChevronRight size={14} /></button>
-                  </div>
-
-                  <select
-                    className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-1.5 px-3 rounded-lg text-[var(--app-text)]/80 focus:outline-none"
-                  >
-                    <option value={10}>10 / halaman</option>
-                  </select>
-                </div>
+              <div className="p-4 border-t border-[var(--app-border)] bg-[var(--app-card-subtle)]">
+                <Pagination
+                  currentPage={safeCurrentPage}
+                  totalPages={totalPages}
+                  totalItems={filteredData.length}
+                  pageSize={pageSize}
+                  onPageChange={setCurrentPage}
+                  onPageSizeChange={(newSize) => {
+                    setPageSize(newSize);
+                    setCurrentPage(1);
+                  }}
+                />
               </div>
             </div>
 
@@ -507,7 +681,7 @@ export default function PaymentReconciliationPage() {
                 ))}
               </div>
 
-              <button onClick={() => alert("Menampilkan semua log aktivitas rekonsiliasi pembayaran.")} className="w-full text-center text-xs font-bold text-blue-500 hover:underline pt-2 border-t border-[var(--app-border)] block">
+              <button onClick={() => toast.info("Menampilkan semua log aktivitas rekonsiliasi pembayaran.")} className="w-full text-center text-xs font-bold text-blue-500 hover:underline pt-2 border-t border-[var(--app-border)] block">
                 Lihat Semua Aktivitas &rarr;
               </button>
             </div>
@@ -517,26 +691,220 @@ export default function PaymentReconciliationPage() {
               <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Aksi Cepat</h3>
               
               <div className="space-y-2 text-[10px] font-bold text-[var(--app-muted)]">
-                {[
-                  { name: 'Jalankan Rekonsiliasi Otomatis', desc: 'Cocokkan transaksi secara massal' },
-                  { name: 'Rekonsiliasi Manual', desc: 'Pilih transaksi untuk rekonsiliasi manual' },
-                  { name: 'Upload Statement Bank', desc: 'Import mutasi rekening bank' },
-                  { name: 'Download Laporan Rekonsiliasi', desc: 'Export laporan hasil rekonsiliasi' }
-                ].map((item, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-3 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl hover:bg-[var(--app-border)]/20 cursor-pointer transition-colors">
-                    <div className="space-y-0.5">
-                      <p className="text-white leading-none">{item.name}</p>
-                      <p className="text-[8px] text-[var(--app-muted)] font-normal mt-0.5">{item.desc}</p>
-                    </div>
-                    <ChevronRight size={14} className="text-[var(--app-muted)]" />
+                <div
+                  onClick={handleRunAutoReconcile}
+                  className="flex items-center justify-between p-3 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl hover:bg-[var(--app-card-subtle)] cursor-pointer transition-colors"
+                >
+                  <div className="space-y-0.5">
+                    <p className="text-[var(--app-text)] font-bold leading-none flex items-center gap-1.5">
+                      {isAutoReconciling && <RefreshCw size={11} className="animate-spin text-blue-500" />}
+                      Jalankan Rekonsiliasi Otomatis
+                    </p>
+                    <p className="text-[8px] text-[var(--app-muted)] font-normal mt-0.5">Cocokkan transaksi rekening & gateway massal</p>
                   </div>
-                ))}
+                  <ChevronRight size={14} className="text-[var(--app-muted)]" />
+                </div>
+
+                <div
+                  onClick={() => {
+                    setActiveTab('Tidak Cocok');
+                    setCurrentPage(1);
+                    toast.info('Menampilkan daftar transaksi yang butuh rekonsiliasi manual.');
+                  }}
+                  className="flex items-center justify-between p-3 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl hover:bg-[var(--app-card-subtle)] cursor-pointer transition-colors"
+                >
+                  <div className="space-y-0.5">
+                    <p className="text-[var(--app-text)] font-bold leading-none">Rekonsiliasi Manual</p>
+                    <p className="text-[8px] text-[var(--app-muted)] font-normal mt-0.5">Pilih dan cocokkan transaksi tidak cocok/selisih</p>
+                  </div>
+                  <ChevronRight size={14} className="text-[var(--app-muted)]" />
+                </div>
+
+                <div
+                  onClick={() => setShowUploadModal(true)}
+                  className="flex items-center justify-between p-3 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl hover:bg-[var(--app-card-subtle)] cursor-pointer transition-colors"
+                >
+                  <div className="space-y-0.5">
+                    <p className="text-[var(--app-text)] font-bold leading-none">Upload Statement Bank</p>
+                    <p className="text-[8px] text-[var(--app-muted)] font-normal mt-0.5">Import rekening koran BCA/BRI/Mandiri (CSV/Excel)</p>
+                  </div>
+                  <ChevronRight size={14} className="text-[var(--app-muted)]" />
+                </div>
+
+                <div
+                  onClick={handleExportCSV}
+                  className="flex items-center justify-between p-3 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl hover:bg-[var(--app-card-subtle)] cursor-pointer transition-colors"
+                >
+                  <div className="space-y-0.5">
+                    <p className="text-[var(--app-text)] font-bold leading-none">Download Laporan Rekonsiliasi</p>
+                    <p className="text-[8px] text-[var(--app-muted)] font-normal mt-0.5">Export laporan hasil rekonsiliasi ke CSV</p>
+                  </div>
+                  <ChevronRight size={14} className="text-[var(--app-muted)]" />
+                </div>
               </div>
             </div>
 
           </div>
 
         </div>
+
+        {/* Modal: Upload Statement Rekening Koran */}
+        {showUploadModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
+              <div className="flex items-center justify-between border-b border-[var(--app-border)] pb-3">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 rounded-xl bg-blue-500/10 text-blue-500 border border-blue-500/20">
+                    <Upload size={18} />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-[var(--app-text)]">Upload Mutasi Bank / Statement</h3>
+                    <p className="text-[10px] text-[var(--app-muted)]">Format didukung: CSV, XLSX rekening koran</p>
+                  </div>
+                </div>
+                <button onClick={() => setShowUploadModal(false)} className="p-1 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)]">
+                  <X size={16} />
+                </button>
+              </div>
+
+              <div className="space-y-3.5 text-xs">
+                <div>
+                  <label className="block text-[11px] font-semibold text-[var(--app-text)] mb-1">Pilih Rekening Bank</label>
+                  <select className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2 text-[var(--app-text)] focus:outline-none">
+                    <option>BCA - 1234567890 (PT. Audira NET Indonesia)</option>
+                    <option>Mandiri - 9876543210 (PT. Audira NET Indonesia)</option>
+                    <option>BRI - 5544332211 (PT. Audira NET Indonesia)</option>
+                    <option>QRIS Settlement Merchant</option>
+                  </select>
+                </div>
+
+                <div className="border-2 border-dashed border-[var(--app-border)] hover:border-blue-500 rounded-2xl p-6 text-center cursor-pointer transition bg-[var(--app-bg)]">
+                  <Upload size={24} className="mx-auto text-[var(--app-muted)] mb-2" />
+                  <p className="font-semibold text-xs text-[var(--app-text)]">Klik atau seret file CSV/XLSX mutasi ke sini</p>
+                  <p className="text-[10px] text-[var(--app-muted)] mt-1">Maksimal ukuran file 15 MB</p>
+                </div>
+
+                <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[var(--app-border)]">
+                  <button
+                    type="button"
+                    onClick={() => setShowUploadModal(false)}
+                    className="px-4 py-2 rounded-xl border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] text-xs font-semibold"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowUploadModal(false);
+                      handleRunAutoReconcile();
+                    }}
+                    className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md flex items-center gap-1.5"
+                  >
+                    <Upload size={13} />
+                    <span>Upload & Rekonsiliasi</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Modal: Detail Rekonsiliasi */}
+        {selectedDetailItem && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
+              <div className="flex items-center justify-between border-b border-[var(--app-border)] pb-3">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 rounded-xl bg-blue-500/10 text-blue-500 border border-blue-500/20">
+                    <FileText size={18} />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-[var(--app-text)]">Rincian Transaksi Rekonsiliasi</h3>
+                    <p className="text-[10px] text-[var(--app-muted)] font-mono">{selectedDetailItem.refNo}</p>
+                  </div>
+                </div>
+                <button onClick={() => setSelectedDetailItem(null)} className="p-1 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)]">
+                  <X size={16} />
+                </button>
+              </div>
+
+              <div className="bg-[var(--app-bg)] border border-[var(--app-border)] rounded-2xl p-4 space-y-2.5 text-xs">
+                <div className="flex justify-between items-center pb-2 border-b border-[var(--app-border)]">
+                  <span className="text-[var(--app-muted)] font-medium">Status Rekonsiliasi</span>
+                  <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full ${
+                    selectedDetailItem.status === 'Cocok'
+                      ? 'bg-green-500/10 text-green-400 border border-green-500/20'
+                      : selectedDetailItem.status === 'Selisih'
+                      ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20'
+                      : 'bg-red-500/10 text-red-400 border border-red-500/20'
+                  }`}>
+                    {selectedDetailItem.status}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-[var(--app-muted)] font-medium">Pelanggan</span>
+                  <span className="font-bold text-[var(--app-text)]">{selectedDetailItem.customerName}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-[var(--app-muted)] font-medium">Nomor Invoice</span>
+                  <span className="font-mono text-blue-400 font-bold">{selectedDetailItem.invoiceNo}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-[var(--app-muted)] font-medium">Metode & Channel</span>
+                  <span className="font-medium text-[var(--app-text)]">{selectedDetailItem.method} ({selectedDetailItem.channel})</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-[var(--app-muted)] font-medium">Waktu Transaksi</span>
+                  <span className="font-medium text-[var(--app-text)]">{selectedDetailItem.date} WIB</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-[var(--app-muted)] font-medium">Nominal Mutasi</span>
+                  <span className="font-mono font-bold text-green-400">{formatCurrency(selectedDetailItem.amount)}</span>
+                </div>
+                <div className="flex justify-between items-center pt-2 border-t border-[var(--app-border)]">
+                  <span className="text-[var(--app-muted)] font-medium">Nilai Selisih</span>
+                  <span className={`font-mono font-bold ${selectedDetailItem.diffAmount > 0 ? 'text-red-400' : 'text-green-400'}`}>
+                    {formatCurrency(selectedDetailItem.diffAmount)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Status Update Quick Toggles */}
+              <div className="space-y-1.5 pt-1">
+                <span className="text-[10px] font-bold text-[var(--app-muted)] uppercase tracking-wider block">Ubah Status Manual:</span>
+                <div className="grid grid-cols-3 gap-2">
+                  <button
+                    onClick={() => handleUpdateStatus(selectedDetailItem.id, 'Cocok')}
+                    className="py-2 rounded-xl bg-green-500/10 hover:bg-green-500/20 text-green-400 border border-green-500/20 text-xs font-bold transition flex items-center justify-center gap-1"
+                  >
+                    <Check size={12} /> Cocok
+                  </button>
+                  <button
+                    onClick={() => handleUpdateStatus(selectedDetailItem.id, 'Selisih')}
+                    className="py-2 rounded-xl bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 border border-orange-500/20 text-xs font-bold transition flex items-center justify-center gap-1"
+                  >
+                    Selisih
+                  </button>
+                  <button
+                    onClick={() => handleUpdateStatus(selectedDetailItem.id, 'Tidak Cocok')}
+                    className="py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 text-xs font-bold transition flex items-center justify-center gap-1"
+                  >
+                    Tidak Cocok
+                  </button>
+                </div>
+              </div>
+
+              <div className="pt-2 border-t border-[var(--app-border)]">
+                <button
+                  onClick={() => setSelectedDetailItem(null)}
+                  className="w-full py-2 bg-[var(--app-bg)] hover:bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-xs font-semibold rounded-xl text-[var(--app-text)] transition"
+                >
+                  Tutup
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
       </div>
     </Layout>

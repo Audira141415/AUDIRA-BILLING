@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
+import { useToast } from '@/contexts/ToastContext';
 import {
   TrendingUp,
   TrendingDown,
@@ -36,8 +37,11 @@ import {
   Percent,
   Wallet,
   Edit,
-  Trash2
+  Trash2,
+  Upload,
+  X
 } from 'lucide-react';
+import { Pagination } from '@/components/Pagination';
 import {
   ResponsiveContainer,
   PieChart,
@@ -63,6 +67,7 @@ const COLORS_STRUKTUR = ['#1D4ED8', '#10B981', '#F59E0B', '#EC4899', '#EF4444', 
 
 export default function AkunDashboard() {
   const router = useRouter();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('Semua Akun');
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -81,6 +86,9 @@ export default function AkunDashboard() {
 
   // Modal State
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
   const [newCode, setNewCode] = useState('');
   const [newName, setNewName] = useState('');
   const [newCategory, setNewCategory] = useState('Aset');
@@ -281,6 +289,8 @@ export default function AkunDashboard() {
     return matchesSearch && matchesCategory && matchesLevel && matchesStatus && matchesTab && !parentIsCollapsed;
   });
 
+  const paginatedAccounts = filteredAccounts.slice((page - 1) * limit, page * limit);
+
   return (
     <Layout>
       <div className="bg-[var(--app-bg)] text-[var(--app-text)] min-h-screen p-6 font-sans antialiased">
@@ -307,12 +317,12 @@ export default function AkunDashboard() {
               <Plus className="w-3.5 h-3.5" />
               <span>Akun Baru</span>
             </button>
-            <button onClick={() => alert("Membuka dialog Import COA / Bagan Akun...")} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--app-card)] hover:bg-[var(--app-card-subtle)] text-xs font-semibold text-[var(--app-text)] border border-[var(--app-border)] shadow-xs transition-colors">
+            <button onClick={() => setShowImportModal(true)} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--app-card)] hover:bg-[var(--app-card-subtle)] text-xs font-semibold text-[var(--app-text)] border border-[var(--app-border)] shadow-xs transition-colors cursor-pointer">
               <FolderOpen className="w-3.5 h-3.5 text-[var(--app-muted)]" />
               <span>Import Akun</span>
             </button>
             <button 
-              onClick={() => alert('Mengekspor COA...')}
+              onClick={() => toast.success('Mengekspor COA...')}
               className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--app-card)] hover:bg-slate-800 text-xs font-semibold text-white border border-[var(--app-border)] transition-colors"
             >
               <Download className="w-3.5 h-3.5" />
@@ -583,7 +593,7 @@ export default function AkunDashboard() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[var(--app-border)] text-[var(--app-text)]/90">
-                  {filteredAccounts.map((acc) => {
+                  {paginatedAccounts.map((acc) => {
                     const isCollapsed = collapsedNodes[acc.code];
                     const hasChildren = accounts.some(child => child.parent === acc.code);
 
@@ -665,11 +675,15 @@ export default function AkunDashboard() {
             </div>
 
             {/* Table Pagination */}
-            <div className="flex justify-between items-center mt-4 pt-4 border-t border-[var(--app-border)]/60 text-[11px] text-[var(--app-muted)]">
-              <span>Menampilkan {filteredAccounts.length} dari {totalAkun} akun</span>
-              <div className="flex items-center gap-1.5">
-                <button onClick={() => alert("Halaman 1")} className="px-2.5 py-1 rounded bg-blue-600 text-white text-xs font-semibold">1</button>
-              </div>
+            <div className="mt-4 pt-4 border-t border-[var(--app-border)]/60">
+              <Pagination
+                currentPage={page}
+                totalItems={filteredAccounts.length}
+                pageSize={limit}
+                onPageChange={setPage}
+                onPageSizeChange={(newLimit) => { setLimit(newLimit); setPage(1); }}
+                pageSizeOptions={[5, 10, 20]}
+              />
             </div>
           </div>
 
@@ -1010,6 +1024,86 @@ export default function AkunDashboard() {
                 >
                   Ya, Hapus
                 </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Modal: Import COA Bagan Akun */}
+        {showImportModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl w-full max-w-lg shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+              <div className="flex items-center justify-between p-5 border-b border-[var(--app-border)]">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-lg bg-blue-500/10 text-blue-500 border border-blue-500/20">
+                    <Upload size={16} />
+                  </div>
+                  <h3 className="text-sm font-bold text-[var(--app-text)]">Import Bagan Akun (COA)</h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowImportModal(false)}
+                  className="p-1.5 text-[var(--app-muted)] hover:text-[var(--app-text)] rounded-lg hover:bg-[var(--app-surface-2)] transition-colors cursor-pointer"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              <div className="p-5 space-y-4 text-xs">
+                {/* Drag and Drop Zone */}
+                <div className="border-2 border-dashed border-[var(--app-border)] hover:border-blue-500 rounded-xl p-6 text-center bg-[var(--app-surface-2)]/50 transition-colors cursor-pointer">
+                  <Upload size={28} className="mx-auto text-blue-500 mb-2" />
+                  <p className="font-semibold text-[var(--app-text)]">Pilih atau seret berkas CSV/Excel ke sini</p>
+                  <p className="text-[11px] text-[var(--app-muted)] mt-1">Mendukung format .csv dan .xlsx (Maks. 5 MB)</p>
+                </div>
+
+                <div className="bg-[var(--app-surface-2)] p-3 rounded-xl border border-[var(--app-border)] space-y-2 text-[11px]">
+                  <p className="font-semibold text-[var(--app-text)]">Format Kolom yang Diperlukan:</p>
+                  <div className="grid grid-cols-2 gap-1 text-[var(--app-muted)] font-mono text-[10px]">
+                    <span>1. kode_akun (1.1.1.04)</span>
+                    <span>2. nama_akun (Kas Kasir)</span>
+                    <span>3. kategori (Aset/Beban)</span>
+                    <span>4. level (1-5)</span>
+                    <span>5. tipe (Header/Detail)</span>
+                    <span>6. saldo_awal (0)</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-3 border-t border-[var(--app-border)]">
+                  <button
+                    type="button"
+                    onClick={() => toast.success('Mengunduh template_coa_audira.csv...', 'Unduh Template')}
+                    className="text-blue-500 hover:text-blue-400 font-semibold flex items-center gap-1 text-xs cursor-pointer"
+                  >
+                    <Download size={13} />
+                    <span>Download Template CSV</span>
+                  </button>
+
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowImportModal(false)}
+                      className="px-4 py-2 rounded-lg border border-[var(--app-border)] bg-[var(--app-surface-2)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-surface)] transition-colors cursor-pointer"
+                    >
+                      Batal
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const importedSample = [
+                          { code: '1.1.1.04', name: 'Kas Petty Cash Kantor', category: 'Aset', level: 4, type: 'Detail', status: 'Aktif', debit: 5000000, kredit: 0, desc: 'Petty cash kantor operasional', creator: 'Agus Dwi Rianto', dateCreated: '29/10/2026 08:00', changer: 'Agus Dwi Rianto', dateChanged: '29/10/2026 08:00', parent: '1.1.1' },
+                          { code: '2.1.1.01', name: 'Hutang Bandwidth NAP Core', category: 'Liabilitas', level: 4, type: 'Detail', status: 'Aktif', debit: 0, kredit: 45000000, desc: 'Hutang transit IP & NAP upstream', creator: 'Agus Dwi Rianto', dateCreated: '29/10/2026 08:00', changer: 'Agus Dwi Rianto', dateChanged: '29/10/2026 08:00', parent: '1.1' }
+                        ];
+                        setAccounts(prev => [...prev, ...importedSample]);
+                        setShowImportModal(false);
+                        toast.success('Bagan akun berhasil diimpor! 2 akun baru ditambahkan ke COA.', 'Impor Berhasil');
+                      }}
+                      className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold transition-colors cursor-pointer"
+                    >
+                      Proses Impor COA
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

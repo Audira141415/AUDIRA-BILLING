@@ -394,7 +394,7 @@ export default function KolektorPage() {
                 <h3 className="font-bold text-sm text-theme-text flex items-center gap-2">
                   <DollarSign size={16} className="text-emerald-500" /> Penerimaan Uang Kas di Tempat
                 </h3>
-                <button onClick={() => setSelectedInvoice(null)} className="text-theme-muted hover:text-theme-text">✕</button>
+                <button onClick={() => setSelectedInvoice(null)} className="p-1 rounded-lg text-theme-muted hover:text-theme-text focus-visible:ring-2 focus-visible:ring-[var(--app-primary)] focus-visible:outline-none transition" aria-label="Tutup"><X size={16} /></button>
               </div>
 
               <form onSubmit={handleConfirmCollect} className="p-5 space-y-4 text-xs">
@@ -452,11 +452,11 @@ export default function KolektorPage() {
                 <h3 className="font-bold text-sm text-theme-text flex items-center gap-2">
                   <Receipt size={16} className="text-theme-primary" /> Struk Kuitansi Pembayaran
                 </h3>
-                <button onClick={() => setActiveReceipt(null)} className="text-theme-muted hover:text-theme-text">✕</button>
+                <button onClick={() => setActiveReceipt(null)} className="p-1 rounded-lg text-theme-muted hover:text-theme-text focus-visible:ring-2 focus-visible:ring-[var(--app-primary)] focus-visible:outline-none transition" aria-label="Tutup"><X size={16} /></button>
               </div>
 
               {/* Printable Receipt Layout */}
-              <div className="receipt-print-area p-5 bg-white text-slate-900 font-mono text-center space-y-2 text-xs">
+              <div className="receipt-print-area p-5 bg-white dark:bg-slate-100 text-slate-900 font-mono text-center space-y-2 text-xs">
                 <div className="font-black text-sm">AUDIRA NET BROADBAND</div>
                 <div className="text-[10px] text-slate-500">KUITANSI PENERIMAAN KAS LAPANGAN</div>
                 <div className="text-[10px] text-slate-500">0821-1200-1600 • https://audira.my.id</div>
@@ -508,7 +508,7 @@ export default function KolektorPage() {
                 <h3 className="font-bold text-sm text-theme-text flex items-center gap-2">
                   <ShieldCheck size={16} className="text-blue-500" /> Serah Terima Kas & Tutup Shift
                 </h3>
-                <button onClick={() => setShowHandoverModal(false)} className="text-theme-muted hover:text-theme-text">✕</button>
+                <button onClick={() => setShowHandoverModal(false)} className="p-1 rounded-lg text-theme-muted hover:text-theme-text focus-visible:ring-2 focus-visible:ring-[var(--app-primary)] focus-visible:outline-none transition" aria-label="Tutup"><X size={16} /></button>
               </div>
 
               <form onSubmit={handleHandoverShift} className="p-5 space-y-4 text-xs">

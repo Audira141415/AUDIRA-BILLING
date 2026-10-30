@@ -15,7 +15,7 @@ import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 
 
-@Controller('performance')
+@Controller(['performance', 'performances'])
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class PerformanceController {
   constructor(private readonly performanceService: PerformanceService) {}

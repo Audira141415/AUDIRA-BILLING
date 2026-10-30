@@ -155,7 +155,7 @@ export default function WorkOrderDetailPage() {
     try {
       const result = await api.fieldService.testOpticalPower(id as string);
       setOpticalTelemetry(result);
-      showAudiraToast('success', `✅ Telemetri Optik Berhasil: Rx ${result.rxPowerDbm} dBm (${result.quality})`);
+      showAudiraToast('success', `Telemetri Optik Berhasil: Rx ${result.rxPowerDbm} dBm (${result.quality})`);
     } catch (e) {
       // Simulate realistic telemetry for instant feedback
       const simData: OpticalTelemetry = {
@@ -170,7 +170,7 @@ export default function WorkOrderDetailPage() {
         timestamp: new Date().toISOString(),
       };
       setOpticalTelemetry(simData);
-      showAudiraToast('success', '✅ Telemetri Optik: Rx -19.45 dBm (Status O5 OPERATION - Sangat Baik)');
+      showAudiraToast('success', 'Telemetri Optik: Rx -19.45 dBm (Status O5 OPERATION - Sangat Baik)');
     } finally {
       setTestingOptical(false);
     }
@@ -184,7 +184,7 @@ export default function WorkOrderDetailPage() {
     try {
       const newUrls = Array.from(files).map(file => URL.createObjectURL(file));
       await api.fieldService.uploadPhotos(id as string, newUrls);
-      showAudiraToast('success', '✅ Foto bukti pekerjaan berhasil disimpan!');
+      showAudiraToast('success', 'Foto bukti pekerjaan berhasil disimpan!');
       loadWorkOrderDetail();
     } catch (error) {
       const newPhotos = Array.from(files).map(file => URL.createObjectURL(file));
@@ -192,7 +192,7 @@ export default function WorkOrderDetailPage() {
         ...prev,
         photos: [...prev.photos, ...newPhotos]
       }));
-      showAudiraToast('success', '✅ Foto bukti berhasil diupload (Local Cache)!');
+      showAudiraToast('success', 'Foto bukti berhasil diupload (Local Cache)!');
     } finally {
       setUploading(false);
     }
@@ -201,10 +201,10 @@ export default function WorkOrderDetailPage() {
   const handleUpdateStatus = async (newStatus: string) => {
     try {
       await api.fieldService.updateStatus(id as string, newStatus);
-      showAudiraToast('success', `✅ Status berhasil diperbarui menjadi ${newStatus.toUpperCase()}`);
+      showAudiraToast('success', `Status berhasil diperbarui menjadi ${newStatus.toUpperCase()}`);
       loadWorkOrderDetail();
     } catch (error) {
-      showAudiraToast('error', '❌ Gagal memperbarui status');
+      showAudiraToast('error', 'Gagal memperbarui status');
     }
   };
 
@@ -213,11 +213,11 @@ export default function WorkOrderDetailPage() {
     try {
       await api.fieldService.updateQC(id as string, status, qcNotes);
       setQcStatus(status);
-      showAudiraToast('success', `✅ Verifikasi QC berhasil disimpan: [${status}]`);
+      showAudiraToast('success', `Verifikasi QC berhasil disimpan: [${status}]`);
       loadWorkOrderDetail();
     } catch (error) {
       setQcStatus(status);
-      showAudiraToast('success', `✅ Verifikasi QC berhasil diperbarui: [${status}]`);
+      showAudiraToast('success', `Verifikasi QC berhasil diperbarui: [${status}]`);
     } finally {
       setSubmittingQC(false);
     }
@@ -348,7 +348,7 @@ export default function WorkOrderDetailPage() {
 
         {/* Optical Telemetry Live Card (if measured or active) */}
         {opticalTelemetry && (
-          <div className="p-5 rounded-2xl bg-gradient-to-r from-emerald-950/40 via-[#0B1528] to-cyan-950/40 border border-emerald-500/40">
+          <div className="p-5 rounded-2xl bg-[var(--app-card)] border border-emerald-500/40">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <Cpu className="w-5 h-5 text-emerald-400" />
@@ -470,7 +470,7 @@ export default function WorkOrderDetailPage() {
                         alt={`Evidence ${index + 1}`}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-2.5">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-2.5">
                         <span className="text-[11px] font-mono text-cyan-300">DOKUMEN #{index + 1}</span>
                       </div>
                     </div>
@@ -630,7 +630,7 @@ export default function WorkOrderDetailPage() {
         {/* Modal: Berita Acara Digital (BA-Digital) */}
         {showBAModal && (
           <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
-            <div className="relative w-full max-w-3xl bg-[#0F172A] border border-cyan-500/40 rounded-3xl shadow-2xl p-6 sm:p-8 space-y-6 text-white my-8 print:p-0 print:border-none print:shadow-none print:bg-white print:text-black">
+            <div className="relative w-full max-w-3xl bg-[#0F172A] border border-cyan-500/40 rounded-3xl shadow-2xl p-6 sm:p-8 space-y-6 text-white my-8 print:p-0 print:border-none print:shadow-none print:bg-white print:dark:bg-white print:text-black">
               {/* Close Button (Hidden in print) */}
               <button
                 onClick={() => setShowBAModal(false)}

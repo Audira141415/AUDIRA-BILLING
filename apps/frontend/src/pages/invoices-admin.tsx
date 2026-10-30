@@ -378,74 +378,74 @@ export default function InvoicesAdmin() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-950 text-gray-900 dark:text-slate-100 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Invoice Management</h1>
-          <p className="text-gray-600 mt-2">Kelola invoice dan pembayaran pelanggan</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100">Invoice Management</h1>
+          <p className="text-gray-600 dark:text-slate-400 mt-2">Kelola invoice dan pembayaran pelanggan</p>
         </div>
 
         {/* Statistics Cards */}
         {statistics && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 mb-8">
-            <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Total Invoice</p>
-                  <p className="text-2xl font-bold text-gray-900">{statistics.total}</p>
+                  <p className="text-sm text-gray-600 dark:text-slate-400">Total Invoice</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-slate-100">{statistics.total}</p>
                 </div>
-                <FileText className="text-blue-600" size={32} />
+                <FileText className="text-blue-600 dark:text-blue-400" size={32} />
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Pending</p>
-                  <p className="text-2xl font-bold text-yellow-600">{statistics.pending}</p>
+                  <p className="text-sm text-gray-600 dark:text-slate-400">Pending</p>
+                  <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{statistics.pending}</p>
                 </div>
-                <Clock className="text-yellow-600" size={32} />
+                <Clock className="text-yellow-600 dark:text-yellow-400" size={32} />
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Paid</p>
-                  <p className="text-2xl font-bold text-green-600">{statistics.paid}</p>
+                  <p className="text-sm text-gray-600 dark:text-slate-400">Paid</p>
+                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">{statistics.paid}</p>
                 </div>
-                <CheckCircle className="text-green-600" size={32} />
+                <CheckCircle className="text-green-600 dark:text-green-400" size={32} />
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Overdue</p>
-                  <p className="text-2xl font-bold text-red-600">{statistics.overdue}</p>
+                  <p className="text-sm text-gray-600 dark:text-slate-400">Overdue</p>
+                  <p className="text-2xl font-bold text-red-600 dark:text-red-400">{statistics.overdue}</p>
                 </div>
-                <AlertCircle className="text-red-600" size={32} />
+                <AlertCircle className="text-red-600 dark:text-red-400" size={32} />
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow-sm p-6 col-span-2">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm p-6 col-span-2">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Total Revenue</p>
-                  <p className="text-2xl font-bold text-blue-600">{formatCurrency(statistics.totalRevenue)}</p>
+                  <p className="text-sm text-gray-600 dark:text-slate-400">Total Revenue</p>
+                  <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{formatCurrency(statistics.totalRevenue)}</p>
                   <p className="text-xs text-slate-400 mt-1">
                     Pending: {formatCurrency(statistics.pendingRevenue)}
                   </p>
                 </div>
-                <DollarSign className="text-blue-600" size={32} />
+                <DollarSign className="text-blue-600 dark:text-blue-400" size={32} />
               </div>
             </div>
           </div>
         )}
 
         {/* Filters */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm p-6 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             {/* Search */}
             <div className="relative">
@@ -455,7 +455,7 @@ export default function InvoicesAdmin() {
                 placeholder="Cari invoice, customer..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100 border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
 
@@ -463,7 +463,7 @@ export default function InvoicesAdmin() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="px-4 py-2 bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100 border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="all">All Status</option>
               <option value="PENDING">Pending</option>
@@ -475,7 +475,7 @@ export default function InvoicesAdmin() {
             <select
               value={customerFilter}
               onChange={(e) => setCustomerFilter(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="px-4 py-2 bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100 border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="">All Customers</option>
               {customers.map(customer => (
@@ -488,7 +488,7 @@ export default function InvoicesAdmin() {
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="px-4 py-2 bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100 border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Start Date"
             />
 
@@ -496,7 +496,7 @@ export default function InvoicesAdmin() {
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="px-4 py-2 bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100 border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="End Date"
             />
           </div>
@@ -510,7 +510,7 @@ export default function InvoicesAdmin() {
                 setStartDate('')
                 setEndDate('')
               }}
-              className="text-sm text-gray-600 hover:text-gray-900"
+              className="text-sm text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-primary)]"
             >
               Reset Filters
             </button>
@@ -518,15 +518,15 @@ export default function InvoicesAdmin() {
             <div className="flex items-center space-x-2">
               <Link
                 href="/whatsapp/billing-scheduler"
-                className="flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg transition-colors font-medium text-sm"
+                className="flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg transition-colors font-medium text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
               >
                 <MessageSquare size={18} />
-                <span>🤖 WhatsApp Scheduler</span>
+                <span>WhatsApp Scheduler</span>
               </Link>
 
               <button
                 onClick={() => setShowCreateModal(true)}
-                className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+                className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               >
                 <Plus size={20} />
                 <span>Create Invoice</span>
@@ -536,10 +536,10 @@ export default function InvoicesAdmin() {
         </div>
 
         {/* Invoices Table */}
-        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead className="bg-gray-50 dark:bg-slate-800/60 border-b border-gray-200 dark:border-slate-800">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Invoice #</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Customer</th>
@@ -550,7 +550,7 @@ export default function InvoicesAdmin() {
                   <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-white dark:bg-slate-900 divide-y divide-gray-200 dark:divide-slate-800">
                 {invoices.map(invoice => {
                   const totalPaid = invoice.payments.reduce((sum, p) => sum + p.amount, 0)
                   const remaining = invoice.amount - totalPaid
@@ -689,7 +689,7 @@ export default function InvoicesAdmin() {
         {/* Create Invoice Modal */}
         {showCreateModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-gray-900 dark:text-slate-100 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <h2 className="text-2xl font-bold mb-4">Create New Invoice</h2>
                 <form onSubmit={handleCreateInvoice} className="space-y-4">
@@ -809,7 +809,7 @@ export default function InvoicesAdmin() {
         {/* Edit Invoice Modal - Similar structure to Create Modal */}
         {showEditModal && selectedInvoice && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-gray-900 dark:text-slate-100 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <h2 className="text-2xl font-bold mb-4">Edit Invoice</h2>
                 <form onSubmit={handleUpdateInvoice} className="space-y-4">
@@ -894,10 +894,10 @@ export default function InvoicesAdmin() {
         {/* Payment Modal */}
         {showPaymentModal && selectedInvoice && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg max-w-md w-full">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-gray-900 dark:text-slate-100 rounded-lg max-w-md w-full">
               <div className="p-6">
                 <h2 className="text-2xl font-bold mb-4">Record Payment</h2>
-                <div className="mb-4 p-4 bg-gray-50 rounded-lg">
+                <div className="mb-4 p-4 bg-gray-50 dark:bg-slate-800/60 rounded-lg">
                   <p className="text-sm text-gray-600">Invoice: {selectedInvoice.invoiceNumber}</p>
                   <p className="text-sm text-gray-600">Customer: {selectedInvoice.customer.name}</p>
                   <p className="text-lg font-bold text-gray-900 mt-2">
@@ -991,7 +991,7 @@ export default function InvoicesAdmin() {
         {/* Detail Modal */}
         {showDetailModal && selectedInvoice && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-gray-900 dark:text-slate-100 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <h2 className="text-2xl font-bold mb-4">Invoice Detail</h2>
                 

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import Link from 'next/link';
 import { showAudiraToast } from '@/contexts/ToastContext';
+import { useRealtime } from '@/contexts/RealtimeContext';
 import { 
   Ticket as TicketIcon, 
   Search, 
@@ -19,7 +20,10 @@ import {
   X,
   ChevronRight,
   ShieldAlert,
-  Inbox
+  Inbox,
+  UserCheck,
+  Send,
+  Radio
 } from 'lucide-react';
 
 interface Ticket {
@@ -27,7 +31,7 @@ interface Ticket {
   ticketNumber: string;
   title: string;
   description?: string;
-  priority: 'low' | 'medium' | 'high';
+  priority: 'low' | 'medium' | 'high' | 'urgent';
   status: 'open' | 'in_progress' | 'resolved' | 'closed';
   createdAt: string;
   updatedAt: string;
@@ -41,20 +45,40 @@ interface Ticket {
     id: string;
     name: string;
     email: string;
+    phone: string;
   };
 }
 
+interface Technician {
+  id: string;
+  name: string;
+  phone: string;
+  status: string;
+  activeTickets?: number;
+}
+
 export default function TicketsPage() {
+  const { lastEvent } = useRealtime();
+
   const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [technicians, setTechnicians] = useState<Technician[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<'ALL' | 'open' | 'in_progress' | 'resolved' | 'closed'>('ALL');
-  const [filterPriority, setFilterPriority] = useState<'ALL' | 'low' | 'medium' | 'high'>('ALL');
+  const [filterPriority, setFilterPriority] = useState<'ALL' | 'low' | 'medium' | 'high' | 'urgent'>('ALL');
+  
+  // Modals state
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showAssignModal, setShowAssignModal] = useState(false);
+  const [ticketToAssign, setTicketToAssign] = useState<Ticket | null>(null);
+  const [selectedTechnicianId, setSelectedTechnicianId] = useState<string>('');
+  
+  // Create ticket state
   const [createForm, setCreateForm] = useState({
     title: '',
+    category: 'Internet Lambat',
     description: '',
     priority: 'medium',
     customerId: '',
@@ -63,23 +87,38 @@ export default function TicketsPage() {
 
   useEffect(() => {
     fetchTickets();
+    fetchTechnicians();
   }, []);
+
+  // Real-time synchronization
+  useEffect(() => {
+    if (lastEvent?.type === 'ticket_updated') {
+      const data = lastEvent.data;
+      showAudiraToast.info(
+        `Update Tiket [${data?.ticketNumber || 'NOC'}]: ${data?.title || 'Status tiket berubah'} -> ${data?.status || 'update'}`,
+        'NOC Real-time'
+      );
+      fetchTickets();
+    } else if (lastEvent?.type === 'dashboard_refresh') {
+      fetchTickets();
+    }
+  }, [lastEvent]);
 
   const fetchTickets = async () => {
     try {
       setLoading(true);
       const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3218';
-      const response = await fetch(`${baseUrl}/tickets`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+
+      const response = await fetch(`${baseUrl}/tickets`, { headers });
 
       if (response.ok) {
-        const data = await response.json();
-        setTickets(Array.isArray(data) ? data : []);
+        const result = await response.json();
+        // Support both { data: [...], pagination: {...} } and direct array
+        const list = Array.isArray(result) ? result : (result.data || []);
+        setTickets(list);
       }
     } catch (error) {
       console.error('Error fetching tickets:', error);
@@ -88,26 +127,48 @@ export default function TicketsPage() {
     }
   };
 
+  const fetchTechnicians = async () => {
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3218';
+      const res = await fetch(`${baseUrl}/tickets/technicians/available`);
+      if (res.ok) {
+        const data = await res.json();
+        const list = Array.isArray(data) ? data : [];
+        setTechnicians(list);
+        if (list.length > 0 && !selectedTechnicianId) {
+          setSelectedTechnicianId(list[0].id);
+        }
+      }
+    } catch (e) {
+      console.error('Failed to fetch technicians', e);
+    }
+  };
+
   const handleCreateTicket = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       setIsSubmitting(true);
-      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3218';
+      
+      const payload = {
+        title: `[${createForm.category}] ${createForm.title}`,
+        category: createForm.category,
+        description: createForm.description,
+        priority: createForm.priority,
+        customerId: createForm.customerId || undefined,
+      };
+
       const response = await fetch(`${baseUrl}/tickets`, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(createForm)
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
       });
 
       if (response.ok) {
         setShowCreateModal(false);
-        setCreateForm({ title: '', description: '', priority: 'medium', customerId: '' });
+        setCreateForm({ title: '', category: 'Internet Lambat', description: '', priority: 'medium', customerId: '' });
         fetchTickets();
-        showAudiraToast.success('Tiket pengaduan baru berhasil dibuat!', 'Tiket Dibuat');
+        showAudiraToast.success('Tiket pengaduan baru berhasil dibuat & disiagakan di NOC!', 'Tiket Diterbitkan');
       } else {
         showAudiraToast.error('Gagal membuat tiket di server', 'Gagal');
       }
@@ -121,14 +182,10 @@ export default function TicketsPage() {
 
   const handleUpdateStatus = async (ticketId: string, newStatus: string) => {
     try {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3218';
-      const response = await fetch(`${baseUrl}/tickets/${ticketId}`, {
+      const response = await fetch(`${baseUrl}/tickets/${ticketId}/status`, {
         method: 'PATCH',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
       });
 
@@ -137,13 +194,44 @@ export default function TicketsPage() {
         if (selectedTicket && selectedTicket.id === ticketId) {
           setSelectedTicket({ ...selectedTicket, status: newStatus as any });
         }
-        showAudiraToast.success(`Status tiket diubah menjadi ${newStatus}!`, 'Status Diperbarui');
+        showAudiraToast.success(`Status tiket diubah menjadi ${newStatus.toUpperCase()}!`, 'Status Diperbarui');
       } else {
         showAudiraToast.error('Gagal memperbarui status di server', 'Error');
       }
     } catch (error: any) {
       console.error('Error updating ticket:', error);
       showAudiraToast.error(`Gagal memperbarui status tiket: ${error.message}`, 'Error');
+    }
+  };
+
+  const handleAssignTechnician = async () => {
+    if (!ticketToAssign || !selectedTechnicianId) return;
+
+    try {
+      setIsSubmitting(true);
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3218';
+      const response = await fetch(`${baseUrl}/tickets/${ticketToAssign.id}/assign`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ technicianId: selectedTechnicianId }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setShowAssignModal(false);
+        setTicketToAssign(null);
+        fetchTickets();
+        showAudiraToast.success(
+          `Teknisi ${result.ticket?.technician?.name || 'Lapangan'} berhasil didisposisikan ke tiket ${ticketToAssign.ticketNumber}!`,
+          'Disposisi Teknisi Berhasil'
+        );
+      } else {
+        showAudiraToast.error('Gagal melakukan penugasan teknisi di server', 'Gagal Disposisi');
+      }
+    } catch (e: any) {
+      showAudiraToast.error(`Error penugasan teknisi: ${e.message}`, 'Error');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -166,13 +254,14 @@ export default function TicketsPage() {
         return (
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-rose-500/10 text-rose-400 border border-rose-500/20">
             <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
-            Open
+            Open (NOC)
           </span>
         );
       case 'in_progress':
+      case 'in-progress':
         return (
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
-            <Clock size={12} />
+            <Clock size={12} className="animate-spin" />
             In Progress
           </span>
         );
@@ -195,6 +284,7 @@ export default function TicketsPage() {
 
   const getPriorityBadge = (priority: string) => {
     switch (priority) {
+      case 'urgent':
       case 'high':
         return (
           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold bg-rose-500/15 text-rose-400 border border-rose-500/30 uppercase tracking-wider">
@@ -220,7 +310,7 @@ export default function TicketsPage() {
   const statsData = {
     total: tickets.length,
     open: tickets.filter(t => t.status === 'open').length,
-    inProgress: tickets.filter(t => t.status === 'in_progress').length,
+    inProgress: tickets.filter(t => t.status === 'in_progress' || (t.status as string) === 'in-progress').length,
     resolved: tickets.filter(t => t.status === 'resolved' || t.status === 'closed').length,
   };
 
@@ -235,23 +325,27 @@ export default function TicketsPage() {
               <span>/</span>
               <span>Operasional & Lapangan</span>
               <span>/</span>
-              <span className="text-[var(--app-primary)]">Helpdesk</span>
+              <span className="text-[var(--app-primary)]">Helpdesk Real-time</span>
             </div>
             <h1 className="text-xl md:text-2xl font-bold tracking-tight text-[var(--app-text)] font-sans flex items-center gap-2.5">
               <TicketIcon className="text-[var(--app-primary)] w-6 h-6" />
               Tiket Gangguan & Helpdesk CS
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center gap-1">
+                <Radio size={10} className="animate-pulse" />
+                LIVE SYNC
+              </span>
             </h1>
             <p className="text-xs text-[var(--app-muted)] mt-0.5">
-              Manajemen tiket kendala teknis pelanggan, eskalasi ke teknisi lapangan, dan monitoring SLA.
+              Manajemen tiket kendala teknis pelanggan dari Mobile App, eskalasi ke teknisi lapangan, dan monitoring SLA terintegrasi.
             </p>
           </div>
 
           <div className="flex items-center gap-2.5">
             <button
-              onClick={fetchTickets}
+              onClick={() => { fetchTickets(); fetchTechnicians(); }}
               disabled={loading}
               className="p-2 border border-[var(--app-border)] bg-[var(--app-card)] text-[var(--app-muted)] hover:text-[var(--app-text)] rounded-lg transition-colors"
-              title="Refresh Data"
+              title="Refresh Data Tiket & Teknisi"
             >
               <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
             </button>
@@ -270,7 +364,7 @@ export default function TicketsPage() {
           <div className="p-4 rounded-xl border border-[var(--app-border)] bg-[var(--app-card)] shadow-xs">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--app-muted)]">Total Tiket Masuk</span>
             <div className="text-2xl font-bold font-mono text-[var(--app-text)] mt-1">{statsData.total}</div>
-            <div className="text-[11px] text-[var(--app-muted)] mt-0.5">Semua riwayat pengaduan</div>
+            <div className="text-[11px] text-[var(--app-muted)] mt-0.5">Riwayat pengaduan aktif</div>
           </div>
 
           <div className="p-4 rounded-xl border border-[var(--app-border)] bg-[var(--app-card)] shadow-xs">
@@ -353,7 +447,7 @@ export default function TicketsPage() {
                   <th className="px-4 py-3">Status</th>
                   <th className="px-4 py-3">Teknisi PIC</th>
                   <th className="px-4 py-3">Waktu Lapor</th>
-                  <th className="px-4 py-3 text-right">Aksi</th>
+                  <th className="px-4 py-3 text-right">Aksi & Disposisi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--app-border)] text-xs">
@@ -398,7 +492,23 @@ export default function TicketsPage() {
                       <td className="px-4 py-3">{getPriorityBadge(ticket.priority)}</td>
                       <td className="px-4 py-3">{getStatusBadge(ticket.status)}</td>
                       <td className="px-4 py-3 text-[var(--app-muted)]">
-                        {ticket.technician?.name || <span className="text-amber-500/80 font-mono text-[11px]">Belum Ditugaskan</span>}
+                        {ticket.technician ? (
+                          <div className="flex items-center gap-1.5 text-emerald-400 font-medium">
+                            <UserCheck size={14} />
+                            <span>{ticket.technician.name}</span>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => {
+                              setTicketToAssign(ticket);
+                              setShowAssignModal(true);
+                            }}
+                            className="px-2 py-0.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded text-[11px] font-semibold flex items-center gap-1 transition-all"
+                          >
+                            <Wrench size={11} />
+                            Tugaskan
+                          </button>
+                        )}
                       </td>
                       <td className="px-4 py-3 text-[var(--app-muted)] font-mono text-[11px]">
                         {new Date(ticket.createdAt).toLocaleDateString('id-ID', {
@@ -420,6 +530,21 @@ export default function TicketsPage() {
                           >
                             <Eye size={14} />
                           </button>
+                          
+                          {!ticket.technician && ticket.status === 'open' && (
+                            <button
+                              onClick={() => {
+                                setTicketToAssign(ticket);
+                                setShowAssignModal(true);
+                              }}
+                              className="px-2 py-1 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-md font-medium text-[11px] flex items-center gap-1 transition-colors"
+                              title="Disposisi Teknisi"
+                            >
+                              <Wrench size={12} />
+                              Disposisi
+                            </button>
+                          )}
+
                           {ticket.status !== 'resolved' && (
                             <button
                               onClick={() => handleUpdateStatus(ticket.id, 'resolved')}
@@ -439,6 +564,72 @@ export default function TicketsPage() {
           </div>
         </div>
 
+        {/* Modal Disposisi Teknisi */}
+        {showAssignModal && ticketToAssign && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl shadow-2xl max-w-md w-full p-6 text-[var(--app-text)] animate-in fade-in zoom-in-95">
+              <div className="flex items-center justify-between pb-4 border-b border-[var(--app-border)]">
+                <div className="flex items-center gap-2">
+                  <Wrench size={18} className="text-[var(--app-primary)]" />
+                  <h3 className="text-base font-bold">Disposisi Teknisi Lapangan</h3>
+                </div>
+                <button onClick={() => setShowAssignModal(false)} className="text-[var(--app-muted)] hover:text-[var(--app-text)]">
+                  <X size={18} />
+                </button>
+              </div>
+
+              <div className="mt-4 space-y-4 text-xs">
+                <div className="p-3 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg">
+                  <span className="text-[10px] font-semibold uppercase text-[var(--app-muted)] block">No Tiket:</span>
+                  <div className="font-mono font-bold text-[var(--app-primary)]">{ticketToAssign.ticketNumber}</div>
+                  <div className="font-medium text-[var(--app-text)] mt-1">{ticketToAssign.title}</div>
+                  {ticketToAssign.customer && (
+                    <div className="text-[11px] text-[var(--app-muted)] mt-1">
+                      Pelanggan: {ticketToAssign.customer.name} ({ticketToAssign.customer.phone})
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-[var(--app-muted)] mb-1">
+                    Pilih Teknisi Lapangan Siaga:
+                  </label>
+                  <select
+                    value={selectedTechnicianId}
+                    onChange={(e) => setSelectedTechnicianId(e.target.value)}
+                    className="w-full px-3 py-2 text-xs bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-[var(--app-text)] focus:outline-none focus:border-[var(--app-primary)]"
+                  >
+                    {technicians.map((tech) => (
+                      <option key={tech.id} value={tech.id}>
+                        {tech.name} ({tech.phone}) - {tech.status.toUpperCase()}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="flex items-center justify-end gap-2 pt-2 border-t border-[var(--app-border)]">
+                  <button
+                    type="button"
+                    onClick={() => setShowAssignModal(false)}
+                    className="px-4 py-2 text-xs font-medium border border-[var(--app-border)] rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)]"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleAssignTechnician}
+                    disabled={isSubmitting || !selectedTechnicianId}
+                    className="px-4 py-2 text-xs font-semibold bg-[var(--app-primary)] text-white rounded-lg hover:opacity-90 disabled:opacity-50 flex items-center gap-1.5"
+                  >
+                    <Send size={13} />
+                    {isSubmitting ? 'Mengirim Tugas...' : 'Tugaskan Teknisi ➔'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Create Ticket Modal */}
         {showCreateModal && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
@@ -455,11 +646,26 @@ export default function TicketsPage() {
 
               <form onSubmit={handleCreateTicket} className="mt-4 space-y-4">
                 <div>
+                  <label className="block text-xs font-medium text-[var(--app-muted)] mb-1">Kategori Gangguan</label>
+                  <select
+                    value={createForm.category}
+                    onChange={(e) => setCreateForm({ ...createForm, category: e.target.value })}
+                    className="w-full px-3 py-2 text-xs bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-[var(--app-text)] focus:outline-none focus:border-[var(--app-primary)]"
+                  >
+                    <option value="Internet Lambat">Internet Lambat / Latensi Tinggi</option>
+                    <option value="Lampu LOS Merah">Lampu LOS Merah / Kabel Putus</option>
+                    <option value="Wi-Fi Tidak Terdeteksi">Wi-Fi Tidak Terdeteksi</option>
+                    <option value="Kendala Tagihan">Kendala Pembayaran / Tagihan</option>
+                    <option value="Instalasi Baru">Permintaan Instalasi Baru</option>
+                  </select>
+                </div>
+
+                <div>
                   <label className="block text-xs font-medium text-[var(--app-muted)] mb-1">Judul Kendala / Laporan</label>
                   <input
                     type="text"
                     required
-                    placeholder="Contoh: Lampu LOS Merah / Redaman Tinggi"
+                    placeholder="Contoh: Redaman sinyal fluktuatif di ODP"
                     value={createForm.title}
                     onChange={(e) => setCreateForm({ ...createForm, title: e.target.value })}
                     className="w-full px-3 py-2 text-xs bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-[var(--app-text)] focus:outline-none focus:border-[var(--app-primary)]"
@@ -503,7 +709,7 @@ export default function TicketsPage() {
                     disabled={isSubmitting}
                     className="px-4 py-2 text-xs font-semibold bg-[var(--app-primary)] text-white rounded-lg hover:opacity-90 disabled:opacity-50"
                   >
-                    {isSubmitting ? 'Menyimpan...' : 'Simpan Tiket'}
+                    {isSubmitting ? 'Menyimpan...' : 'Simpan Tiket ➔'}
                   </button>
                 </div>
               </form>
@@ -545,6 +751,26 @@ export default function TicketsPage() {
                     <p><span className="text-[var(--app-muted)]">Kontak:</span> <strong className="text-[var(--app-text)] font-mono">{selectedTicket.customer.phone}</strong></p>
                   </div>
                 )}
+
+                <div className="p-3 border border-[var(--app-border)] rounded-lg space-y-1">
+                  <span className="text-[10px] font-semibold uppercase text-[var(--app-muted)] block mb-1">Teknisi Bertugas:</span>
+                  {selectedTicket.technician ? (
+                    <p className="text-emerald-400 font-semibold">{selectedTicket.technician.name} ({selectedTicket.technician.phone})</p>
+                  ) : (
+                    <div className="flex items-center justify-between">
+                      <span className="text-amber-400 italic">Belum ada teknisi ditugaskan</span>
+                      <button
+                        onClick={() => {
+                          setTicketToAssign(selectedTicket);
+                          setShowAssignModal(true);
+                        }}
+                        className="px-2 py-1 bg-[var(--app-primary)] text-white rounded text-[11px] font-semibold"
+                      >
+                        Disposisi Sekarang
+                      </button>
+                    </div>
+                  )}
+                </div>
 
                 <div className="flex items-center justify-between text-[11px] text-[var(--app-muted)] pt-2 border-t border-[var(--app-border)]">
                   <span>Dibuat: {new Date(selectedTicket.createdAt).toLocaleString('id-ID')}</span>

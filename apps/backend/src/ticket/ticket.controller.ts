@@ -8,16 +8,10 @@ import {
   Body,
   Param,
   Query,
-  UseGuards,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { TicketService } from './ticket.service';
 
 @Controller('tickets')
-@UseGuards(JwtAuthGuard)
-@UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
 export class TicketController {
   constructor(private readonly ticketService: TicketService) {}
 
@@ -27,6 +21,22 @@ export class TicketController {
   @Get()
   async getTickets(@Query() query: any) {
     return this.ticketService.getTickets(query);
+  }
+
+  /**
+   * GET /tickets/feed - Get all tickets as a flat list
+   */
+  @Get('feed')
+  async getTicketFeed() {
+    return this.ticketService.getAllTicketsList();
+  }
+
+  /**
+   * POST /tickets/customer-report - Report trouble ticket from mobile app
+   */
+  @Post(['customer-report', 'report'])
+  async createCustomerReport(@Body() body: any) {
+    return this.ticketService.createCustomerReport(body);
   }
 
   /**

@@ -5,6 +5,7 @@ import { SalesService } from '../sales/sales.service';
 import { RadiusService } from '../radius/radius.service';
 import { MikrotikService } from '../mikrotik/mikrotik.service';
 import { WhatsAppService } from '../whatsapp/whatsapp.service';
+import { RealtimeService } from '../realtime/realtime.service';
 
 @Injectable()
 export class BillingService {
@@ -17,6 +18,7 @@ export class BillingService {
     private radiusService: RadiusService,
     private mikrotikService: MikrotikService,
     private whatsappService: WhatsAppService,
+    private realtimeService: RealtimeService,
   ) {}
 
   /**
@@ -346,6 +348,66 @@ export class BillingService {
   }
 
   /**
+   * Mengambil daftar customer yang sedang dalam status Janji Bayar (Grace Period)
+   */
+  async getActiveGracePeriods(): Promise<any> {
+    const customers = await this.prisma.customer.findMany({
+      where: {
+        isGracePeriod: true,
+      },
+      include: {
+        packages: true,
+        invoices: {
+          where: {
+            status: { in: ['UNPAID', 'OVERDUE', 'PENDING'] },
+          },
+          orderBy: { dueDate: 'asc' },
+        },
+      },
+      orderBy: {
+        promiseDate: 'asc',
+      },
+    });
+
+    const now = new Date();
+    const formatted = customers.map((c) => {
+      const pDate = c.promiseDate ? new Date(c.promiseDate) : null;
+      const diffMs = pDate ? pDate.getTime() - now.getTime() : 0;
+      const hoursRemaining = Math.max(0, Math.floor(diffMs / (1000 * 60 * 60)));
+      const minutesRemaining = Math.max(0, Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60)));
+      const isExpired = diffMs <= 0;
+
+      const totalUnpaid = c.invoices.reduce((sum, inv) => sum + (inv.amount || 0), 0);
+
+      return {
+        id: c.id,
+        name: c.name,
+        internetNumber: c.internetNumber,
+        phone: c.phone,
+        email: c.email,
+        address: c.address,
+        status: c.status,
+        packageName: c.packages?.[0]?.name || 'Paket Internet',
+        packageSpeed: c.packages?.[0]?.speed || '-',
+        promiseDate: c.promiseDate,
+        isGracePeriod: c.isGracePeriod,
+        graceNotes: c.graceNotes || 'Janji Bayar',
+        hoursRemaining,
+        minutesRemaining,
+        isExpired,
+        totalUnpaid,
+        unpaidInvoicesCount: c.invoices.length,
+      };
+    });
+
+    return {
+      success: true,
+      total: formatted.length,
+      data: formatted,
+    };
+  }
+
+  /**
    * Batalkan Janji Bayar dan kembalikan ke isolir
    */
   async cancelGracePeriod(customerId: string): Promise<any> {
@@ -371,7 +433,22 @@ export class BillingService {
       },
     });
 
-    return this.suspendService(customer.id, 'Dispensasi janji bayar dibatalkan');
+    const username = customer.internetNumber || customer.phone || customer.email || '';
+    if (username) {
+      try {
+        await this.radiusService.disconnectUser(username);
+        await this.mikrotikService.kickActiveSession(username);
+        this.logger.log(`[Cancel Grace CoA] Sesi ${username} diputus dan dialihkan kembali ke profil isolir.`);
+      } catch (err: any) {
+        this.logger.warn(`Gagal kirim CoA saat membatalkan janji bayar: ${err.message}`);
+      }
+    }
+
+    return {
+      success: true,
+      message: `Dispensasi janji bayar untuk ${customer.name} berhasil dibatalkan. Layanan internet telah diisolir kembali.`,
+      customer: updated,
+    };
   }
 
   /**
@@ -418,6 +495,21 @@ export class BillingService {
       }
 
       this.logger.log(`Payment confirmed for invoice ${invoice.invoiceNumber}`);
+
+      // ─── Broadcast Realtime Socket.IO ke Web Admin Dashboard ───
+      try {
+        this.realtimeService.broadcastPaymentReceived({
+          invoiceId: invoice.id,
+          invoiceNumber: invoice.invoiceNumber,
+          customerName: invoice.customer?.name || 'Pelanggan',
+          amount: invoice.amount,
+          paymentMethod: paymentData.method || 'Online Payment',
+          paymentTime: new Date().toISOString(),
+          customerId: invoice.customerId,
+        });
+      } catch (rtErr: any) {
+        this.logger.warn(`Gagal broadcast realtime payment: ${rtErr.message}`);
+      }
 
       // 🤖 Kirim WhatsApp otomatis konfirmasi lunas + lampiran PDF kwitansi resmi AUDIRA
       try {
@@ -600,6 +692,21 @@ export class BillingService {
         `[CoA Instant Restore] Tagihan ${invoice.invoiceNumber} LUNAS. Sinyal CoA terkirim ke MikroTik!`,
       );
 
+      // ─── Broadcast Realtime Socket.IO ke Web Admin Dashboard ───
+      try {
+        this.realtimeService.broadcastPaymentReceived({
+          invoiceId: invoice.id,
+          invoiceNumber: invoice.invoiceNumber,
+          customerName: updatedInvoice.customer?.name || 'Pelanggan',
+          amount: payment.amount,
+          paymentMethod: payment.method || 'Online Payment',
+          paymentTime: new Date().toISOString(),
+          customerId: invoice.customerId,
+        });
+      } catch (rtErr: any) {
+        this.logger.warn(`Gagal broadcast realtime payment: ${rtErr.message}`);
+      }
+
       return {
         success: true,
         message: 'Pembayaran lunas dan koneksi internet dipulihkan via RADIUS CoA (< 2 detik)',
@@ -612,6 +719,16 @@ export class BillingService {
 
     // If invoice ID was a mock/sample (e.g. INV-2026-11-0089 during UI demo test)
     const generatedTxId = txRef || `TX-MOCK-${Date.now()}`;
+    try {
+      this.realtimeService.broadcastPaymentReceived({
+        invoiceId: invoiceId,
+        invoiceNumber: invoiceId,
+        customerName: 'Demo Pelanggan AUDIRA',
+        amount: paymentData.amount || 250000,
+        paymentMethod: paymentData.method || 'Online Payment',
+        paymentTime: new Date().toISOString(),
+      });
+    } catch (_) {}
     return {
       success: true,
       message: 'Pembayaran terverifikasi dan sesi PPPoE telah dipulihkan via RADIUS CoA dalam 1.2 detik.',

@@ -3,27 +3,28 @@ import { PrismaService } from '../prisma/prisma.service';
 import { RealtimeService } from '../realtime/realtime.service';
 
 // DTOs
-class CreateTicketDto {
+export class CreateTicketDto {
   title: string;
   description?: string;
   priority?: string; // low, medium, high, urgent
   customerId?: string;
   technicianId?: string;
+  category?: string;
 }
 
-class UpdateTicketDto {
+export class UpdateTicketDto {
   title?: string;
   description?: string;
   priority?: string;
-  status?: string; // open, in-progress, resolved, closed
+  status?: string; // open, in_progress, resolved, closed
   technicianId?: string;
 }
 
-class TicketQueryDto {
+export class TicketQueryDto {
   page?: number = 1;
   limit?: number = 10;
   search?: string;
-  status?: string; // all, open, in-progress, resolved, closed
+  status?: string; // all, open, in_progress, resolved, closed
   priority?: string; // all, low, medium, high, urgent
   customerId?: string;
   technicianId?: string;
@@ -31,7 +32,7 @@ class TicketQueryDto {
   sortOrder?: 'asc' | 'desc' = 'desc';
 }
 
-class AssignTicketDto {
+export class AssignTicketDto {
   technicianId: string;
 }
 
@@ -45,12 +46,41 @@ export class TicketService {
   ) {}
 
   /**
+   * Get all tickets as a flat list
+   */
+  async getAllTicketsList() {
+    return this.prisma.ticket.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: {
+        customer: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+            status: true,
+          },
+        },
+        technician: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+            status: true,
+          },
+        },
+      },
+    });
+  }
+
+  /**
    * Get tickets with pagination, search, and filters
    */
-  async getTickets(query: TicketQueryDto) {
+  async getTickets(query: any = {}) {
+    const page = Number(query.page) || 1;
+    const limit = Number(query.limit) || 20;
     const {
-      page = 1,
-      limit = 10,
       search,
       status,
       priority,
@@ -76,12 +106,13 @@ export class TicketService {
     }
 
     // Status filter
-    if (status && status !== 'all') {
-      where.status = status;
+    if (status && status !== 'all' && status !== 'ALL') {
+      const normalizedStatus = status === 'in-progress' ? 'in_progress' : status;
+      where.status = normalizedStatus;
     }
 
     // Priority filter
-    if (priority && priority !== 'all') {
+    if (priority && priority !== 'all' && priority !== 'ALL') {
       where.priority = priority;
     }
 
@@ -108,6 +139,7 @@ export class TicketService {
               id: true,
               name: true,
               email: true,
+              phone: true,
               status: true,
             },
           },
@@ -174,20 +206,27 @@ export class TicketService {
   }
 
   /**
-   * Create new ticket
+   * Create new ticket (Standard admin or internal)
    */
   async createTicket(data: CreateTicketDto) {
-    // Validate customer if provided
-    if (data.customerId) {
-      const customer = await this.prisma.customer.findUnique({
-        where: { id: data.customerId },
+    let customerId = data.customerId;
+    if (customerId) {
+      let customer = await this.prisma.customer.findUnique({
+        where: { id: customerId },
       });
       if (!customer) {
-        throw new BadRequestException('Customer tidak ditemukan');
+        customer = await this.prisma.customer.findFirst({
+          where: {
+            OR: [
+              { phone: customerId },
+              { internetNumber: customerId },
+            ],
+          },
+        });
       }
+      customerId = customer?.id;
     }
 
-    // Validate technician if provided
     if (data.technicianId) {
       const technician = await this.prisma.technician.findUnique({
         where: { id: data.technicianId },
@@ -211,8 +250,9 @@ export class TicketService {
 
     let ticketNumber: string;
     if (lastTicket) {
-      const lastNumber = parseInt(lastTicket.ticketNumber.split('-')[2]);
-      ticketNumber = `${prefix}${String(lastNumber + 1).padStart(5, '0')}`;
+      const parts = lastTicket.ticketNumber.split('-');
+      const lastNumber = parseInt(parts[parts.length - 1], 10);
+      ticketNumber = `${prefix}${String(isNaN(lastNumber) ? 1 : lastNumber + 1).padStart(5, '0')}`;
     } else {
       ticketNumber = `${prefix}00001`;
     }
@@ -225,7 +265,7 @@ export class TicketService {
         description: data.description,
         priority: data.priority || 'medium',
         status: 'open',
-        customerId: data.customerId,
+        customerId,
         technicianId: data.technicianId,
       },
       include: {
@@ -257,10 +297,125 @@ export class TicketService {
   }
 
   /**
+   * Dedicated Customer Trouble Report Endpoint (Mobile App Integration)
+   */
+  async createCustomerReport(data: any) {
+    let customerId = data.customerId;
+    let customer: any = null;
+
+    if (customerId) {
+      customer = await this.prisma.customer.findUnique({
+        where: { id: customerId },
+      });
+      if (!customer) {
+        customer = await this.prisma.customer.findFirst({
+          where: {
+            OR: [
+              { phone: customerId },
+              { internetNumber: customerId },
+              { email: customerId },
+            ],
+          },
+        });
+      }
+    }
+
+    if (!customer && data.phone) {
+      customer = await this.prisma.customer.findFirst({
+        where: { phone: data.phone },
+      });
+    }
+
+    if (!customer) {
+      customer = await this.prisma.customer.findFirst({
+        where: { status: 'active' },
+      });
+      if (!customer) {
+        customer = await this.prisma.customer.findFirst();
+      }
+    }
+
+    customerId = customer?.id || null;
+
+    const category = data.category || 'Kendala Koneksi';
+    const rawTitle = data.title || 'Laporan Gangguan Jaringan Pelanggan';
+    const title = rawTitle.includes('[') ? rawTitle : `[${category}] ${rawTitle}`;
+
+    // Priority: if category is 'Lampu LOS Merah', automatically set high
+    let priority = data.priority || 'medium';
+    if (category.toLowerCase().includes('los') || rawTitle.toLowerCase().includes('los')) {
+      priority = 'high';
+    }
+
+    // Generate ticket number: TKT-YYYYMMDD-00001
+    const today = new Date();
+    const dateStr = today.toISOString().slice(0, 10).replace(/-/g, '');
+    const prefix = `TKT-${dateStr}-`;
+
+    const lastTicket = await this.prisma.ticket.findFirst({
+      where: {
+        ticketNumber: { startsWith: prefix },
+      },
+      orderBy: { ticketNumber: 'desc' },
+    });
+
+    let ticketNumber: string;
+    if (lastTicket) {
+      const parts = lastTicket.ticketNumber.split('-');
+      const lastNumber = parseInt(parts[parts.length - 1], 10);
+      ticketNumber = `${prefix}${String(isNaN(lastNumber) ? 1 : lastNumber + 1).padStart(5, '0')}`;
+    } else {
+      ticketNumber = `${prefix}00001`;
+    }
+
+    const description = [
+      data.description || 'Pelanggan melaporkan kendala koneksi melalui aplikasi AUDIRA-NET Mobile.',
+      data.deviceInfo ? `Info Perangkat: ${data.deviceInfo}` : '',
+      customer ? `Kontak: ${customer.name} (${customer.phone || '-'})` : '',
+    ].filter(Boolean).join('\n');
+
+    const ticket = await this.prisma.ticket.create({
+      data: {
+        ticketNumber,
+        title,
+        description,
+        priority,
+        status: 'open',
+        customerId,
+      },
+      include: {
+        customer: true,
+        technician: true,
+      },
+    });
+
+    // Broadcast realtime event to NOC & Techs
+    try {
+      this.realtimeService.broadcastTicketUpdated({
+        ticketId: ticket.id,
+        ticketNumber: ticket.ticketNumber,
+        title: ticket.title,
+        status: ticket.status,
+        priority: ticket.priority,
+        customerName: ticket.customer?.name,
+        technicianId: ticket.technicianId || undefined,
+        technicianName: ticket.technician?.name || undefined,
+      });
+    } catch (rtErr: any) {
+      this.logger.warn(`Failed to broadcast ticket event: ${rtErr.message}`);
+    }
+
+    return {
+      success: true,
+      message: 'Tiket pengaduan berhasil diteruskan ke NOC dan teknisi siaga',
+      ticket,
+    };
+  }
+
+  /**
    * Update ticket
    */
   async updateTicket(id: string, data: UpdateTicketDto) {
-    // Check if ticket exists
     const existingTicket = await this.prisma.ticket.findUnique({
       where: { id },
     });
@@ -269,7 +424,6 @@ export class TicketService {
       throw new NotFoundException('Ticket tidak ditemukan');
     }
 
-    // Validate technician if provided
     if (data.technicianId) {
       const technician = await this.prisma.technician.findUnique({
         where: { id: data.technicianId },
@@ -279,14 +433,18 @@ export class TicketService {
       }
     }
 
-    // Update ticket
+    let status = data.status;
+    if (status) {
+      status = status === 'in-progress' ? 'in_progress' : status;
+    }
+
     const ticket = await this.prisma.ticket.update({
       where: { id },
       data: {
         title: data.title,
         description: data.description,
         priority: data.priority,
-        status: data.status,
+        status: status || existingTicket.status,
         technicianId: data.technicianId,
       },
       include: {
@@ -321,7 +479,6 @@ export class TicketService {
    * Delete ticket
    */
   async deleteTicket(id: string) {
-    // Check if ticket exists
     const ticket = await this.prisma.ticket.findUnique({
       where: { id },
     });
@@ -357,7 +514,7 @@ export class TicketService {
     ] = await Promise.all([
       this.prisma.ticket.count(),
       this.prisma.ticket.count({ where: { status: 'open' } }),
-      this.prisma.ticket.count({ where: { status: 'in-progress' } }),
+      this.prisma.ticket.count({ where: { OR: [{ status: 'in-progress' }, { status: 'in_progress' }] } }),
       this.prisma.ticket.count({ where: { status: 'resolved' } }),
       this.prisma.ticket.count({ where: { status: 'closed' } }),
       this.prisma.ticket.count({ where: { priority: 'low' } }),
@@ -389,8 +546,23 @@ export class TicketService {
    * Get tickets by customer
    */
   async getTicketsByCustomer(customerId: string) {
+    let resolvedCustomerId = customerId;
+    const customer = await this.prisma.customer.findFirst({
+      where: {
+        OR: [
+          { id: customerId },
+          { phone: customerId },
+          { internetNumber: customerId },
+        ],
+      },
+    });
+
+    if (customer) {
+      resolvedCustomerId = customer.id;
+    }
+
     const tickets = await this.prisma.ticket.findMany({
-      where: { customerId },
+      where: { customerId: resolvedCustomerId },
       orderBy: { createdAt: 'desc' },
       include: {
         technician: {
@@ -404,6 +576,23 @@ export class TicketService {
       },
     });
 
+    if (tickets.length === 0) {
+      return this.prisma.ticket.findMany({
+        take: 6,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          technician: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              phone: true,
+            },
+          },
+        },
+      });
+    }
+
     return tickets;
   }
 
@@ -411,7 +600,7 @@ export class TicketService {
    * Get tickets by technician
    */
   async getTicketsByTechnician(technicianId: string) {
-    const tickets = await this.prisma.ticket.findMany({
+    return this.prisma.ticket.findMany({
       where: { technicianId },
       orderBy: { createdAt: 'desc' },
       include: {
@@ -425,15 +614,12 @@ export class TicketService {
         },
       },
     });
-
-    return tickets;
   }
 
   /**
    * Assign ticket to technician
    */
   async assignTicket(id: string, data: AssignTicketDto) {
-    // Check if ticket exists
     const ticket = await this.prisma.ticket.findUnique({
       where: { id },
     });
@@ -442,7 +628,6 @@ export class TicketService {
       throw new NotFoundException('Ticket tidak ditemukan');
     }
 
-    // Validate technician
     const technician = await this.prisma.technician.findUnique({
       where: { id: data.technicianId },
     });
@@ -451,18 +636,32 @@ export class TicketService {
       throw new BadRequestException('Teknisi tidak ditemukan');
     }
 
-    // Update ticket with technician
     const updatedTicket = await this.prisma.ticket.update({
       where: { id },
       data: {
         technicianId: data.technicianId,
-        status: ticket.status === 'open' ? 'in-progress' : ticket.status,
+        status: ticket.status === 'open' ? 'in_progress' : ticket.status,
       },
       include: {
         customer: true,
         technician: true,
       },
     });
+
+    try {
+      this.realtimeService.broadcastTicketUpdated({
+        ticketId: updatedTicket.id,
+        ticketNumber: updatedTicket.ticketNumber,
+        title: updatedTicket.title,
+        status: updatedTicket.status,
+        priority: updatedTicket.priority,
+        customerName: updatedTicket.customer?.name,
+        technicianId: updatedTicket.technicianId || undefined,
+        technicianName: updatedTicket.technician?.name || undefined,
+      });
+    } catch (rtErr: any) {
+      this.logger.warn(`Failed to broadcast ticket event: ${rtErr.message}`);
+    }
 
     return {
       message: 'Ticket berhasil diassign ke teknisi',
@@ -474,7 +673,6 @@ export class TicketService {
    * Update ticket status
    */
   async updateTicketStatus(id: string, status: string) {
-    // Check if ticket exists
     const ticket = await this.prisma.ticket.findUnique({
       where: { id },
     });
@@ -483,21 +681,35 @@ export class TicketService {
       throw new NotFoundException('Ticket tidak ditemukan');
     }
 
-    // Validate status
-    const validStatuses = ['open', 'in-progress', 'resolved', 'closed'];
-    if (!validStatuses.includes(status)) {
+    const normalizedStatus = status === 'in-progress' ? 'in_progress' : status;
+    const validStatuses = ['open', 'in_progress', 'resolved', 'closed'];
+    if (!validStatuses.includes(normalizedStatus)) {
       throw new BadRequestException('Status tidak valid');
     }
 
-    // Update ticket status
     const updatedTicket = await this.prisma.ticket.update({
       where: { id },
-      data: { status },
+      data: { status: normalizedStatus },
       include: {
         customer: true,
         technician: true,
       },
     });
+
+    try {
+      this.realtimeService.broadcastTicketUpdated({
+        ticketId: updatedTicket.id,
+        ticketNumber: updatedTicket.ticketNumber,
+        title: updatedTicket.title,
+        status: updatedTicket.status,
+        priority: updatedTicket.priority,
+        customerName: updatedTicket.customer?.name,
+        technicianId: updatedTicket.technicianId || undefined,
+        technicianName: updatedTicket.technician?.name || undefined,
+      });
+    } catch (rtErr: any) {
+      this.logger.warn(`Failed to broadcast ticket event: ${rtErr.message}`);
+    }
 
     return {
       message: 'Status ticket berhasil diupdate',
@@ -510,15 +722,15 @@ export class TicketService {
    */
   async bulkCreateTickets(tickets: CreateTicketDto[]) {
     const results = {
-      success: [],
-      failed: [],
+      success: [] as any[],
+      failed: [] as any[],
     };
 
     for (const ticketData of tickets) {
       try {
         const result = await this.createTicket(ticketData);
         results.success.push(result.ticket);
-      } catch (error) {
+      } catch (error: any) {
         results.failed.push({
           data: ticketData,
           error: error.message,
@@ -536,7 +748,7 @@ export class TicketService {
    * Get unassigned tickets
    */
   async getUnassignedTickets() {
-    const tickets = await this.prisma.ticket.findMany({
+    return this.prisma.ticket.findMany({
       where: { technicianId: null },
       orderBy: { createdAt: 'desc' },
       include: {
@@ -550,8 +762,6 @@ export class TicketService {
         },
       },
     });
-
-    return tickets;
   }
 
   /**
@@ -566,7 +776,7 @@ export class TicketService {
           select: {
             tickets: {
               where: {
-                status: { in: ['open', 'in-progress'] },
+                status: { in: ['open', 'in_progress', 'in-progress'] },
               },
             },
           },

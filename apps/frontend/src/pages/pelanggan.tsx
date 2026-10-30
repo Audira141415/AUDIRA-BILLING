@@ -35,7 +35,8 @@ import {
   MessageSquare,
   ShieldCheck,
   DollarSign,
-  Activity
+  Activity,
+  X
 } from 'lucide-react'
 
 interface Customer {
@@ -1052,24 +1053,24 @@ export default function Pelanggan() {
                   <h3 className="text-base font-bold text-theme-text flex items-center gap-2">
                     <Plus size={18} className="text-theme-primary" /> Tambah Pelanggan Baru
                   </h3>
-                  <button type="button" onClick={() => setShowAddModal(false)} className="text-theme-muted hover:text-theme-text">✕</button>
+                  <button type="button" onClick={() => setShowAddModal(false)} className="p-1 rounded-lg text-theme-muted hover:text-theme-text focus-visible:ring-2 focus-visible:ring-[var(--app-primary)] focus-visible:outline-none transition" aria-label="Tutup"><X size={18} /></button>
                 </div>
                 <div className="p-5 space-y-3.5">
                   <div className="space-y-1">
                     <label className="text-xs text-theme-muted font-bold block">Nama Lengkap *</label>
-                    <input required value={newName} onChange={e => setNewName(e.target.value)} placeholder="Contoh: Budi Santoso" className="w-full bg-theme-bg border border-theme-border rounded-xl px-3.5 py-2 text-xs text-theme-text focus:outline-none focus:border-blue-500" />
+                    <input required value={newName} onChange={e => setNewName(e.target.value)} placeholder="Contoh: Budi Santoso" className="w-full bg-theme-bg border border-theme-border rounded-xl px-3.5 py-2 text-xs text-theme-text focus:outline-none focus:border-blue-500 focus-visible:ring-2 focus-visible:ring-[var(--app-primary)] transition" />
                   </div>
                   <div className="space-y-1">
                     <label className="text-xs text-theme-muted font-bold block">No. Telepon / WhatsApp *</label>
-                    <input required value={newPhone} onChange={e => setNewPhone(e.target.value)} placeholder="Contoh: 081234567890" className="w-full bg-theme-bg border border-theme-border rounded-xl px-3.5 py-2 text-xs text-theme-text focus:outline-none focus:border-blue-500" />
+                    <input required value={newPhone} onChange={e => setNewPhone(e.target.value)} placeholder="Contoh: 081234567890" className="w-full bg-theme-bg border border-theme-border rounded-xl px-3.5 py-2 text-xs text-theme-text focus:outline-none focus:border-blue-500 focus-visible:ring-2 focus-visible:ring-[var(--app-primary)] transition" />
                   </div>
                   <div className="space-y-1">
                     <label className="text-xs text-theme-muted font-bold block">Email (Opsional)</label>
-                    <input type="email" value={newEmail} onChange={e => setNewEmail(e.target.value)} placeholder="pelanggan@domain.com" className="w-full bg-theme-bg border border-theme-border rounded-xl px-3.5 py-2 text-xs text-theme-text focus:outline-none focus:border-blue-500" />
+                    <input type="email" value={newEmail} onChange={e => setNewEmail(e.target.value)} placeholder="pelanggan@domain.com" className="w-full bg-theme-bg border border-theme-border rounded-xl px-3.5 py-2 text-xs text-theme-text focus:outline-none focus:border-blue-500 focus-visible:ring-2 focus-visible:ring-[var(--app-primary)] transition" />
                   </div>
                   <div className="space-y-1">
                     <label className="text-xs text-theme-muted font-bold block">Pilih Paket Layanan</label>
-                    <select value={newPackageId} onChange={e => setNewPackageId(e.target.value)} className="w-full bg-theme-bg border border-theme-border rounded-xl px-3.5 py-2 text-xs text-theme-text focus:outline-none focus:border-blue-500">
+                    <select value={newPackageId} onChange={e => setNewPackageId(e.target.value)} className="w-full bg-theme-bg border border-theme-border rounded-xl px-3.5 py-2 text-xs text-theme-text focus:outline-none focus:border-blue-500 focus-visible:ring-2 focus-visible:ring-[var(--app-primary)] transition">
                       <option value="">Tanpa Paket</option>
                       {Array.isArray(availablePackages) && availablePackages.map(pkg => (
                         <option key={pkg.id} value={pkg.id}>
@@ -1080,12 +1081,12 @@ export default function Pelanggan() {
                   </div>
                   <div className="space-y-1">
                     <label className="text-xs text-theme-muted font-bold block">Alamat Pemasangan</label>
-                    <textarea value={newAddress} onChange={e => setNewAddress(e.target.value)} rows={3} placeholder="Jalan, Blok/No, RT/RW, Kelurahan..." className="w-full bg-theme-bg border border-theme-border rounded-xl px-3.5 py-2 text-xs text-theme-text focus:outline-none focus:border-blue-500" />
+                    <textarea value={newAddress} onChange={e => setNewAddress(e.target.value)} rows={3} placeholder="Jalan, Blok/No, RT/RW, Kelurahan..." className="w-full bg-theme-bg border border-theme-border rounded-xl px-3.5 py-2 text-xs text-theme-text focus:outline-none focus:border-blue-500 focus-visible:ring-2 focus-visible:ring-[var(--app-primary)] transition" />
                   </div>
                 </div>
                 <div className="p-4 border-t border-theme-border flex justify-end gap-2.5 bg-slate-50/50 dark:bg-slate-900/50">
-                  <button type="button" onClick={() => setShowAddModal(false)} className="px-4 py-2 border border-theme-border text-theme-muted hover:text-theme-text rounded-xl text-xs font-semibold transition">Batal</button>
-                  <button type="submit" disabled={actionLoading === 'create'} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition">Simpan Pelanggan</button>
+                  <button type="button" onClick={() => setShowAddModal(false)} className="px-4 py-2 border border-theme-border text-theme-muted hover:text-theme-text rounded-xl text-xs font-semibold focus-visible:ring-2 focus-visible:ring-[var(--app-primary)] focus-visible:outline-none transition">Batal</button>
+                  <button type="submit" disabled={actionLoading === 'create'} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none transition">Simpan Pelanggan</button>
                 </div>
               </form>
             </div>
@@ -1101,24 +1102,24 @@ export default function Pelanggan() {
                   <h3 className="text-base font-bold text-theme-text flex items-center gap-2">
                     <Edit size={18} className="text-theme-primary" /> Edit Data Pelanggan
                   </h3>
-                  <button type="button" onClick={() => { setShowEditModal(false); setEditingCustomer(null); }} className="text-theme-muted hover:text-theme-text">✕</button>
+                  <button type="button" onClick={() => { setShowEditModal(false); setEditingCustomer(null); }} className="p-1 rounded-lg text-theme-muted hover:text-theme-text focus-visible:ring-2 focus-visible:ring-[var(--app-primary)] focus-visible:outline-none transition" aria-label="Tutup"><X size={18} /></button>
                 </div>
                 <div className="p-5 space-y-3.5">
                   <div className="space-y-1">
                     <label className="text-xs text-theme-muted font-bold block">Nama Lengkap *</label>
-                    <input required value={editingCustomer.name} onChange={e => setEditingCustomer({ ...editingCustomer, name: e.target.value })} className="w-full bg-theme-bg border border-theme-border rounded-xl px-3.5 py-2 text-xs text-theme-text focus:outline-none focus:border-blue-500" />
+                    <input required value={editingCustomer.name} onChange={e => setEditingCustomer({ ...editingCustomer, name: e.target.value })} className="w-full bg-theme-bg border border-theme-border rounded-xl px-3.5 py-2 text-xs text-theme-text focus:outline-none focus:border-blue-500 focus-visible:ring-2 focus-visible:ring-[var(--app-primary)] transition" />
                   </div>
                   <div className="space-y-1">
                     <label className="text-xs text-theme-muted font-bold block">No. Telepon *</label>
-                    <input required value={editingCustomer.phone} onChange={e => setEditingCustomer({ ...editingCustomer, phone: e.target.value })} className="w-full bg-theme-bg border border-theme-border rounded-xl px-3.5 py-2 text-xs text-theme-text focus:outline-none focus:border-blue-500" />
+                    <input required value={editingCustomer.phone} onChange={e => setEditingCustomer({ ...editingCustomer, phone: e.target.value })} className="w-full bg-theme-bg border border-theme-border rounded-xl px-3.5 py-2 text-xs text-theme-text focus:outline-none focus:border-blue-500 focus-visible:ring-2 focus-visible:ring-[var(--app-primary)] transition" />
                   </div>
                   <div className="space-y-1">
                     <label className="text-xs text-theme-muted font-bold block">Email</label>
-                    <input type="email" value={editingCustomer.email || ''} onChange={e => setEditingCustomer({ ...editingCustomer, email: e.target.value || null })} className="w-full bg-theme-bg border border-theme-border rounded-xl px-3.5 py-2 text-xs text-theme-text focus:outline-none focus:border-blue-500" />
+                    <input type="email" value={editingCustomer.email || ''} onChange={e => setEditingCustomer({ ...editingCustomer, email: e.target.value || null })} className="w-full bg-theme-bg border border-theme-border rounded-xl px-3.5 py-2 text-xs text-theme-text focus:outline-none focus:border-blue-500 focus-visible:ring-2 focus-visible:ring-[var(--app-primary)] transition" />
                   </div>
                   <div className="space-y-1">
                     <label className="text-xs text-theme-muted font-bold block">Status Layanan</label>
-                    <select value={editingCustomer.status} onChange={e => setEditingCustomer({ ...editingCustomer, status: e.target.value as any })} className="w-full bg-theme-bg border border-theme-border rounded-xl px-3.5 py-2 text-xs text-theme-text focus:outline-none focus:border-blue-500">
+                    <select value={editingCustomer.status} onChange={e => setEditingCustomer({ ...editingCustomer, status: e.target.value as any })} className="w-full bg-theme-bg border border-theme-border rounded-xl px-3.5 py-2 text-xs text-theme-text focus:outline-none focus:border-blue-500 focus-visible:ring-2 focus-visible:ring-[var(--app-primary)] transition">
                       <option value="active">Aktif</option>
                       <option value="suspended">Isolir / Suspend</option>
                       <option value="expired">Expired</option>
@@ -1128,14 +1129,58 @@ export default function Pelanggan() {
                   </div>
                   <div className="space-y-1">
                     <label className="text-xs text-theme-muted font-bold block">Alamat Pemasangan</label>
-                    <textarea value={editingCustomer.address || ''} onChange={e => setEditingCustomer({ ...editingCustomer, address: e.target.value || null })} rows={3} className="w-full bg-theme-bg border border-theme-border rounded-xl px-3.5 py-2 text-xs text-theme-text focus:outline-none focus:border-blue-500" />
+                    <textarea value={editingCustomer.address || ''} onChange={e => setEditingCustomer({ ...editingCustomer, address: e.target.value || null })} rows={3} className="w-full bg-theme-bg border border-theme-border rounded-xl px-3.5 py-2 text-xs text-theme-text focus:outline-none focus:border-blue-500 focus-visible:ring-2 focus-visible:ring-[var(--app-primary)] transition" />
                   </div>
                 </div>
                 <div className="p-4 border-t border-theme-border flex justify-end gap-2.5 bg-slate-50/50 dark:bg-slate-900/50">
-                  <button type="button" onClick={() => { setShowEditModal(false); setEditingCustomer(null); }} className="px-4 py-2 border border-theme-border text-theme-muted hover:text-theme-text rounded-xl text-xs font-semibold transition">Batal</button>
-                  <button type="submit" disabled={actionLoading === 'save-edit'} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition">Simpan Perubahan</button>
+                  <button type="button" onClick={() => { setShowEditModal(false); setEditingCustomer(null); }} className="px-4 py-2 border border-theme-border text-theme-muted hover:text-theme-text rounded-xl text-xs font-semibold focus-visible:ring-2 focus-visible:ring-[var(--app-primary)] focus-visible:outline-none transition">Batal</button>
+                  <button type="submit" disabled={actionLoading === 'save-edit'} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none transition">Simpan Perubahan</button>
                 </div>
               </form>
+            </div>
+          </div>
+        )}
+
+        {/* ─── MODAL: Hapus Pelanggan Confirmation ───────────────────── */}
+        {customerToDelete && (
+          <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-xs">
+            <div className="bg-theme-card border border-theme-border rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
+              <div className="p-5 space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
+                    <Trash2 size={20} />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold text-theme-text">Konfirmasi Hapus Pelanggan</h3>
+                    <p className="text-xs text-theme-muted">Tindakan ini tidak dapat dibatalkan</p>
+                  </div>
+                </div>
+                <div className="bg-slate-50 dark:bg-slate-900/60 p-3.5 rounded-xl border border-theme-border text-xs space-y-1">
+                  <div className="font-semibold text-theme-text">{customerToDelete.name}</div>
+                  <div className="text-theme-muted font-mono">{customerToDelete.internetNumber || customerToDelete.id}</div>
+                  {customerToDelete.phone && <div className="text-theme-muted">{customerToDelete.phone}</div>}
+                </div>
+                <p className="text-xs text-theme-muted">
+                  Apakah Anda yakin ingin menghapus pelanggan ini dari database?
+                </p>
+                <div className="flex justify-end gap-2.5 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setCustomerToDelete(null)}
+                    className="px-4 py-2 border border-theme-border text-theme-muted hover:text-theme-text rounded-xl text-xs font-semibold focus-visible:ring-2 focus-visible:ring-[var(--app-primary)] focus-visible:outline-none transition"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="button"
+                    onClick={confirmDeleteCustomer}
+                    disabled={actionLoading !== null}
+                    className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold focus-visible:ring-2 focus-visible:ring-rose-500 focus-visible:outline-none transition disabled:opacity-50"
+                  >
+                    {actionLoading === `delete-${customerToDelete.id}` ? 'Menghapus...' : 'Hapus Pelanggan'}
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         )}

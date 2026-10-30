@@ -42,38 +42,38 @@ export class WhatsAppBotService {
           `_AUDIRA Multimedia Digital - Internet Cepat & Terpercaya_`;
 
         await this.whatsappService.sendMessage({ phone: cleanSender, message: unregisteredReply });
-        return { success: true, match: 'UNREGISTERED_USER' };
+        return { success: true, match: 'UNREGISTERED_USER', reply: unregisteredReply };
       }
 
       // 2. State & Keyword Routing for Registered Customer
       if (upperText === '1' || upperText.includes('TAGIHAN') || upperText.includes('BAYAR') || upperText.includes('INVOICE') || upperText.includes('!TAGIHAN')) {
-        await this.handleCheckInvoice(cleanSender, customer);
-        return { success: true, match: 'MENU_INVOICE' };
+        const reply = await this.handleCheckInvoice(cleanSender, customer);
+        return { success: true, match: 'MENU_INVOICE', reply };
       }
 
       if (upperText === '2' || upperText.includes('STATUS') || upperText.includes('REDAMAN') || upperText.includes('SIGNAL') || upperText.includes('KONEKSI') || upperText.includes('!CEK') || upperText.includes('!CEKSINYAL') || upperText.includes('!CEKMODEM') || upperText.includes('!SINYAL')) {
-        await this.handleCheckStatusAndOptical(cleanSender, customer);
-        return { success: true, match: 'MENU_STATUS_OPTICAL' };
+        const reply = await this.handleCheckStatusAndOptical(cleanSender, customer);
+        return { success: true, match: 'MENU_STATUS_OPTICAL', reply };
       }
 
       if (upperText === '3' || upperText.includes('RESTART') || upperText.includes('REBOOT') || upperText.includes('!REBOOT')) {
-        await this.handleRebootONT(cleanSender, customer);
-        return { success: true, match: 'MENU_REBOOT_ONT' };
+        const reply = await this.handleRebootONT(cleanSender, customer);
+        return { success: true, match: 'MENU_REBOOT_ONT', reply };
       }
 
       if (upperText.startsWith('GANTIWIFI#') || upperText === '4' || upperText.includes('WIFI') || upperText.includes('SANDI')) {
-        await this.handleWifiConfig(cleanSender, customer, text);
-        return { success: true, match: 'MENU_WIFI_CONFIG' };
+        const reply = await this.handleWifiConfig(cleanSender, customer, text);
+        return { success: true, match: 'MENU_WIFI_CONFIG', reply };
       }
 
       if (upperText === '0' || upperText.includes('CS') || upperText.includes('BANTUAN') || upperText.includes('ADMIN') || upperText.includes('OPERATOR')) {
-        await this.handleConnectCS(cleanSender, customer);
-        return { success: true, match: 'MENU_CS' };
+        const reply = await this.handleConnectCS(cleanSender, customer);
+        return { success: true, match: 'MENU_CS', reply };
       }
 
       // Default Menu Response
-      await this.sendMainMenu(cleanSender, customer);
-      return { success: true, match: 'MAIN_MENU' };
+      const reply = await this.sendMainMenu(cleanSender, customer);
+      return { success: true, match: 'MAIN_MENU', reply };
     } catch (error: any) {
       this.logger.error(`[WhatsApp Bot] Error handling chat from ${sender}:`, error.message);
       return { success: false, error: error.message };
@@ -124,7 +124,7 @@ export class WhatsAppBotService {
         `_Ketik *MENU* untuk menampilkan pilihan lainnya._`;
 
       await this.whatsappService.sendMessage({ phone, message: msg });
-      return;
+      return msg;
     }
 
     const inv = unpaidInvoices[0];
@@ -147,6 +147,7 @@ export class WhatsAppBotService {
       `_Ketik *MENU* untuk kembali._`;
 
     await this.whatsappService.sendMessage({ phone, message: msg });
+    return msg;
   }
 
   /**
@@ -174,6 +175,7 @@ export class WhatsAppBotService {
       `_Ketik *MENU* untuk kembali._`;
 
     await this.whatsappService.sendMessage({ phone, message: msg });
+    return msg;
   }
 
   /**
@@ -192,6 +194,7 @@ export class WhatsAppBotService {
       `_Ketik *MENU* untuk kembali._`;
 
     await this.whatsappService.sendMessage({ phone, message: msg });
+    return msg;
   }
 
   /**
@@ -208,7 +211,7 @@ export class WhatsAppBotService {
           `Contoh:\n` +
           `*GANTIWIFI#AUDIRA-${customer.name.split(' ')[0]}#rahasia1234*`;
         await this.whatsappService.sendMessage({ phone, message: errorMsg });
-        return;
+        return errorMsg;
       }
 
       const newSsid = parts[1].trim();
@@ -220,7 +223,7 @@ export class WhatsAppBotService {
           `Kata sandi WiFi minimal harus *8 karakter* demi keamanan jaringan Anda.\n` +
           `Silakan ulangi kembali dengan format: *GANTIWIFI#NamaWiFi#SandiMin8Huruf*`;
         await this.whatsappService.sendMessage({ phone, message: passLenMsg });
-        return;
+        return passLenMsg;
       }
 
       const ontId = customer.modemSerial || customer.internetNumber || 'demo-ont-01';
@@ -240,7 +243,7 @@ export class WhatsAppBotService {
         `_Ketik *MENU* untuk kembali._`;
 
       await this.whatsappService.sendMessage({ phone, message: successMsg });
-      return;
+      return successMsg;
     }
 
     // Default petunjuk cara ganti sandi
@@ -255,6 +258,7 @@ export class WhatsAppBotService {
       `_Ketik *MENU* untuk kembali._`;
 
     await this.whatsappService.sendMessage({ phone, message: guideMsg });
+    return guideMsg;
   }
 
   /**
@@ -272,6 +276,7 @@ export class WhatsAppBotService {
       `Terima kasih! 🙏`;
 
     await this.whatsappService.sendMessage({ phone, message: csMsg });
+    return csMsg;
   }
 
   /**
@@ -291,5 +296,6 @@ export class WhatsAppBotService {
       `_Balas dengan angka *1* - *4*, *0*, atau ketik perintah *!ceksinyal* / *!reboot*_`;
 
     await this.whatsappService.sendMessage({ phone, message: menuMsg });
+    return menuMsg;
   }
 }

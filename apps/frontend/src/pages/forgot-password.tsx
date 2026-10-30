@@ -24,7 +24,7 @@ export default function ForgotPasswordPage() {
   return (
     <>
       <Head>
-        <title>Pemulihan Akun — AUDIRA NET</title>
+        <title>Pemulihan Akun - AUDIRA NET</title>
       </Head>
       <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] flex items-center justify-center p-4">
         <div className="w-full max-w-md bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-xl p-6 sm:p-8">

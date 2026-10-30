@@ -11,19 +11,35 @@ export class AttendanceService {
     today.setHours(0, 0, 0, 0);
 
     // Get user with employee relation
-    const user = await this.prisma.user.findUnique({
+    let user = await this.prisma.user.findUnique({
       where: { id: userId },
       include: { employee: true },
     });
 
+    let effectiveUserId = userId;
+    let effectiveEmployeeId = user?.employee?.id;
+
     if (!user) {
-      throw new Error('User not found');
+      const emp = await this.prisma.employee.findUnique({
+        where: { id: userId },
+        include: { user: true },
+      });
+      if (emp && emp.user) {
+        user = emp.user as any;
+        effectiveUserId = emp.user.id;
+        effectiveEmployeeId = emp.id;
+      } else {
+        throw new Error('User atau Karyawan tidak ditemukan');
+      }
     }
 
     // Check if already checked in today
     const existingAttendance = await this.prisma.attendance.findFirst({
       where: {
-        userId,
+        OR: [
+          { userId: effectiveUserId },
+          ...(effectiveEmployeeId ? [{ employeeId: effectiveEmployeeId }] : []),
+        ],
         date: today,
       },
     });
@@ -40,7 +56,7 @@ export class AttendanceService {
           checkInPhoto,
           checkInLat: latitude,
           checkInLong: longitude,
-          status: await this.determineStatus(new Date(), user.employee?.id),
+          status: await this.determineStatus(new Date(), effectiveEmployeeId),
         },
       });
     }
@@ -48,14 +64,14 @@ export class AttendanceService {
     // Create new attendance record
     return await this.prisma.attendance.create({
       data: {
-        userId,
-        employeeId: user.employee?.id,
+        userId: effectiveUserId,
+        employeeId: effectiveEmployeeId,
         date: today,
         checkInTime: new Date(),
         checkInPhoto,
         checkInLat: latitude,
         checkInLong: longitude,
-        status: await this.determineStatus(new Date(), user.employee?.id),
+        status: await this.determineStatus(new Date(), effectiveEmployeeId),
       },
     });
   }
@@ -67,7 +83,10 @@ export class AttendanceService {
 
     const attendance = await this.prisma.attendance.findFirst({
       where: {
-        userId,
+        OR: [
+          { userId },
+          { employeeId: userId },
+        ],
         date: today,
       },
     });
@@ -175,7 +194,12 @@ export class AttendanceService {
 
   // Get user attendance history
   async getUserAttendance(userId: string, startDate?: string, endDate?: string) {
-    const where: any = { userId };
+    const where: any = {
+      OR: [
+        { userId },
+        { employeeId: userId },
+      ],
+    };
 
     if (startDate || endDate) {
       where.date = {};
@@ -192,6 +216,7 @@ export class AttendanceService {
     return await this.prisma.attendance.findMany({
       where,
       orderBy: { date: 'desc' },
+      take: 30,
     });
   }
 
@@ -202,7 +227,10 @@ export class AttendanceService {
 
     const attendance = await this.prisma.attendance.findFirst({
       where: {
-        userId,
+        OR: [
+          { userId },
+          { employeeId: userId },
+        ],
         date: today,
       },
     });

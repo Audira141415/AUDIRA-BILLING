@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import React, { useState } from 'react';
 import Layout from '@/components/Layout';
+import Pagination from '@/components/Pagination';
+import { useToast } from '@/contexts/ToastContext';
 import {
   Search,
   Filter,
@@ -25,7 +27,14 @@ import {
   Wallet,
   ArrowUpRight,
   Upload,
-  BookOpen
+  BookOpen,
+  X,
+  Check,
+  Zap,
+  Printer,
+  Share2,
+  Send,
+  FileCheck
 } from 'lucide-react';
 
 interface TaxRow {
@@ -218,8 +227,40 @@ const mockEFakturHistory: EFakturHistory[] = [
 ];
 
 export default function TaxPage() {
+  const { toast } = useToast();
+  const [taxData, setTaxData] = useState<TaxRow[]>(mockTaxData);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [taxTypeFilter, setTaxTypeFilter] = useState('Semua');
+  const [statusFilter, setStatusFilter] = useState('Semua');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  // Modals
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [isPayTaxModalOpen, setIsPayTaxModalOpen] = useState(false);
+  const [selectedTaxDetail, setSelectedTaxDetail] = useState<TaxRow | null>(null);
+  const [selectedTaxAction, setSelectedTaxAction] = useState<TaxRow | null>(null);
+
+  // Form State
+  const [newTaxType, setNewTaxType] = useState<'PPN Keluaran' | 'PPN Masukan'>('PPN Keluaran');
+  const [newDescription, setNewDescription] = useState('');
+  const [newDpp, setNewDpp] = useState(10000000);
+  const [newFakturNo, setNewFakturNo] = useState(`010.001-26.${Math.floor(10000000 + Math.random() * 90000000)}`);
+
+  const filteredData = taxData.filter(item => {
+    const matchesSearch = 
+      item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.fakturNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.taxType.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesTaxType = taxTypeFilter === 'Semua' || item.taxType === taxTypeFilter;
+    const matchesStatus = statusFilter === 'Semua' || item.status === statusFilter;
+    return matchesSearch && matchesTaxType && matchesStatus;
+  });
+
+  const totalPages = Math.max(1, Math.ceil(filteredData.length / pageSize));
+  const paginatedData = filteredData.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const handleSelectRow = (id: string) => {
     setSelectedIds(prev =>
@@ -228,11 +269,85 @@ export default function TaxPage() {
   };
 
   const handleSelectAll = () => {
-    if (selectedIds.length === mockTaxData.length) {
+    if (selectedIds.length === filteredData.length) {
       setSelectedIds([]);
     } else {
-      setSelectedIds(mockTaxData.map(d => d.id));
+      setSelectedIds(filteredData.map(d => d.id));
     }
+  };
+
+  const handleCreateTax = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newDescription.trim()) {
+      toast.error('Deskripsi faktur pajak wajib diisi!');
+      return;
+    }
+
+    const calculatedTax = Math.round(newDpp * 0.11);
+    const newEntry: TaxRow = {
+      id: String(Date.now()),
+      date: new Date().toLocaleDateString('id-ID'),
+      taxType: newTaxType,
+      description: newDescription,
+      dpp: Number(newDpp),
+      rate: '11%',
+      taxAmount: calculatedTax,
+      status: 'Faktur Dibuat',
+      fakturNo: newFakturNo || `010.001-26.${Math.floor(10000000 + Math.random() * 90000000)}`
+    };
+
+    setTaxData([newEntry, ...taxData]);
+    setIsCreateModalOpen(false);
+    setNewDescription('');
+    setNewDpp(10000000);
+    setNewFakturNo(`010.001-26.${Math.floor(10000000 + Math.random() * 90000000)}`);
+    toast.success(`Faktur Pajak ${newEntry.fakturNo} berhasil dibuat.`);
+  };
+
+  const handleSendEFaktur = (tax: TaxRow) => {
+    setTaxData(prev => prev.map(t => t.id === tax.id ? { ...t, status: 'e-Faktur Terkirim' } : t));
+    setSelectedTaxAction(null);
+    toast.success(`Faktur ${tax.fakturNo} berhasil disinkronisasi & dikirim ke DJP e-Faktur.`);
+  };
+
+  const handleValidateFaktur = (tax: TaxRow) => {
+    setTaxData(prev => prev.map(t => t.id === tax.id ? { ...t, status: 'Faktur Valid' } : t));
+    setSelectedTaxAction(null);
+    toast.success(`Faktur ${tax.fakturNo} divalidasi berhasil.`);
+  };
+
+  const handleDeleteFaktur = (tax: TaxRow) => {
+    setTaxData(prev => prev.filter(t => t.id !== tax.id));
+    setSelectedTaxAction(null);
+    toast.success(`Faktur ${tax.fakturNo} telah dibatalkan/dihapus.`);
+  };
+
+  const handleExportCSV = () => {
+    if (filteredData.length === 0) {
+      toast.error('Tidak ada data faktur pajak untuk diekspor!');
+      return;
+    }
+    const headers = ['No', 'Tanggal', 'Jenis Pajak', 'Deskripsi/Invoice', 'DPP (IDR)', 'Tarif', 'Pajak (IDR)', 'Status', 'Nomor Faktur Pajak'];
+    const rows = filteredData.map((d, index) => [
+      index + 1,
+      `"${d.date}"`,
+      `"${d.taxType}"`,
+      `"${d.description}"`,
+      d.dpp,
+      `"${d.rate}"`,
+      d.taxAmount,
+      `"${d.status}"`,
+      `"${d.fakturNo}"`
+    ]);
+    const csvContent = 'data:text/csv;charset=utf-8,\uFEFF' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `rekap_faktur_pajak_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success(`Ekspor CSV berhasil (${filteredData.length} baris faktur pajak)`);
   };
 
   const formatCurrency = (amount: number) => {
@@ -354,46 +469,67 @@ export default function TaxPage() {
                 type="text" 
                 placeholder="Cari invoice, customer, no faktur..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
                 className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] text-xs pl-10 pr-4 py-2.5 rounded-xl text-[var(--app-text)] placeholder-slate-400 focus:outline-none focus:border-blue-500 transition-colors"
               />
             </div>
 
-            <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]">
-              <option>Semua Jenis Pajak</option>
+            <select 
+              value={taxTypeFilter}
+              onChange={(e) => {
+                setTaxTypeFilter(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)] focus:outline-none min-w-[140px]"
+            >
+              <option value="Semua">Semua Jenis Pajak</option>
+              <option value="PPN Keluaran">PPN Keluaran</option>
+              <option value="PPN Masukan">PPN Masukan</option>
             </select>
 
-            <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]">
-              <option>Semua Status</option>
+            <select 
+              value={statusFilter}
+              onChange={(e) => {
+                setStatusFilter(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)] focus:outline-none min-w-[140px]"
+            >
+              <option value="Semua">Semua Status</option>
+              <option value="Faktur Dibuat">Faktur Dibuat</option>
+              <option value="Faktur Valid">Faktur Valid</option>
+              <option value="e-Faktur Terkirim">e-Faktur Terkirim</option>
             </select>
-
-            <select className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-2.5 px-4 rounded-xl text-[var(--app-text)]/80 focus:outline-none min-w-[140px]">
-              <option>Semua Periode</option>
-            </select>
-            
-            {/* Date range picker mock */}
-            <div className="flex items-center gap-2 bg-[var(--app-bg)] border border-[var(--app-border)] px-3 py-2.5 rounded-xl text-xs text-[var(--app-text)]/80 cursor-pointer">
-              <Calendar size={14} className="text-[var(--app-muted)]" />
-              <span>01/06/2026 - 22/10/2026</span>
-            </div>
 
             <button 
-              onClick={() => { setSearchTerm(''); }}
+              onClick={() => { 
+                setSearchTerm(''); 
+                setTaxTypeFilter('Semua');
+                setStatusFilter('Semua');
+                setCurrentPage(1);
+              }}
               className="text-xs font-semibold text-[var(--app-muted)] hover:text-[var(--app-text)] px-4 py-2.5 rounded-xl border border-transparent hover:border-[var(--app-border)] transition-all ml-auto"
             >
               Reset
             </button>
 
-            <button onClick={() => alert("Penyaringan data diterapkan berdasarkan parameter yang dipilih.")} className="flex items-center gap-2 bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-md transition-all">
-              <Filter size={14} />
-              <span>Filter</span>
+            <button 
+              onClick={() => setIsCreateModalOpen(true)}
+              className="flex items-center gap-2 bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-md transition-all"
+            >
+              <Plus size={14} />
+              <span>Buat Faktur Pajak</span>
             </button>
 
-            <button onClick={() => alert("Membuka formulir Buat Faktur Pajak Baru...")} className="flex items-center gap-2 bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-md transition-all"><Plus size={14} /><span>Buat Faktur Pajak</span></button>
-
-            <button onClick={() => alert("Mengekspor data ke berkas CSV / Excel...")} className="flex items-center gap-2 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-sm border-gray-800">
+            <button 
+              onClick={handleExportCSV}
+              className="flex items-center gap-2 bg-[var(--app-card)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-sm"
+            >
               <Download size={14} className="text-[var(--app-muted)]" />
-              <span>Export</span>
+              <span>Export CSV</span>
             </button>
           </div>
         </div>
@@ -413,7 +549,7 @@ export default function TaxPage() {
                       <th className="p-4 w-10">
                         <input 
                           type="checkbox" 
-                          checked={selectedIds.length > 0}
+                          checked={selectedIds.length > 0 && selectedIds.length === filteredData.length}
                           onChange={handleSelectAll}
                           className="rounded bg-[var(--app-bg)] border-[var(--app-border)] text-blue-600 focus:ring-0" 
                         />
@@ -431,93 +567,95 @@ export default function TaxPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[var(--app-border)] text-xs text-[var(--app-text)]/80">
-                    {mockTaxData.map((d, idx) => {
-                      const isSelected = selectedIds.includes(d.id);
-                      return (
-                        <tr 
-                          key={d.id}
-                          onClick={() => handleSelectRow(d.id)}
-                          className={`hover:bg-[var(--app-border)]/20 transition-colors cursor-pointer ${isSelected ? 'bg-[var(--app-border)]/20/50' : ''}`}
-                        >
-                          <td className="p-4" onClick={(e) => e.stopPropagation()}>
-                            <input 
-                              type="checkbox" 
-                              checked={isSelected}
-                              onChange={() => handleSelectRow(d.id)}
-                              className="rounded bg-[var(--app-bg)] border-[var(--app-border)] text-blue-600 focus:ring-0" 
-                            />
-                          </td>
-                          <td className="p-4 text-[var(--app-muted)] font-medium">{idx + 1}</td>
-                          <td className="p-4 text-[var(--app-muted)] font-medium">{d.date}</td>
-                          <td className="p-4">
-                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                              d.taxType === 'PPN Keluaran'
-                                ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
-                                : 'bg-green-500/10 text-green-400 border border-green-500/20'
-                            }`}>
-                              {d.taxType}
-                            </span>
-                          </td>
-                          <td className="p-4 font-semibold text-white">{d.description}</td>
-                          <td className="p-4 font-bold text-[var(--app-text)]">{formatCurrency(d.dpp)}</td>
-                          <td className="p-4 text-[var(--app-muted)] font-bold">{d.rate}</td>
-                          <td className="p-4 font-bold text-[var(--app-text)]">{formatCurrency(d.taxAmount)}</td>
-                          <td className="p-4">
-                            <span className={`px-2.5 py-1 text-[10px] font-bold rounded-full ${
-                              d.status === 'Faktur Dibuat' 
-                                ? 'bg-green-500/10 text-green-400 border border-green-500/20' 
-                                : d.status === 'Faktur Valid'
-                                ? 'bg-green-600/10 text-green-500 border border-green-600/20'
-                                : 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
-                            }`}>
-                              {d.status}
-                            </span>
-                          </td>
-                          <td className="p-4 font-mono text-[var(--app-muted)] font-semibold">{d.fakturNo}</td>
-                          <td className="p-4" onClick={(e) => e.stopPropagation()}>
-                            <div className="flex items-center justify-center gap-1.5">
-                              <button onClick={() => alert("Menampilkan rincian detail catatan ini.")} className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors">
-                                <Eye size={13} />
-                              </button>
-                              <button onClick={() => alert("Opsi tindakan: Kirim WhatsApp, Cetak PDF, Void Transaksi.")} className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors">
-                                <MoreVertical size={13} />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
+                    {paginatedData.length === 0 ? (
+                      <tr>
+                        <td colSpan={11} className="p-8 text-center text-sm text-[var(--app-muted)]">
+                          Tidak ditemukan catatan faktur pajak sesuai kriteria pencarian.
+                        </td>
+                      </tr>
+                    ) : (
+                      paginatedData.map((d, idx) => {
+                        const isSelected = selectedIds.includes(d.id);
+                        return (
+                          <tr 
+                            key={d.id}
+                            onClick={() => handleSelectRow(d.id)}
+                            className={`hover:bg-[var(--app-border)]/20 transition-colors cursor-pointer ${isSelected ? 'bg-[var(--app-border)]/20/50' : ''}`}
+                          >
+                            <td className="p-4" onClick={(e) => e.stopPropagation()}>
+                              <input 
+                                type="checkbox" 
+                                checked={isSelected}
+                                onChange={() => handleSelectRow(d.id)}
+                                className="rounded bg-[var(--app-bg)] border-[var(--app-border)] text-blue-600 focus:ring-0" 
+                              />
+                            </td>
+                            <td className="p-4 text-[var(--app-muted)] font-medium">{(currentPage - 1) * pageSize + idx + 1}</td>
+                            <td className="p-4 text-[var(--app-muted)] font-medium">{d.date}</td>
+                            <td className="p-4">
+                              <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                                d.taxType === 'PPN Keluaran'
+                                  ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
+                                  : 'bg-green-500/10 text-green-400 border border-green-500/20'
+                              }`}>
+                                {d.taxType}
+                              </span>
+                            </td>
+                            <td className="p-4 font-semibold text-white">{d.description}</td>
+                            <td className="p-4 font-bold text-[var(--app-text)]">{formatCurrency(d.dpp)}</td>
+                            <td className="p-4 text-[var(--app-muted)] font-bold">{d.rate}</td>
+                            <td className="p-4 font-bold text-[var(--app-text)]">{formatCurrency(d.taxAmount)}</td>
+                            <td className="p-4">
+                              <span className={`px-2.5 py-1 text-[10px] font-bold rounded-full ${
+                                d.status === 'Faktur Dibuat' 
+                                  ? 'bg-green-500/10 text-green-400 border border-green-500/20' 
+                                  : d.status === 'Faktur Valid'
+                                  ? 'bg-green-600/10 text-green-500 border border-green-600/20'
+                                  : 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
+                              }`}>
+                                {d.status}
+                              </span>
+                            </td>
+                            <td className="p-4 font-mono text-[var(--app-muted)] font-semibold">{d.fakturNo}</td>
+                            <td className="p-4" onClick={(e) => e.stopPropagation()}>
+                              <div className="flex items-center justify-center gap-1.5">
+                                <button 
+                                  onClick={() => setSelectedTaxDetail(d)} 
+                                  title="Lihat Rincian Faktur"
+                                  className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors"
+                                >
+                                  <Eye size={13} />
+                                </button>
+                                <button 
+                                  onClick={() => setSelectedTaxAction(d)} 
+                                  title="Tindakan Faktur"
+                                  className="p-1.5 hover:bg-[var(--app-border)]/30 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] transition-colors"
+                                >
+                                  <MoreVertical size={13} />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
                   </tbody>
                 </table>
               </div>
 
               {/* Table pagination */}
-              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-t border-[var(--app-border)] bg-white/60">
-                <span className="text-xs text-[var(--app-muted)]">
-                  Menampilkan <span className="font-semibold text-white">1 - 10</span> dari <span className="font-semibold text-white">86</span> data
-                </span>
-                
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <button onClick={() => alert("Halaman pertama sudah tercapai.")} className="p-2 border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 rounded-xl text-[var(--app-muted)] transition-colors">
-                      <ChevronLeft size={14} />
-                    </button>
-                    <button onClick={() => alert("Halaman 1 saat ini aktif.")} className="w-8 h-8 rounded-xl text-xs font-semibold border bg-[#0052cc] text-white border-[#0052cc]">1</button>
-                    <button onClick={() => alert("Beralih ke halaman 2")} className="w-8 h-8 rounded-xl text-xs font-semibold border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/30">2</button>
-                    <button onClick={() => alert("Beralih ke halaman 3")} className="w-8 h-8 rounded-xl text-xs font-semibold border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/30">3</button>
-                    <span className="text-gray-600 text-xs px-1">...</span>
-                    <button onClick={() => alert("Beralih ke halaman 9")} className="w-8 h-8 rounded-xl text-xs font-semibold border border-[var(--app-border)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/30">9</button>
-                    <button onClick={() => alert("Beralih ke halaman selanjutnya.")} className="p-2 border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 rounded-xl text-[var(--app-muted)] transition-colors">
-                      <ChevronRight size={14} />
-                    </button>
-                  </div>
-
-                  <select
-                    className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs py-1.5 px-3 rounded-lg text-[var(--app-text)]/80 focus:outline-none"
-                  >
-                    <option value={10}>10 / halaman</option>
-                  </select>
-                </div>
+              <div className="p-4 border-t border-[var(--app-border)] bg-[var(--app-card-subtle)]">
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  totalItems={filteredData.length}
+                  pageSize={pageSize}
+                  onPageChange={setCurrentPage}
+                  onPageSizeChange={(newSize: number) => {
+                    setPageSize(newSize);
+                    setCurrentPage(1);
+                  }}
+                />
               </div>
             </div>
 
@@ -618,28 +756,40 @@ export default function TaxPage() {
                 <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Tugas Cepat</h4>
                 
                 <div className="space-y-2 text-[10px] font-bold text-[var(--app-muted)]">
-                  <div className="flex items-center justify-between p-2 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl hover:bg-[var(--app-border)]/20 cursor-pointer">
+                  <div 
+                    onClick={() => setIsCreateModalOpen(true)}
+                    className="flex items-center justify-between p-2 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl hover:bg-[var(--app-border)]/20 cursor-pointer transition-colors"
+                  >
                     <div className="flex items-center gap-2">
                       <Plus size={12} className="text-blue-500" />
                       <span>Buat Faktur Pajak</span>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between p-2 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl hover:bg-[var(--app-border)]/20 cursor-pointer">
+                  <div 
+                    onClick={() => setIsUploadModalOpen(true)}
+                    className="flex items-center justify-between p-2 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl hover:bg-[var(--app-border)]/20 cursor-pointer transition-colors"
+                  >
                     <div className="flex items-center gap-2">
                       <Upload size={12} className="text-purple-400" />
                       <span>Upload Faktur Masukan</span>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between p-2 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl hover:bg-[var(--app-border)]/20 cursor-pointer">
+                  <div 
+                    onClick={handleExportCSV}
+                    className="flex items-center justify-between p-2 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl hover:bg-[var(--app-border)]/20 cursor-pointer transition-colors"
+                  >
                     <div className="flex items-center gap-2">
                       <FileText size={12} className="text-yellow-500" />
-                      <span>Laporan PPN</span>
+                      <span>Laporan PPN (CSV)</span>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between p-2 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl hover:bg-[var(--app-border)]/20 cursor-pointer">
+                  <div 
+                    onClick={() => setIsPayTaxModalOpen(true)}
+                    className="flex items-center justify-between p-2 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl hover:bg-[var(--app-border)]/20 cursor-pointer transition-colors"
+                  >
                     <div className="flex items-center gap-2">
                       <Wallet size={12} className="text-green-500" />
                       <span>Setor PPN</span>
@@ -810,7 +960,7 @@ export default function TaxPage() {
                 ))}
               </div>
 
-              <button onClick={() => alert("Menampilkan semua faktur pajak mendekati jatuh tempo...")} className="w-full text-center text-xs font-bold text-blue-500 hover:underline pt-2 border-t border-[var(--app-border)]">
+              <button onClick={() => toast.info("Menampilkan semua faktur pajak mendekati jatuh tempo...")} className="w-full text-center text-xs font-bold text-blue-500 hover:underline pt-2 border-t border-[var(--app-border)]">
                 Lihat Semua Jatuh Tempo
               </button>
             </div>
@@ -826,7 +976,7 @@ export default function TaxPage() {
                 <li>PER-03/PJ/2022 tentang Tata Cara Pembuatan e-Faktur</li>
               </ul>
 
-              <button onClick={() => alert("Mengunduh bundel regulasi perpajakan PMK dan PER Dirjen Pajak...")} className="w-full flex items-center justify-center gap-2 bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-blue-400 text-xs font-bold py-2.5 rounded-xl transition-all">
+              <button onClick={() => toast.success("Bundel regulasi perpajakan PMK & PER Dirjen Pajak berhasil diunduh (PDF).")} className="w-full flex items-center justify-center gap-2 bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-blue-400 text-xs font-bold py-2.5 rounded-xl transition-all">
                 <BookOpen size={13} />
                 <span>Download Regulasi</span>
               </button>
@@ -837,6 +987,387 @@ export default function TaxPage() {
         </div>
 
       </div>
+
+      {/* ─── MODAL 1: Buat Faktur Pajak Baru ─── */}
+      {isCreateModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="p-5 border-b border-[var(--app-border)] flex items-center justify-between bg-[var(--app-bg)]">
+              <div>
+                <h3 className="text-base font-bold text-[var(--app-text)]">Buat Faktur Pajak Baru</h3>
+                <p className="text-xs text-[var(--app-muted)]">Penerbitan faktur pajak standar PPN 11% sesuai regulasi DJP</p>
+              </div>
+              <button 
+                onClick={() => setIsCreateModalOpen(false)}
+                className="p-1 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/20"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateTax} className="p-5 space-y-4">
+              <div>
+                <label className="text-xs font-bold text-[var(--app-muted)] block mb-1">Jenis Pajak</label>
+                <select
+                  value={newTaxType}
+                  onChange={(e) => setNewTaxType(e.target.value as 'PPN Keluaran' | 'PPN Masukan')}
+                  className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] text-xs p-2.5 rounded-xl text-[var(--app-text)] focus:outline-none focus:border-blue-500"
+                >
+                  <option value="PPN Keluaran">PPN Keluaran (Penjualan / Invoice ISP)</option>
+                  <option value="PPN Masukan">PPN Masukan (Pembelian Perangkat / Bandwidth)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-[var(--app-muted)] block mb-1">Nomor Seri Faktur Pajak (NSFP)</label>
+                <input
+                  type="text"
+                  value={newFakturNo}
+                  onChange={(e) => setNewFakturNo(e.target.value)}
+                  className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] text-xs p-2.5 rounded-xl font-mono text-blue-400 focus:outline-none focus:border-blue-500"
+                  placeholder="010.001-26.XXXXXXXX"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-[var(--app-muted)] block mb-1">Deskripsi / Nomor Invoice / Vendor</label>
+                <input
+                  type="text"
+                  value={newDescription}
+                  onChange={(e) => setNewDescription(e.target.value)}
+                  placeholder="Contoh: INV/2026/10/0129 atau PT Solusi Jaringan"
+                  className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] text-xs p-2.5 rounded-xl text-[var(--app-text)] focus:outline-none focus:border-blue-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-bold text-[var(--app-muted)] block mb-1">Dasar Pengenaan Pajak (DPP)</label>
+                  <input
+                    type="number"
+                    value={newDpp}
+                    onChange={(e) => setNewDpp(Number(e.target.value))}
+                    className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] text-xs p-2.5 rounded-xl text-[var(--app-text)] font-bold focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-[var(--app-muted)] block mb-1">PPN (11%)</label>
+                  <div className="bg-[var(--app-bg)] border border-[var(--app-border)] text-xs p-2.5 rounded-xl text-green-400 font-bold">
+                    {formatCurrency(Math.round(newDpp * 0.11))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl text-xs text-blue-400">
+                Total Nilai Transaksi: <strong>{formatCurrency(newDpp + Math.round(newDpp * 0.11))}</strong> (DPP + PPN 11%)
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-[var(--app-border)]">
+                <button
+                  type="button"
+                  onClick={() => setIsCreateModalOpen(false)}
+                  className="px-4 py-2 border border-[var(--app-border)] rounded-xl text-xs font-semibold text-[var(--app-muted)] hover:text-[var(--app-text)]"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-[#0052cc] hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-md"
+                >
+                  Simpan & Terbitkan Faktur
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ─── MODAL 2: Detail Faktur Pajak ─── */}
+      {selectedTaxDetail && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="p-5 border-b border-[var(--app-border)] flex items-center justify-between bg-[var(--app-bg)]">
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-blue-500">Rincian e-Faktur</span>
+                <h3 className="text-base font-bold text-[var(--app-text)] font-mono">{selectedTaxDetail.fakturNo}</h3>
+              </div>
+              <button 
+                onClick={() => setSelectedTaxDetail(null)}
+                className="p-1 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/20"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="p-5 space-y-4 text-xs">
+              <div className="flex items-center justify-between p-3 bg-[var(--app-bg)] rounded-xl border border-[var(--app-border)]">
+                <div>
+                  <p className="text-[10px] text-[var(--app-muted)] font-bold uppercase">Status Faktur</p>
+                  <p className="font-bold text-white mt-0.5">{selectedTaxDetail.status}</p>
+                </div>
+                <span className={`px-2.5 py-1 text-[10px] font-bold rounded-full ${
+                  selectedTaxDetail.status === 'Faktur Dibuat' 
+                    ? 'bg-green-500/10 text-green-400 border border-green-500/20' 
+                    : selectedTaxDetail.status === 'Faktur Valid'
+                    ? 'bg-green-600/10 text-green-500 border border-green-600/20'
+                    : 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
+                }`}>
+                  {selectedTaxDetail.status}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-3 bg-[var(--app-bg)] rounded-xl border border-[var(--app-border)]">
+                  <p className="text-[10px] text-[var(--app-muted)] font-bold uppercase">Jenis Pajak</p>
+                  <p className="font-bold text-purple-400 mt-0.5">{selectedTaxDetail.taxType}</p>
+                </div>
+                <div className="p-3 bg-[var(--app-bg)] rounded-xl border border-[var(--app-border)]">
+                  <p className="text-[10px] text-[var(--app-muted)] font-bold uppercase">Tanggal Terbit</p>
+                  <p className="font-bold text-white mt-0.5">{selectedTaxDetail.date}</p>
+                </div>
+              </div>
+
+              <div className="p-3 bg-[var(--app-bg)] rounded-xl border border-[var(--app-border)] space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-[var(--app-muted)]">Deskripsi / Ref:</span>
+                  <span className="font-bold text-white">{selectedTaxDetail.description}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[var(--app-muted)]">DPP (Dasar Pengenaan):</span>
+                  <span className="font-bold text-white">{formatCurrency(selectedTaxDetail.dpp)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[var(--app-muted)]">Tarif PPN:</span>
+                  <span className="font-bold text-white">{selectedTaxDetail.rate}</span>
+                </div>
+                <div className="flex justify-between border-t border-[var(--app-border)] pt-2 text-sm">
+                  <span className="font-bold text-white">Jumlah Pajak (PPN):</span>
+                  <span className="font-extrabold text-blue-400">{formatCurrency(selectedTaxDetail.taxAmount)}</span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between gap-2 pt-3 border-t border-[var(--app-border)]">
+                <button
+                  onClick={() => {
+                    toast.success(`Dokumen e-Faktur ${selectedTaxDetail.fakturNo} disiapkan untuk dicetak.`);
+                    window.print();
+                  }}
+                  className="flex items-center gap-1.5 px-3 py-2 bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-white rounded-xl text-xs font-semibold"
+                >
+                  <Printer size={14} />
+                  <span>Cetak PDF</span>
+                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleSendEFaktur(selectedTaxDetail)}
+                    className="flex items-center gap-1.5 px-4 py-2 bg-[#0052cc] hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-md"
+                  >
+                    <Send size={14} />
+                    <span>Kirim ke DJP</span>
+                  </button>
+                  <button
+                    onClick={() => setSelectedTaxDetail(null)}
+                    className="px-4 py-2 bg-[var(--app-border)]/50 hover:bg-[var(--app-border)] text-white rounded-xl text-xs font-semibold"
+                  >
+                    Tutup
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── MODAL 3: Tindakan Faktur Pajak ─── */}
+      {selectedTaxAction && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="p-4 border-b border-[var(--app-border)] flex items-center justify-between bg-[var(--app-bg)]">
+              <div>
+                <h3 className="text-sm font-bold text-[var(--app-text)]">Tindakan Faktur</h3>
+                <p className="text-[10px] text-[var(--app-muted)] font-mono">{selectedTaxAction.fakturNo}</p>
+              </div>
+              <button 
+                onClick={() => setSelectedTaxAction(null)}
+                className="p-1 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/20"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="p-4 space-y-2 text-xs">
+              <button
+                onClick={() => handleSendEFaktur(selectedTaxAction)}
+                className="w-full flex items-center gap-3 p-3 bg-[var(--app-bg)] hover:bg-blue-500/10 border border-[var(--app-border)] hover:border-blue-500/30 rounded-xl text-left transition-colors"
+              >
+                <Send size={16} className="text-blue-500" />
+                <div>
+                  <p className="font-bold text-white">Kirim ke e-Faktur DJP</p>
+                  <p className="text-[10px] text-[var(--app-muted)]">Sinkronisasi status dengan web server DJP</p>
+                </div>
+              </button>
+
+              <button
+                onClick={() => handleValidateFaktur(selectedTaxAction)}
+                className="w-full flex items-center gap-3 p-3 bg-[var(--app-bg)] hover:bg-green-500/10 border border-[var(--app-border)] hover:border-green-500/30 rounded-xl text-left transition-colors"
+              >
+                <FileCheck size={16} className="text-green-500" />
+                <div>
+                  <p className="font-bold text-white">Validasi Faktur Pajak</p>
+                  <p className="text-[10px] text-[var(--app-muted)]">Tandai faktur telah diverifikasi akuntan</p>
+                </div>
+              </button>
+
+              <button
+                onClick={() => {
+                  toast.success(`Faktur ${selectedTaxAction.fakturNo} diexport ke format PDF.`);
+                  setSelectedTaxAction(null);
+                }}
+                className="w-full flex items-center gap-3 p-3 bg-[var(--app-bg)] hover:bg-[var(--app-border)]/20 border border-[var(--app-border)] rounded-xl text-left transition-colors"
+              >
+                <Download size={16} className="text-yellow-500" />
+                <div>
+                  <p className="font-bold text-white">Unduh PDF Faktur Pajak</p>
+                  <p className="text-[10px] text-[var(--app-muted)]">Unduh lembar faktur cetak</p>
+                </div>
+              </button>
+
+              <button
+                onClick={() => handleDeleteFaktur(selectedTaxAction)}
+                className="w-full flex items-center gap-3 p-3 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded-xl text-left transition-colors"
+              >
+                <XCircle size={16} className="text-red-500" />
+                <div>
+                  <p className="font-bold text-red-400">Batalkan Faktur Pajak</p>
+                  <p className="text-[10px] text-red-300">Batalkan nomor faktur jika ada kekeliruan</p>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── MODAL 4: Upload Faktur Masukan ─── */}
+      {isUploadModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl w-full max-w-md shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="p-4 border-b border-[var(--app-border)] flex items-center justify-between bg-[var(--app-bg)]">
+              <div>
+                <h3 className="text-sm font-bold text-[var(--app-text)]">Upload Faktur Masukan</h3>
+                <p className="text-[10px] text-[var(--app-muted)]">Unggah file XML / CSV e-Faktur dari vendor/supplier</p>
+              </div>
+              <button 
+                onClick={() => setIsUploadModalOpen(false)}
+                className="p-1 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/20"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="p-5 space-y-4 text-xs">
+              <div className="border-2 border-dashed border-[var(--app-border)] rounded-2xl p-6 text-center hover:border-blue-500 cursor-pointer bg-[var(--app-bg)] transition-colors">
+                <Upload size={32} className="mx-auto text-[var(--app-muted)] mb-2" />
+                <p className="font-bold text-white">Tarik & Lepas File Faktur Masukan di Sini</p>
+                <p className="text-[10px] text-[var(--app-muted)] mt-1">Mendukung format XML, CSV, atau PDF (Maks. 15MB)</p>
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-[var(--app-border)]">
+                <button
+                  onClick={() => setIsUploadModalOpen(false)}
+                  className="px-4 py-2 border border-[var(--app-border)] rounded-xl text-xs font-semibold text-[var(--app-muted)] hover:text-[var(--app-text)]"
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={() => {
+                    const newEntry: TaxRow = {
+                      id: String(Date.now()),
+                      date: new Date().toLocaleDateString('id-ID'),
+                      taxType: 'PPN Masukan',
+                      description: 'Impor e-Faktur Vendor Telco',
+                      dpp: 8500000,
+                      rate: '11%',
+                      taxAmount: 935000,
+                      status: 'Faktur Valid',
+                      fakturNo: `020.001-26.${Math.floor(10000000 + Math.random() * 90000000)}`
+                    };
+                    setTaxData([newEntry, ...taxData]);
+                    setIsUploadModalOpen(false);
+                    toast.success('Faktur Pajak Masukan berhasil diimpor & divalidasi!');
+                  }}
+                  className="px-5 py-2 bg-[#0052cc] hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-md"
+                >
+                  Proses & Impor Faktur
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── MODAL 5: Setor PPN DJP ─── */}
+      {isPayTaxModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl w-full max-w-md shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="p-4 border-b border-[var(--app-border)] flex items-center justify-between bg-[var(--app-bg)]">
+              <div>
+                <h3 className="text-sm font-bold text-[var(--app-text)]">Penyetoran PPN Terutang</h3>
+                <p className="text-[10px] text-[var(--app-muted)]">Pembayaran ke Kas Negara melalui ID Billing DJP</p>
+              </div>
+              <button 
+                onClick={() => setIsPayTaxModalOpen(false)}
+                className="p-1 rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-border)]/20"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="p-5 space-y-4 text-xs">
+              <div className="p-4 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-[var(--app-muted)]">Masa Pajak:</span>
+                  <span className="font-bold text-white">Juni 2026</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[var(--app-muted)]">Kode Akun Pajak (KAP):</span>
+                  <span className="font-bold text-white font-mono">411211 (PPN Dalam Negeri)</span>
+                </div>
+                <div className="flex justify-between border-t border-[var(--app-border)] pt-2">
+                  <span className="font-bold text-white">Total PPN Belum Disetor:</span>
+                  <span className="font-extrabold text-red-400 text-sm">Rp 12.450.000</span>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-[var(--app-muted)] block mb-1">Kode ID Billing DJP</label>
+                <input
+                  type="text"
+                  defaultValue="019283746501928"
+                  className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] text-xs p-2.5 rounded-xl font-mono text-blue-400 focus:outline-none focus:border-blue-500"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-[var(--app-border)]">
+                <button
+                  onClick={() => setIsPayTaxModalOpen(false)}
+                  className="px-4 py-2 border border-[var(--app-border)] rounded-xl text-xs font-semibold text-[var(--app-muted)] hover:text-[var(--app-text)]"
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={() => {
+                    setIsPayTaxModalOpen(false);
+                    toast.success('Setoran PPN Rp 12.450.000 berhasil dikonfirmasi dengan NTPN #260799102837!');
+                  }}
+                  className="px-5 py-2 bg-green-600 hover:bg-green-700 text-white rounded-xl text-xs font-bold shadow-md"
+                >
+                  Konfirmasi Setoran
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 }

@@ -1,6 +1,19 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import api from '../../lib/api';
+import { useRealtime } from '@/contexts/RealtimeContext';
+import { 
+  Ticket as TicketIcon, 
+  Search, 
+  Plus, 
+  X, 
+  CheckCircle2, 
+  Clock, 
+  ChevronLeft,
+  AlertTriangle,
+  User,
+  Radio,
+  RefreshCw
+} from 'lucide-react';
 
 interface Ticket {
   id: string;
@@ -14,57 +27,29 @@ interface Ticket {
   technician?: {
     id: string;
     name: string;
+    phone?: string;
   } | null;
-}
-
-interface TicketDetail extends Ticket {
-  customer: {
+  customer?: {
     id: string;
     name: string;
-    email: string | null;
-    phone: string;
-    address: string | null;
+    phone?: string;
+    email?: string | null;
+    address?: string | null;
   };
 }
 
-const defaultCustomerTickets: Ticket[] = [
-  {
-    id: 'tkt-101',
-    ticketNumber: 'TKT-2026-05-001',
-    title: 'Optimalisasi Posisi Router WiFi Lantai 2',
-    description: 'Mohon bantuan pengecekan coverage signal WiFi pada ruang kerja lantai 2.',
-    status: 'closed',
-    priority: 'low',
-    createdAt: '2026-05-10T10:00:00.000Z',
-    updatedAt: '2026-05-11T14:30:00.000Z',
-    technician: { id: 'tech-1', name: 'Rudi Hermawan' }
-  },
-  {
-    id: 'tkt-102',
-    ticketNumber: 'TKT-2026-04-002',
-    title: 'Konfigurasi Port Forwarding CCTV DVR',
-    description: 'Bantuan pembukaan port untuk akses kamera pengawas dari luar jaringan.',
-    status: 'resolved',
-    priority: 'medium',
-    createdAt: '2026-04-12T09:15:00.000Z',
-    updatedAt: '2026-04-12T16:00:00.000Z',
-    technician: { id: 'tech-2', name: 'Andi Wijaya' }
-  }
-];
-
 export default function CustomerTickets() {
   const router = useRouter();
-  const [tickets, setTickets] = useState<Ticket[]>(defaultCustomerTickets);
-  const [loading, setLoading] = useState(false);
+  const { lastEvent } = useRealtime();
+
+  const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // Pagination
+  // Pagination & Filters
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [total, setTotal] = useState(2);
-  const limit = 10;
-
-  // Filter
+  const [total, setTotal] = useState(0);
   const [statusFilter, setStatusFilter] = useState<string>('');
 
   // Create ticket modal
@@ -72,218 +57,281 @@ export default function CustomerTickets() {
   const [creating, setCreating] = useState(false);
   const [createForm, setCreateForm] = useState({
     title: '',
+    category: 'Internet Lambat',
     description: '',
     priority: 'medium',
   });
 
   // Detail modal
-  const [selectedTicket, setSelectedTicket] = useState<TicketDetail | null>(null);
-  const [loadingDetail, setLoadingDetail] = useState(false);
+  const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
 
   useEffect(() => {
     loadTickets();
   }, [currentPage, statusFilter]);
 
-  const loadTickets = async () => {
-    const token = localStorage.getItem('customer_token');
-    if (!token) {
-      setLoading(false);
-      return;
+  // Real-time synchronization
+  useEffect(() => {
+    if (lastEvent?.type === 'ticket_updated' || lastEvent?.type === 'dashboard_refresh') {
+      loadTickets();
     }
+  }, [lastEvent]);
 
+  const loadTickets = async () => {
     try {
       setLoading(true);
-      const data = await api.customer.getTickets(token, currentPage, limit, statusFilter || undefined);
-      if (data && data.data) {
-        setTickets(data.data);
-        setTotal(data.pagination.total);
-        setTotalPages(data.pagination.totalPages);
+      setError('');
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3218';
+      
+      const queryParams = new URLSearchParams();
+      queryParams.set('page', currentPage.toString());
+      queryParams.set('limit', '10');
+      if (statusFilter) queryParams.set('status', statusFilter);
+
+      const res = await fetch(`${baseUrl}/tickets?${queryParams.toString()}`);
+      if (res.ok) {
+        const result = await res.json();
+        const list = Array.isArray(result) ? result : (result.data || []);
+        setTickets(list);
+        setTotal(result.pagination?.total || list.length);
+        setTotalPages(result.pagination?.totalPages || 1);
+      } else {
+        setError('Gagal memuat daftar tiket dari server.');
       }
     } catch (err: any) {
-      console.warn('Customer tickets API returned:', err?.message);
+      console.warn('Customer tickets API returned error:', err?.message);
+      setError('Koneksi ke backend terputus.');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const loadTicketDetail = async (ticketId: string) => {
-    const token = localStorage.getItem('customer_token');
-    if (!token) {
-      router.push('/customer/login');
-      return;
-    }
-
-    try {
-      setLoadingDetail(true);
-      const data = await api.customer.getTicketDetail(token, ticketId);
-      setSelectedTicket(data);
-    } catch (err: any) {
-      setError(err.message || 'Failed to load ticket detail');
-    } finally {
-      setLoadingDetail(false);
     }
   };
 
   const handleCreateTicket = async (e: React.FormEvent) => {
     e.preventDefault();
-    const token = localStorage.getItem('customer_token');
-    if (!token) {
-      router.push('/customer/login');
-      return;
-    }
-
     try {
       setCreating(true);
       setError('');
-      await api.customer.createTicket(token, createForm);
-      setShowCreateModal(false);
-      setCreateForm({ title: '', description: '', priority: 'medium' });
-      setCurrentPage(1);
-      await loadTickets();
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3218';
+      
+      const payload = {
+        title: `[${createForm.category}] ${createForm.title}`,
+        category: createForm.category,
+        description: createForm.description,
+        priority: createForm.priority,
+      };
+
+      const res = await fetch(`${baseUrl}/tickets/customer-report`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.ok) {
+        setShowCreateModal(false);
+        setCreateForm({ title: '', category: 'Internet Lambat', description: '', priority: 'medium' });
+        setCurrentPage(1);
+        await loadTickets();
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        setError(errData.message || 'Gagal membuat tiket pengaduan.');
+      }
     } catch (err: any) {
-      setError(err.message || 'Failed to create ticket');
+      setError(err.message || 'Gagal mengirim tiket ke server.');
     } finally {
       setCreating(false);
     }
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('id-ID', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+    try {
+      return new Date(dateString).toLocaleDateString('id-ID', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    } catch {
+      return dateString;
+    }
   };
 
   const getPriorityBadge = (priority: string) => {
-    const styles = {
-      high: 'bg-red-100 text-red-800',
-      medium: 'bg-yellow-100 text-yellow-800',
-      low: 'bg-blue-100 text-blue-800',
-    };
-    return styles[priority as keyof typeof styles] || 'bg-gray-100 text-gray-800';
+    switch (priority) {
+      case 'urgent':
+      case 'high':
+        return 'bg-rose-500/15 text-rose-400 border border-rose-500/30';
+      case 'medium':
+        return 'bg-amber-500/15 text-amber-400 border border-amber-500/30';
+      case 'low':
+      default:
+        return 'bg-blue-500/15 text-blue-400 border border-blue-500/30';
+    }
   };
 
   const getStatusBadge = (status: string) => {
-    const styles = {
-      open: 'bg-blue-100 text-blue-800',
-      in_progress: 'bg-yellow-100 text-yellow-800',
-      resolved: 'bg-green-100 text-green-800',
-      closed: 'bg-gray-100 text-gray-800',
-    };
-    return styles[status as keyof typeof styles] || 'bg-gray-100 text-gray-800';
+    switch (status) {
+      case 'open':
+        return 'bg-rose-500/10 text-rose-400 border border-rose-500/20';
+      case 'in_progress':
+      case 'in-progress':
+        return 'bg-amber-500/10 text-amber-400 border border-amber-500/20';
+      case 'resolved':
+        return 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+      case 'closed':
+      default:
+        return 'bg-slate-500/10 text-slate-400 border border-slate-500/20';
+    }
   };
 
-
-
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         {/* Header */}
-        <div className="mb-8 flex justify-between items-start">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-[var(--app-border)]">
           <div>
             <button
               onClick={() => router.push('/customer/dashboard')}
-              className="text-blue-600 hover:underline mb-2 flex items-center"
+              className="text-xs text-[var(--app-primary)] hover:underline mb-1.5 flex items-center gap-1 font-mono"
             >
-              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-              Back to Dashboard
+              <ChevronLeft size={14} />
+              Kembali ke Portal Pelanggan
             </button>
-            <h1 className="text-3xl font-bold text-gray-900">My Support Tickets</h1>
-            <p className="text-gray-600 mt-2">Total: {total} ticket(s)</p>
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl font-bold tracking-tight text-[var(--app-text)] flex items-center gap-2">
+                <TicketIcon className="text-[var(--app-primary)]" size={24} />
+                Tiket Pengaduan & Layanan CS
+              </h1>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center gap-1">
+                <Radio size={10} className="animate-pulse" />
+                LIVE SYNC
+              </span>
+            </div>
+            <p className="text-xs text-[var(--app-muted)] mt-1">
+              Total riwayat tiket kendala: <strong className="font-mono text-[var(--app-text)]">{total}</strong> tiket
+            </p>
           </div>
-          <button
-            onClick={() => setShowCreateModal(true)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
-            Create Ticket
-          </button>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={loadTickets}
+              disabled={loading}
+              className="p-2 border border-[var(--app-border)] bg-[var(--app-card)] text-[var(--app-muted)] hover:text-[var(--app-text)] rounded-lg transition-colors"
+              title="Refresh"
+            >
+              <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
+            </button>
+            <button
+              onClick={() => setShowCreateModal(true)}
+              className="px-4 py-2 bg-[var(--app-primary)] text-white text-xs font-semibold rounded-lg hover:opacity-90 flex items-center gap-2 shadow-sm"
+            >
+              <Plus size={16} />
+              Buat Tiket Gangguan
+            </button>
+          </div>
         </div>
 
         {error && (
-          <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-            {error}
+          <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-lg flex items-center gap-2">
+            <AlertTriangle size={15} />
+            <span>{error}</span>
           </div>
         )}
 
-        {/* Filter */}
-        <div className="bg-white rounded-lg shadow-md p-4 mb-6">
-          <div className="flex items-center gap-4">
-            <label className="text-sm font-medium text-gray-700">Filter by Status:</label>
-            <select
-              value={statusFilter}
-              onChange={(e) => {
-                setStatusFilter(e.target.value);
-                setCurrentPage(1);
-              }}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="">All Status</option>
-              <option value="open">Open</option>
-              <option value="in_progress">In Progress</option>
-              <option value="resolved">Resolved</option>
-              <option value="closed">Closed</option>
-            </select>
+        {/* Filters Bar */}
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-3.5 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold text-[var(--app-muted)]">Status:</span>
+            <div className="flex items-center gap-1">
+              {[
+                { label: 'Semua', val: '' },
+                { label: 'Open', val: 'open' },
+                { label: 'Dalam Proses', val: 'in_progress' },
+                { label: 'Selesai', val: 'resolved' },
+              ].map((tab) => (
+                <button
+                  key={tab.val}
+                  onClick={() => {
+                    setStatusFilter(tab.val);
+                    setCurrentPage(1);
+                  }}
+                  className={`px-3 py-1 rounded text-xs font-medium transition-all ${
+                    statusFilter === tab.val
+                      ? 'bg-[var(--app-primary)] text-white'
+                      : 'text-[var(--app-muted)] hover:text-[var(--app-text)]'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
         {/* Ticket List */}
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
-          {tickets.length === 0 ? (
-            <div className="text-center py-12">
-              <svg className="w-16 h-16 text-slate-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
-              </svg>
-              <p className="text-slate-400">No tickets found</p>
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl overflow-hidden shadow-xs">
+          {loading ? (
+            <div className="text-center py-16 text-[var(--app-muted)] font-mono text-xs">
+              <RefreshCw size={24} className="animate-spin mx-auto mb-2 text-[var(--app-primary)]" />
+              Menghubungkan ke NOC dan memuat data tiket...
+            </div>
+          ) : tickets.length === 0 ? (
+            <div className="text-center py-16">
+              <TicketIcon className="w-12 h-12 text-[var(--app-muted)] mx-auto mb-3 opacity-50" />
+              <p className="text-sm font-semibold text-[var(--app-text)]">Belum Ada Tiket Pengaduan</p>
+              <p className="text-xs text-[var(--app-muted)] mt-1">Semua layanan internet Anda beroperasi normal tanpa kendala.</p>
               <button
                 onClick={() => setShowCreateModal(true)}
-                className="mt-4 text-blue-600 hover:underline"
+                className="mt-4 px-4 py-2 bg-[var(--app-primary)] text-white text-xs font-semibold rounded-lg hover:opacity-90 inline-flex items-center gap-2"
               >
-                Create your first ticket
+                <Plus size={14} />
+                Laporkan Masalah Baru
               </button>
             </div>
           ) : (
-            <div className="divide-y divide-gray-200">
+            <div className="divide-y divide-[var(--app-border)]">
               {tickets.map((ticket) => (
                 <div
                   key={ticket.id}
-                  className="p-6 hover:bg-gray-50 cursor-pointer"
-                  onClick={() => loadTicketDetail(ticket.id)}
+                  className="p-5 hover:bg-[var(--app-border)]/20 cursor-pointer transition-colors"
+                  onClick={() => setSelectedTicket(ticket)}
                 >
-                  <div className="flex justify-between items-start">
+                  <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
                     <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-lg font-semibold text-gray-900">{ticket.title}</h3>
-                        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getPriorityBadge(ticket.priority)}`}>
+                      <div className="flex flex-wrap items-center gap-2 mb-1.5">
+                        <span className="font-mono text-xs font-bold text-[var(--app-primary)]">
+                          {ticket.ticketNumber || `#TK-${ticket.id.slice(0, 6)}`}
+                        </span>
+                        <span className={`px-2 py-0.5 text-[10px] font-semibold rounded ${getPriorityBadge(ticket.priority)}`}>
                           {ticket.priority.toUpperCase()}
                         </span>
-                        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusBadge(ticket.status)}`}>
+                        <span className={`px-2 py-0.5 text-[10px] font-semibold rounded ${getStatusBadge(ticket.status)}`}>
                           {ticket.status.replace('_', ' ').toUpperCase()}
                         </span>
                       </div>
-                      <p className="text-sm text-gray-600 mb-3 line-clamp-2">{ticket.description}</p>
-                      <div className="flex items-center gap-4 text-sm text-slate-400">
-                        <span>#{ticket.ticketNumber}</span>
-                        <span>•</span>
-                        <span>{formatDate(ticket.createdAt)}</span>
+                      <h3 className="text-sm font-bold text-[var(--app-text)]">{ticket.title}</h3>
+                      {ticket.description && (
+                        <p className="text-xs text-[var(--app-muted)] mt-1 line-clamp-2">{ticket.description}</p>
+                      )}
+                      <div className="flex flex-wrap items-center gap-3 text-[11px] text-[var(--app-muted)] mt-2 font-mono">
+                        <span>Lapor: {formatDate(ticket.createdAt)}</span>
                         {ticket.technician && (
                           <>
                             <span>•</span>
-                            <span>Assigned to: {ticket.technician.name}</span>
+                            <span className="text-emerald-400 font-semibold">Teknisi: {ticket.technician.name}</span>
                           </>
                         )}
                       </div>
                     </div>
-                    <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedTicket(ticket);
+                      }}
+                      className="self-end sm:self-center px-3 py-1.5 border border-[var(--app-border)] hover:bg-[var(--app-border)] text-[var(--app-text)] text-xs rounded-lg transition-colors"
+                    >
+                      Detail
+                    </button>
                   </div>
                 </div>
               ))}
@@ -292,203 +340,191 @@ export default function CustomerTickets() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="bg-gray-50 px-6 py-4 flex items-center justify-between border-t border-gray-200">
-              <div className="text-sm text-gray-700">
-                Page {currentPage} of {totalPages}
-              </div>
+            <div className="bg-[var(--app-bg)]/50 px-6 py-3.5 flex items-center justify-between border-t border-[var(--app-border)] text-xs">
+              <span className="text-[var(--app-muted)]">
+                Halaman {currentPage} dari {totalPages}
+              </span>
               <div className="flex gap-2">
                 <button
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
-                  className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-3 py-1.5 border border-[var(--app-border)] rounded-md font-medium text-[var(--app-text)] bg-[var(--app-card)] disabled:opacity-40"
                 >
-                  Previous
+                  Sebelumnya
                 </button>
                 <button
                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages}
-                  className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-3 py-1.5 border border-[var(--app-border)] rounded-md font-medium text-[var(--app-text)] bg-[var(--app-card)] disabled:opacity-40"
                 >
-                  Next
+                  Selanjutnya
                 </button>
               </div>
             </div>
           )}
         </div>
-      </div>
 
-      {/* Create Ticket Modal */}
-      {showCreateModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-lg w-full">
-            <div className="p-6">
-              <div className="flex justify-between items-start mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">Create Support Ticket</h2>
+        {/* Create Ticket Modal */}
+        {showCreateModal && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl shadow-2xl max-w-lg w-full p-6 text-[var(--app-text)] animate-in fade-in zoom-in-95">
+              <div className="flex justify-between items-center pb-4 border-b border-[var(--app-border)]">
+                <h2 className="text-base font-bold flex items-center gap-2">
+                  <TicketIcon size={18} className="text-[var(--app-primary)]" />
+                  Buat Tiket Pengaduan Gangguan
+                </h2>
                 <button
-                  onClick={() => {
-                    setShowCreateModal(false);
-                    setCreateForm({ title: '', description: '', priority: 'medium' });
-                  }}
-                  className="text-slate-500 hover:text-gray-600"
+                  onClick={() => setShowCreateModal(false)}
+                  className="text-[var(--app-muted)] hover:text-[var(--app-text)]"
                 >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
+                  <X size={18} />
                 </button>
               </div>
 
-              <form onSubmit={handleCreateTicket} className="space-y-4">
+              <form onSubmit={handleCreateTicket} className="mt-4 space-y-4 text-xs">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Title <span className="text-red-500">*</span>
+                  <label className="block font-medium text-[var(--app-muted)] mb-1">
+                    Kategori Kendala <span className="text-rose-500">*</span>
+                  </label>
+                  <select
+                    value={createForm.category}
+                    onChange={(e) => setCreateForm({ ...createForm, category: e.target.value })}
+                    className="w-full px-3 py-2 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-[var(--app-text)] focus:outline-none focus:border-[var(--app-primary)]"
+                  >
+                    <option value="Internet Lambat">Internet Lambat / Latensi Tinggi</option>
+                    <option value="Lampu LOS Merah">Lampu LOS Merah / Kabel Putus</option>
+                    <option value="Wi-Fi Tidak Terdeteksi">Wi-Fi Tidak Terdeteksi</option>
+                    <option value="Kendala Tagihan">Kendala Pembayaran / Tagihan</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-medium text-[var(--app-muted)] mb-1">
+                    Judul Ringkas Masalah <span className="text-rose-500">*</span>
                   </label>
                   <input
                     type="text"
                     value={createForm.title}
                     onChange={(e) => setCreateForm({ ...createForm, title: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-[var(--app-text)] focus:outline-none focus:border-[var(--app-primary)]"
                     required
-                    placeholder="Brief description of your issue"
+                    placeholder="Contoh: Sinyal WiFi sering putus di ruang kerja"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Description <span className="text-red-500">*</span>
+                  <label className="block font-medium text-[var(--app-muted)] mb-1">
+                    Deskripsi Detail & Gejala <span className="text-rose-500">*</span>
                   </label>
                   <textarea
                     value={createForm.description}
                     onChange={(e) => setCreateForm({ ...createForm, description: e.target.value })}
                     rows={4}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-[var(--app-text)] focus:outline-none focus:border-[var(--app-primary)]"
                     required
-                    placeholder="Provide detailed information about your issue"
+                    placeholder="Jelaskan kondisi lampu indikator modem, waktu mulai gangguan, dll..."
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Priority <span className="text-red-500">*</span>
+                  <label className="block font-medium text-[var(--app-muted)] mb-1">
+                    Tingkat Urgensi
                   </label>
                   <select
                     value={createForm.priority}
                     onChange={(e) => setCreateForm({ ...createForm, priority: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    required
+                    className="w-full px-3 py-2 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg text-[var(--app-text)] focus:outline-none focus:border-[var(--app-primary)]"
                   >
-                    <option value="low">Low - General inquiry</option>
-                    <option value="medium">Medium - Service issue</option>
-                    <option value="high">High - Service down</option>
+                    <option value="low">Low - Pertanyaan umum</option>
+                    <option value="medium">Medium - Gangguan kecepatan</option>
+                    <option value="high">High - Total Down / Mati total</option>
                   </select>
                 </div>
 
-                <div className="flex gap-3 pt-4">
+                <div className="flex gap-2.5 pt-3 border-t border-[var(--app-border)]">
+                  <button
+                    type="button"
+                    onClick={() => setShowCreateModal(false)}
+                    disabled={creating}
+                    className="flex-1 px-4 py-2 border border-[var(--app-border)] rounded-lg text-[var(--app-muted)] hover:text-[var(--app-text)]"
+                  >
+                    Batal
+                  </button>
                   <button
                     type="submit"
                     disabled={creating}
-                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 px-4 py-2 bg-[var(--app-primary)] text-white font-semibold rounded-lg hover:opacity-90 disabled:opacity-50"
                   >
-                    {creating ? 'Creating...' : 'Create Ticket'}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setShowCreateModal(false);
-                      setCreateForm({ title: '', description: '', priority: 'medium' });
-                    }}
-                    disabled={creating}
-                    className="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Cancel
+                    {creating ? 'Meneruskan ke NOC...' : 'Kirim Tiket Gangguan ➔'}
                   </button>
                 </div>
               </form>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Ticket Detail Modal */}
-      {selectedTicket && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6">
-              <div className="flex justify-between items-start mb-6">
+        {/* Ticket Detail Modal */}
+        {selectedTicket && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl shadow-2xl max-w-lg w-full p-6 text-[var(--app-text)] animate-in fade-in zoom-in-95">
+              <div className="flex justify-between items-start pb-4 border-b border-[var(--app-border)]">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900">{selectedTicket.title}</h2>
-                  <p className="text-sm text-gray-600 mt-1">#{selectedTicket.ticketNumber}</p>
+                  <span className="font-mono text-xs text-[var(--app-primary)] font-bold">
+                    {selectedTicket.ticketNumber || `#TK-${selectedTicket.id}`}
+                  </span>
+                  <h2 className="text-base font-bold text-[var(--app-text)] mt-0.5">{selectedTicket.title}</h2>
                 </div>
                 <button
                   onClick={() => setSelectedTicket(null)}
-                  className="text-slate-500 hover:text-gray-600"
+                  className="text-[var(--app-muted)] hover:text-[var(--app-text)]"
                 >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
+                  <X size={18} />
                 </button>
               </div>
 
-              {loadingDetail ? (
-                <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-                  <p className="mt-2 text-gray-600">Loading...</p>
+              <div className="py-4 space-y-4 text-xs">
+                <div className="flex gap-2">
+                  <span className={`px-2.5 py-1 text-xs font-semibold rounded ${getPriorityBadge(selectedTicket.priority)}`}>
+                    {selectedTicket.priority.toUpperCase()} PRIORITY
+                  </span>
+                  <span className={`px-2.5 py-1 text-xs font-semibold rounded ${getStatusBadge(selectedTicket.status)}`}>
+                    {selectedTicket.status.replace('_', ' ').toUpperCase()}
+                  </span>
                 </div>
-              ) : (
-                <>
-                  {/* Status & Priority */}
-                  <div className="flex gap-3 mb-6">
-                    <span className={`px-3 py-1 text-sm font-semibold rounded-full ${getStatusBadge(selectedTicket.status)}`}>
-                      {selectedTicket.status.replace('_', ' ').toUpperCase()}
-                    </span>
-                    <span className={`px-3 py-1 text-sm font-semibold rounded-full ${getPriorityBadge(selectedTicket.priority)}`}>
-                      {selectedTicket.priority.toUpperCase()} PRIORITY
-                    </span>
-                  </div>
 
-                  {/* Description */}
-                  <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Description</h3>
-                    <p className="text-gray-700 whitespace-pre-wrap">{selectedTicket.description}</p>
+                {selectedTicket.description && (
+                  <div className="p-3 bg-[var(--app-bg)] border border-[var(--app-border)] rounded-lg">
+                    <span className="text-[10px] font-semibold uppercase text-[var(--app-muted)] block mb-1">Keterangan:</span>
+                    <p className="whitespace-pre-wrap">{selectedTicket.description}</p>
                   </div>
+                )}
 
-                  {/* Info Grid */}
-                  <div className="grid grid-cols-2 gap-4 mb-6">
-                    <div className="bg-gray-50 rounded-lg p-3">
-                      <p className="text-sm text-gray-600">Created At</p>
-                      <p className="text-sm font-medium text-gray-900">{formatDate(selectedTicket.createdAt)}</p>
-                    </div>
-                    <div className="bg-gray-50 rounded-lg p-3">
-                      <p className="text-sm text-gray-600">Assigned Technician</p>
-                      <p className="text-sm font-medium text-gray-900">
-                        {selectedTicket.technician ? selectedTicket.technician.name : 'Not assigned yet'}
-                      </p>
-                    </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="p-3 border border-[var(--app-border)] rounded-lg">
+                    <span className="text-[10px] font-semibold uppercase text-[var(--app-muted)] block mb-0.5">Waktu Lapor</span>
+                    <p className="font-medium font-mono">{formatDate(selectedTicket.createdAt)}</p>
                   </div>
+                  <div className="p-3 border border-[var(--app-border)] rounded-lg">
+                    <span className="text-[10px] font-semibold uppercase text-[var(--app-muted)] block mb-0.5">Teknisi PIC</span>
+                    <p className="font-semibold text-emerald-400">
+                      {selectedTicket.technician ? selectedTicket.technician.name : 'Dalam antrean NOC'}
+                    </p>
+                  </div>
+                </div>
+              </div>
 
-                  {/* Customer Info */}
-                  <div className="border-t pt-4">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3">Your Information</h3>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex">
-                        <span className="w-24 text-gray-600">Name:</span>
-                        <span className="text-gray-900">{selectedTicket.customer.name}</span>
-                      </div>
-                      <div className="flex">
-                        <span className="w-24 text-gray-600">Phone:</span>
-                        <span className="text-gray-900">{selectedTicket.customer.phone}</span>
-                      </div>
-                      <div className="flex">
-                        <span className="w-24 text-gray-600">Email:</span>
-                        <span className="text-gray-900">{selectedTicket.customer.email || '-'}</span>
-                      </div>
-                    </div>
-                  </div>
-                </>
-              )}
+              <div className="flex justify-end pt-3 border-t border-[var(--app-border)]">
+                <button
+                  onClick={() => setSelectedTicket(null)}
+                  className="px-4 py-2 border border-[var(--app-border)] rounded-lg text-xs font-medium text-[var(--app-muted)] hover:text-[var(--app-text)]"
+                >
+                  Tutup
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

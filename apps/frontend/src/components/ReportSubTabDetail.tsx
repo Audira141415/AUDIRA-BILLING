@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useToast } from '@/contexts/ToastContext';
 import {
   TrendingUp, TrendingDown, Download, FileSpreadsheet, FileText,
   Printer, Share2, Search, Filter, CheckCircle2, AlertTriangle,
@@ -48,6 +49,7 @@ function generateTabData(tabName: string, category: string) {
 }
 
 export default function ReportSubTabDetail({ tabName, category }: ReportSubTabDetailProps) {
+  const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [timeRange, setTimeRange] = useState('6M');
   const { trendData, baseVolume, growthRate, efficiency, cycleTime, items } = generateTabData(tabName, category);
@@ -58,7 +60,7 @@ export default function ReportSubTabDetail({ tabName, category }: ReportSubTabDe
   );
 
   const handleExport = (type: string) => {
-    alert(`Mengekspor Laporan "${category} - ${tabName}" format ${type.toUpperCase()}... File siap diunduh.`);
+    toast.info(`Mengekspor Laporan "${category} - ${tabName}" format ${type.toUpperCase()}... File siap diunduh.`);
   };
 
   return (
@@ -259,8 +261,8 @@ export default function ReportSubTabDetail({ tabName, category }: ReportSubTabDe
           </div>
 
           <button
-            onClick={() => alert(`Rekomendasi lengkap untuk ${tabName} telah disinkronkan ke memo internal manajemen.`)}
-            className="w-full py-2 px-3 text-xs font-semibold text-center text-blue-500 hover:text-blue-600 bg-blue-500/10 hover:bg-blue-500/20 rounded-lg transition-colors flex items-center justify-center gap-1.5"
+            onClick={() => toast.success(`Rekomendasi lengkap untuk ${tabName} telah disinkronkan ke memo internal manajemen.`)}
+            className="w-full py-2 px-3 text-xs font-semibold text-center text-blue-500 hover:text-blue-600 bg-blue-500/10 hover:bg-blue-500/20 rounded-lg transition-colors flex items-center justify-center gap-1.5 focus-visible:ring-2 focus-visible:ring-[var(--app-primary)]"
           >
             <span>Terapkan Rekomendasi AI</span>
             <ArrowUpRight size={13} />
@@ -335,8 +337,8 @@ export default function ReportSubTabDetail({ tabName, category }: ReportSubTabDe
                     </td>
                     <td className="px-4 py-3 text-right font-sans">
                       <button
-                        onClick={() => alert(`Rincian Lengkap ${item.id} (${item.name}):\nStatus: ${item.status}\nUpdate: ${item.date}`)}
-                        className="px-2.5 py-1 text-[11px] font-medium text-blue-500 hover:text-white hover:bg-blue-600 border border-blue-500/30 rounded-lg transition"
+                        onClick={() => toast.info(`Rincian ${item.id} (${item.name}) - Status: ${item.status}`)}
+                        className="px-2.5 py-1 text-[11px] font-medium text-blue-500 hover:text-white hover:bg-blue-600 border border-blue-500/30 rounded-lg transition focus-visible:ring-2 focus-visible:ring-[var(--app-primary)]"
                       >
                         Detail
                       </button>

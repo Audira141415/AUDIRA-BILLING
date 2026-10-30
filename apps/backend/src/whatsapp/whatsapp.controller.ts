@@ -210,5 +210,18 @@ export class WhatsAppController {
   async sendReminder(@Body() data: { customer: any; invoice: any; daysLeft: number }) {
     return this.whatsappService.sendPaymentReminder(data.customer, data.invoice, data.daysLeft);
   }
+
+  @Post('broadcast-maintenance')
+  async broadcastMaintenance(
+    @Body()
+    body: {
+      title: string;
+      message: string;
+      affectedOdps: string[];
+      customerPhones?: string[];
+    },
+  ) {
+    return this.whatsappService.broadcastMaintenance(body);
+  }
 }
 

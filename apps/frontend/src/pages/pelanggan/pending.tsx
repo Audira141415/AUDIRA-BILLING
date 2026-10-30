@@ -3,6 +3,8 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Layout from '@/components/Layout'
 import api from '@/lib/api'
+import { Pagination } from '@/components/Pagination'
+import { useToast } from '@/contexts/ToastContext'
 import {
   Clock, Hourglass, Wallet, CheckCircle, XCircle, Search, Eye, Edit, MoreHorizontal,
   RefreshCw, Phone, Calendar, Package, ArrowUpRight, Check, Trash2, Ban, Plus, ChevronDown, List, Grid, SlidersHorizontal
@@ -27,6 +29,7 @@ const INITIAL_PENDING_DATA: PendingCustomer[] = []
 
 export default function CustomerPending() {
   const router = useRouter()
+  const { toast } = useToast()
   const [customers, setCustomers] = useState<PendingCustomer[]>([])
   const [loading, setLoading] = useState(false)
   const [actionLoading, setActionLoading] = useState(false)
@@ -41,6 +44,7 @@ export default function CustomerPending() {
   const [dateRange, setDateRange] = useState('01/06/2026 - 01/07/2026')
 
   // Layout View State
+  const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(25)
   const [isGridView, setIsGridView] = useState(false)
 
@@ -131,11 +135,11 @@ export default function CustomerPending() {
       )
       
       setSelectedIds([])
-      alert(`Berhasil ${actionName.toLowerCase()} pengajuan terpilih.`)
+      toast.success(`Berhasil ${actionName.toLowerCase()} pengajuan terpilih.`)
       fetchData()
     } catch (err) {
       console.error(err)
-      alert('Terjadi kesalahan saat memproses data.')
+      toast.error('Terjadi kesalahan saat memproses data.')
     } finally {
       setActionLoading(false)
     }
@@ -156,11 +160,11 @@ export default function CustomerPending() {
       // Update local state
       setCustomers(prev => prev.filter(c => !selectedIds.includes(c.id)))
       setSelectedIds([])
-      alert('Data terpilih berhasil dihapus.')
+      toast.success('Data terpilih berhasil dihapus.')
       fetchData()
     } catch (err) {
       console.error(err)
-      alert('Gagal menghapus data terpilih.')
+      toast.error('Gagal menghapus data terpilih.')
     } finally {
       setActionLoading(false)
     }
@@ -224,6 +228,13 @@ export default function CustomerPending() {
   const offsetDiterima = getOffset(countDiterima)
   const offsetDitolak = getOffset(countDitolak)
 
+  const totalPages = Math.max(1, Math.ceil(filteredCustomers.length / pageSize));
+  const safeCurrentPage = Math.min(currentPage, totalPages);
+  const paginatedCustomers = filteredCustomers.slice(
+    (safeCurrentPage - 1) * pageSize,
+    safeCurrentPage * pageSize
+  );
+
   return (
     <Layout>
       <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] p-4 md:p-6 space-y-6">
@@ -269,11 +280,11 @@ export default function CustomerPending() {
         <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
           
           {/* Card 1: Total Pending */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs flex items-center justify-between hover:border-blue-500/35 transition cursor-pointer" onClick={() => setStatusFilter('all')}>
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs flex items-center justify-between hover:border-blue-500/35 transition cursor-pointer" onClick={() => setStatusFilter('all')}>
             <div className="space-y-1">
-              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Total Pending</span>
-              <p className="text-2xl font-black text-slate-900 mt-1">{countTotal}</p>
-              <p className="text-[10px] text-slate-500">Semua data pending</p>
+              <span className="text-[10px] text-[var(--app-text-muted)] font-bold uppercase tracking-wider">Total Pending</span>
+              <p className="text-2xl font-black font-mono text-[var(--app-text)] mt-1">{countTotal}</p>
+              <p className="text-[10px] text-[var(--app-text-muted)]">Semua data pending</p>
             </div>
             <div className="p-3 bg-blue-600/10 rounded-xl text-blue-400 border border-blue-500/20">
               <Clock size={20} />
@@ -281,11 +292,11 @@ export default function CustomerPending() {
           </div>
 
           {/* Card 2: Menunggu Verifikasi */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs flex items-center justify-between hover:border-orange-500/35 transition cursor-pointer" onClick={() => setStatusFilter('verifikasi')}>
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs flex items-center justify-between hover:border-orange-500/35 transition cursor-pointer" onClick={() => setStatusFilter('verifikasi')}>
             <div className="space-y-1">
-              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Menunggu Verifikasi</span>
-              <p className="text-2xl font-black text-orange-400 mt-1">{countVerifikasi}</p>
-              <p className="text-[10px] text-slate-500">Menunggu verifikasi admin</p>
+              <span className="text-[10px] text-[var(--app-text-muted)] font-bold uppercase tracking-wider">Menunggu Verifikasi</span>
+              <p className="text-2xl font-black font-mono text-orange-400 mt-1">{countVerifikasi}</p>
+              <p className="text-[10px] text-[var(--app-text-muted)]">Menunggu verifikasi admin</p>
             </div>
             <div className="p-3 bg-orange-600/10 rounded-xl text-orange-400 border border-orange-500/20">
               <Hourglass size={20} />
@@ -293,11 +304,11 @@ export default function CustomerPending() {
           </div>
 
           {/* Card 3: Menunggu Pembayaran */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs flex items-center justify-between hover:border-purple-500/35 transition cursor-pointer" onClick={() => setStatusFilter('pembayaran')}>
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs flex items-center justify-between hover:border-purple-500/35 transition cursor-pointer" onClick={() => setStatusFilter('pembayaran')}>
             <div className="space-y-1">
-              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Menunggu Pembayaran</span>
-              <p className="text-2xl font-black text-purple-400 mt-1">{countPembayaran}</p>
-              <p className="text-[10px] text-slate-500">Menunggu pembayaran</p>
+              <span className="text-[10px] text-[var(--app-text-muted)] font-bold uppercase tracking-wider">Menunggu Pembayaran</span>
+              <p className="text-2xl font-black font-mono text-purple-400 mt-1">{countPembayaran}</p>
+              <p className="text-[10px] text-[var(--app-text-muted)]">Menunggu pembayaran</p>
             </div>
             <div className="p-3 bg-purple-600/10 rounded-xl text-purple-400 border border-purple-500/20">
               <Wallet size={20} />
@@ -305,11 +316,11 @@ export default function CustomerPending() {
           </div>
 
           {/* Card 4: Pembayaran Diterima */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs flex items-center justify-between hover:border-green-500/35 transition cursor-pointer" onClick={() => setStatusFilter('diterima')}>
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs flex items-center justify-between hover:border-green-500/35 transition cursor-pointer" onClick={() => setStatusFilter('diterima')}>
             <div className="space-y-1">
-              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Pembayaran Diterima</span>
-              <p className="text-2xl font-black text-green-400 mt-1">{countDiterima}</p>
-              <p className="text-[10px] text-slate-500">Pembayaran sudah diterima</p>
+              <span className="text-[10px] text-[var(--app-text-muted)] font-bold uppercase tracking-wider">Pembayaran Diterima</span>
+              <p className="text-2xl font-black font-mono text-green-400 mt-1">{countDiterima}</p>
+              <p className="text-[10px] text-[var(--app-text-muted)]">Pembayaran sudah diterima</p>
             </div>
             <div className="p-3 bg-green-500/10 rounded-xl text-green-400 border border-green-500/20">
               <CheckCircle size={20} />
@@ -317,11 +328,11 @@ export default function CustomerPending() {
           </div>
 
           {/* Card 5: Ditolak */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs flex items-center justify-between hover:border-red-500/35 transition cursor-pointer" onClick={() => setStatusFilter('ditolak')}>
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs flex items-center justify-between hover:border-red-500/35 transition cursor-pointer" onClick={() => setStatusFilter('ditolak')}>
             <div className="space-y-1">
-              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Ditolak</span>
-              <p className="text-2xl font-black text-red-400 mt-1">{countDitolak}</p>
-              <p className="text-[10px] text-slate-500">Pengajuan ditolak</p>
+              <span className="text-[10px] text-[var(--app-text-muted)] font-bold uppercase tracking-wider">Ditolak</span>
+              <p className="text-2xl font-black font-mono text-red-400 mt-1">{countDitolak}</p>
+              <p className="text-[10px] text-[var(--app-text-muted)]">Pengajuan ditolak</p>
             </div>
             <div className="p-3 bg-red-500/10 rounded-xl text-red-400 border border-red-500/20">
               <XCircle size={20} />
@@ -330,26 +341,26 @@ export default function CustomerPending() {
         </div>
 
         {/* Filter Toolbar Card */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-4">
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-4">
           <div className="flex flex-col xl:flex-row gap-4 justify-between items-stretch xl:items-center">
             {/* Search Input */}
             <div className="relative flex-1">
-              <Search className="absolute left-3.5 top-3.5 text-slate-400" size={16} />
+              <Search className="absolute left-3.5 top-3.5 text-[var(--app-text-muted)]" size={16} />
               <input
                 type="text"
                 placeholder="Cari nama, no. hp, email, paket, sales..."
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-11 pr-4 py-3 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition"
+                className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl pl-11 pr-4 py-3 text-xs text-[var(--app-text)] placeholder-[var(--app-text-muted)] focus:outline-none focus:border-blue-500 focus-visible:ring-2 focus-visible:ring-[var(--app-primary)] transition"
               />
             </div>
 
             {/* Quick Actions */}
             <div className="flex items-center gap-3">
-              <button onClick={handleResetFilters} className="px-4 py-3 bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 hover:text-slate-900 text-xs font-semibold rounded-xl text-slate-500 hover:text-slate-900 transition">
+              <button onClick={handleResetFilters} className="px-4 py-3 bg-[var(--app-bg)] hover:bg-[var(--app-card-hover)] border border-[var(--app-border)] text-[var(--app-text-muted)] hover:text-[var(--app-text)] text-xs font-semibold rounded-xl transition">
                 Reset
               </button>
-              <button onClick={() => alert("Mengekspor daftar pelanggan pending...")} className="flex items-center gap-1.5 px-4 py-3 bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 hover:text-slate-900 text-xs font-semibold rounded-xl text-slate-500 hover:text-slate-900 transition">Export <ChevronDown size={14} /></button>
+              <button onClick={() => toast.info("Mengekspor daftar pelanggan pending...")} className="flex items-center gap-1.5 px-4 py-3 bg-[var(--app-bg)] hover:bg-[var(--app-card-hover)] border border-[var(--app-border)] text-[var(--app-text-muted)] hover:text-[var(--app-text)] text-xs font-semibold rounded-xl transition">Export <ChevronDown size={14} /></button>
             </div>
           </div>
 
@@ -357,8 +368,8 @@ export default function CustomerPending() {
           <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3">
             
             <div className="space-y-1.5">
-              <label className="text-[10px] text-slate-400 font-bold block">Status Pending</label>
-              <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="w-full bg-slate-100 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-blue-500">
+              <label className="text-[10px] text-[var(--app-text-muted)] font-bold block">Status Pending</label>
+              <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2.5 text-xs text-[var(--app-text)] focus:outline-none focus:border-blue-500">
                 <option value="all">Semua Status</option>
                 <option value="verifikasi">Menunggu Verifikasi</option>
                 <option value="pembayaran">Menunggu Pembayaran</option>
@@ -368,8 +379,8 @@ export default function CustomerPending() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[10px] text-slate-400 font-bold block">Paket</label>
-              <select value={packageFilter} onChange={e => setPackageFilter(e.target.value)} className="w-full bg-slate-100 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-blue-500">
+              <label className="text-[10px] text-[var(--app-text-muted)] font-bold block">Paket</label>
+              <select value={packageFilter} onChange={e => setPackageFilter(e.target.value)} className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2.5 text-xs text-[var(--app-text)] focus:outline-none focus:border-blue-500">
                 <option value="all">Semua Paket</option>
                 <option value="home 20 mbps">Home 20 Mbps</option>
                 <option value="home 50 mbps">Home 50 Mbps</option>
@@ -379,8 +390,8 @@ export default function CustomerPending() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[10px] text-slate-400 font-bold block">Sales</label>
-              <select value={salesFilter} onChange={e => setSalesFilter(e.target.value)} className="w-full bg-slate-100 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-blue-500">
+              <label className="text-[10px] text-[var(--app-text-muted)] font-bold block">Sales</label>
+              <select value={salesFilter} onChange={e => setSalesFilter(e.target.value)} className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2.5 text-xs text-[var(--app-text)] focus:outline-none focus:border-blue-500">
                 <option value="all">Semua Sales</option>
                 <option value="budi santoso">Budi Santoso</option>
                 <option value="dewi lestari">Dewi Lestari</option>
@@ -389,18 +400,18 @@ export default function CustomerPending() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[10px] text-slate-400 font-bold block">Tanggal Pengajuan</label>
+              <label className="text-[10px] text-[var(--app-text-muted)] font-bold block">Tanggal Pengajuan</label>
               <input
                 type="text"
                 value={dateRange}
                 onChange={e => setDateRange(e.target.value)}
-                className="w-full bg-slate-100 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-blue-500"
+                className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2.5 text-xs text-[var(--app-text)] focus:outline-none focus:border-blue-500"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[10px] text-slate-400 font-bold block">Metode Pembayaran</label>
-              <select value={paymentFilter} onChange={e => setPaymentFilter(e.target.value)} className="w-full bg-slate-100 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-blue-500">
+              <label className="text-[10px] text-[var(--app-text-muted)] font-bold block">Metode Pembayaran</label>
+              <select value={paymentFilter} onChange={e => setPaymentFilter(e.target.value)} className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2.5 text-xs text-[var(--app-text)] focus:outline-none focus:border-blue-500">
                 <option value="all">Semua</option>
                 <option value="qris">QRIS</option>
                 <option value="trf">Transfer Bank</option>
@@ -409,8 +420,8 @@ export default function CustomerPending() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[10px] text-slate-400 font-bold block">Area</label>
-              <select value={areaFilter} onChange={e => setAreaFilter(e.target.value)} className="w-full bg-slate-100 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-blue-500">
+              <label className="text-[10px] text-[var(--app-text-muted)] font-bold block">Area</label>
+              <select value={areaFilter} onChange={e => setAreaFilter(e.target.value)} className="w-full bg-[var(--app-bg)] border border-[var(--app-border)] rounded-xl px-3 py-2.5 text-xs text-[var(--app-text)] focus:outline-none focus:border-blue-500">
                 <option value="all">Semua Area</option>
                 <option value="cimahi selatan">Cimahi Selatan</option>
                 <option value="cimahi utara">Cimahi Utara</option>
@@ -428,7 +439,7 @@ export default function CustomerPending() {
           <div className="xl:col-span-9 space-y-4">
             
             {/* Sub-Navigation Tabs */}
-            <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 border-b border-slate-200 pb-px">
+            <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 border-b border-[var(--app-border)] pb-px">
               <div className="flex overflow-x-auto gap-2 scrollbar-none">
                 {[
                   { id: 'verifikasi', label: `Menunggu Verifikasi (${countVerifikasi})` },
@@ -443,7 +454,7 @@ export default function CustomerPending() {
                     className={`px-4 py-3 font-semibold text-xs whitespace-nowrap border-b-2 transition-all ${
                       statusFilter === tab.id 
                         ? 'border-blue-500 text-blue-400 bg-blue-500/5' 
-                        : 'border-transparent text-slate-500 hover:text-gray-200'
+                        : 'border-transparent text-[var(--app-text-muted)] hover:text-[var(--app-text)]'
                     }`}
                   >
                     {tab.label}
@@ -452,12 +463,12 @@ export default function CustomerPending() {
               </div>
 
               <div className="flex items-center justify-end gap-3 pb-3 sm:pb-0">
-                <div className="flex items-center gap-1.5 text-xs text-slate-500">
+                <div className="flex items-center gap-1.5 text-xs text-[var(--app-text-muted)]">
                   <span>Tampilkan</span>
                   <select 
                     value={pageSize} 
                     onChange={e => setPageSize(parseInt(e.target.value))}
-                    className="bg-slate-100 border border-slate-200 rounded-lg px-2 py-1 text-xs text-white focus:outline-none"
+                    className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-lg px-2 py-1 text-xs text-[var(--app-text)] focus:outline-none"
                   >
                     <option value={10}>10</option>
                     <option value={25}>25</option>
@@ -466,17 +477,17 @@ export default function CustomerPending() {
                   <span>data</span>
                 </div>
 
-                <div className="flex items-center border border-slate-200 rounded-xl overflow-hidden">
+                <div className="flex items-center border border-[var(--app-border)] rounded-xl overflow-hidden">
                   <button 
                     onClick={() => setIsGridView(false)} 
-                    className={`p-2 transition-colors ${!isGridView ? 'bg-blue-600/20 text-blue-400' : 'bg-slate-100 text-slate-400 hover:text-slate-600'}`}
+                    className={`p-2 transition-colors ${!isGridView ? 'bg-blue-600/20 text-blue-400' : 'bg-[var(--app-card)] text-[var(--app-text-muted)] hover:text-[var(--app-text)]'}`}
                     title="List View"
                   >
                     <List size={14} />
                   </button>
                   <button 
                     onClick={() => setIsGridView(true)} 
-                    className={`p-2 transition-colors ${isGridView ? 'bg-blue-600/20 text-blue-400' : 'bg-slate-100 text-slate-400 hover:text-slate-600'}`}
+                    className={`p-2 transition-colors ${isGridView ? 'bg-blue-600/20 text-blue-400' : 'bg-[var(--app-card)] text-[var(--app-text-muted)] hover:text-[var(--app-text)]'}`}
                     title="Grid View"
                   >
                     <Grid size={14} />
@@ -486,17 +497,17 @@ export default function CustomerPending() {
             </div>
 
             {/* List Table Container */}
-            <div className="bg-white border border-slate-200 rounded-2xl shadow-2xs overflow-hidden">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl shadow-2xs overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
                   <thead>
-                    <tr className="border-b border-slate-200 text-slate-400 uppercase tracking-wider font-bold">
+                    <tr className="border-b border-[var(--app-border)] text-[var(--app-text-muted)] uppercase tracking-wider font-bold">
                       <th className="p-4 w-12 text-center">
                         <input 
                           type="checkbox" 
                           checked={selectedIds.length === filteredCustomers.length && filteredCustomers.length > 0} 
                           onChange={e => handleSelectAll(e.target.checked)}
-                          className="w-4 h-4 rounded bg-slate-100 border-slate-200 text-blue-500 focus:ring-0 focus:ring-offset-0" 
+                          className="w-4 h-4 rounded bg-[var(--app-bg)] border-[var(--app-border)] text-blue-500 focus:ring-0 focus:ring-offset-0" 
                         />
                       </th>
                       <th className="p-4 w-10 text-center">NO</th>
@@ -511,15 +522,15 @@ export default function CustomerPending() {
                       <th className="p-4 text-center">AKSI</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-200/35">
+                  <tbody className="divide-y divide-[var(--app-border)]">
                     {loading ? (
-                      <tr><td colSpan={11} className="py-12 text-center text-slate-400">Memuat data customer pending...</td></tr>
+                      <tr><td colSpan={11} className="py-12 text-center text-[var(--app-text-muted)]">Memuat data customer pending...</td></tr>
                     ) : filteredCustomers.length === 0 ? (
-                      <tr><td colSpan={11} className="py-12 text-center text-slate-400">Tidak ada data customer pending yang cocok.</td></tr>
+                      <tr><td colSpan={11} className="py-12 text-center text-[var(--app-text-muted)]">Tidak ada data customer pending yang cocok.</td></tr>
                     ) : (
-                      filteredCustomers.slice(0, pageSize).map((row, index) => {
+                      paginatedCustomers.map((row, index) => {
                         const isSelected = selectedIds.includes(row.id)
-                        let badgeColor = 'bg-gray-500/10 text-slate-500 border border-gray-500/20'
+                        let badgeColor = 'bg-gray-500/10 text-[var(--app-text-muted)] border border-gray-500/20'
                         if (row.status === 'Menunggu Verifikasi') badgeColor = 'bg-orange-500/10 text-orange-400 border border-orange-500/20'
                         else if (row.status === 'Menunggu Pembayaran') badgeColor = 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
                         else if (row.status === 'Pembayaran Diterima') badgeColor = 'bg-green-500/10 text-green-400 border border-green-500/20'
@@ -528,7 +539,7 @@ export default function CustomerPending() {
                         return (
                           <tr 
                             key={row.id} 
-                            className={`border-b border-slate-200/20 last:border-b-0 hover:bg-slate-100/25 transition ${
+                            className={`border-b border-[var(--app-border)] last:border-b-0 hover:bg-[var(--app-card-hover)] transition ${
                               isSelected ? 'bg-blue-600/5' : ''
                             }`}
                           >
@@ -537,36 +548,36 @@ export default function CustomerPending() {
                                 type="checkbox" 
                                 checked={isSelected} 
                                 onChange={() => handleBulkSelect(row.id)}
-                                className="w-4 h-4 rounded bg-slate-100 border-slate-200 text-blue-500 focus:ring-0" 
+                                className="w-4 h-4 rounded bg-[var(--app-bg)] border-[var(--app-border)] text-blue-500 focus:ring-0" 
                               />
                             </td>
-                            <td className="p-4 text-center text-slate-400 font-semibold">{index + 1}</td>
-                            <td className="p-4 text-slate-500 font-medium">{row.createdAt}</td>
-                            <td className="p-4 font-bold text-slate-800 cursor-pointer hover:text-blue-600" onClick={() => router.push(`/pelanggan/${row.id}`)}>{row.name}</td>
-                            <td className="p-4 text-slate-700 font-semibold">{row.packageName}</td>
-                            <td className="p-4 text-slate-500 font-medium">{row.salesName}</td>
-                            <td className="p-4 text-slate-700 font-semibold">
+                            <td className="p-4 text-center text-[var(--app-text-muted)] font-mono font-semibold">{index + 1}</td>
+                            <td className="p-4 text-[var(--app-text-muted)] font-medium">{row.createdAt}</td>
+                            <td className="p-4 font-bold text-[var(--app-text)] cursor-pointer hover:text-blue-500" onClick={() => router.push(`/pelanggan/${row.id}`)}>{row.name}</td>
+                            <td className="p-4 text-[var(--app-text)] font-semibold">{row.packageName}</td>
+                            <td className="p-4 text-[var(--app-text-muted)] font-medium">{row.salesName}</td>
+                            <td className="p-4 text-[var(--app-text)] font-semibold">
                               <div className="flex flex-col">
-                                <span>{row.phone}</span>
-                                <span className="text-[10px] text-slate-400 font-normal">{row.email}</span>
+                                <span className="font-mono">{row.phone}</span>
+                                <span className="text-[10px] text-[var(--app-text-muted)] font-normal">{row.email}</span>
                               </div>
                             </td>
-                            <td className="p-4 text-slate-500 font-medium">{row.area}</td>
+                            <td className="p-4 text-[var(--app-text-muted)] font-medium">{row.area}</td>
                             <td className="p-4">
                               <span className={`px-2.5 py-1 rounded-full text-[9px] font-bold ${badgeColor}`}>
                                 {row.status}
                               </span>
                             </td>
-                            <td className="p-4 text-slate-500 font-medium">{row.updatedAt}</td>
+                            <td className="p-4 text-[var(--app-text-muted)] font-medium">{row.updatedAt}</td>
                             <td className="p-4 text-center">
                               <div className="flex items-center justify-center gap-1.5">
-                                <button onClick={() => router.push(`/pelanggan/${row.id}`)} className="p-1 hover:bg-slate-100 hover:text-white text-slate-500 rounded transition">
+                                <button onClick={() => router.push(`/pelanggan/${row.id}`)} className="p-1 hover:bg-[var(--app-bg)] hover:text-[var(--app-text)] text-[var(--app-text-muted)] rounded transition">
                                   <Eye size={12} />
                                 </button>
-                                <button onClick={() => router.push(`/pelanggan/${row.id}`)} className="p-1 hover:bg-slate-100 hover:text-white text-slate-500 rounded transition">
+                                <button onClick={() => router.push(`/pelanggan/${row.id}`)} className="p-1 hover:bg-[var(--app-bg)] hover:text-[var(--app-text)] text-[var(--app-text-muted)] rounded transition">
                                   <Edit size={12} />
                                 </button>
-                                <button onClick={() => alert("Opsi tindakan: Verifikasi Pendaftaran, Kirim WhatsApp, Batalkan.")} className="p-1 hover:bg-slate-100 hover:text-white text-slate-500 rounded transition"><MoreHorizontal size={12} /></button>
+                                <button onClick={() => toast.info("Opsi tindakan: Verifikasi Pendaftaran, Kirim WhatsApp, Batalkan.")} className="p-1 hover:bg-[var(--app-bg)] hover:text-[var(--app-text)] text-[var(--app-text-muted)] rounded transition"><MoreHorizontal size={12} /></button>
                               </div>
                             </td>
                           </tr>
@@ -578,18 +589,17 @@ export default function CustomerPending() {
               </div>
             </div>
 
-            <div className="flex justify-between items-center text-xs text-slate-400 font-medium pt-2">
-              <span>Menampilkan 1 - {Math.min(filteredCustomers.length, pageSize)} dari {filteredCustomers.length} data</span>
-              <div className="flex gap-1">
-                <button onClick={() => alert("Halaman pertama sudah aktif.")} className="px-3 py-1 bg-slate-100 border border-slate-200 text-slate-500 hover:text-slate-900 rounded-lg font-semibold">&lt;</button>
-                <button onClick={() => alert("Halaman 1 saat ini aktif.")} className="px-3 py-1 bg-blue-600/20 text-blue-400 border border-blue-500/20 rounded-lg font-semibold">1</button>
-                <button onClick={() => alert("Beralih ke halaman 2")} className="px-3 py-1 bg-slate-100 border border-slate-200/50 text-slate-400 rounded-lg font-semibold">2</button>
-                <button onClick={() => alert("Beralih ke halaman 3")} className="px-3 py-1 bg-slate-100 border border-slate-200/50 text-slate-400 rounded-lg font-semibold">3</button>
-                <span className="px-2 pt-1 text-gray-600">...</span>
-                <button onClick={() => alert("Beralih ke halaman 13")} className="px-3 py-1 bg-slate-100 border border-slate-200/50 text-slate-400 rounded-lg font-semibold">13</button>
-                <button onClick={() => alert("Beralih ke halaman selanjutnya.")} className="px-3 py-1 bg-slate-100 border border-slate-200/50 text-slate-500 hover:text-slate-900 rounded-lg font-semibold">&gt;</button>
-              </div>
-            </div>
+            <Pagination
+              currentPage={safeCurrentPage}
+              totalPages={totalPages}
+              totalItems={filteredCustomers.length}
+              pageSize={pageSize}
+              onPageChange={setCurrentPage}
+              onPageSizeChange={(newSize) => {
+                setPageSize(newSize);
+                setCurrentPage(1);
+              }}
+            />
 
           </div>
 
@@ -597,14 +607,14 @@ export default function CustomerPending() {
           <div className="xl:col-span-3 space-y-6">
             
             {/* Widget 1: Statistik Pending (Donut Chart) */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-4">
-              <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">Statistik Pending</h3>
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-4">
+              <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider">Statistik Pending</h3>
               
               <div className="flex items-center justify-between gap-4">
                 {/* SVG Donut Chart */}
                 <div className="relative w-24 h-24 flex items-center justify-center flex-shrink-0">
                   <svg className="w-full h-full transform -rotate-90" viewBox="0 0 80 80">
-                    <circle cx="40" cy="40" r={radius} fill="transparent" stroke="#e2e8f0" strokeWidth="6" />
+                    <circle cx="40" cy="40" r={radius} fill="transparent" stroke="var(--app-border)" strokeWidth="6" />
                     
                     {/* Menunggu Verifikasi (40.6%) - Orange */}
                     <circle 
@@ -656,8 +666,8 @@ export default function CustomerPending() {
                   </svg>
                   
                   <div className="absolute flex flex-col items-center">
-                    <span className="text-base font-black text-slate-900">{countTotal}</span>
-                    <span className="text-[8px] text-slate-400 font-bold uppercase">Total</span>
+                    <span className="text-base font-black font-mono text-[var(--app-text)]">{countTotal}</span>
+                    <span className="text-[8px] text-[var(--app-text-muted)] font-bold uppercase">Total</span>
                   </div>
                 </div>
 
@@ -666,41 +676,41 @@ export default function CustomerPending() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-orange-400"></span>
-                      <span className="text-slate-500">Verifikasi</span>
+                      <span className="text-[var(--app-text-muted)]">Verifikasi</span>
                     </div>
-                    <span className="font-bold text-slate-800">{countVerifikasi}</span>
+                    <span className="font-bold font-mono text-[var(--app-text)]">{countVerifikasi}</span>
                   </div>
 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
-                      <span className="text-slate-500">Pembayaran</span>
+                      <span className="text-[var(--app-text-muted)]">Pembayaran</span>
                     </div>
-                    <span className="font-bold text-slate-800">{countPembayaran}</span>
+                    <span className="font-bold font-mono text-[var(--app-text)]">{countPembayaran}</span>
                   </div>
 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-green-400"></span>
-                      <span className="text-slate-500">Diterima</span>
+                      <span className="text-[var(--app-text-muted)]">Diterima</span>
                     </div>
-                    <span className="font-bold text-slate-800">{countDiterima}</span>
+                    <span className="font-bold font-mono text-[var(--app-text)]">{countDiterima}</span>
                   </div>
 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-red-400"></span>
-                      <span className="text-slate-500">Ditolak</span>
+                      <span className="text-[var(--app-text-muted)]">Ditolak</span>
                     </div>
-                    <span className="font-bold text-slate-800">{countDitolak}</span>
+                    <span className="font-bold font-mono text-[var(--app-text)]">{countDitolak}</span>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Widget 2: Sumber Pending */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-4">
-              <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">Sumber Pending</h3>
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-4">
+              <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider">Sumber Pending</h3>
               
               <div className="space-y-3">
                 {[
@@ -711,10 +721,10 @@ export default function CustomerPending() {
                 ].map(src => (
                   <div key={src.label} className="space-y-1.5">
                     <div className="flex justify-between items-center text-[10px]">
-                      <span className="text-slate-500 font-bold">{src.label}</span>
-                      <span className="text-white font-bold">{src.value}</span>
+                      <span className="text-[var(--app-text-muted)] font-bold">{src.label}</span>
+                      <span className="text-[var(--app-text)] font-mono font-bold">{src.value}</span>
                     </div>
-                    <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                    <div className="w-full bg-[var(--app-bg)] h-1.5 rounded-full overflow-hidden">
                       <div className={`h-full rounded-full ${src.color} ${src.pct}`}></div>
                     </div>
                   </div>
@@ -723,20 +733,20 @@ export default function CustomerPending() {
             </div>
 
             {/* Widget 3: Aktivitas Terakhir */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-4">
-              <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">Aktivitas Terakhir</h3>
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-4">
+              <h3 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider">Aktivitas Terakhir</h3>
               
-              <div className="relative pl-4 border-l border-slate-200 space-y-5">
+              <div className="relative pl-4 border-l border-[var(--app-border)] space-y-5">
                 {[
                   { time: '22 Okt 2026 08:25', desc: 'Pengajuan baru dari Rudi Hartono', detail: 'Paket Home 50 Mbps', icon: 'bg-orange-500/20 text-orange-400' },
                   { time: '22 Okt 2026 08:10', desc: 'Pengajuan baru dari Siti Aisyah', detail: 'Paket Home 20 Mbps', icon: 'bg-orange-500/20 text-orange-400' },
                   { time: '22 Okt 2026 07:45', desc: 'Pembayaran diterima dari Dian Permata', detail: 'Paket Home 20 Mbps', icon: 'bg-green-500/20 text-green-400' }
                 ].map((act, i) => (
                   <div key={i} className="relative space-y-1 text-[10px]">
-                    <span className="absolute -left-[21px] top-0.5 w-2.5 h-2.5 rounded-full bg-slate-50 border-2 border-blue-500"></span>
-                    <span className="text-slate-400 font-bold">{act.time}</span>
-                    <p className="text-white font-bold leading-relaxed">{act.desc}</p>
-                    <p className="text-slate-500">{act.detail}</p>
+                    <span className="absolute -left-[21px] top-0.5 w-2.5 h-2.5 rounded-full bg-[var(--app-bg)] border-2 border-blue-500"></span>
+                    <span className="text-[var(--app-text-muted)] font-mono font-bold">{act.time}</span>
+                    <p className="text-[var(--app-text)] font-bold leading-relaxed">{act.desc}</p>
+                    <p className="text-[var(--app-text-muted)]">{act.detail}</p>
                   </div>
                 ))}
               </div>
@@ -747,21 +757,21 @@ export default function CustomerPending() {
         </div>
 
         {/* Footer Action Bar (Bulk actions panel that matches the style) */}
-        <div className="flex flex-col sm:flex-row justify-between items-center bg-white border border-slate-200 p-4 rounded-2xl gap-4">
+        <div className="flex flex-col sm:flex-row justify-between items-center bg-[var(--app-card)] border border-[var(--app-border)] p-4 rounded-2xl gap-4">
           <div className="flex flex-wrap items-center gap-3.5 text-xs">
-            <span className="text-slate-500 font-bold">
-              <span className="text-blue-400 font-black">{selectedIds.length}</span> dipilih
+            <span className="text-[var(--app-text-muted)] font-bold">
+              <span className="text-blue-400 font-black font-mono">{selectedIds.length}</span> dipilih
             </span>
-            <label className="flex items-center gap-2 text-slate-700 font-semibold cursor-pointer">
+            <label className="flex items-center gap-2 text-[var(--app-text)] font-semibold cursor-pointer">
               <input 
                 type="checkbox"
                 checked={selectedIds.length === filteredCustomers.length && filteredCustomers.length > 0} 
                 onChange={e => handleSelectAll(e.target.checked)} 
-                className="w-4 h-4 rounded bg-slate-100 border-slate-200" 
+                className="w-4 h-4 rounded bg-[var(--app-bg)] border-[var(--app-border)]" 
               />
               Pilih Semua
             </label>
-            <div className="h-4 w-px bg-slate-100 hidden sm:block"></div>
+            <div className="h-4 w-px bg-[var(--app-border)] hidden sm:block"></div>
             <button
               onClick={() => handleBulkStatusChange('active')}
               disabled={selectedIds.length === 0 || actionLoading}
@@ -779,7 +789,7 @@ export default function CustomerPending() {
             <button
               onClick={handleBulkDelete}
               disabled={selectedIds.length === 0 || actionLoading}
-              className="flex items-center gap-1.5 px-3.5 py-2 bg-slate-100 hover:bg-red-500/10 disabled:opacity-50 text-slate-500 hover:text-red-400 border border-slate-200 rounded-xl font-bold transition"
+              className="flex items-center gap-1.5 px-3.5 py-2 bg-[var(--app-bg)] hover:bg-red-500/10 disabled:opacity-50 text-[var(--app-text-muted)] hover:text-red-400 border border-[var(--app-border)] rounded-xl font-bold transition"
             >
               <Trash2 size={12} /> Hapus
             </button>

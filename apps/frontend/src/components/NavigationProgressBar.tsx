@@ -15,7 +15,6 @@ export default function NavigationProgressBar() {
     let timerFinish: NodeJS.Timeout
 
     const handleStart = (url: string) => {
-      // Don't animate if navigating to identical route
       if (url === router.asPath) return
 
       setIsVisible(true)
@@ -65,12 +64,12 @@ export default function NavigationProgressBar() {
 
   return (
     <div
-      className="fixed top-0 left-0 right-0 z-[9999] pointer-events-none transition-opacity duration-200"
+      className="fixed top-0 left-0 right-0 z-[9999] pointer-events-none transition-opacity duration-150"
       style={{ opacity: isVisible ? 1 : 0 }}
       aria-hidden="true"
     >
       <div
-        className="h-[3px] bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 nav-progress-glow transition-all duration-180 ease-out shadow-[0_0_12px_rgba(56,189,248,0.8)]"
+        className="h-[2px] bg-[var(--app-primary)] transition-all duration-150 ease-out"
         style={{
           width: `${progress}%`,
         }}

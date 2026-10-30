@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3218'
 
-export type UserRole = 'ADMIN' | 'BILLING' | 'NOC' | 'CS' | 'TECHNICIAN'
+export type UserRole = 'SUPERADMIN' | 'OWNER' | 'ADMIN' | 'BILLING' | 'NOC' | 'CS' | 'TECHNICIAN' | 'CUSTOMER'
 
 interface User {
   id: string
@@ -16,6 +16,7 @@ interface AuthContextType {
   user: User | null
   login: (email: string, password: string) => Promise<void>
   logout: () => void
+  switchRole: (role: UserRole) => void
   isLoading: boolean
 }
 
@@ -50,7 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (data.role) {
           data.role = data.role.toUpperCase()
         }
-        console.log('👤 User authenticated:', data.email, 'Role:', data.role)
+        console.log('[Auth] User authenticated:', data.email, 'Role:', data.role)
         setUser(data)
         if (typeof window !== 'undefined') {
           localStorage.setItem('user', JSON.stringify(data))
@@ -156,7 +157,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         role: userRole
       }
 
-      console.log('✅ Login successful:', userData.email, 'Role:', userData.role)
+      console.log('[Auth] Login successful:', userData.email, 'Role:', userData.role)
 
       if (typeof window !== 'undefined') {
         localStorage.setItem('token', data.access_token);
@@ -171,6 +172,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       console.error('Login error:', error)
       throw error
+    }
+  }
+
+  const switchRole = (newRole: UserRole) => {
+    const roleUpper = newRole.toUpperCase() as UserRole
+    const nameMap: Record<string, string> = {
+      SUPERADMIN: 'Agus Dwi Rianto (Superadmin)',
+      OWNER: 'Agus Dwi Rianto (Owner)',
+      ADMIN: 'Agus Dwi Rianto (Admin)',
+      NOC: 'Budi Santoso (NOC Engineer)',
+      TECHNICIAN: 'Rudi Hartono (Teknisi Lapangan)',
+      BILLING: 'Siti Rahmawati (Billing & Kasir)',
+      CS: 'Dewi Lestari (Customer Service)',
+      CUSTOMER: 'Ahmad Pratama (Pelanggan Mandiri)'
+    }
+
+    const updatedUser: User = {
+      id: user?.id || 'usr-role-switch',
+      email: `${roleUpper.toLowerCase()}@audira.net`,
+      name: nameMap[roleUpper] || `${roleUpper} User`,
+      role: roleUpper,
+    }
+
+    console.log('[Auth] Role switched dynamically to:', roleUpper)
+    setUser(updatedUser)
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('user', JSON.stringify(updatedUser))
     }
   }
 
@@ -196,7 +224,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, login, logout, switchRole, isLoading }}>
       {children}
     </AuthContext.Provider>
   )

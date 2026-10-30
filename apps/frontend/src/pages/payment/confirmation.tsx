@@ -2,6 +2,7 @@ import Link from 'next/link';
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
+import { useToast } from '@/contexts/ToastContext';
 import {
   Search,
   Filter,
@@ -66,6 +67,7 @@ const mockLogs: ConfirmationLog[] = [
 
 export default function PaymentConfirmationPage() {
   const router = useRouter();
+  const { toast } = useToast();
   const [selectedStatus, setSelectedStatus] = useState('Terima');
   const [notes, setNotes] = useState('Pembayaran sesuai dengan invoice. Terima kasih.');
 
@@ -419,12 +421,12 @@ export default function PaymentConfirmationPage() {
                 </button>
                 
                 <div className="flex items-center gap-3">
-                  <button onClick={() => alert("Pembayaran berhasil diverifikasi dan diproses.")} className="flex items-center gap-1.5 bg-[#10b981] hover:bg-emerald-600 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-md transition-all">
+                  <button onClick={() => toast.success("Pembayaran berhasil diverifikasi dan diproses.")} className="flex items-center gap-1.5 bg-[#10b981] hover:bg-emerald-600 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-md transition-all">
                     <CheckCircle size={14} />
                     <span>Simpan & Proses</span>
                   </button>
 
-                  <button onClick={() => alert("Perubahan status verifikasi pembayaran disimpan.")} className="flex items-center gap-1.5 bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-md transition-all">
+                  <button onClick={() => toast.success("Perubahan status verifikasi pembayaran disimpan.")} className="flex items-center gap-1.5 bg-[#0052cc] hover:bg-blue-700 text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow-md transition-all">
                     <CheckCircle size={14} />
                     <span>Simpan</span>
                   </button>
@@ -448,12 +450,12 @@ export default function PaymentConfirmationPage() {
 
               {/* Sample Bank Receipt Image box */}
               <div className="bg-[var(--app-bg)] border border-[var(--app-border)] p-3 rounded-xl flex items-center justify-center h-44 overflow-hidden relative group">
-                <div className="bg-white p-4 w-32 rounded text-[5px] text-gray-800 shadow-md flex flex-col justify-between h-36">
+                <div className="bg-[var(--app-card)] border border-[var(--app-border)] p-4 w-32 rounded text-[5px] text-[var(--app-text)] shadow-md flex flex-col justify-between h-36">
                   <div>
-                    <h5 className="font-extrabold text-[7px] text-blue-900 leading-tight">Bank Mandiri</h5>
+                    <h5 className="font-extrabold text-[7px] text-blue-400 leading-tight">Bank Mandiri</h5>
                     <p className="text-[4px] text-[var(--app-muted)]">STRUK TRANSAKSI TRANSFER</p>
                   </div>
-                  <div className="border-t border-b border-gray-100 py-1 space-y-1">
+                  <div className="border-t border-b border-[var(--app-border)] py-1 space-y-1">
                     <div className="flex justify-between"><span>Dari</span><span className="font-bold">Budi Santoso</span></div>
                     <div className="flex justify-between"><span>Ke</span><span className="font-bold">Audira NET</span></div>
                     <div className="flex justify-between"><span>Jumlah</span><span className="font-bold">Rp 1.200.000</span></div>
@@ -484,15 +486,15 @@ export default function PaymentConfirmationPage() {
 
               {/* Action Buttons */}
               <div className="grid grid-cols-3 gap-2">
-                <button onClick={() => alert("Membuka preview struk bukti transfer...")} className="flex flex-col items-center justify-center p-2 rounded-lg bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-[9px] font-bold text-[var(--app-text)]/80 transition-colors">
+                <button onClick={() => toast.info("Membuka preview struk bukti transfer...")} className="flex flex-col items-center justify-center p-2 rounded-lg bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-[9px] font-bold text-[var(--app-text)]/80 transition-colors">
                   <Eye size={12} className="mb-1" />
                   <span>Lihat</span>
                 </button>
-                <button onClick={() => alert("Mengunduh bukti-transfer-budi-santoso.jpg...")} className="flex flex-col items-center justify-center p-2 rounded-lg bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-[9px] font-bold text-[var(--app-text)]/80 transition-colors">
+                <button onClick={() => toast.info("Mengunduh bukti-transfer-budi-santoso.jpg...")} className="flex flex-col items-center justify-center p-2 rounded-lg bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-[9px] font-bold text-[var(--app-text)]/80 transition-colors">
                   <Download size={12} className="mb-1" />
                   <span>Unduh</span>
                 </button>
-                <button onClick={() => alert("Memperbesar gambar bukti transfer...")} className="flex flex-col items-center justify-center p-2 rounded-lg bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-[9px] font-bold text-[var(--app-text)]/80 transition-colors">
+                <button onClick={() => toast.info("Memperbesar gambar bukti transfer...")} className="flex flex-col items-center justify-center p-2 rounded-lg bg-[var(--app-bg)] border border-[var(--app-border)] hover:bg-[var(--app-border)]/30 text-[9px] font-bold text-[var(--app-text)]/80 transition-colors">
                   <ZoomIn size={12} className="mb-1" />
                   <span>Zoom</span>
                 </button>

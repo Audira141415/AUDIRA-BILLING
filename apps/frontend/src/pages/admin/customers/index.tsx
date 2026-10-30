@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { useToast } from '@/contexts/ToastContext';
+import { ArrowLeft, Plus, Upload, CheckCircle2, XCircle } from 'lucide-react';
 
 interface Customer {
   id: string;
@@ -50,6 +52,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3218';
 
 export default function AdminCustomersPage() {
   const router = useRouter();
+  const { toast } = useToast();
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [statistics, setStatistics] = useState<Statistics | null>(null);
   const [loading, setLoading] = useState(true);
@@ -248,17 +251,17 @@ export default function AdminCustomersPage() {
       });
 
       if (response.ok) {
-        alert('Customer created successfully!');
+        toast.success('Pelanggan berhasil ditambahkan!');
         setShowCreateModal(false);
         fetchCustomers();
         fetchStatistics();
       } else {
         const error = await response.json();
-        alert(`Error: ${error.message || 'Failed to create customer'}`);
+        toast.error(`Gagal membuat pelanggan: ${error.message || 'Terjadi kesalahan'}`);
       }
     } catch (error) {
       console.error('Error creating customer:', error);
-      alert('Failed to create customer');
+      toast.error('Gagal menambahkan pelanggan');
     } finally {
       setFormLoading(false);
     }
@@ -283,16 +286,16 @@ export default function AdminCustomersPage() {
       });
 
       if (response.ok) {
-        alert('Customer updated successfully!');
+        toast.success('Data pelanggan berhasil diperbarui!');
         setShowEditModal(false);
         fetchCustomers();
       } else {
         const error = await response.json();
-        alert(`Error: ${error.message || 'Failed to update customer'}`);
+        toast.error(`Gagal memperbarui data: ${error.message || 'Terjadi kesalahan'}`);
       }
     } catch (error) {
       console.error('Error updating customer:', error);
-      alert('Failed to update customer');
+      toast.error('Gagal memperbarui pelanggan');
     } finally {
       setFormLoading(false);
     }
@@ -309,17 +312,17 @@ export default function AdminCustomersPage() {
       });
 
       if (response.ok) {
-        alert('Customer deleted successfully!');
+        toast.success('Pelanggan berhasil dihapus!');
         setShowDeleteModal(false);
         fetchCustomers();
         fetchStatistics();
       } else {
         const error = await response.json();
-        alert(`Error: ${error.message || 'Failed to delete customer'}`);
+        toast.error(`Gagal menghapus pelanggan: ${error.message || 'Terjadi kesalahan'}`);
       }
     } catch (error) {
       console.error('Error deleting customer:', error);
-      alert('Failed to delete customer');
+      toast.error('Gagal menghapus pelanggan');
     } finally {
       setFormLoading(false);
     }
@@ -329,7 +332,7 @@ export default function AdminCustomersPage() {
     e.preventDefault();
     
     if (!csvFile) {
-      alert('Please select a CSV file');
+      toast.warning('Silakan pilih file CSV terlebih dahulu');
       return;
     }
 
@@ -364,11 +367,11 @@ export default function AdminCustomersPage() {
         fetchStatistics();
       } else {
         const error = await response.json();
-        alert(`Error: ${error.message || 'Failed to import customers'}`);
+        toast.error(`Gagal import: ${error.message || 'Terjadi kesalahan'}`);
       }
     } catch (error) {
       console.error('Error importing CSV:', error);
-      alert('Failed to import CSV file');
+      toast.error('Gagal memproses file CSV');
     } finally {
       setImportLoading(false);
     }
@@ -392,17 +395,17 @@ export default function AdminCustomersPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)]">
       {/* Header */}
-      <div className="bg-white shadow">
+      <div className="bg-[var(--app-card)] border-b border-[var(--app-border)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-gray-900">Customer Management</h1>
+            <h1 className="text-2xl font-bold text-[var(--app-text)]">Customer Management</h1>
             <button
               onClick={() => router.push('/')}
-              className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900"
+              className="px-4 py-2 text-sm text-[var(--app-text-muted)] hover:text-[var(--app-text)] flex items-center gap-1.5"
             >
-              ← Back to Dashboard
+              <ArrowLeft className="w-4 h-4" /> Kembali ke Dashboard
             </button>
           </div>
         </div>
@@ -412,23 +415,23 @@ export default function AdminCustomersPage() {
         {/* Statistics Cards */}
         {statistics && (
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-6">
               <div className="text-sm font-medium text-slate-400">Total Customers</div>
-              <div className="mt-2 text-3xl font-semibold text-gray-900">{statistics.total}</div>
+              <div className="mt-2 text-3xl font-semibold text-[var(--app-text)]">{statistics.total}</div>
             </div>
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-6">
               <div className="text-sm font-medium text-slate-400">Active</div>
-              <div className="mt-2 text-3xl font-semibold text-green-600">{statistics.active}</div>
+              <div className="mt-2 text-3xl font-semibold text-emerald-600">{statistics.active}</div>
             </div>
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-6">
               <div className="text-sm font-medium text-slate-400">Inactive</div>
-              <div className="mt-2 text-3xl font-semibold text-gray-600">{statistics.inactive}</div>
+              <div className="mt-2 text-3xl font-semibold text-[var(--app-text-muted)]">{statistics.inactive}</div>
             </div>
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-6">
               <div className="text-sm font-medium text-slate-400">Suspended</div>
-              <div className="mt-2 text-3xl font-semibold text-red-600">{statistics.suspended}</div>
+              <div className="mt-2 text-3xl font-semibold text-rose-600">{statistics.suspended}</div>
             </div>
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-6">
               <div className="text-sm font-medium text-slate-400">New (30 days)</div>
               <div className="mt-2 text-3xl font-semibold text-blue-600">{statistics.newCustomers}</div>
             </div>
@@ -436,7 +439,7 @@ export default function AdminCustomersPage() {
         )}
 
         {/* Controls */}
-        <div className="bg-white rounded-lg shadow mb-4">
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl mb-4">
           <div className="p-4">
             <div className="flex flex-col md:flex-row gap-4">
               {/* Search */}
@@ -468,15 +471,15 @@ export default function AdminCustomersPage() {
               <div className="flex gap-2">
                 <button
                   onClick={openCreateModal}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 whitespace-nowrap"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 whitespace-nowrap flex items-center gap-1.5"
                 >
-                  + Create Customer
+                  <Plus className="w-4 h-4" /> Tambah Pelanggan
                 </button>
                 <button
                   onClick={() => setShowImportModal(true)}
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 whitespace-nowrap"
+                  className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 whitespace-nowrap flex items-center gap-1.5"
                 >
-                  📁 Import CSV
+                  <Upload className="w-4 h-4" /> Import CSV
                 </button>
               </div>
             </div>
@@ -484,15 +487,15 @@ export default function AdminCustomersPage() {
         </div>
 
         {/* Table */}
-        <div className="bg-white rounded-lg shadow overflow-hidden">
+        <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-[var(--app-border)]">
+              <thead className="bg-[var(--app-card-subtle)]">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onClick={() => handleSort('name')}>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider cursor-pointer hover:bg-[var(--app-card)]" onClick={() => handleSort('name')}>
                     Name {sortBy === 'name' && (sortOrder === 'asc' ? '↑' : '↓')}
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onClick={() => handleSort('email')}>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider cursor-pointer hover:bg-[var(--app-card)]" onClick={() => handleSort('email')}>
                     Email {sortBy === 'email' && (sortOrder === 'asc' ? '↑' : '↓')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
@@ -512,7 +515,7 @@ export default function AdminCustomersPage() {
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-[var(--app-card)] divide-y divide-[var(--app-border)]">
                 {loading ? (
                   <tr>
                     <td colSpan={7} className="px-6 py-4 text-center text-slate-400">
@@ -579,9 +582,9 @@ export default function AdminCustomersPage() {
           </div>
 
           {/* Pagination */}
-          <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+          <div className="bg-[var(--app-card)] px-4 py-3 flex items-center justify-between border-t border-[var(--app-border)] sm:px-6">
             <div className="flex-1 flex justify-between items-center">
-              <div className="text-sm text-gray-700">
+              <div className="text-sm text-[var(--app-text)]">
                 Showing <span className="font-medium">{(page - 1) * limit + 1}</span> to{' '}
                 <span className="font-medium">{Math.min(page * limit, total)}</span> of{' '}
                 <span className="font-medium">{total}</span> results
@@ -593,7 +596,7 @@ export default function AdminCustomersPage() {
                     setLimit(Number(e.target.value));
                     setPage(1);
                   }}
-                  className="px-3 py-1 border border-gray-300 rounded-md text-sm"
+                  className="px-3 py-1 bg-[var(--app-bg)] border border-[var(--app-border)] text-[var(--app-text)] rounded-md text-sm"
                 >
                   <option value="10">10 per page</option>
                   <option value="25">25 per page</option>
@@ -603,17 +606,17 @@ export default function AdminCustomersPage() {
                 <button
                   onClick={() => setPage(Math.max(1, page - 1))}
                   disabled={page === 1}
-                  className="px-3 py-1 border border-gray-300 rounded-md text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-3 py-1 bg-[var(--app-bg)] border border-[var(--app-border)] text-[var(--app-text)] rounded-md text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Previous
                 </button>
-                <span className="text-sm text-gray-700">
+                <span className="text-sm text-[var(--app-text)]">
                   Page {page} of {totalPages}
                 </span>
                 <button
                   onClick={() => setPage(Math.min(totalPages, page + 1))}
                   disabled={page === totalPages}
-                  className="px-3 py-1 border border-gray-300 rounded-md text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-3 py-1 bg-[var(--app-bg)] border border-[var(--app-border)] text-[var(--app-text)] rounded-md text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Next
                 </button>
@@ -626,7 +629,7 @@ export default function AdminCustomersPage() {
       {/* Create Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <h2 className="text-2xl font-bold mb-4">Create New Customer</h2>
               <form onSubmit={handleCreateCustomer}>
@@ -764,7 +767,7 @@ export default function AdminCustomersPage() {
       {/* Edit Modal */}
       {showEditModal && selectedCustomer && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <h2 className="text-2xl font-bold mb-4">Edit Customer</h2>
               <form onSubmit={handleUpdateCustomer}>
@@ -892,10 +895,10 @@ export default function AdminCustomersPage() {
       {/* Delete Modal */}
       {showDeleteModal && selectedCustomer && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-md w-full">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl max-w-md w-full">
             <div className="p-6">
               <h2 className="text-2xl font-bold mb-4">Delete Customer</h2>
-              <p className="text-gray-700 mb-4">
+              <p className="text-[var(--app-text)] mb-4">
                 Are you sure you want to delete customer <strong>{selectedCustomer.name}</strong>?
               </p>
               <p className="text-sm text-slate-400 mb-6">
@@ -905,14 +908,14 @@ export default function AdminCustomersPage() {
                 <button
                   onClick={() => setShowDeleteModal(false)}
                   disabled={formLoading}
-                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
+                  className="px-4 py-2 border border-[var(--app-border)] rounded-lg hover:bg-[var(--app-card-subtle)] disabled:opacity-50"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleDeleteCustomer}
                   disabled={formLoading}
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
+                  className="px-4 py-2 bg-rose-600 text-white rounded-lg hover:bg-rose-700 disabled:opacity-50"
                 >
                   {formLoading ? 'Deleting...' : 'Delete Customer'}
                 </button>
@@ -925,38 +928,38 @@ export default function AdminCustomersPage() {
       {/* Import CSV Modal */}
       {showImportModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-2xl w-full">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl max-w-2xl w-full">
             <div className="p-6">
               <h2 className="text-2xl font-bold mb-4">Import Customers from CSV</h2>
               
-              <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <p className="text-sm text-blue-800 font-medium mb-2">CSV Format:</p>
-                <p className="text-xs text-blue-700 font-mono">
+              <div className="mb-4 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                <p className="text-sm text-blue-400 font-medium mb-2">CSV Format:</p>
+                <p className="text-xs text-blue-300 font-mono">
                   name,email,password,phone,address,internetNumber,ipAddress,installedModem,modemSerial,installationDate
                 </p>
               </div>
 
               <form onSubmit={handleImportCSV}>
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Select CSV File</label>
+                  <label className="block text-sm font-medium text-[var(--app-text)] mb-2">Select CSV File</label>
                   <input
                     type="file"
                     accept=".csv"
                     onChange={(e) => setCsvFile(e.target.files?.[0] || null)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                    className="w-full px-3 py-2 border border-[var(--app-border)] rounded-lg bg-[var(--app-bg)] text-[var(--app-text)]"
                   />
                 </div>
 
                 {importResult && (
-                  <div className="mb-4 p-4 bg-gray-50 border border-gray-200 rounded-lg">
-                    <p className="text-sm font-medium text-gray-700 mb-2">Import Results:</p>
-                    <p className="text-sm text-green-600">✅ Success: {importResult.success} customers</p>
-                    <p className="text-sm text-red-600">❌ Failed: {importResult.failed} customers</p>
+                  <div className="mb-4 p-4 bg-[var(--app-card-subtle)] border border-[var(--app-border)] rounded-lg">
+                    <p className="text-sm font-medium text-[var(--app-text)] mb-2">Import Results:</p>
+                    <p className="text-sm text-emerald-500 flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4" /> Success: {importResult.success} customers</p>
+                    <p className="text-sm text-rose-500 flex items-center gap-1.5"><XCircle className="w-4 h-4" /> Failed: {importResult.failed} customers</p>
                     {importResult.errors && importResult.errors.length > 0 && (
                       <div className="mt-2 max-h-40 overflow-y-auto">
-                        <p className="text-xs text-gray-600 font-medium mb-1">Errors:</p>
+                        <p className="text-xs text-[var(--app-text-muted)] font-medium mb-1">Errors:</p>
                         {importResult.errors.map((err: any, idx: number) => (
-                          <p key={idx} className="text-xs text-red-600">
+                          <p key={idx} className="text-xs text-rose-500">
                             Row {err.row}: {err.error}
                           </p>
                         ))}

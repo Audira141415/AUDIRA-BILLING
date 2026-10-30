@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { useState, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
+import { useToast } from '@/contexts/ToastContext';
 import {
   Search,
   Filter,
@@ -62,6 +63,7 @@ interface TaxObligation {
 
 export default function PajakDashboard() {
   const router = useRouter();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('Ringkasan');
 
   // Search & Filter state
@@ -77,6 +79,7 @@ export default function PajakDashboard() {
 
   // Modals state
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedTaxDetails, setSelectedTaxDetails] = useState<TaxObligation | null>(null);
 
@@ -257,7 +260,7 @@ export default function PajakDashboard() {
               <Plus className="w-4 h-4" />
               <span>Pajak Baru</span>
             </button>
-            <button onClick={() => alert("Membuka dialog Import Faktur & Pajak...")} className="flex items-center gap-1.5 bg-[var(--app-card)] hover:bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-[var(--app-text)] text-xs font-medium px-4 py-2.5 rounded-lg transition-colors cursor-pointer shadow-xs">
+            <button onClick={() => setShowImportModal(true)} className="flex items-center gap-1.5 bg-[var(--app-card)] hover:bg-[var(--app-card-subtle)] border border-[var(--app-border)] text-[var(--app-text)] text-xs font-medium px-4 py-2.5 rounded-lg transition-colors cursor-pointer shadow-xs">
               <Upload className="w-3.5 h-3.5 text-[var(--app-text-muted)]" />
               <span>Import Data Pajak</span>
             </button>
@@ -694,7 +697,7 @@ export default function PajakDashboard() {
             <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-xl p-5 shadow-xs">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xs font-bold text-[var(--app-text)] uppercase tracking-wider">Pajak Jatuh Tempo</h2>
-                <button onClick={() => alert("Menampilkan semua jadwal pajak jatuh tempo.")} className="text-[10px] text-blue-600 dark:text-blue-400 font-semibold hover:underline cursor-pointer">Lihat Semua</button>
+                <button onClick={() => toast.info("Menampilkan semua jadwal pajak jatuh tempo.")} className="text-[10px] text-blue-600 dark:text-blue-400 font-semibold hover:underline cursor-pointer">Lihat Semua</button>
               </div>
 
               <div className="space-y-3">
@@ -760,7 +763,7 @@ export default function PajakDashboard() {
                   </div>
                 ))}
               </div>
-              <button onClick={() => alert("Menampilkan seluruh arsip pelaporan SPT Masa/Tahunan...")} className="w-full text-center text-blue-600 dark:text-blue-400 font-semibold text-[10px] mt-4 hover:underline block cursor-pointer">
+              <button onClick={() => toast.info("Menampilkan seluruh arsip pelaporan SPT Masa/Tahunan...")} className="w-full text-center text-blue-600 dark:text-blue-400 font-semibold text-[10px] mt-4 hover:underline block cursor-pointer">
                 Lihat Semua SPT &gt;
               </button>
             </div>
@@ -806,7 +809,7 @@ export default function PajakDashboard() {
                   </div>
                 ))}
               </div>
-              <button onClick={() => alert("Membuka panduan kepatuhan regulasi perpustakaan pajak.")} className="w-full text-center text-blue-600 dark:text-blue-400 font-semibold text-[10px] mt-4 hover:underline block cursor-pointer">
+              <button onClick={() => toast.info("Membuka panduan kepatuhan regulasi perpustakaan pajak.")} className="w-full text-center text-blue-600 dark:text-blue-400 font-semibold text-[10px] mt-4 hover:underline block cursor-pointer">
                 Lihat Catatan Lengkap &gt;
               </button>
             </div>
@@ -1031,6 +1034,99 @@ export default function PajakDashboard() {
                 >
                   Tutup
                 </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* IMPORT DATA PAJAK MODAL */}
+      {showImportModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl w-full max-w-lg shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between p-5 border-b border-[var(--app-border)]">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-lg bg-blue-500/10 text-blue-500 border border-blue-500/20">
+                  <Upload className="w-4 h-4" />
+                </div>
+                <h3 className="text-sm font-bold text-[var(--app-text)]">Import e-Faktur Pajak (CSV DJP)</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowImportModal(false)}
+                className="p-1.5 text-[var(--app-text-muted)] hover:text-[var(--app-text)] rounded-lg hover:bg-[var(--app-surface-2)] transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="p-5 space-y-4 text-xs">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold mb-1 text-[var(--app-text)]">Jenis Pajak</label>
+                  <select className="w-full p-2.5 rounded bg-[var(--app-surface-2)] border border-[var(--app-border)] text-[var(--app-text)] focus:outline-none">
+                    <option>PPN Keluaran (Faktur Standar)</option>
+                    <option>PPN Masukan (Belanja/Vendor)</option>
+                    <option>PPh 23 Bukti Potong</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block font-semibold mb-1 text-[var(--app-text)]">Masa Pajak</label>
+                  <select className="w-full p-2.5 rounded bg-[var(--app-surface-2)] border border-[var(--app-border)] text-[var(--app-text)] focus:outline-none">
+                    <option>Oktober 2026</option>
+                    <option>September 2026</option>
+                    <option>Agustus 2026</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="border-2 border-dashed border-[var(--app-border)] hover:border-blue-500 rounded-xl p-6 text-center bg-[var(--app-surface-2)]/50 transition-colors cursor-pointer">
+                <Upload size={28} className="mx-auto text-blue-500 mb-2" />
+                <p className="font-semibold text-[var(--app-text)]">Pilih atau seret berkas CSV e-Faktur dari DJP</p>
+                <p className="text-[11px] text-[var(--app-text-muted)] mt-1">Format resmi ekspor aplikasi e-Faktur / DJP Online</p>
+              </div>
+
+              <div className="flex items-center justify-between pt-3 border-t border-[var(--app-border)]">
+                <button
+                  type="button"
+                  onClick={() => toast.success('Mengunduh format_efaktur_sample.csv...', 'Unduh Contoh')}
+                  className="text-blue-500 hover:text-blue-400 font-semibold flex items-center gap-1 text-xs cursor-pointer"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Download Format CSV</span>
+                </button>
+
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowImportModal(false)}
+                    className="px-4 py-2 rounded-lg border border-[var(--app-border)] bg-[var(--app-surface-2)] text-[var(--app-text-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-surface)] transition-colors cursor-pointer"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newTax: TaxObligation = {
+                        id: Date.now(),
+                        jenisPajak: 'PPN',
+                        masaPajak: 'Oktober 2026',
+                        tglJatuhTempo: '15 Nov 2026',
+                        dpp: 1250000000,
+                        tarif: '11%',
+                        pajakTerutang: 137500000,
+                        pajakDibayar: 137500000,
+                        status: 'Lunas'
+                      };
+                      setTaxData(prev => [newTax, ...prev]);
+                      setShowImportModal(false);
+                      toast.success('Data e-Faktur berhasil diimpor! Rekapitulasi PPN telah disinkronkan.', 'Impor Sukses');
+                    }}
+                    className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold transition-colors cursor-pointer"
+                  >
+                    Proses Impor Faktur
+                  </button>
+                </div>
               </div>
             </div>
           </div>

@@ -43,4 +43,51 @@ export class MikrotikController {
   async getInterfaces(@Param('id') id: string) {
     return this.mikrotikService.getInterfaces(id);
   }
+
+  // ==========================================
+  // IPAM & FORENSIK CGNAT (UU ITE)
+  // ==========================================
+
+  @Get('ipam/pools')
+  async getIpamPools() {
+    return this.mikrotikService.getIpamPools();
+  }
+
+  @Get('ipam/allocations')
+  async getIpamAllocations(@Body('search') search?: string) {
+    return this.mikrotikService.getIpamAllocations(search);
+  }
+
+  @Post('ipam/forensic-search')
+  async searchCgnatForensic(
+    @Body()
+    body: {
+      publicIp: string;
+      publicPort: number;
+      protocol: string;
+      timestamp: string;
+    },
+  ) {
+    return this.mikrotikService.searchCgnatForensic(body);
+  }
+
+  // ==========================================
+  // LIVE MRTG & UPLINK TELEMETRY
+  // ==========================================
+
+  @Get('traffic/live')
+  async getLiveTraffic() {
+    return this.mikrotikService.getLiveTraffic();
+  }
+
+  @Get('traffic/top-consumers')
+  async getTopConsumers() {
+    return this.mikrotikService.getTopConsumers();
+  }
+
+  @Post('traffic/kick-coa')
+  async kickActiveSession(@Body() body: { username: string; mikrotikId?: string }) {
+    return this.mikrotikService.kickActiveSession(body.username, body.mikrotikId);
+  }
 }
+

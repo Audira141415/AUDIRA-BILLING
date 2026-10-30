@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Layout from '@/components/Layout'
 import api from '@/lib/api'
+import { useToast } from '@/contexts/ToastContext'
 import {
   ArrowLeft,
   ArrowRight,
@@ -43,6 +44,7 @@ const RELATIONS = ['Suami', 'Istri', 'Anak', 'Orang Tua', 'Saudara', 'Lainnya']
 
 export default function TambahCustomer() {
   const router = useRouter()
+  const { toast } = useToast()
   const [step, setStep] = useState(1)
   const [saving, setSaving] = useState(false)
   const [availablePackages, setAvailablePackages] = useState<any[]>([])
@@ -126,7 +128,7 @@ export default function TambahCustomer() {
 
   const handleSaveDraft = async () => {
     if (!namaLengkap || !noTelepon) {
-      alert('Harap isi Nama Lengkap dan No. Telepon terlebih dahulu.')
+      toast.warning('Harap isi Nama Lengkap dan No. Telepon terlebih dahulu.')
       return
     }
     try {
@@ -141,10 +143,10 @@ export default function TambahCustomer() {
         installedModem: modemType || null,
         modemSerial: modemSerial || null,
       })
-      alert('Draft pelanggan berhasil disimpan.')
+      toast.success('Draft pelanggan berhasil disimpan.')
       router.push('/pelanggan')
     } catch (err: any) {
-      alert(err.message || 'Gagal menyimpan draft.')
+      toast.error(err.message || 'Gagal menyimpan draft.')
     } finally {
       setSaving(false)
     }
@@ -152,7 +154,7 @@ export default function TambahCustomer() {
 
   const handleSubmit = async () => {
     if (!namaLengkap || !noTelepon) {
-      alert('Harap lengkapi Nama Lengkap dan No. Telepon terlebih dahulu.')
+      toast.warning('Harap lengkapi Nama Lengkap dan No. Telepon terlebih dahulu.')
       return
     }
     try {
@@ -171,10 +173,10 @@ export default function TambahCustomer() {
       if (generateFirstInvoice && selectedPkg) {
         // Invoice generation would go here
       }
-      alert('Pelanggan baru berhasil didaftarkan!')
+      toast.success('Pelanggan baru berhasil didaftarkan!')
       router.push('/pelanggan')
     } catch (err: any) {
-      alert(err.message || 'Gagal mendaftarkan pelanggan.')
+      toast.error(err.message || 'Gagal mendaftarkan pelanggan.')
     } finally {
       setSaving(false)
     }
@@ -218,7 +220,7 @@ export default function TambahCustomer() {
         </div>
 
         {/* ── Progress Steps ──────────────────────────────────────── */}
-        <div className="border-b border-slate-200 px-6 py-4 bg-white/40">
+        <div className="border-b border-[var(--app-border)] px-6 py-4 bg-[var(--app-card-subtle)]">
           <div className="flex items-center gap-0">
             {STEPS.map((s, idx) => (
               <div key={s.id} className="flex items-center">
@@ -233,7 +235,7 @@ export default function TambahCustomer() {
                   }`}
                 >
                   <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black ${
-                    step === s.id ? 'bg-white/20' : s.id < step ? 'bg-green-500/20' : 'bg-slate-100'
+                    step === s.id ? 'bg-[var(--app-card)]' : s.id < step ? 'bg-green-500/20' : 'bg-slate-100'
                   }`}>
                     {s.id < step ? <Check size={12} /> : s.id}
                   </div>
@@ -257,8 +259,8 @@ export default function TambahCustomer() {
             {step === 1 && (
               <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
 
-                {/* Column 1 — Informasi Pribadi */}
-                <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs space-y-4">
+                {/* Column 1: Informasi Pribadi */}
+                <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-6 shadow-2xs space-y-4">
                   <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2 pb-3 border-b border-slate-200">
                     <User size={16} className="text-blue-400" /> Informasi Pribadi
                   </h3>
@@ -366,8 +368,8 @@ export default function TambahCustomer() {
                   </div>
                 </div>
 
-                {/* Column 2 — Informasi Alamat */}
-                <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs space-y-4">
+                {/* Column 2: Informasi Alamat */}
+                <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-6 shadow-2xs space-y-4">
                   <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2 pb-3 border-b border-slate-200">
                     <MapPin size={16} className="text-blue-400" /> Informasi Alamat
                   </h3>
@@ -472,9 +474,9 @@ export default function TambahCustomer() {
                   </div>
                 </div>
 
-                {/* Column 3 — Informasi Tambahan + Kontak Darurat */}
+                {/* Column 3: Informasi Tambahan + Kontak Darurat */}
                 <div className="space-y-4">
-                  <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs space-y-4">
+                  <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-6 shadow-2xs space-y-4">
                     <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2 pb-3 border-b border-slate-200">
                       <Info size={16} className="text-blue-400" /> Informasi Tambahan
                     </h3>
@@ -537,7 +539,7 @@ export default function TambahCustomer() {
                   </div>
 
                   {/* Kontak Darurat */}
-                  <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs space-y-4">
+                  <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-6 shadow-2xs space-y-4">
                     <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2 pb-3 border-b border-slate-200">
                       <Phone size={16} className="text-blue-400" /> Kontak Darurat
                     </h3>
@@ -572,7 +574,7 @@ export default function TambahCustomer() {
 
             {/* ══ STEP 2: Paket & Layanan ════════════════════════════ */}
             {step === 2 && (
-              <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs space-y-6">
+              <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-6 shadow-2xs space-y-6">
                 <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2 pb-4 border-b border-slate-200">
                   <Package size={16} className="text-blue-400" /> Paket & Layanan
                 </h3>
@@ -642,7 +644,7 @@ export default function TambahCustomer() {
 
             {/* ══ STEP 3: Billing & Pembayaran ═══════════════════════ */}
             {step === 3 && (
-              <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs space-y-6">
+              <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-6 shadow-2xs space-y-6">
                 <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2 pb-4 border-b border-slate-200">
                   <CreditCard size={16} className="text-blue-400" /> Billing & Pembayaran
                 </h3>
@@ -729,7 +731,7 @@ export default function TambahCustomer() {
 
             {/* ══ STEP 4: Dokumen ════════════════════════════════════ */}
             {step === 4 && (
-              <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs space-y-6">
+              <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-6 shadow-2xs space-y-6">
                 <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2 pb-4 border-b border-slate-200">
                   <FileText size={16} className="text-blue-400" /> Upload Dokumen
                 </h3>
@@ -755,7 +757,7 @@ export default function TambahCustomer() {
 
             {/* ══ STEP 5: Konfirmasi ═════════════════════════════════ */}
             {step === 5 && (
-              <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs space-y-6">
+              <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-6 shadow-2xs space-y-6">
                 <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2 pb-4 border-b border-slate-200">
                   <FileCheck size={16} className="text-blue-400" /> Konfirmasi Data
                 </h3>
@@ -812,7 +814,7 @@ export default function TambahCustomer() {
           {/* ── Right Summary Panel ─────────────────────────────────── */}
           <div className="hidden xl:flex flex-col gap-4 w-72 flex-shrink-0">
             {/* Customer Summary */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-4 sticky top-4">
+            <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl p-5 shadow-2xs space-y-4 sticky top-4">
               <h3 className="text-xs font-bold text-slate-800 border-b border-slate-200 pb-3">Ringkasan Customer</h3>
 
               {/* Avatar */}

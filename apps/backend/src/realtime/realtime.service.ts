@@ -31,6 +31,26 @@ export interface TicketEventData {
   technicianName?: string;
 }
 
+export interface WorkOrderEventData {
+  workOrderId: string;
+  ticketId?: string;
+  customerId?: string;
+  technicianId?: string;
+  type?: string;
+  priority?: string;
+  status: string;
+  title: string;
+  description?: string;
+  location?: string;
+  latitude?: number;
+  longitude?: number;
+  scheduledAt?: string | Date;
+  startedAt?: string | Date;
+  completedAt?: string | Date;
+  checkInPhoto?: string;
+  notes?: string;
+}
+
 export interface NetworkAlertData {
   device: string;
   type: 'MIKROTIK' | 'OLT' | 'GENIEACS' | 'SYSTEM';
@@ -100,10 +120,59 @@ export class RealtimeService {
     // Emit to admin web and technician mobile
     this.gateway.server?.to('admin_room').emit('ticket_updated', payload);
     this.gateway.server?.to('technician_room').emit('ticket_updated', payload);
+    this.gateway.server?.emit('ticket_updated', payload);
 
     if (data.technicianId) {
       this.gateway.server?.to(`technician_${data.technicianId}`).emit('ticket_assigned', payload);
     }
+
+    this.broadcastDashboardRefresh('ticket_updated');
+  }
+
+  /**
+   * Broadcast work order lifecycle event (created, assigned, in-progress, completed)
+   */
+  broadcastWorkOrderUpdated(data: any) {
+    const payload = {
+      ...data,
+      workOrderId: data.id || data.workOrderId,
+      event: 'WORK_ORDER_UPDATED',
+      timestamp: new Date().toISOString(),
+    };
+
+    this.logger.log(`[Realtime] Emitting WORK_ORDER_UPDATED for workOrder ${payload.workOrderId} [${payload.status}]`);
+    // Broadcast to web admin and technician room
+    this.gateway.server?.to('admin_room').emit('work_order_updated', payload);
+    this.gateway.server?.to('technician_room').emit('work_order_updated', payload);
+    this.gateway.server?.emit('work_order_updated', payload);
+
+    if (data.technicianId) {
+      this.gateway.server?.to(`technician_${data.technicianId}`).emit('work_order_assigned', payload);
+    }
+
+    this.broadcastDashboardRefresh('work_order_updated');
+  }
+
+  /**
+   * Broadcast Technician Live GPS location to Web Admin Radar
+   */
+  broadcastTechnicianLocation(payload: {
+    technicianId: string;
+    technicianName?: string;
+    latitude: number;
+    longitude: number;
+    status?: string;
+    timestamp?: string;
+  }) {
+    const data = {
+      ...payload,
+      event: 'TECHNICIAN_LOCATION',
+      timestamp: payload.timestamp || new Date().toISOString(),
+    };
+
+    this.logger.log(`[Realtime] Emitting TECHNICIAN_LOCATION: ${payload.technicianId} at [${payload.latitude}, ${payload.longitude}]`);
+    this.gateway.server?.to('admin_room').emit('technician_location', data);
+    this.gateway.server?.emit('technician_location', data);
   }
 
   /**

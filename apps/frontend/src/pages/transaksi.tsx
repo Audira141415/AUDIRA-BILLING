@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
 import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/contexts/ToastContext';
 import api from '@/lib/api';
 import {
   Search,
@@ -50,6 +51,7 @@ interface InvoiceTransaction {
 export default function SemuaPembayaranPage() {
   const router = useRouter();
   const { user, isLoading } = useAuth();
+  const { addToast } = useToast();
 
   const [invoices, setInvoices] = useState<InvoiceTransaction[]>([]);
   const [loading, setLoading] = useState(true);
@@ -135,7 +137,7 @@ export default function SemuaPembayaranPage() {
   // Real CSV Export
   const handleExportCSV = () => {
     if (filteredTransactions.length === 0) {
-      alert('Tidak ada data transaksi untuk diexport.');
+      addToast('warning', 'Tidak ada data transaksi untuk diexport.');
       return;
     }
     const headers = ['No. Invoice', 'Pelanggan', 'No. Internet', 'Nominal', 'Status', 'Metode Pembayaran', 'Tanggal Bayar', 'Jatuh Tempo'];

@@ -143,22 +143,22 @@ export default function TechnicianDashboard() {
           const { latitude, longitude } = position.coords;
           try {
             await api.fieldService.startJob(jobId, latitude, longitude);
-            showAudiraToast('success', `🚀 Pekerjaan dimulai di koordinat GPS: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`);
+            showAudiraToast('success', `Pekerjaan dimulai di koordinat GPS: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`);
             loadData();
           } catch (e) {
-            showAudiraToast('success', `🚀 Pekerjaan dimulai (GPS Lock Aktif)`);
+            showAudiraToast('success', `Pekerjaan dimulai (GPS Lock Aktif)`);
             loadData();
           }
         },
         () => {
           api.fieldService.startJob(jobId);
-          showAudiraToast('success', `🚀 Pekerjaan dimulai (GPS Standard)`);
+          showAudiraToast('success', `Pekerjaan dimulai (GPS Standard)`);
           loadData();
         }
       );
     } else {
       await api.fieldService.startJob(jobId);
-      showAudiraToast('success', `🚀 Pekerjaan dimulai`);
+      showAudiraToast('success', `Pekerjaan dimulai`);
       loadData();
     }
   };

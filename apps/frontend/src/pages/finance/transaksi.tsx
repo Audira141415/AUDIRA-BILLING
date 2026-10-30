@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
+import { useToast } from '@/contexts/ToastContext';
 import {
   TrendingUp,
   TrendingDown,
@@ -38,8 +39,10 @@ import {
   ChevronRight,
   Wallet,
   Scale,
-  Percent
+  Percent,
+  X
 } from 'lucide-react';
+import { Pagination } from '@/components/Pagination';
 import {
   ResponsiveContainer,
   LineChart,
@@ -69,6 +72,7 @@ const COLORS_TIPE = ['#10B981', '#EF4444', '#3B82F6', '#8B5CF6'];
 
 export default function TransaksiDashboard() {
   const router = useRouter();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('Semua Transaksi');
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -84,6 +88,9 @@ export default function TransaksiDashboard() {
 
   // Modals state
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
   const [newType, setNewType] = useState('Pemasukan');
   const [newDesc, setNewDesc] = useState('');
   const [newCategory, setNewCategory] = useState('Pendapatan');
@@ -285,6 +292,8 @@ export default function TransaksiDashboard() {
     return matchesSearch && matchesTab && matchesType && matchesCategory && matchesAccount && matchesMethod && matchesStatus && matchesMinAmount && matchesMaxAmount;
   });
 
+  const paginatedList = filteredList.slice((page - 1) * limit, page * limit);
+
   return (
     <Layout>
       <div className="bg-[var(--app-bg)] text-[var(--app-text)] min-h-screen p-6 font-sans antialiased">
@@ -307,12 +316,12 @@ export default function TransaksiDashboard() {
             <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--app-card)] border border-[var(--app-border)] text-xs">
               <span className="text-[var(--app-muted)] font-medium">25 Juni 2026 - 22 Oktober 2026</span>
             </div>
-            <button onClick={() => alert("Penyaringan data transaksi keuangan diterapkan.")} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white transition-colors">
+            <button onClick={() => toast.info("Penyaringan data transaksi keuangan diterapkan.")} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white transition-colors">
               <Filter className="w-3.5 h-3.5" />
               <span>Filter</span>
             </button>
             <button 
-              onClick={() => alert('Mengekspor daftar transaksi...')}
+              onClick={() => toast.success('Mengekspor daftar transaksi...')}
               className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--app-card)] hover:bg-[var(--app-card-subtle)] text-xs font-semibold text-[var(--app-text)] border border-[var(--app-border)] shadow-xs transition-colors"
             >
               <Download className="w-3.5 h-3.5" />
@@ -529,7 +538,7 @@ export default function TransaksiDashboard() {
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 pt-2">
-                  <button onClick={() => alert("Penyaringan transaksi diterapkan.")} className="bg-blue-600 hover:bg-blue-500 py-2 rounded text-[var(--app-text)] font-semibold">Terapkan Filter</button>
+                  <button onClick={() => toast.info("Penyaringan transaksi diterapkan.")} className="bg-blue-600 hover:bg-blue-500 py-2 rounded text-[var(--app-text)] font-semibold">Terapkan Filter</button>
                   <button onClick={handleResetFilter} className="bg-slate-800 hover:bg-slate-700 py-2 rounded text-white">
                     Reset
                   </button>
@@ -590,7 +599,7 @@ export default function TransaksiDashboard() {
                     <Plus className="w-3.5 h-3.5" />
                     <span>Transaksi Baru</span>
                   </button>
-                  <button onClick={() => alert("Membuka modal impor transaksi dari rekening koran / CSV...")} className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-[var(--app-border)] rounded text-xs text-white">
+                  <button onClick={() => setShowImportModal(true)} className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-[var(--app-border)] rounded text-xs text-white cursor-pointer">
                     <UploadCloud className="w-3.5 h-3.5 text-[var(--app-muted)]" />
                     <span>Import Transaksi</span>
                   </button>
@@ -617,7 +626,7 @@ export default function TransaksiDashboard() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[var(--app-border)] text-[var(--app-text)]/90">
-                    {filteredList.map((t, idx) => (
+                    {paginatedList.map((t, idx) => (
                       <tr key={t.id} className="hover:bg-[var(--app-card-subtle)]/20 transition-colors">
                         <td className="py-3 text-[var(--app-muted)]">{idx + 1}</td>
                         <td className="py-3 text-[11px] text-[var(--app-muted)]">{t.tanggal}</td>
@@ -681,17 +690,15 @@ export default function TransaksiDashboard() {
               </div>
 
               {/* Pagination */}
-              <div className="flex justify-between items-center mt-4 pt-4 border-t border-[var(--app-border)]/60 text-xs text-[var(--app-muted)]">
-                <span>Menampilkan {filteredList.length} dari {totalTrxCount} transaksi</span>
-                <div className="flex items-center gap-2">
-                  <button onClick={() => alert("Halaman pertama sudah aktif.")} className="p-1 rounded bg-[#071225] border border-[var(--app-border)] hover:text-white"><ChevronLeft className="w-4 h-4" /></button>
-                  <button onClick={() => alert("Halaman 1 saat ini aktif.")} className="px-2 py-1 rounded bg-blue-600 text-[var(--app-text)] font-semibold">1</button>
-                  <button onClick={() => alert("Beralih ke halaman 2")} className="px-2 py-1 rounded bg-[#071225] hover:text-white">2</button>
-                  <button onClick={() => alert("Beralih ke halaman 3")} className="px-2 py-1 rounded bg-[#071225] hover:text-white">3</button>
-                  <span>...</span>
-                  <button onClick={() => alert("Beralih ke halaman 125")} className="px-2 py-1 rounded bg-[#071225] hover:text-white">125</button>
-                  <button onClick={() => alert("Beralih ke halaman selanjutnya.")} className="p-1 rounded bg-[#071225] border border-[var(--app-border)] hover:text-white"><ChevronRight className="w-4 h-4" /></button>
-                </div>
+              <div className="mt-4 pt-4 border-t border-[var(--app-border)]/60">
+                <Pagination
+                  currentPage={page}
+                  totalItems={filteredList.length}
+                  pageSize={limit}
+                  onPageChange={setPage}
+                  onPageSizeChange={(newLimit) => { setLimit(newLimit); setPage(1); }}
+                  pageSizeOptions={[5, 10, 25]}
+                />
               </div>
             </div>
           </div>
@@ -1129,6 +1136,93 @@ export default function TransaksiDashboard() {
               >
                 Ya, Hapus
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Import Transaksi Rekening Koran */}
+      {showImportModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-[var(--app-card)] border border-[var(--app-border)] rounded-2xl w-full max-w-lg shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between p-5 border-b border-[var(--app-border)]">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-lg bg-blue-500/10 text-blue-500 border border-blue-500/20">
+                  <UploadCloud size={16} />
+                </div>
+                <h3 className="text-sm font-bold text-[var(--app-text)]">Import Transaksi Rekening Koran</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowImportModal(false)}
+                className="p-1.5 text-[var(--app-muted)] hover:text-[var(--app-text)] rounded-lg hover:bg-[var(--app-surface-2)] transition-colors cursor-pointer"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="p-5 space-y-4 text-xs">
+              <div>
+                <label className="block font-semibold mb-1 text-[var(--app-text)]">Akun Bank Tujuan</label>
+                <select className="w-full p-2.5 rounded bg-[var(--app-surface-2)] border border-[var(--app-border)] text-[var(--app-text)] focus:outline-none">
+                  <option>Bank Mandiri (123-00-9876543-1 a.n AUDIRA)</option>
+                  <option>Bank BCA (882-019-2831 a.n AUDIRA)</option>
+                  <option>Bank BRI (0012-01-098273-50-1 a.n AUDIRA)</option>
+                  <option>Kas Operasional Sentral</option>
+                </select>
+              </div>
+
+              <div className="border-2 border-dashed border-[var(--app-border)] hover:border-blue-500 rounded-xl p-6 text-center bg-[var(--app-surface-2)]/50 transition-colors cursor-pointer">
+                <UploadCloud size={28} className="mx-auto text-blue-500 mb-2" />
+                <p className="font-semibold text-[var(--app-text)]">Pilih atau seret berkas CSV/MT940 Mutasi Bank</p>
+                <p className="text-[11px] text-[var(--app-muted)] mt-1">Mendukung ekspor e-Banking BCA, Mandiri MCM, BRI CMS</p>
+              </div>
+
+              <div className="flex items-center justify-between pt-3 border-t border-[var(--app-border)]">
+                <button
+                  type="button"
+                  onClick={() => toast.success('Mengunduh contoh_format_mutasi.csv...', 'Unduh Contoh')}
+                  className="text-blue-500 hover:text-blue-400 font-semibold flex items-center gap-1 text-xs cursor-pointer"
+                >
+                  <Download size={13} />
+                  <span>Download Format CSV</span>
+                </button>
+
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowImportModal(false)}
+                    className="px-4 py-2 rounded-lg border border-[var(--app-border)] bg-[var(--app-surface-2)] text-[var(--app-muted)] hover:text-[var(--app-text)] hover:bg-[var(--app-surface)] transition-colors cursor-pointer"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newTx = {
+                        id: Date.now(),
+                        tanggal: new Date().toLocaleDateString('id-ID') + ' 09:00',
+                        trxNo: `TRX/${new Date().getFullYear()}/07/00${transactions.length + 1}`,
+                        tipe: 'Pemasukan',
+                        deskripsi: 'Setoran Mutasi QRIS Settlement H-1',
+                        akun: 'Kas & Bank',
+                        kategori: 'Pendapatan',
+                        debit: 0,
+                        kredit: 12500000,
+                        saldo: 49910500,
+                        metode: 'Transfer Bank',
+                        status: 'Selesai'
+                      };
+                      setTransactions(prev => [newTx, ...prev]);
+                      setShowImportModal(false);
+                      toast.success('Mutasi rekening koran berhasil diimpor! Transaksi kas telah diperbarui.', 'Impor Berhasil');
+                    }}
+                    className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold transition-colors cursor-pointer"
+                  >
+                    Proses Impor Transaksi
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>

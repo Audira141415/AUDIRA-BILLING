@@ -1,27 +1,80 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { RealtimeService } from '../realtime/realtime.service';
 
 @Injectable()
 export class FieldServiceService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly realtimeService: RealtimeService,
+  ) {}
+
+  // Broadcast technician location
+  broadcastTechnicianLocation(payload: {
+    technicianId: string;
+    technicianName?: string;
+    latitude: number;
+    longitude: number;
+    status?: string;
+  }) {
+    this.realtimeService.broadcastTechnicianLocation(payload);
+    return { success: true, timestamp: new Date().toISOString() };
+  }
 
   // Create work order
-  async createWorkOrder(data: {
-    customerId: string;
-    technicianId: string;
-    type: string;
-    priority?: string;
-    title: string;
-    description: string;
-    scheduledAt: Date;
-    location?: string;
-    latitude?: number;
-    longitude?: number;
-  }) {
-    return await this.prisma.workOrder.create({
+  async createWorkOrder(data: any) {
+    let customerId = data.customerId;
+    if (!customerId) {
+      if (data.customer?.name) {
+        // Find existing customer by phone or name, or create
+        let found = await this.prisma.customer.findFirst({
+          where: {
+            OR: [
+              { phone: data.customer.phone },
+              { name: { contains: data.customer.name, mode: 'insensitive' } }
+            ]
+          }
+        });
+        if (!found) {
+          found = await this.prisma.customer.create({
+            data: {
+              name: data.customer.name,
+              phone: data.customer.phone || '0821-1200-1600',
+              address: data.customer.address || data.location || 'Alamat Pelanggan',
+              status: 'active',
+            }
+          });
+        }
+        customerId = found.id;
+      } else {
+        const anyCustomer = await this.prisma.customer.findFirst();
+        customerId = anyCustomer?.id;
+      }
+    }
+
+    let technicianId = data.technicianId;
+    if (!technicianId) {
+      const anyTech = await this.prisma.user.findFirst({
+        where: { role: { in: ['TECHNICIAN', 'ADMIN', 'NOC'] } },
+      });
+      technicianId = anyTech?.id;
+    }
+
+    const { customer, ...restData } = data;
+
+    const workOrder = await this.prisma.workOrder.create({
       data: {
-        ...data,
-        status: 'pending',
+        title: restData.title,
+        description: restData.description || '',
+        type: restData.type || 'installation',
+        priority: restData.priority || 'medium',
+        location: restData.location || data.customer?.address || '',
+        latitude: restData.latitude ? Number(restData.latitude) : undefined,
+        longitude: restData.longitude ? Number(restData.longitude) : undefined,
+        customerId,
+        technicianId: technicianId || undefined,
+        status: restData.status || (technicianId ? 'assigned' : 'pending'),
+        scheduledAt: restData.scheduledAt ? new Date(restData.scheduledAt) : new Date(),
       },
       include: {
         customer: {
@@ -32,6 +85,88 @@ export class FieldServiceService {
         },
       },
     });
+
+    this.realtimeService.broadcastWorkOrderUpdated(workOrder);
+    return workOrder;
+  }
+
+  // Create emergency splicing work order (OTDR Dispatch)
+  async createEmergencySplicingSpk(data: {
+    oltName: string;
+    feederName: string;
+    distanceMeter: number;
+    location: string;
+    affectedOdps: string[];
+    affectedCustomersCount: number;
+  }) {
+    let customer = await this.prisma.customer.findFirst({
+      where: { status: 'active' },
+    });
+    if (!customer) {
+      customer = await this.prisma.customer.findFirst();
+    }
+
+    let user = await this.prisma.user.findFirst({
+      where: { role: { in: ['TECHNICIAN', 'ADMIN', 'NOC'] } },
+    });
+    if (!user) {
+      user = await this.prisma.user.findFirst();
+    }
+
+    if (!customer || !user) {
+      throw new Error('Customer or User not found in database to assign WorkOrder');
+    }
+
+    const title = `[DARURAT FIBER CUT] Splicing ${data.distanceMeter}m - ${data.feederName}`;
+    const description = `Insiden kabel serat optik putus pada jarak ${data.distanceMeter} meter dari ${data.oltName}. Lokasi estimasi: ${data.location}. ODP Terdampak: ${data.affectedOdps.join(', ')}. Estimasi Pelanggan Terdampak: ${data.affectedCustomersCount}. Segera lakukan penarikan kabel dropcore/feeder dan fusi splicing TIA-598.`;
+
+    const workOrder = await this.prisma.workOrder.create({
+      data: {
+        customerId: customer.id,
+        technicianId: user.id,
+        type: 'repair',
+        priority: 'urgent',
+        status: 'assigned',
+        title,
+        description,
+        scheduledAt: new Date(),
+        location: data.location,
+      },
+      include: {
+        customer: { select: { id: true, name: true, phone: true, address: true } },
+        technician: { select: { id: true, name: true, email: true } },
+      },
+    });
+
+    this.realtimeService.broadcastWorkOrderUpdated(workOrder);
+    return workOrder;
+  }
+
+  private splicingMatrixState: any[] = [];
+
+  getSplicingMatrix(tubeId: number = 1) {
+    if (this.splicingMatrixState.length === 0) {
+      this.splicingMatrixState = [
+        { coreNumber: 1, colorName: 'Biru', colorHex: '#2563eb', status: 'BROKEN', lossDbm: -34.5, assignedOdp: 'ODP-KEMANG-01', notes: 'Putus di span Tiang T-14 - T-15' },
+        { coreNumber: 2, colorName: 'Oranye', colorHex: '#f97316', status: 'BROKEN', lossDbm: -32.8, assignedOdp: 'ODP-KEMANG-02', notes: 'Putus di span Tiang T-14 - T-15' },
+        { coreNumber: 3, colorName: 'Hijau', colorHex: '#16a34a', status: 'BROKEN', lossDbm: -35.0, assignedOdp: 'ODP-KEMANG-03', notes: 'Putus di span Tiang T-14 - T-15' },
+        { coreNumber: 4, colorName: 'Coklat', colorHex: '#854d0e', status: 'STANDBY', lossDbm: -18.2, notes: 'Core cadangan siap pakai' },
+        { coreNumber: 5, colorName: 'Abu-abu', colorHex: '#64748b', status: 'ACTIVE', lossDbm: -19.4, assignedOdp: 'ODP-PUSAT-04', connectedCustomer: 'Bank Mandiri KCP' },
+        { coreNumber: 6, colorName: 'Putih', colorHex: '#cbd5e1', status: 'ACTIVE', lossDbm: -20.1, assignedOdp: 'ODP-PUSAT-05', connectedCustomer: 'Hotel Harmoni Batam' },
+        { coreNumber: 7, colorName: 'Merah', colorHex: '#dc2626', status: 'ACTIVE', lossDbm: -18.9, assignedOdp: 'ODP-PUSAT-06' },
+        { coreNumber: 8, colorName: 'Hitam', colorHex: '#1e293b', status: 'STANDBY', lossDbm: -17.5, notes: 'Cadangan Feeder Utama' },
+        { coreNumber: 9, colorName: 'Kuning', colorHex: '#eab308', status: 'RESERVED', lossDbm: -19.0, notes: 'Alokasi ekspansi ODC-BT-02' },
+        { coreNumber: 10, colorName: 'Ungu', colorHex: '#9333ea', status: 'ACTIVE', lossDbm: -21.4, assignedOdp: 'ODP-KEMANG-08' },
+        { coreNumber: 11, colorName: 'Pink', colorHex: '#ec4899', status: 'ACTIVE', lossDbm: -20.5, assignedOdp: 'ODP-KEMANG-09' },
+        { coreNumber: 12, colorName: 'Toska', colorHex: '#06b6d4', status: 'STANDBY', lossDbm: -18.0, notes: 'Cadangan Jalur Timur' }
+      ];
+    }
+    return this.splicingMatrixState;
+  }
+
+  updateSplicingMatrix(cores: any[]) {
+    this.splicingMatrixState = cores;
+    return { success: true, count: cores.length };
   }
 
   // Get all work orders
@@ -101,7 +236,7 @@ export class FieldServiceService {
       notes: string;
     }>,
   ) {
-    return await this.prisma.workOrder.update({
+    const workOrder = await this.prisma.workOrder.update({
       where: { id },
       data,
       include: {
@@ -109,22 +244,32 @@ export class FieldServiceService {
         technician: true,
       },
     });
+
+    this.realtimeService.broadcastWorkOrderUpdated(workOrder);
+    return workOrder;
   }
 
   // Assign technician to work order
   async assignTechnician(workOrderId: string, technicianId: string) {
-    return await this.prisma.workOrder.update({
+    const workOrder = await this.prisma.workOrder.update({
       where: { id: workOrderId },
       data: {
         technicianId,
         status: 'assigned',
       },
+      include: {
+        customer: true,
+        technician: true,
+      },
     });
+
+    this.realtimeService.broadcastWorkOrderUpdated(workOrder);
+    return workOrder;
   }
 
   // Start work order (technician arrives on site)
   async startWorkOrder(workOrderId: string, latitude?: number, longitude?: number, checkInPhoto?: string) {
-    return await this.prisma.workOrder.update({
+    const workOrder = await this.prisma.workOrder.update({
       where: { id: workOrderId },
       data: {
         status: 'in-progress',
@@ -133,17 +278,42 @@ export class FieldServiceService {
         longitude,
         checkInPhoto, // Save foto selfie di field terpisah
       },
+      include: {
+        customer: true,
+        technician: true,
+      },
     });
+
+    this.realtimeService.broadcastWorkOrderUpdated(workOrder);
+
+    if (latitude && longitude) {
+      this.realtimeService.broadcastTechnicianLocation({
+        technicianId: workOrder.technicianId || 'technician',
+        technicianName: workOrder.technician?.name || 'Teknisi Lapangan',
+        latitude,
+        longitude,
+        status: 'in-progress',
+      });
+    }
+
+    return workOrder;
   }
 
   // Upload check-in photo
   async uploadCheckInPhoto(workOrderId: string, photo: string) {
-    return await this.prisma.workOrder.update({
+    const workOrder = await this.prisma.workOrder.update({
       where: { id: workOrderId },
       data: {
         checkInPhoto: photo
-      }
+      },
+      include: {
+        customer: true,
+        technician: true,
+      },
     });
+
+    this.realtimeService.broadcastWorkOrderUpdated(workOrder);
+    return workOrder;
   }
 
   // Complete work order
@@ -152,25 +322,39 @@ export class FieldServiceService {
     signature?: string;
     photos?: string[];
   }) {
-    return await this.prisma.workOrder.update({
+    const workOrder = await this.prisma.workOrder.update({
       where: { id: workOrderId },
       data: {
         status: 'completed',
         completedAt: new Date(),
         ...data,
       },
+      include: {
+        customer: true,
+        technician: true,
+      },
     });
+
+    this.realtimeService.broadcastWorkOrderUpdated(workOrder);
+    return workOrder;
   }
 
   // Cancel work order
   async cancelWorkOrder(workOrderId: string, reason: string) {
-    return await this.prisma.workOrder.update({
+    const workOrder = await this.prisma.workOrder.update({
       where: { id: workOrderId },
       data: {
         status: 'cancelled',
         notes: reason,
       },
+      include: {
+        customer: true,
+        technician: true,
+      },
     });
+
+    this.realtimeService.broadcastWorkOrderUpdated(workOrder);
+    return workOrder;
   }
 
   // Update work order status
@@ -185,10 +369,17 @@ export class FieldServiceService {
       data.completedAt = new Date();
     }
 
-    return await this.prisma.workOrder.update({
+    const workOrder = await this.prisma.workOrder.update({
       where: { id: workOrderId },
       data,
+      include: {
+        customer: true,
+        technician: true,
+      },
     });
+
+    this.realtimeService.broadcastWorkOrderUpdated(workOrder);
+    return workOrder;
   }
 
   // Upload photos
@@ -490,12 +681,19 @@ export class FieldServiceService {
     const qcEntry = `\n[QC_AUDIT | ${qcTimestamp}] STATUS: ${qcStatus.toUpperCase()}${qcNotes ? ` | CATATAN: ${qcNotes}` : ''}`;
     const updatedNotes = (wo.notes || '') + qcEntry;
 
-    return await this.prisma.workOrder.update({
+    const workOrder = await this.prisma.workOrder.update({
       where: { id: workOrderId },
       data: {
         notes: updatedNotes,
       },
+      include: {
+        customer: true,
+        technician: true,
+      },
     });
+
+    this.realtimeService.broadcastWorkOrderUpdated(workOrder);
+    return workOrder;
   }
 
   // Optical Pocket Diagnostics for Work Order

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import Layout from '@/components/Layout'
+import { useToast } from '@/contexts/ToastContext'
 import {
   DollarSign,
   Plus,
@@ -66,6 +67,7 @@ const PAYMENT_METHODS = ['Cash', 'Transfer Bank', 'QRIS', 'Virtual Account BCA',
 
 export default function Keuangan() {
   const router = useRouter()
+  const { toast } = useToast()
   useEffect(() => {
     router.replace('/finance/dashboard')
   }, [router])
@@ -133,7 +135,7 @@ export default function Keuangan() {
       })
     } catch (err) {
       console.error('Error fetching customer detail:', err)
-      alert('Gagal mengambil data detail pelanggan')
+      toast.error('Gagal mengambil data detail pelanggan')
       setShowCustomerModal(false)
     } finally {
       setModalLoading(false)
@@ -144,13 +146,13 @@ export default function Keuangan() {
     if (!selectedInvoice) return
     try {
       await api.keuangan.markPaid(selectedInvoice.id, paymentMethod)
-      alert('Invoice berhasil ditandai LUNAS')
+      toast.success('Invoice berhasil ditandai LUNAS')
       setShowMarkPaidModal(false)
       setSelectedInvoice(null)
       fetchInvoices()
       fetchStats()
     } catch (err: any) {
-      alert(err.message || 'Gagal mengubah status pembayaran')
+      toast.error(err.message || 'Gagal mengubah status pembayaran')
     }
   }
 
@@ -252,7 +254,7 @@ export default function Keuangan() {
                 </button>
                 <button 
                   onClick={() => { fetchInvoices(); fetchStats(); }}
-                  className="flex items-center space-x-2 bg-white border border-gray-200 text-gray-700 px-4 py-2.5 rounded-lg font-medium hover:bg-gray-50 transition-colors text-sm shadow-sm"
+                  className="flex items-center space-x-2 bg-[var(--app-card)] border border-[var(--app-border)] text-[var(--app-text)] px-4 py-2.5 rounded-lg font-medium hover:bg-[var(--app-card-subtle)] transition-colors text-sm shadow-sm"
                 >
                   <RefreshCw size={18} />
                 </button>
@@ -261,7 +263,7 @@ export default function Keuangan() {
 
             {/* Statistics Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+              <div className="bg-[var(--app-card)] rounded-xl shadow-sm p-6 border border-[var(--app-border)]">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Total Pendapatan</p>
@@ -275,11 +277,11 @@ export default function Keuangan() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+              <div className="bg-[var(--app-card)] rounded-xl shadow-sm p-6 border border-[var(--app-border)]">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Invoice Lunas</p>
-                    <p className="text-2xl font-bold text-gray-800 mt-1">{stats.paidInvoices} invoice</p>
+                    <p className="text-2xl font-bold text-[var(--app-text)] mt-1">{stats.paidInvoices} invoice</p>
                   </div>
                   <div className="bg-blue-50 p-3 rounded-lg text-blue-600">
                     <FileText size={24} />
@@ -287,7 +289,7 @@ export default function Keuangan() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+              <div className="bg-[var(--app-card)] rounded-xl shadow-sm p-6 border border-[var(--app-border)]">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Total Piutang Pending</p>
@@ -301,7 +303,7 @@ export default function Keuangan() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+              <div className="bg-[var(--app-card)] rounded-xl shadow-sm p-6 border border-[var(--app-border)]">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Total Tunggakan Jatuh Tempo</p>
@@ -317,7 +319,7 @@ export default function Keuangan() {
             </div>
 
             {/* Filters */}
-            <div className="bg-white rounded-xl shadow-sm p-4 mb-6 border border-gray-100">
+            <div className="bg-[var(--app-card)] rounded-xl shadow-sm p-4 mb-6 border border-[var(--app-border)]">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500" size={20} />
@@ -367,7 +369,7 @@ export default function Keuangan() {
             </div>
 
             {/* Invoices Table */}
-            <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+            <div className="bg-[var(--app-card)] rounded-xl shadow-sm overflow-hidden border border-[var(--app-border)]">
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead className="bg-gray-50 border-b border-gray-200">
@@ -461,15 +463,15 @@ export default function Keuangan() {
       {/* Customer Detail Modal */}
       {showCustomerModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-[var(--app-card)] text-[var(--app-text)] rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-[var(--app-border)]">
             {/* Header */}
             <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-indigo-700 px-6 py-4 flex items-center justify-between rounded-t-2xl">
               <div className="flex items-center gap-3">
-                <div className="bg-white/20 p-3 rounded-lg">
+                <div className="bg-blue-500/30 p-3 rounded-lg">
                   <User className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-slate-800">
+                  <h2 className="text-2xl font-bold text-white">
                     {modalLoading ? 'Memuat data...' : selectedCustomer?.name}
                   </h2>
                   <p className="text-blue-100 text-sm">Detail Informasi Pelanggan & Keuangan</p>
@@ -632,26 +634,26 @@ export default function Keuangan() {
       {/* Modal Tandai Lunas */}
       {showMarkPaidModal && selectedInvoice && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
-            <div className="flex items-center justify-between p-6 border-b border-gray-100">
-              <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+          <div className="bg-[var(--app-card)] text-[var(--app-text)] rounded-2xl shadow-2xl w-full max-w-md border border-[var(--app-border)]">
+            <div className="flex items-center justify-between p-6 border-b border-[var(--app-border)]">
+              <h2 className="text-xl font-bold text-[var(--app-text)] flex items-center gap-2">
                 <CheckCircle size={22} className="text-green-600" /> Tandai Lunas
               </h2>
-              <button onClick={() => { setShowMarkPaidModal(false); setSelectedInvoice(null); }} className="p-2 hover:bg-gray-100 rounded-lg">
+              <button onClick={() => { setShowMarkPaidModal(false); setSelectedInvoice(null); }} className="p-2 hover:bg-[var(--app-card-subtle)] rounded-lg">
                 <X size={18} />
               </button>
             </div>
             <div className="p-6 space-y-4">
-              <div className="bg-gray-50 rounded-xl p-4">
+              <div className="bg-[var(--app-card-subtle)] rounded-xl p-4">
                 <p className="text-xs text-slate-400 uppercase font-semibold">Invoice</p>
-                <p className="font-mono font-bold text-blue-700">{selectedInvoice.invoiceNumber}</p>
+                <p className="font-mono font-bold text-blue-500">{selectedInvoice.invoiceNumber}</p>
                 <p className="text-xs text-slate-400 uppercase font-semibold mt-2">Pelanggan</p>
-                <p className="font-semibold text-gray-800">{selectedInvoice.customer.name}</p>
+                <p className="font-semibold text-[var(--app-text)]">{selectedInvoice.customer.name}</p>
                 <p className="text-xs text-slate-400 uppercase font-semibold mt-2">Jumlah Tagihan</p>
-                <p className="text-2xl font-bold text-gray-800">Rp {selectedInvoice.amount.toLocaleString('id-ID')}</p>
+                <p className="text-2xl font-bold text-[var(--app-text)]">Rp {selectedInvoice.amount.toLocaleString('id-ID')}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Metode Pembayaran</label>
+                <label className="block text-sm font-medium text-[var(--app-text)] mb-2">Metode Pembayaran</label>
                 <div className="grid grid-cols-2 gap-2">
                   {PAYMENT_METHODS.map(m => (
                     <button
@@ -660,7 +662,7 @@ export default function Keuangan() {
                       className={`px-3 py-2 rounded-lg text-sm border transition ${
                         paymentMethod === m
                           ? 'bg-green-600 text-white border-green-600 font-semibold'
-                          : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
+                          : 'bg-[var(--app-card)] text-[var(--app-text)] border-[var(--app-border)] hover:bg-[var(--app-card-subtle)]'
                       }`}
                     >
                       {m}
@@ -669,7 +671,7 @@ export default function Keuangan() {
                 </div>
               </div>
             </div>
-            <div className="p-6 border-t border-gray-100 flex gap-3">
+            <div className="p-6 border-t border-[var(--app-border)] flex gap-3">
               <button 
                 onClick={() => { setShowMarkPaidModal(false); setSelectedInvoice(null); }} 
                 className="flex-1 px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 text-sm font-medium"

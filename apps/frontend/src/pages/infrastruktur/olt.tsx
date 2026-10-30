@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Layout from '@/components/Layout'
+import { useToast } from '@/contexts/ToastContext'
 import { 
   Server, 
   Cpu, 
@@ -62,6 +63,7 @@ interface Stats {
 }
 
 export default function OltManagementPage() {
+  const { toast } = useToast()
   const [olts, setOlts] = useState<OltDevice[]>([])
   const [unregistered, setUnregistered] = useState<OltOnu[]>([])
   const [registered, setRegistered] = useState<OltOnu[]>([])
@@ -69,7 +71,6 @@ export default function OltManagementPage() {
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'unregistered' | 'registered' | 'olts'>('unregistered')
   const [search, setSearch] = useState('')
-  const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
 
   // Modal State
   const [selectedOnu, setSelectedOnu] = useState<OltOnu | null>(null)
@@ -84,8 +85,11 @@ export default function OltManagementPage() {
   const [viewScript, setViewScript] = useState<string | null>(null)
 
   const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
-    setNotification({ message, type })
-    setTimeout(() => setNotification(null), 4000)
+    if (type === 'error') {
+      toast.error(message)
+    } else {
+      toast.success(message)
+    }
   }
 
   const loadData = async () => {
@@ -170,18 +174,6 @@ export default function OltManagementPage() {
   return (
     <Layout>
       <div className="min-h-screen bg-theme-bg text-theme-text p-4 md:p-6 space-y-6">
-
-        {/* Toast */}
-        {notification && (
-          <div className={`fixed top-5 right-5 z-50 px-4 py-3 rounded-xl shadow-lg border flex items-center gap-3 text-sm font-medium ${
-            notification.type === 'success' 
-              ? 'bg-emerald-50 dark:bg-emerald-950/80 border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200' 
-              : 'bg-rose-50 dark:bg-rose-950/80 border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-200'
-          }`}>
-            {notification.type === 'success' ? <CheckCircle2 size={18} className="text-emerald-600 dark:text-emerald-400" /> : <AlertCircle size={18} className="text-rose-600 dark:text-rose-400" />}
-            <span>{notification.message}</span>
-          </div>
-        )}
 
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-theme-border pb-5">
@@ -503,7 +495,13 @@ export default function OltManagementPage() {
                   <Zap size={16} className="text-blue-500" />
                   <h3 className="text-sm font-bold text-theme-text">Zero-Touch Provisioning ONU</h3>
                 </div>
-                <button onClick={() => setShowModal(false)} className="text-theme-muted hover:text-theme-text">✕</button>
+                <button 
+                  onClick={() => setShowModal(false)} 
+                  className="p-1 rounded-lg text-theme-muted hover:text-theme-text hover:bg-theme-bg transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                  aria-label="Tutup modal"
+                >
+                  <X size={16} />
+                </button>
               </div>
 
               {provisionSuccess ? (
